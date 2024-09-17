@@ -1,0 +1,87 @@
+﻿@model TeddyShop.Models.Pedido
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Pedido</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NumPedido" class="control-label"></label>
+                <input asp-for="NumPedido" class="form-control" />
+                <span asp-validation-for="NumPedido" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TamañoOso" class="control-label"></label>
+                <input asp-for="TamañoOso" class="form-control" />
+                <span asp-validation-for="TamañoOso" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NombreComprador" class="control-label"></label>
+                <input asp-for="NombreComprador" class="form-control" />
+                <span asp-validation-for="NombreComprador" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumeroComprador" class="control-label"></label>
+                <input asp-for="NumeroComprador" class="form-control" />
+                <span asp-validation-for="NumeroComprador" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NombreAgendador" class="control-label"></label>
+                <input asp-for="NombreAgendador" class="form-control" />
+                <span asp-validation-for="NombreAgendador" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumeroAgendador" class="control-label"></label>
+                <input asp-for="NumeroAgendador" class="form-control" />
+                <span asp-validation-for="NumeroAgendador" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Localidad" class="control-label"></label>
+                <input asp-for="Localidad" class="form-control" />
+                <span asp-validation-for="Localidad" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Direccion" class="control-label"></label>
+                <input asp-for="Direccion" class="form-control" />
+                <span asp-validation-for="Direccion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Barrio" class="control-label"></label>
+                <input asp-for="Barrio" class="form-control" />
+                <span asp-validation-for="Barrio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cliente_DniCliente" class="control-label"></label>
+                <select asp-for="Cliente_DniCliente" class ="form-control" asp-items="ViewBag.Cliente_DniCliente"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApellidoAgendador" class="control-label"></label>
+                <input asp-for="ApellidoAgendador" class="form-control" />
+                <span asp-validation-for="ApellidoAgendador" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApellidoComprador" class="control-label"></label>
+                <input asp-for="ApellidoComprador" class="form-control" />
+                <span asp-validation-for="ApellidoComprador" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
