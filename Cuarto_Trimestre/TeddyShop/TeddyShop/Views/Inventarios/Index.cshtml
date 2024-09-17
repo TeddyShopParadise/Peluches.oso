@@ -1,0 +1,65 @@
+﻿@model IEnumerable<TeddyShop.Models.Inventario>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StockMinimo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrecioVenta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrecioCompra)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockMaximo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Devoluciones_Devoluciones)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockMinimo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrecioVenta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrecioCompra)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stock)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockMaximo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Devoluciones_Devoluciones.Devoluciones_ID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdInventario">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdInventario">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdInventario">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

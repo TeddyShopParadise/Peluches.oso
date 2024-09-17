@@ -1,0 +1,65 @@
+﻿@model IEnumerable<TeddyShop.Models.Producto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EstiloProducto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CmCabezaColaProducto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaterialProducto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisponibilidadProducto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CmColaPataProducto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TamañoProducto)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstiloProducto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CmCabezaColaProducto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaterialProducto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisponibilidadProducto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CmColaPataProducto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TamañoProducto)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdProducto">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdProducto">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdProducto">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
