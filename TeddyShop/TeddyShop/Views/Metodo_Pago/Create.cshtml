@@ -1,0 +1,42 @@
+﻿@model TeddyShop.Models.Metodo_Pago
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Metodo_Pago</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NumPago" class="control-label"></label>
+                <input asp-for="NumPago" class="form-control" />
+                <span asp-validation-for="NumPago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NombreMetodoPago" class="control-label"></label>
+                <input asp-for="NombreMetodoPago" class="form-control" />
+                <span asp-validation-for="NombreMetodoPago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Factura_IdFactura" class="control-label"></label>
+                <select asp-for="Factura_IdFactura" class ="form-control" asp-items="ViewBag.Factura_IdFactura"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
