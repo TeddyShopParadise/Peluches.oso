@@ -1,0 +1,1049 @@
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #e2eaff;
+    color: #101632dd;
+}
+
+body,
+div,
+ul,
+nav,
+header,
+footer,
+a,
+li,
+label {
+    margin: 0;
+    padding: 0;
+}
+
+.listaInicio {
+    margin-left: 25px;
+    font-size: 20px;
+}
+
+.mostrarcontra {
+    font-weight: bold;
+    margin-right: 90%;
+}
+
+.tendencia1 {
+    margin-left: 25px;
+}
+
+.tendencia2 {
+    margin-left: 25px;
+}
+
+.peluchesTend {
+    color: #ccafcc;
+    font-size: 50px;
+    flex: 1;
+    padding: 12px;
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+    display: grid;
+    margin-bottom: 20px;
+}
+
+.logoPrincipal {
+    margin-left: 175px;
+    width: 250px;
+    height: 250px;
+}
+
+.tituloprin {
+    margin-left: 0px;
+    font-size: 60px;
+}
+
+/* Estilos del Header */
+.header {
+    background-color: #000000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+}
+
+.header__open-nav-button {
+    color: #48e;
+    font-size: 3rem;
+    font-weight: 570;
+    position: absolute;
+    right: 10px;
+}
+
+.header__checkbox {
+    display: none;
+}
+
+.header__logo {
+    max-width: 100%;
+    width: 77px;
+    margin: 10px 20px;
+}
+
+/* Estilos Responsivos para Header */
+@media screen and (min-width: 600px) {
+    .header {
+        padding: 20px 0;
+        animation: header-movement both;
+        animation-timeline: scroll();
+        position: sticky;
+        top: 0;
+        animation-range: 10px 100px;
+    }
+
+    .header__nav {
+        display: block;
+        position: static;
+        height: auto;
+        width: auto;
+        background-color: initial;
+    }
+}
+
+/* Estilos de la Sección de Perfil */
+.profile {
+    background-image: url(../img/fondoprincipal.jpg);
+    background-position: right center !important;
+    background-size: cover;
+    container-name: profile;
+    container-type: inline-size;
+    animation: aparecer 3s both;
+    height: 90vh; /* Asegura que el fondo cubra toda la altura de la ventana */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #000000;
+    max-width: 1400px;
+    margin: 0 auto; /* Centra horizontalmente */
+}
+
+.profile__data-container {
+    max-width: 6000px;
+    padding: 100px;
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco semi-transparente para mejor legibilidad */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+.profile__img-container {
+    max-height: 500px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile__img {
+    max-width: 100%;
+    width: 577px;
+}
+
+/* Nueva clase para el rectángulo rosado detrás del logo */
+.logo-background {
+    background-color: rgba(255, 192, 203, 0.9); /* Color rosado */
+    padding: 50px; /* Ajusta el padding según sea necesario */
+    border-radius: 10px; /* Bordes redondeados */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+h1 {
+    color: #957698;
+}
+
+
+.load-bar {
+    border: 2px solid #48e;
+    border-radius: 8px;
+    color: #fff;
+    padding: 2px;
+    font-size: 12px;
+    width: 80%;
+    margin: 4px;
+    margin-left: 0;
+}
+
+.load-bar__bar {
+    background-color: #48e;
+    border-radius: 4px;
+    padding: 4px 6px;
+}
+
+/* Estilos Responsivos para la Sección de Perfil */
+@container profile (min-width: 650px) {
+    .profile__wrapper {
+        flex-direction: row;
+        padding: 25px;
+        background-color: transparent;
+        height: 80vh;
+        margin: auto;
+    }
+
+    .profile__data-container {
+        background-color: #e6d6e7;
+        display: flex;
+        align-items: center;
+        border-radius: 25px 25px 25px 25px;
+        box-shadow: 10px 10px 9px rgba(255, 0, 0, 0.133);
+    }
+
+    h1 {
+        margin-top: 0;
+        font-size: 3rem;
+        text-wrap: balance;
+    }
+
+    .profile__data {
+        max-width: 620px;
+    }
+
+    .profile__img-container {
+        max-height: initial;
+        border-radius: 25px 0px 0px 25px;
+    }
+
+    .profile__img {
+        object-fit: cover;
+        height: 700px;
+        width: 700px;
+    }
+}
+
+/* Estilos de la Sección de Portafolio */
+.portfolio {
+    background-color: #aa8bad;
+    color: #000000;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+}
+
+.portfolio__project-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    max-width: 13000px;
+    margin: smaller;
+    width: 100%;
+    gap: 12px;
+    padding: 12px;
+}
+
+/* Estilos de la Sección de Portafolio */
+.portfolio__project {
+    background-size: cover;
+    background-position: center;
+    padding: 10px;
+    border: 0.5px solid rgba(177, 34, 185, 0.7);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: aparecer both;
+    animation-timeline: view();
+    animation-range: cover 10% cover 40%;
+}
+
+    .portfolio__project:hover {
+        background-color: rgb(129, 38, 123);
+        /* Cambia el cursor al pasar el mouse */
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+
+/* Estilos del Formulario de Contacto */
+.form {
+    background-color: #ccafcc;
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px 0;
+    container-name: form;
+    container-type: inline-size;
+}
+
+.form__title {
+    margin-top: 0;
+    /* reduce el espacio encima del título */
+    margin-bottom: 10px;
+    /* reduce el espacio debajo del título */
+    font-size: 2rem;
+    color: #957698;
+}
+
+.form__form {
+    flex: 1;
+    padding: 12px;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    display: grid;
+    margin-bottom: 30px;
+}
+
+.form__input-container {
+    margin-bottom: 16px;
+}
+
+    .form__input-container label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .form__input-container :is(input, textarea) {
+        width: 100%;
+        padding: 9px;
+        font-size: 16px;
+        margin: 0;
+        /* Ajusta este margen a 0 si hay demasiado espacio */
+        border: none;
+        box-shadow: 2px 2px 4px rgba(12, 12, 12, 0.2);
+    }
+
+    /* Estilos adicionales para elementos del formulario */
+    .form__input-container input[type="submit"] {
+        background-color: rgb(85, 145, 235);
+        color: #fff;
+        border: none;
+        padding: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+        .form__input-container input[type="submit"]:hover {
+            background-color: #26a;
+        }
+
+    .form__input-container textarea {
+        resize: none;
+        min-height: 120px;
+        font-family: inherit;
+    }
+
+.form__title {
+    font-size: 2.7rem;
+}
+
+/* Estilos Responsivos para el Formulario */
+/* Estilos Responsivos para el Formulario */
+@media (min-width: 56.25rem) {
+    .form__form {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "name lastname"
+            "email email"
+            "message message"
+            "button button";
+        gap: 12px;
+        background-image: radial-gradient(#18233f06, #18233f22);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 40px #0007;
+    }
+
+    .form__input-container:first-child {
+        grid-area: name;
+    }
+
+    .form__input-container:nth-child(2) {
+        grid-area: lastname;
+    }
+
+    .form__input-container:nth-child(3) {
+        grid-area: email;
+    }
+
+    .form__input-container:nth-child(4) {
+        grid-area: message;
+    }
+
+    .form__input-container:nth-child(5) {
+        grid-area: button;
+    }
+
+    .form__input-container :is(input, textarea) {
+        box-shadow: none;
+        border-radius: 4px;
+    }
+}
+
+.ubicacion {
+    background-color: #957698;
+    padding: 1%;
+}
+
+.textubi {
+    color: #ccafcc;
+    font-size: 50px;
+    text-align: center;
+}
+
+.mapa {
+    margin-left: 580px;
+    width: 700px;
+    height: 500px;
+}
+
+/* Estilos del Footer */
+.footer {
+    background-color: #101632;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 1300px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+.footer__section {
+    max-width: 300px;
+    text-align: left;
+}
+
+    .footer__section h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #48e;
+    }
+
+.footer__links-list,
+.footer__contact-list {
+    list-style: none;
+    padding: 0;
+}
+
+    .footer__links-list li,
+    .footer__contact-list li {
+        margin-bottom: 10px;
+    }
+
+        .footer__links-list li a,
+        .footer__contact-list li a {
+            color: #48e;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .footer__links-list li a:hover,
+            .footer__contact-list li a:hover {
+                color: #26a;
+            }
+
+.footer__bottom {
+    margin-top: 20px;
+    border-top: 1px solid #48e;
+    padding-top: 10px;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* Estilos Responsivos para el Footer */
+@media (min-width: 600px) {
+    .footer__content {
+        flex-direction: row;
+        justify-content: space-around;
+        text-align: left;
+    }
+
+    .footer__section {
+        flex: 1;
+    }
+}
+
+/* Animaciones */
+
+@keyframes header-movement {
+    form {
+        padding: 5px;
+        background-color: #fff;
+    }
+
+    to {
+        padding: 0px;
+        background-color: #0006;
+        color: #fff;
+    }
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.header__nav-item a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos para centrar el mapa en el index.html */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    /* Ajusta la altura mínima según sea necesario */
+    padding: 20px;
+}
+
+    .main-content iframe {
+        border: 0;
+        width: 100%;
+        max-width: 1000px;
+        /* Ajusta el ancho máximo según sea necesario */
+        height: 500px;
+        /* Ajusta la altura según sea necesario */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: #101632dd;
+}
+
+body,
+div,
+ul,
+nav,
+header,
+footer,
+a,
+li,
+label {
+    margin: 0;
+    padding: 0;
+}
+
+
+.float-wa {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #25d366;
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    z-index: 100;
+}
+/* interfaza de propiedades (inicio, catalogo, sugerencias, registrarse, iniciar sesion)*/
+.header {
+    background-color: #957698;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    font-size: 20px;
+    color: #48e;
+}
+
+.header__open-nav-button {
+    color: #48e;
+    font-size: 3rem;
+    font-weight: 570;
+    position: absolute;
+    right: 10px;
+}
+
+.header__checkbox {
+    display: none;
+}
+
+.header__nav {
+    position: absolute;
+    color: #ff0000;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    z-index: -1;
+}
+
+.header__nav-list {
+    color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    height: 40vh;
+    justify-content: space-evenly;
+}
+
+.header__checkbox:checked ~ .header__nav {
+    display: flex;
+}
+
+.header__logo {
+    max-width: 100%;
+    width: 77px;
+    margin: 10px 20px;
+}
+
+.header__nav-item {
+    list-style: none;
+}
+
+    .header__nav-item a {
+        color: inherit;
+    }
+
+        .header__nav-item a:not(:is(:hover, :active)) {
+            text-decoration: none;
+        }
+
+/* Estilos Responsivos para Header */
+@media screen and (min-width: 600px) {
+    .header {
+        padding: 2px;
+        animation: header-movement both;
+        animation-timeline: scroll();
+        position: sticky;
+        top: 0;
+    }
+
+    .header__nav {
+        display: block;
+        position: static;
+        height: auto;
+        width: auto;
+        justify-content: space-between;
+        background-color: initial;
+    }
+
+    .header__nav-list {
+        font-size: x-large;
+        flex-direction: row;
+        height: auto;
+        width: auto;
+        gap: 15px;
+        margin-right: 27px;
+    }
+
+    .header__open-nav-button {
+        display: none;
+    }
+}
+
+/* Estilos de la Sección de Catálogo */
+.catalog {
+    background-color: #fff;
+    padding: 20px;
+    max-width: 1300px;
+    margin: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+    .catalog h1 {
+        color: #26a;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+.catalog__section {
+    margin-bottom: 40px;
+}
+
+    .catalog__section h2 {
+        color: #48e;
+        margin-bottom: 20px;
+        font-size: 2rem;
+        text-align: center;
+    }
+
+.catalog__item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+    .catalog__item:hover {
+        transform: scale(1.05);
+    }
+
+    .catalog__item img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-right: 20px;
+    }
+
+.catalog__item-info h3 {
+    margin: 0;
+    color: #26a;
+}
+
+.catalog__item-info p {
+    margin: 5px 0 0 0;
+    color: #666;
+}
+
+/* Estilos Responsivos para la Sección de Catálogo */
+@media (min-width: 600px) {
+    .catalog__item {
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 599px) {
+    .catalog__item {
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .catalog__item img {
+            margin-bottom: 10px;
+        }
+}
+
+/* Estilos del Footer */
+.footer {
+    background-color: #4c2882;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 1300px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+.footer__section {
+    max-width: 300px;
+    text-align: left;
+}
+
+    .footer__section h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #48e;
+    }
+
+.footer__links-list,
+.footer__contact-list {
+    list-style: none;
+    padding: 0;
+}
+
+    .footer__links-list li,
+    .footer__contact-list li {
+        margin-bottom: 10px;
+    }
+
+        .footer__links-list li a,
+        .footer__contact-list li a {
+            color: #48e;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .footer__links-list li a:hover,
+            .footer__contact-list li a:hover {
+                color: #26a;
+            }
+
+.footer__bottom {
+    margin-top: 20px;
+    border-top: 1px solid #48e;
+    padding-top: 10px;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* Estilos Responsivos para el Footer */
+@media (min-width: 600px) {
+    .footer__content {
+        flex-direction: row;
+        justify-content: space-around;
+        text-align: left;
+    }
+
+    .footer__section {
+        flex: 1;
+    }
+}
+
+/* Animaciones */
+@keyframes header-movement {
+    form {
+        padding: 5px;
+        background-color: #fff;
+    }
+
+    to {
+        padding: 0px;
+        background-color: #0006;
+        color: #fff;
+    }
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/*ESTILO DE LA INTERFAZ LOGIN*/
+
+/* efectos por defecto */
+body {
+    font-family: 'Overpass', sans-serif;
+    font-weight: normal;
+    font-size: 100%;
+    color: #1b262c;
+    margin: 0;
+    background-color: #5f6769;
+}
+
+/* efectos para el contenedor de pantalla completa */
+#contenedor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    min-width: 100vw;
+    min-height: 100vh;
+    width: 100%;
+    height: 100%;
+    background-image: url(../img/l\ rosa\ \(1\).png);
+    background-position: center;
+    background-size: cover;
+}
+
+/* contenedor del login a la izquierda */
+#contenedorcentrado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    min-width: 380px;
+    max-width: 900px;
+    width: 90%;
+    background-color: #957698;
+    /*opacity: 0.50;
+    filter: alpha(opacity=50);*/
+
+    border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    -webkit-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+/* formulario de login */
+#login {
+    width: 100%;
+    max-width: 320px;
+    min-width: 320px;
+    padding: 30px 30px 50px 30px;
+    background-color: #ccafcc;
+    -webkit-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+    border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px 3px 3px 3px;
+    -webkit-border-radius: 3px 3px 3px 3px;
+    box-sizing: border-box;
+    opacity: 1;
+    filter: alpha(opacity=1);
+}
+
+    #login label {
+        display: block;
+        font-family: 'Overpass', sans-serif;
+        font-size: 120%;
+        color: #3c4245;
+        margin-top: 15px;
+    }
+
+    #login input {
+        font-family: 'Overpass', sans-serif;
+        font-size: 110%;
+        color: #1b262c;
+        display: block;
+        width: 100%;
+        height: 40px;
+        margin-bottom: 10px;
+        padding: 5px 5px 5px 10px;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 3px 3px 3px 3px;
+        -moz-border-radius: 3px 3px 3px 3px;
+        -webkit-border-radius: 3px 3px 3px 3px;
+    }
+
+        #login input::placeholder {
+            font-family: 'Overpass', sans-serif;
+            color: #E4E4E4;
+        }
+
+    #login button {
+        font-family: 'Overpass', sans-serif;
+        font-size: 110%;
+        color: #1b262c;
+        width: 100%;
+        height: 40px;
+        border: none;
+        border-radius: 3px 3px 3px 3px;
+        -moz-border-radius: 3px 3px 3px 3px;
+        -webkit-border-radius: 3px 3px 3px 3px;
+        background-color: #dfcdc3;
+        margin-top: 10px;
+    }
+
+        #login button:hover {
+            background-color: #3c4245;
+            color: #dfcdc3;
+        }
+
+#derecho {
+    text-align: center;
+    width: 100%;
+    opacity: 0.70;
+    filter: alpha(opacity=70);
+    padding: 20px 20px 20px 50px;
+    box-sizing: border-box;
+}
+
+.titulo {
+    font-size: 300%;
+    color: #000;
+}
+
+.logo-empresa img {
+    width: 70%;
+}
+
+hr {
+    border-top: 1px solid #60068d;
+    border-bottom: 1px solid #dfcdc3;
+}
+
+.pie-form {
+    font-size: 90%;
+    text-align: center;
+    margin-top: 15px;
+}
+
+    .pie-form a {
+        display: block;
+        text-decoration: none;
+        color: #000;
+        margin-bottom: 3px;
+    }
+
+        .pie-form a:hover {
+            color: #719192;
+        }
+
+/* seccion de la derecha */
+/* seccion de la derecha */
+
+/* ajustar a pantallas con ancho menor o igual a 775px; */
+/* ajustar a pantallas con ancho menor o igual a 775px; */
+@media all and (max-width: 775px) {
+    #contenedorcentrado {
+        flex-direction: column-reverse;
+        min-width: 380px;
+        max-width: 900px;
+        width: 90%;
+        background-color: #5f6769;
+        /*opacity: 0.50;
+        filter: alpha(opacity=50);*/
+
+        border-radius: 10px 10px 10px 10px;
+        -moz-border-radius: 10px 10px 10px 10px;
+        -webkit-border-radius: 10px 10px 10px 10px;
+        -webkit-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+        -moz-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+        box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
+        padding: 30px;
+        box-sizing: border-box;
+    }
+
+    #login {
+        margin: 0 auto;
+    }
+
+    #derecho {
+        padding: 20px 20px 20px 20px;
+    }
+
+    #login label {
+        text-align: left;
+    }
+}
+/*FINAL INTERFAZ LOGIN*/
