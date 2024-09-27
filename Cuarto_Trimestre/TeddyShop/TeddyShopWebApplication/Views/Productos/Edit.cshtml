@@ -1,0 +1,59 @@
+﻿@model TeddyShopWebApplication.Models.Producto
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Producto</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdProducto" />
+            <div class="form-group">
+                <label asp-for="EstiloProducto" class="control-label"></label>
+                <input asp-for="EstiloProducto" class="form-control" />
+                <span asp-validation-for="EstiloProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CmCabezaColaProducto" class="control-label"></label>
+                <input asp-for="CmCabezaColaProducto" class="form-control" />
+                <span asp-validation-for="CmCabezaColaProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaterialProducto" class="control-label"></label>
+                <input asp-for="MaterialProducto" class="form-control" />
+                <span asp-validation-for="MaterialProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisponibilidadProducto" class="control-label"></label>
+                <input asp-for="DisponibilidadProducto" class="form-control" />
+                <span asp-validation-for="DisponibilidadProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CmColaPataProducto" class="control-label"></label>
+                <input asp-for="CmColaPataProducto" class="form-control" />
+                <span asp-validation-for="CmColaPataProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TamañoProducto" class="control-label"></label>
+                <input asp-for="TamañoProducto" class="form-control" />
+                <span asp-validation-for="TamañoProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

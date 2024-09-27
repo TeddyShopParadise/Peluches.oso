@@ -1,0 +1,53 @@
+﻿@model IEnumerable<TeddyShopWebApplication.Models.Movimiento>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Fecha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CantidadIngreso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CantidadVendida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Inventario_IdInventarioNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CantidadIngreso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CantidadVendida)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inventario_IdInventarioNavigation.IdInventario)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdMovimiento">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdMovimiento">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdMovimiento">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
