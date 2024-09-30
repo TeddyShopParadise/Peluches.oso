@@ -1,39 +1,15 @@
-﻿@model TeddyShopWebApplication.Models.Roles
+﻿@model TeddyShopWebApplication.Models.ViewModels.RoleViewModel
 
-@{
-    ViewData["Title"] = "Edit";
-}
+<h2>Editar Rol</h2>
 
-<h1>Edit</h1>
-
-<h4>Roles</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IdRol" />
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Estado" /> @Html.DisplayNameFor(model => model.Estado)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Edit" asp-controller="Roles" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Nombre del Rol</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-</div>
+        <button type="submit" class="btn btn-create"><i class="fas fa-save"></i> Guardar</button>
+        <a asp-action="Index" class="btn btn-back"><i class="fas fa-arrow-left"></i> Volver</a>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

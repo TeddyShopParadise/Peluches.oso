@@ -308,32 +308,6 @@ namespace TeddyShopWebApplication.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("RolesUsuario", b =>
-                {
-                    b.Property<int>("Roles_IdRol")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Usuario_IdUsuario")
-                        .HasColumnType("int");
-
-                    b.HasKey("Roles_IdRol", "Usuario_IdUsuario");
-
-                    b.HasIndex("Usuario_IdUsuario");
-
-                    b.ToTable("RolesUsuario");
-                });
-
-            modelBuilder.Entity("TeddyShopWebApplication.Models.Administrador", b =>
-                {
-                    b.Property<int>("DniEmpleado")
-                        .HasColumnType("int");
-
-                    b.HasKey("DniEmpleado")
-                        .HasName("Administrador_PK");
-
-                    b.ToTable("Administrador");
-                });
-
             modelBuilder.Entity("TeddyShopWebApplication.Models.Catalogo", b =>
                 {
                     b.Property<int>("IdCatalogo")
@@ -540,10 +514,16 @@ namespace TeddyShopWebApplication.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("DniEmpleado")
                         .HasName("Empleado_PK");
 
                     b.HasIndex("Compañia_NIT");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Empleado");
                 });
@@ -794,69 +774,14 @@ namespace TeddyShopWebApplication.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("IdProducto")
                         .HasName("Producto_PK");
 
                     b.ToTable("Producto");
-                });
-
-            modelBuilder.Entity("TeddyShopWebApplication.Models.Roles", b =>
-                {
-                    b.Property<int>("IdRol")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Estado")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("IdRol")
-                        .HasName("Roles_PK");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("TeddyShopWebApplication.Models.Usuario", b =>
-                {
-                    b.Property<int>("IdUsuario")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Contraseña")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<int>("Empleado_DniEmpleado")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Estado")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("IdUsuario")
-                        .HasName("Usuario_PK");
-
-                    b.HasIndex(new[] { "Empleado_DniEmpleado" }, "Usuario__IDX")
-                        .IsUnique();
-
-                    b.ToTable("Usuario");
                 });
 
             modelBuilder.Entity("TeddyShopWebApplication.Models.Vendedor", b =>
@@ -991,32 +916,6 @@ namespace TeddyShopWebApplication.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RolesUsuario", b =>
-                {
-                    b.HasOne("TeddyShopWebApplication.Models.Roles", null)
-                        .WithMany()
-                        .HasForeignKey("Roles_IdRol")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TeddyShopWebApplication.Models.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("Usuario_IdUsuario")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TeddyShopWebApplication.Models.Administrador", b =>
-                {
-                    b.HasOne("TeddyShopWebApplication.Models.Empleado", "DniEmpleadoNavigation")
-                        .WithOne("Administrador")
-                        .HasForeignKey("TeddyShopWebApplication.Models.Administrador", "DniEmpleado")
-                        .IsRequired()
-                        .HasConstraintName("Administrador_Empleado_FK");
-
-                    b.Navigation("DniEmpleadoNavigation");
-                });
-
             modelBuilder.Entity("TeddyShopWebApplication.Models.Catalogo", b =>
                 {
                     b.HasOne("TeddyShopWebApplication.Models.Compañia", "Compañia_NITNavigation")
@@ -1082,7 +981,13 @@ namespace TeddyShopWebApplication.Migrations
                         .IsRequired()
                         .HasConstraintName("Empleado_Compañia_FK");
 
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Compañia_NITNavigation");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TeddyShopWebApplication.Models.Factura", b =>
@@ -1159,17 +1064,6 @@ namespace TeddyShopWebApplication.Migrations
                     b.Navigation("Cliente_DniClienteNavigation");
                 });
 
-            modelBuilder.Entity("TeddyShopWebApplication.Models.Usuario", b =>
-                {
-                    b.HasOne("TeddyShopWebApplication.Models.Empleado", "Empleado_DniEmpleadoNavigation")
-                        .WithOne("Usuario")
-                        .HasForeignKey("TeddyShopWebApplication.Models.Usuario", "Empleado_DniEmpleado")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Empleado_DniEmpleadoNavigation");
-                });
-
             modelBuilder.Entity("TeddyShopWebApplication.Models.Vendedor", b =>
                 {
                     b.HasOne("TeddyShopWebApplication.Models.Empleado", "DniEmpleadoNavigation")
@@ -1232,10 +1126,6 @@ namespace TeddyShopWebApplication.Migrations
 
             modelBuilder.Entity("TeddyShopWebApplication.Models.Empleado", b =>
                 {
-                    b.Navigation("Administrador");
-
-                    b.Navigation("Usuario");
-
                     b.Navigation("Vendedor");
                 });
 

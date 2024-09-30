@@ -162,24 +162,12 @@ namespace TeddyShopWebApplication.Migrations
                     MaterialProducto = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     DisponibilidadProducto = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CmColaPataProducto = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    TamañoProducto = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                    TamañoProducto = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("Producto_PK", x => x.IdProducto);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
-                {
-                    IdRol = table.Column<int>(type: "int", nullable: false),
-                    Estado = table.Column<bool>(type: "bit", nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("Roles_PK", x => x.IdRol);
                 });
 
             migrationBuilder.CreateTable(
@@ -343,7 +331,8 @@ namespace TeddyShopWebApplication.Migrations
                     CodigoEmpleado = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     FechaNaciminetoEmpleado = table.Column<DateOnly>(type: "date", nullable: false),
                     NombreEmpleado = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Compañia_NIT = table.Column<int>(type: "int", nullable: false)
+                    Compañia_NIT = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -353,6 +342,11 @@ namespace TeddyShopWebApplication.Migrations
                         column: x => x.Compañia_NIT,
                         principalTable: "Compañia",
                         principalColumn: "NIT");
+                    table.ForeignKey(
+                        name: "FK_Empleado_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -495,45 +489,6 @@ namespace TeddyShopWebApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Administrador",
-                columns: table => new
-                {
-                    DniEmpleado = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("Administrador_PK", x => x.DniEmpleado);
-                    table.ForeignKey(
-                        name: "Administrador_Empleado_FK",
-                        column: x => x.DniEmpleado,
-                        principalTable: "Empleado",
-                        principalColumn: "DniEmpleado");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Usuario",
-                columns: table => new
-                {
-                    IdUsuario = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Telefono = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Contraseña = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Empleado_DniEmpleado = table.Column<int>(type: "int", nullable: false),
-                    Estado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("Usuario_PK", x => x.IdUsuario);
-                    table.ForeignKey(
-                        name: "FK_Usuario_Empleado_Empleado_DniEmpleado",
-                        column: x => x.Empleado_DniEmpleado,
-                        principalTable: "Empleado",
-                        principalColumn: "DniEmpleado",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Vendedor",
                 columns: table => new
                 {
@@ -667,30 +622,6 @@ namespace TeddyShopWebApplication.Migrations
                         principalColumn: "IdFactura");
                 });
 
-            migrationBuilder.CreateTable(
-                name: "RolesUsuario",
-                columns: table => new
-                {
-                    Roles_IdRol = table.Column<int>(type: "int", nullable: false),
-                    Usuario_IdUsuario = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RolesUsuario", x => new { x.Roles_IdRol, x.Usuario_IdUsuario });
-                    table.ForeignKey(
-                        name: "FK_RolesUsuario_Roles_Roles_IdRol",
-                        column: x => x.Roles_IdRol,
-                        principalTable: "Roles",
-                        principalColumn: "IdRol",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RolesUsuario_Usuario_Usuario_IdUsuario",
-                        column: x => x.Usuario_IdUsuario,
-                        principalTable: "Usuario",
-                        principalColumn: "IdUsuario",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -776,6 +707,11 @@ namespace TeddyShopWebApplication.Migrations
                 column: "Compañia_NIT");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Empleado_UserId",
+                table: "Empleado",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Factura_Cliente_DniCliente",
                 table: "Factura",
                 column: "Cliente_DniCliente");
@@ -811,17 +747,6 @@ namespace TeddyShopWebApplication.Migrations
                 column: "Cliente_DniCliente");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RolesUsuario_Usuario_IdUsuario",
-                table: "RolesUsuario",
-                column: "Usuario_IdUsuario");
-
-            migrationBuilder.CreateIndex(
-                name: "Usuario__IDX",
-                table: "Usuario",
-                column: "Empleado_DniEmpleado",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "Vendedor_PKv1",
                 table: "Vendedor",
                 column: "CodigoVendedor",
@@ -841,9 +766,6 @@ namespace TeddyShopWebApplication.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Administrador");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -893,9 +815,6 @@ namespace TeddyShopWebApplication.Migrations
                 name: "Movimiento");
 
             migrationBuilder.DropTable(
-                name: "RolesUsuario");
-
-            migrationBuilder.DropTable(
                 name: "Vendedor");
 
             migrationBuilder.DropTable(
@@ -906,9 +825,6 @@ namespace TeddyShopWebApplication.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Categoria");
@@ -923,13 +839,10 @@ namespace TeddyShopWebApplication.Migrations
                 name: "Inventario");
 
             migrationBuilder.DropTable(
-                name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Usuario");
-
-            migrationBuilder.DropTable(
                 name: "Catalogo");
+
+            migrationBuilder.DropTable(
+                name: "Empleado");
 
             migrationBuilder.DropTable(
                 name: "Pedido");
@@ -938,13 +851,13 @@ namespace TeddyShopWebApplication.Migrations
                 name: "Devoluciones");
 
             migrationBuilder.DropTable(
-                name: "Empleado");
+                name: "Compañia");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Cliente");
-
-            migrationBuilder.DropTable(
-                name: "Compañia");
         }
     }
 }
