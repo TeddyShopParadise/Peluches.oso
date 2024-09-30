@@ -8,9 +8,8 @@ namespace TeddyShopWebApplication.Models.Seeds
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-            await EnsureRoleAsync(roleManager, "Root");
-            await EnsureUserAsync(userManager, "superusuario@bibliotecasena.edu.co", "Bibl10t3c4$3n@", "");
+            await EnsureRoleAsync(roleManager, "Root,Aministrador");
+            await EnsureUserAsync(userManager, "superusuario@bibliotecasena.edu.co", "Bibl10t3c4$3n@", "Administrador");
         }
         private static async Task EnsureRoleAsync(RoleManager<IdentityRole> roleManager, string roleName)
         {
@@ -20,7 +19,7 @@ namespace TeddyShopWebApplication.Models.Seeds
                 await roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
-        private static async Task EnsureUserAsync(UserManager<IdentityUser>userManager, string userName,string password,string roleName)
+        private static async Task EnsureUserAsync(UserManager<IdentityUser> userManager, string userName, string password, string roleName)
         {
             var user = await userManager.FindByEmailAsync(userName);
             if (user == null)
