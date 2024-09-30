@@ -1,0 +1,51 @@
+﻿@model TeddyShopWebApplication.Models.ViewModels.RoleViewModel
+
+<h2>Borrar Rol</h2>
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Confirm Deletion</h4>
+    <p>Are you sure you want to delete the role '@Model.Name'? This action cannot be undone.</p>
+    <hr>
+    <button type="button" class="btn btn-danger" id="delete-button">
+        <i class="bi bi-trash-fill"></i> Delete Role
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-x-circle"></i> Cancelar
+    </a>
+</div>
+
+@* @section Scripts {
+    <script>
+        document.getElementById('delete-button').addEventListener('click', function () {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: '¡Sí, bórralo!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '@Url.Action("Delete", new { id = Model.Id })';
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+        @if (Context.Request.Query.ContainsKey("deletionSuccess"))
+        {
+            <text>
+                Swal.fire({
+                    title: "¡Eliminado!",
+                    text: "El rol ha sido eliminado correctamente.",
+                    icon: "success"
+                });
+            </text>
+        }
+    </script>
+} *@
+
+
