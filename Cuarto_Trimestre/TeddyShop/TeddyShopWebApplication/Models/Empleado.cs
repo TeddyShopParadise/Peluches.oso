@@ -1,48 +1,55 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
-namespace TeddyShopWebApplication.Models;
-
-[Table("Empleado")]
-public partial class Empleado
+namespace TeddyShopWebApplication.Models
 {
-    [Key]
-    public int DniEmpleado { get; set; }
+    [Table("Empleado")]
+    public partial class Empleado
+    {
+        [Key]
+        [Required(ErrorMessage = "El DNI del empleado es obligatorio.")]
+        public int DniEmpleado { get; set; }
 
-    [StringLength(256)]
-    public string TelefonoEmpleado { get; set; } = null!;
+        [StringLength(256)]
+        [Required(ErrorMessage = "El número de teléfono es obligatorio.")]
+        public string TelefonoEmpleado { get; set; } = null!;
 
-    [StringLength(256)]
-    public string CodigoEmpleado { get; set; } = null!;
+        [StringLength(256)]
+        [Required(ErrorMessage = "El código del empleado es obligatorio.")]
+        public string CodigoEmpleado { get; set; } = null!;
 
-    public DateOnly FechaNaciminetoEmpleado { get; set; }
+        [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
+        public DateOnly FechaNaciminetoEmpleado { get; set; }
 
-    [StringLength(256)]
-    public string NombreEmpleado { get; set; } = null!;
+        [StringLength(256)]
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        public string NombreEmpleado { get; set; } = null!;
 
-    public int Compañia_NIT { get; set; }
+        [Required(ErrorMessage = "El NIT de la compañía es obligatorio.")]
+        public int Compañia_NIT { get; set; }
 
-    [InverseProperty("DniEmpleadoNavigation")]
-    public virtual Administrador? Administrador { get; set; }
+        [StringLength(450)]
+        public string? UserId { get; set; }
 
-    [ForeignKey("Compañia_NIT")]
-    [InverseProperty("Empleados")]
-    public virtual Compañia Compañia_NITNavigation { get; set; } = null!;
+        [ForeignKey("Compañia_NIT")]
+        [InverseProperty("Empleados")]
+        public virtual Compañia Compañia_NITNavigation { get; set; } = null!;
 
-    [InverseProperty("Empleado_DniEmpleadoNavigation")]
-    public virtual Usuario? Usuario { get; set; }
+        [InverseProperty("DniEmpleadoNavigation")]
+        public virtual Vendedor? Vendedor { get; set; }
 
-    [InverseProperty("DniEmpleadoNavigation")]
-    public virtual Vendedor? Vendedor { get; set; }
+        [ForeignKey("Empleado_DniEmpleado")]
+        [InverseProperty("Empleado_DniEmpleados")]
+        public virtual ICollection<Catalogo> Catalogo_IdCatalogos { get; set; } = new List<Catalogo>();
 
-    [ForeignKey("Empleado_DniEmpleado")]
-    [InverseProperty("Empleado_DniEmpleados")]
-    public virtual ICollection<Catalogo> Catalogo_IdCatalogos { get; set; } = new List<Catalogo>();
+        [ForeignKey("Empleado_DniEmpleado")]
+        [InverseProperty("Empleado_DniEmpleados")]
+        public virtual ICollection<Pedido> Pedido_NumPedidos { get; set; } = new List<Pedido>();
 
-    [ForeignKey("Empleado_DniEmpleado")]
-    [InverseProperty("Empleado_DniEmpleados")]
-    public virtual ICollection<Pedido> Pedido_NumPedidos { get; set; } = new List<Pedido>();
+        [ForeignKey("UserId")]
+        public virtual IdentityUser User { get; set; } = null!;
+    }
 }

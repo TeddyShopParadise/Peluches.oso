@@ -18,7 +18,6 @@ namespace TeddyShopWebApplication.Datos
         {
         }
 
-        public virtual DbSet<Administrador> Administradors { get; set; }
         public virtual DbSet<Catalogo> Catalogos { get; set; }
         public virtual DbSet<Categoria> Categoria { get; set; }
         public virtual DbSet<Cliente> Clientes { get; set; }
@@ -34,8 +33,7 @@ namespace TeddyShopWebApplication.Datos
         public virtual DbSet<Movimiento> Movimientos { get; set; }
         public virtual DbSet<Pedido> Pedidos { get; set; }
         public virtual DbSet<Producto> Productos { get; set; }
-        public virtual DbSet<Roles> Roles { get; set; }
-        public virtual DbSet<Usuario> Usuarios { get; set; }
+        //public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<Vendedor> Vendedors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,16 +48,7 @@ namespace TeddyShopWebApplication.Datos
             modelBuilder.Entity<IdentityUserToken<string>>()
                 .HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
 
-            modelBuilder.Entity<Administrador>(entity =>
-            {
-                entity.HasKey(e => e.DniEmpleado).HasName("Administrador_PK");
-
-                entity.Property(e => e.DniEmpleado).ValueGeneratedNever();
-
-                entity.HasOne(d => d.DniEmpleadoNavigation).WithOne(p => p.Administrador)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Administrador_Empleado_FK");
-            });
+           
 
             modelBuilder.Entity<Catalogo>(entity =>
             {
@@ -174,49 +163,57 @@ namespace TeddyShopWebApplication.Datos
             });
 
             modelBuilder.Entity<Empleado>(entity =>
-            {
-                entity.HasKey(e => e.DniEmpleado).HasName("Empleado_PK");
+        {
+            entity.HasKey(e => e.DniEmpleado).HasName("Empleado_PK");
 
-                entity.Property(e => e.DniEmpleado).ValueGeneratedNever();
+            entity.Property(e => e.DniEmpleado).ValueGeneratedNever();
 
-                entity.HasOne(d => d.Compañia_NITNavigation).WithMany(p => p.Empleados)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Empleado_Compañia_FK");
+            entity.HasOne(d => d.Compañia_NITNavigation)
+                .WithMany(p => p.Empleados)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Empleado_Compañia_FK");
 
-                entity.HasMany(d => d.Catalogo_IdCatalogos).WithMany(p => p.Empleado_DniEmpleados)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "Vendedor_Catalogo",
-                        r => r.HasOne<Catalogo>().WithMany()
-                            .HasForeignKey("Catalogo_IdCatalogo")
-                            .OnDelete(DeleteBehavior.ClientSetNull)
-                            .HasConstraintName("Vendedor_Catalogo_Catalogo_FK"),
-                        l => l.HasOne<Empleado>().WithMany()
-                            .HasForeignKey("Empleado_DniEmpleado")
-                            .OnDelete(DeleteBehavior.ClientSetNull)
-                            .HasConstraintName("Vendedor_Catalogo_Empleado_FK"),
-                        j =>
-                        {
-                            j.HasKey("Empleado_DniEmpleado", "Catalogo_IdCatalogo").HasName("Vendedor_Catalogo_PK");
-                            j.ToTable("Vendedor_Catalogo");
-                        });
+            entity.HasMany(d => d.Catalogo_IdCatalogos)
+                .WithMany(p => p.Empleado_DniEmpleados)
+                .UsingEntity<Dictionary<string, object>>(
+                    "Vendedor_Catalogo",
+                    r => r.HasOne<Catalogo>().WithMany()
+                        .HasForeignKey("Catalogo_IdCatalogo")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("Vendedor_Catalogo_Catalogo_FK"),
+                    l => l.HasOne<Empleado>().WithMany()
+                        .HasForeignKey("Empleado_DniEmpleado")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("Vendedor_Catalogo_Empleado_FK"),
+                    j =>
+                    {
+                        j.HasKey("Empleado_DniEmpleado", "Catalogo_IdCatalogo").HasName("Vendedor_Catalogo_PK");
+                        j.ToTable("Vendedor_Catalogo");
+                    });
 
-                entity.HasMany(d => d.Pedido_NumPedidos).WithMany(p => p.Empleado_DniEmpleados)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "Vendedor_Pedido",
-                        r => r.HasOne<Pedido>().WithMany()
-                            .HasForeignKey("Pedido_NumPedido")
-                            .OnDelete(DeleteBehavior.ClientSetNull)
-                            .HasConstraintName("Vendedor_Pedido_Pedido_FK"),
-                        l => l.HasOne<Empleado>().WithMany()
-                            .HasForeignKey("Empleado_DniEmpleado")
-                            .OnDelete(DeleteBehavior.ClientSetNull)
-                            .HasConstraintName("Vendedor_Pedido_Empleado_FK"),
-                        j =>
-                        {
-                            j.HasKey("Empleado_DniEmpleado", "Pedido_NumPedido").HasName("Vendedor_Pedido_PK");
-                            j.ToTable("Vendedor_Pedido");
-                        });
-            });
+            entity.HasMany(d => d.Pedido_NumPedidos)
+                .WithMany(p => p.Empleado_DniEmpleados)
+                .UsingEntity<Dictionary<string, object>>(
+                    "Vendedor_Pedido",
+                    r => r.HasOne<Pedido>().WithMany()
+                        .HasForeignKey("Pedido_NumPedido")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("Vendedor_Pedido_Pedido_FK"),
+                    l => l.HasOne<Empleado>().WithMany()
+                        .HasForeignKey("Empleado_DniEmpleado")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("Vendedor_Pedido_Empleado_FK"),
+                    j =>
+                    {
+                        j.HasKey("Empleado_DniEmpleado", "Pedido_NumPedido").HasName("Vendedor_Pedido_PK");
+                        j.ToTable("Vendedor_Pedido");
+                    });
+
+            // Configuración de la relación con Identity
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId);
+        });
 
             modelBuilder.Entity<Factura>(entity =>
             {
@@ -296,19 +293,14 @@ namespace TeddyShopWebApplication.Datos
                 entity.Property(e => e.IdProducto).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<Roles>(entity =>
-            {
-                entity.HasKey(e => e.IdRol).HasName("Roles_PK");
+          
 
-                entity.Property(e => e.IdRol).ValueGeneratedNever();
-            });
+            //modelBuilder.Entity<Usuario>(entity =>
+            //{
+            //    entity.HasKey(e => e.IdUsuario).HasName("Usuario_PK");
 
-            modelBuilder.Entity<Usuario>(entity =>
-            {
-                entity.HasKey(e => e.IdUsuario).HasName("Usuario_PK");
-
-                entity.Property(e => e.IdUsuario).ValueGeneratedNever();
-            });
+            //    entity.Property(e => e.IdUsuario).ValueGeneratedNever();
+            //});
 
             modelBuilder.Entity<Vendedor>(entity =>
             {

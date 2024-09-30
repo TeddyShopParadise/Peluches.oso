@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using TeddyShopWebApplication.Datos;
 using TeddyShopWebApplication.Models;
 
@@ -13,20 +14,22 @@ namespace TeddyShopWebApplication.Controllers
     public class EmpleadosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public EmpleadosController(ApplicationDbContext context)
+        public EmpleadosController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // GET: Empleados
+        // GET: Empleadoes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Empleados.Include(e => e.Compañia_NITNavigation);
+            var applicationDbContext = _context.Empleados.Include(e => e.Compañia_NITNavigation).Include(e => e.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Empleados/Details/5
+        // GET: Empleadoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,6 +39,7 @@ namespace TeddyShopWebApplication.Controllers
 
             var empleado = await _context.Empleados
                 .Include(e => e.Compañia_NITNavigation)
+                .Include(e => e.User)
                 .FirstOrDefaultAsync(m => m.DniEmpleado == id);
             if (empleado == null)
             {
@@ -45,31 +49,54 @@ namespace TeddyShopWebApplication.Controllers
             return View(empleado);
         }
 
-        // GET: Empleados/Create
+        // GET: Empleadoes/Create
+        // GET: Empleadoes/Create
         public IActionResult Create()
         {
             ViewData["Compañia_NIT"] = new SelectList(_context.Compañia, "NIT", "NIT");
+            ViewData["UserId"] = new SelectList(_userManager.Users, "Id", "UserName");
             return View();
         }
 
-        // POST: Empleados/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Empleadoes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DniEmpleado,TelefonoEmpleado,CodigoEmpleado,FechaNaciminetoEmpleado,NombreEmpleado,Compañia_NIT")] Empleado empleado)
+        public async Task<IActionResult> Create([Bind("DniEmpleado,TelefonoEmpleado,CodigoEmpleado,FechaNaciminetoEmpleado,NombreEmpleado,Compañia_NIT,UserId")] Empleado empleado)
         {
             //if (ModelState.IsValid)
             {
-                _context.Add(empleado);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var user = await _userManager.FindByIdAsync(empleado.UserId);
+                if (user == null)
+                {
+                    ModelState.AddModelError("UserId", "El usuario especificado no existe.");
+                }
+                else
+                {
+                    _context.Add(empleado);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+
+            foreach (var state in ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    // Aquí puedes usar Console.WriteLine o tu logger
+                    Console.WriteLine($"Error en {state.Key}: {error.ErrorMessage}");
+                  
+                }
+            }
+
             ViewData["Compañia_NIT"] = new SelectList(_context.Compañia, "NIT", "NIT", empleado.Compañia_NIT);
+            ViewData["UserId"] = new SelectList(_userManager.Users, "Id", "UserName", empleado.UserId);
             return View(empleado);
         }
 
-        // GET: Empleados/Edit/5
+
+
+
+        // GET: Empleadoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -83,15 +110,14 @@ namespace TeddyShopWebApplication.Controllers
                 return NotFound();
             }
             ViewData["Compañia_NIT"] = new SelectList(_context.Compañia, "NIT", "NIT", empleado.Compañia_NIT);
+            ViewData["UserId"] = new SelectList(_userManager.Users, "Id", "UserName", empleado.UserId);
             return View(empleado);
         }
 
-        // POST: Empleados/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Empleadoes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DniEmpleado,TelefonoEmpleado,CodigoEmpleado,FechaNaciminetoEmpleado,NombreEmpleado,Compañia_NIT")] Empleado empleado)
+        public async Task<IActionResult> Edit(int id, [Bind("DniEmpleado,TelefonoEmpleado,CodigoEmpleado,FechaNaciminetoEmpleado,NombreEmpleado,Compañia_NIT,UserId")] Empleado empleado)
         {
             if (id != empleado.DniEmpleado)
             {
@@ -119,10 +145,11 @@ namespace TeddyShopWebApplication.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Compañia_NIT"] = new SelectList(_context.Compañia, "NIT", "NIT", empleado.Compañia_NIT);
+            ViewData["UserId"] = new SelectList(_userManager.Users, "Id", "UserName", empleado.UserId);
             return View(empleado);
         }
 
-        // GET: Empleados/Delete/5
+        // GET: Empleadoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -132,6 +159,7 @@ namespace TeddyShopWebApplication.Controllers
 
             var empleado = await _context.Empleados
                 .Include(e => e.Compañia_NITNavigation)
+                .Include(e => e.User)
                 .FirstOrDefaultAsync(m => m.DniEmpleado == id);
             if (empleado == null)
             {
@@ -141,7 +169,7 @@ namespace TeddyShopWebApplication.Controllers
             return View(empleado);
         }
 
-        // POST: Empleados/Delete/5
+        // POST: Empleadoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

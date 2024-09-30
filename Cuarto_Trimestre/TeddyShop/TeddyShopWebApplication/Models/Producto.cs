@@ -30,6 +30,10 @@ public partial class Producto
     [StringLength(256)]
     public string TamañoProducto { get; set; } = null!;
 
+    // Nueva propiedad UserId
+    [StringLength(450)]
+    public string? UserId { get; set; }  // Se establece como nullable
+
     [InverseProperty("Producto_IdProductoNavigation")]
     public virtual ICollection<Detalle_Factura> Detalle_Facturas { get; set; } = new List<Detalle_Factura>();
 
