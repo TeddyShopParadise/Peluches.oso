@@ -1,55 +1,62 @@
 ﻿@model TeddyShopWebApplication.Models.Detalle_Factura
 
-@{
-    ViewData["Title"] = "Create";
-}
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Crear Detalle de Factura</h2>
 
-<h1>Create</h1>
-
-<h4>Detalle_Factura</h4>
-<hr />
-<div class="row">
+<div class="row justify-content-center">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="NumDetalle" class="control-label"></label>
                 <input asp-for="NumDetalle" class="form-control" />
                 <span asp-validation-for="NumDetalle" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="PrecioDetalleFactura" class="control-label"></label>
                 <input asp-for="PrecioDetalleFactura" class="form-control" />
                 <span asp-validation-for="PrecioDetalleFactura" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="CantidadDetalleFactura" class="control-label"></label>
                 <input asp-for="CantidadDetalleFactura" class="form-control" />
                 <span asp-validation-for="CantidadDetalleFactura" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Inventario_IdInventario" class="control-label"></label>
-                <select asp-for="Inventario_IdInventario" class ="form-control" asp-items="ViewBag.Inventario_IdInventario"></select>
+                <select asp-for="Inventario_IdInventario" class="form-control" asp-items="ViewBag.Inventario_IdInventario"></select>
+                <span asp-validation-for="Inventario_IdInventario" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Producto_IdProducto" class="control-label"></label>
-                <select asp-for="Producto_IdProducto" class ="form-control" asp-items="ViewBag.Producto_IdProducto"></select>
+                <select asp-for="Producto_IdProducto" class="form-control" asp-items="ViewBag.Producto_IdProducto"></select>
+                <span asp-validation-for="Producto_IdProducto" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Factura_IdFactura" class="control-label"></label>
-                <select asp-for="Factura_IdFactura" class ="form-control" asp-items="ViewBag.Factura_IdFactura"></select>
+                <select asp-for="Factura_IdFactura" class="form-control" asp-items="ViewBag.Factura_IdFactura"></select>
+                <span asp-validation-for="Factura_IdFactura" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="form-group text-center">
+                <input type="submit" value="Crear" class="btn btn-create" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-back">Volver a la Lista</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

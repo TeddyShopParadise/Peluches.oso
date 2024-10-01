@@ -1,59 +1,68 @@
 ﻿@model IEnumerable<TeddyShopWebApplication.Models.Detalle_Factura>
 
-@{
-    ViewData["Title"] = "Index";
-}
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Detalles de la Factura</h2>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
+<p class="text-center">
+    <a asp-action="Create" class="btn-create"><i class="fas fa-plus"></i> Crear Nuevo Detalle</a>
 </p>
-<table class="table">
+
+<table id="detallesFacturaTable" class="table table-striped table-hover text-center">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.PrecioDetalleFactura)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CantidadDetalleFactura)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Factura_IdFacturaNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Inventario_IdInventarioNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Producto_IdProductoNavigation)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.PrecioDetalleFactura)</th>
+            <th>@Html.DisplayNameFor(model => model.CantidadDetalleFactura)</th>
+            <th>@Html.DisplayNameFor(model => model.Factura_IdFacturaNavigation.IdFactura)</th>
+            <th>@Html.DisplayNameFor(model => model.Inventario_IdInventarioNavigation.IdInventario)</th>
+            <th>@Html.DisplayNameFor(model => model.Producto_IdProductoNavigation.IdProducto)</th>
+            <th>Opciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrecioDetalleFactura)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CantidadDetalleFactura)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Factura_IdFacturaNavigation.IdFactura)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Inventario_IdInventarioNavigation.IdInventario)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Producto_IdProductoNavigation.IdProducto)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.PrecioDetalleFactura)</td>
+                <td>@Html.DisplayFor(modelItem => item.CantidadDetalleFactura)</td>
+                <td>@Html.DisplayFor(modelItem => item.Factura_IdFacturaNavigation.IdFactura)</td>
+                <td>@Html.DisplayFor(modelItem => item.Inventario_IdInventarioNavigation.IdInventario)</td>
+                <td>@Html.DisplayFor(modelItem => item.Producto_IdProductoNavigation.IdProducto)</td>
+                <td>
+@*                     <a asp-action="Edit" asp-route-id="@item.NumDetalle" class="btn btn-edit">
+                        <i class="fas fa-edit"></i> Editar
+                    </a> | *@
+                    <a asp-action="Details" asp-route-id="@item.NumDetalle" class="btn btn-details">
+                        <i class="fas fa-info-circle"></i> Detalles
+                    </a>
+@*                     <a href="javascript:void(0);" class="btn btn-delete" onclick="confirmDelete('@item.NumDetalle')">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </a> *@
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function confirmDelete(numDetalle) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminarlo',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la acción de eliminación
+                    window.location.href = '@Url.Action("Delete", "Detalle_Factura")/' + numDetalle;
+                }
+            });
+        }
+    </script>
+}
