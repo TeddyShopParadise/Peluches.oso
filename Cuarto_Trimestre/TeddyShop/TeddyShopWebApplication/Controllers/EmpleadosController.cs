@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using TeddyShopWebApplication.Datos;
 using TeddyShopWebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TeddyShopWebApplication.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class EmpleadosController : Controller
     {
         private readonly ApplicationDbContext _context;
