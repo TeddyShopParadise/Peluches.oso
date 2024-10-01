@@ -1,0 +1,43 @@
+﻿@model TeddyShopWebApplication.Models.Factura
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<div class="container">
+    <h2 class="text-center">Eliminar Factura</h2>
+    <h3 class="text-center">¿Está seguro de que desea eliminar esto?</h3>
+
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Detalles de la Factura</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaCreacion_Factura)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaCreacion_Factura)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.HoraCreacion_Factura)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.HoraCreacion_Factura)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Cliente_DniClienteNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Cliente_DniClienteNavigation.DniCliente)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Pedido_NumPedidoNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Pedido_NumPedidoNavigation.NumPedido)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <form asp-action="Delete" class="d-inline">
+                <input type="hidden" asp-for="IdFactura" />
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            </form>
+            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

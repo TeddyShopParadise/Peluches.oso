@@ -1,0 +1,40 @@
+﻿@model TeddyShopWebApplication.Models.Compañia
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<div class="container">
+    <h2 class="text-center">Eliminar Compañía</h2>
+    <h3 class="text-center">¿Está seguro de que desea eliminar esto?</h3>
+
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Detalles de la Compañía</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TelefonoEmpresa)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.TelefonoEmpresa)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NombreEmpresa)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.NombreEmpresa)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.DIreccionEmpresa)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.DIreccionEmpresa)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <form asp-action="Delete" class="d-inline">
+                <input type="hidden" asp-for="NIT" />
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            </form>
+            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

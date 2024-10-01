@@ -1,0 +1,45 @@
+﻿@model TeddyShopWebApplication.Models.Empleado
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Detalles del Empleado</h2>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Información del Empleado</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TelefonoEmpleado)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.TelefonoEmpleado)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CodigoEmpleado)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CodigoEmpleado)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaNaciminetoEmpleado)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaNaciminetoEmpleado)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NombreEmpleado)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.NombreEmpleado)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Compañia_NITNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Compañia_NITNavigation.NIT)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.User)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.User.Id)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Edit" asp-route-id="@Model?.DniEmpleado" class="btn btn-warning btn-lg">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

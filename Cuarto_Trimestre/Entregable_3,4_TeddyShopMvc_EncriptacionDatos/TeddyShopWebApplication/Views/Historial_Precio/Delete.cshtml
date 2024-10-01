@@ -1,0 +1,47 @@
+﻿@model TeddyShopWebApplication.Models.Historial_Precio
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<div class="container">
+    <h2 class="text-center">Eliminar Historial de Precio</h2>
+    <h3 class="text-center">¿Está seguro de que desea eliminar esto?</h3>
+
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Detalles del Historial de Precio</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Precio)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaInicio)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaInicio)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaFin)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaFin)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoPrecio)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoPrecio)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Producto_IdProductoNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Producto_IdProductoNavigation.IdProducto)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <form asp-action="Delete" class="d-inline">
+                <input type="hidden" asp-for="HistorialPrecioId" />
+                <input type="hidden" asp-for="Producto_IdProducto" />
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            </form>
+            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

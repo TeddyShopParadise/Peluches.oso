@@ -1,0 +1,52 @@
+﻿@model TeddyShopWebApplication.Models.Inventario
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<div class="container">
+    <h2 class="text-center">Eliminar Inventario</h2>
+    <h3 class="text-center">¿Está seguro de que desea eliminar esto?</h3>
+
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Detalles del Inventario</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StockMinimo)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.StockMinimo)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.PrecioVenta)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.PrecioVenta)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.PrecioCompra)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.PrecioCompra)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Stock)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Stock)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StockMaximo)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.StockMaximo)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Producto_IdProducto)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Producto_IdProducto)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.IdDevolucionNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.IdDevolucionNavigation.IdDevolucion)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <form asp-action="Delete" class="d-inline">
+                <input type="hidden" asp-for="IdInventario" />
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            </form>
+            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

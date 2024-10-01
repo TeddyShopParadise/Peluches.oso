@@ -1,0 +1,40 @@
+﻿@model TeddyShopWebApplication.Models.Categoria
+
+<link rel="stylesheet" href="~/css/roles.css" />
+
+<h2>Editar Categoría</h2>
+
+<div class="form-container">
+    <form asp-action="Edit" method="post" class="role-form">
+        <input type="hidden" asp-for="IdCategoria" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NombreCategoria" class="form-label">Nombre de la Categoría</label>
+            <input asp-for="NombreCategoria" class="form-control" placeholder="Ingresa el nombre de la categoría" />
+            <span asp-validation-for="NombreCategoria" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="DescripcionCategoria" class="form-label">Descripción</label>
+            <input asp-for="DescripcionCategoria" class="form-control" placeholder="Ingresa la descripción de la categoría" />
+            <span asp-validation-for="DescripcionCategoria" class="text-danger"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+}

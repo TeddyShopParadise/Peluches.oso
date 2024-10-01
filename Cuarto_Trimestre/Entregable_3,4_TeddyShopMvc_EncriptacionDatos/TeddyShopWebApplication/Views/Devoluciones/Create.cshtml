@@ -1,0 +1,38 @@
+﻿@model TeddyShopWebApplication.Models.Devoluciones
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Crear Devolución</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="IdDevolucion" class="control-label"></label>
+                <input asp-for="IdDevolucion" class="form-control" />
+                <span asp-validation-for="IdDevolucion" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DetalleDevolucion" class="control-label"></label>
+                <input asp-for="DetalleDevolucion" class="form-control" />
+                <span asp-validation-for="DetalleDevolucion" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-center">
+                <input type="submit" value="Crear" class="btn btn-create" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-back">Volver a la Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

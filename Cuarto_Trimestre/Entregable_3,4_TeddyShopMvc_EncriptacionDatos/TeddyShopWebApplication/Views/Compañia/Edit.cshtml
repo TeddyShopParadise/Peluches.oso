@@ -1,0 +1,46 @@
+﻿@model TeddyShopWebApplication.Models.Compañia
+
+<link rel="stylesheet" href="~/css/roles.css" />
+
+<h2>Editar Compañía</h2>
+
+<div class="form-container">
+    <form asp-action="Edit" method="post" class="role-form">
+        <input type="hidden" asp-for="NIT" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group mb-3">
+            <label asp-for="TelefonoEmpresa" class="form-label">Teléfono</label>
+            <input asp-for="TelefonoEmpresa" class="form-control" placeholder="Ingresa el teléfono de la empresa" />
+            <span asp-validation-for="TelefonoEmpresa" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NombreEmpresa" class="form-label">Nombre de la Empresa</label>
+            <input asp-for="NombreEmpresa" class="form-control" placeholder="Ingresa el nombre de la empresa" />
+            <span asp-validation-for="NombreEmpresa" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="DIreccionEmpresa" class="form-label">Dirección</label>
+            <input asp-for="DIreccionEmpresa" class="form-control" placeholder="Ingresa la dirección de la empresa" />
+            <span asp-validation-for="DIreccionEmpresa" class="text-danger"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+}

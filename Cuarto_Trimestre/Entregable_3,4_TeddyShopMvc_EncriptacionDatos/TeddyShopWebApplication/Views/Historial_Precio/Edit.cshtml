@@ -1,0 +1,50 @@
+﻿@model TeddyShopWebApplication.Models.Historial_Precio
+
+<link rel="stylesheet" href="~/css/roles.css" />
+
+<h2>Editar Historial de Precio</h2>
+
+<div class="form-container">
+    <form asp-action="Edit" method="post" class="role-form">
+        <input type="hidden" asp-for="HistorialPrecioId" />
+        <input type="hidden" asp-for="Producto_IdProducto" />
+
+        <div class="form-group mb-3">
+            <label asp-for="Precio" class="form-label">Precio</label>
+            <input asp-for="Precio" class="form-control" placeholder="Ingresa el precio" />
+            <span asp-validation-for="Precio" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="FechaInicio" class="form-label">Fecha de Inicio</label>
+            <input asp-for="FechaInicio" class="form-control" placeholder="Selecciona la fecha de inicio" type="date" />
+            <span asp-validation-for="FechaInicio" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="FechaFin" class="form-label">Fecha de Fin</label>
+            <input asp-for="FechaFin" class="form-control" placeholder="Selecciona la fecha de fin" type="date" />
+            <span asp-validation-for="FechaFin" class="text-danger"></span>
+        </div>
+
+        <div class="form-group form-check mb-3">
+            <input class="form-check-input" asp-for="EstadoPrecio" />
+            <label class="form-check-label" asp-for="EstadoPrecio">@Html.DisplayNameFor(model => model.EstadoPrecio)</label>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+}

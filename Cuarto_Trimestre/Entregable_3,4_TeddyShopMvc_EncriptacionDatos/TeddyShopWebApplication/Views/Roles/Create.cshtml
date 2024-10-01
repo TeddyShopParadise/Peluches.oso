@@ -1,0 +1,32 @@
+﻿@model TeddyShopWebApplication.Models.ViewModels.RoleViewModel
+
+<link rel="stylesheet" href="~/css/roles.css" />
+
+<h2>Crear Rol</h2>
+
+<div class="form-container">
+    <form asp-action="Create" method="post" class="role-form">
+        <div class="form-group mb-3">
+            <label asp-for="Name" class="form-label">Nombre del Rol</label>
+            <input asp-for="Name" class="form-control" placeholder="Ingresa el nombre del rol" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <!-- Scripts de validación -->
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

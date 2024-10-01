@@ -1,0 +1,62 @@
+﻿@model TeddyShopWebApplication.Models.Empleado
+
+<link rel="stylesheet" href="~/css/roles.css" />
+
+<h2>Editar Empleado</h2>
+
+<div class="form-container">
+    <form asp-action="Edit" method="post" class="role-form">
+        <input type="hidden" asp-for="DniEmpleado" />
+
+        <div class="form-group mb-3">
+            <label asp-for="TelefonoEmpleado" class="form-label">Teléfono</label>
+            <input asp-for="TelefonoEmpleado" class="form-control" placeholder="Ingresa el teléfono" />
+            <span asp-validation-for="TelefonoEmpleado" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="CodigoEmpleado" class="form-label">Código Empleado</label>
+            <input asp-for="CodigoEmpleado" class="form-control" placeholder="Ingresa el código" />
+            <span asp-validation-for="CodigoEmpleado" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="FechaNaciminetoEmpleado" class="form-label">Fecha de Nacimiento</label>
+            <input asp-for="FechaNaciminetoEmpleado" class="form-control" placeholder="Selecciona la fecha" />
+            <span asp-validation-for="FechaNaciminetoEmpleado" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NombreEmpleado" class="form-label">Nombre</label>
+            <input asp-for="NombreEmpleado" class="form-control" placeholder="Ingresa el nombre" />
+            <span asp-validation-for="NombreEmpleado" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Compañia_NIT" class="form-label">NIT de Compañía</label>
+            <select asp-for="Compañia_NIT" class="form-control" asp-items="ViewBag.Compañia_NIT"></select>
+            <span asp-validation-for="Compañia_NIT" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="UserId" class="form-label">ID de Usuario</label>
+            <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+            <span asp-validation-for="UserId" class="text-danger"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+}

@@ -1,0 +1,68 @@
+﻿@model TeddyShopWebApplication.Models.Inventario
+
+<link rel="stylesheet" href="~/css/roles.css" />
+
+<h2>Editar Inventario</h2>
+
+<div class="form-container">
+    <form asp-action="Edit" method="post" class="role-form">
+        <input type="hidden" asp-for="IdInventario" />
+
+        <div class="form-group mb-3">
+            <label asp-for="StockMinimo" class="form-label">Stock Mínimo</label>
+            <input asp-for="StockMinimo" class="form-control" placeholder="Ingresa el stock mínimo" />
+            <span asp-validation-for="StockMinimo" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="PrecioVenta" class="form-label">Precio de Venta</label>
+            <input asp-for="PrecioVenta" class="form-control" placeholder="Ingresa el precio de venta" />
+            <span asp-validation-for="PrecioVenta" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="PrecioCompra" class="form-label">Precio de Compra</label>
+            <input asp-for="PrecioCompra" class="form-control" placeholder="Ingresa el precio de compra" />
+            <span asp-validation-for="PrecioCompra" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Stock" class="form-label">Stock Actual</label>
+            <input asp-for="Stock" class="form-control" placeholder="Ingresa el stock actual" />
+            <span asp-validation-for="Stock" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="StockMaximo" class="form-label">Stock Máximo</label>
+            <input asp-for="StockMaximo" class="form-control" placeholder="Ingresa el stock máximo" />
+            <span asp-validation-for="StockMaximo" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="IdDevolucion" class="form-label">Devolución</label>
+            <select asp-for="IdDevolucion" class="form-control" asp-items="ViewBag.IdDevolucion"></select>
+            <span asp-validation-for="IdDevolucion" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Producto_IdProducto" class="form-label">Producto</label>
+            <input asp-for="Producto_IdProducto" class="form-control" placeholder="Ingresa el ID del producto" />
+            <span asp-validation-for="Producto_IdProducto" class="text-danger"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+}

@@ -1,0 +1,103 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-TeddyShopWebApplication-c98f740c-6782-438f-acff-609db2b83f0c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Views\Catalogos\Create.cshtml" />
+    <None Include="Views\Catalogos\Delete.cshtml" />
+    <None Include="Views\Catalogos\Details.cshtml" />
+    <None Include="Views\Catalogos\Edit.cshtml" />
+    <None Include="Views\Catalogos\Index.cshtml" />
+    <None Include="Views\Categorias\Create.cshtml" />
+    <None Include="Views\Categorias\Delete.cshtml" />
+    <None Include="Views\Categorias\Details.cshtml" />
+    <None Include="Views\Categorias\Edit.cshtml" />
+    <None Include="Views\Categorias\Index.cshtml" />
+    <None Include="Views\Clientes\Create.cshtml" />
+    <None Include="Views\Clientes\Delete.cshtml" />
+    <None Include="Views\Clientes\Details.cshtml" />
+    <None Include="Views\Clientes\Edit.cshtml" />
+    <None Include="Views\Clientes\Index.cshtml" />
+    <None Include="Views\Compañia\Create.cshtml" />
+    <None Include="Views\Compañia\Delete.cshtml" />
+    <None Include="Views\Compañia\Details.cshtml" />
+    <None Include="Views\Compañia\Edit.cshtml" />
+    <None Include="Views\Compañia\Index.cshtml" />
+    <None Include="Views\Detalle_Factura\Create.cshtml" />
+    <None Include="Views\Detalle_Factura\Delete.cshtml" />
+    <None Include="Views\Detalle_Factura\Details.cshtml" />
+    <None Include="Views\Detalle_Factura\Edit.cshtml" />
+    <None Include="Views\Detalle_Factura\Index.cshtml" />
+    <None Include="Views\Detalle_Pedido\Create.cshtml" />
+    <None Include="Views\Detalle_Pedido\Delete.cshtml" />
+    <None Include="Views\Detalle_Pedido\Details.cshtml" />
+    <None Include="Views\Detalle_Pedido\Edit.cshtml" />
+    <None Include="Views\Detalle_Pedido\Index.cshtml" />
+    <None Include="Views\Devoluciones\Create.cshtml" />
+    <None Include="Views\Devoluciones\Delete.cshtml" />
+    <None Include="Views\Devoluciones\Details.cshtml" />
+    <None Include="Views\Devoluciones\Edit.cshtml" />
+    <None Include="Views\Devoluciones\Index.cshtml" />
+    <None Include="Views\Empleados\Create.cshtml" />
+    <None Include="Views\Empleados\Delete.cshtml" />
+    <None Include="Views\Empleados\Details.cshtml" />
+    <None Include="Views\Empleados\Edit.cshtml" />
+    <None Include="Views\Empleados\Index.cshtml" />
+    <None Include="Views\Facturas\Create.cshtml" />
+    <None Include="Views\Facturas\Delete.cshtml" />
+    <None Include="Views\Facturas\Details.cshtml" />
+    <None Include="Views\Facturas\Edit.cshtml" />
+    <None Include="Views\Facturas\Index.cshtml" />
+    <None Include="Views\Historial_Precio\Create.cshtml" />
+    <None Include="Views\Historial_Precio\Delete.cshtml" />
+    <None Include="Views\Historial_Precio\Details.cshtml" />
+    <None Include="Views\Historial_Precio\Edit.cshtml" />
+    <None Include="Views\Historial_Precio\Index.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Home\Privacy.cshtml" />
+    <None Include="Views\Inventarios\Create.cshtml" />
+    <None Include="Views\Inventarios\Delete.cshtml" />
+    <None Include="Views\Inventarios\Details.cshtml" />
+    <None Include="Views\Inventarios\Edit.cshtml" />
+    <None Include="Views\Inventarios\Index.cshtml" />
+    <None Include="Views\Metodo_Pago\Create.cshtml" />
+    <None Include="Views\Metodo_Pago\Delete.cshtml" />
+    <None Include="Views\Metodo_Pago\Details.cshtml" />
+    <None Include="Views\Metodo_Pago\Edit.cshtml" />
+    <None Include="Views\Metodo_Pago\Index.cshtml" />
+    <None Include="Views\Movimientos\Create.cshtml" />
+    <None Include="Views\Movimientos\Delete.cshtml" />
+    <None Include="Views\Movimientos\Details.cshtml" />
+    <None Include="Views\Movimientos\Edit.cshtml" />
+    <None Include="Views\Movimientos\Index.cshtml" />
+    <None Include="Views\Pedidos\Create.cshtml" />
+    <None Include="Views\Pedidos\Delete.cshtml" />
+    <None Include="Views\Pedidos\Details.cshtml" />
+    <None Include="Views\Pedidos\Edit.cshtml" />
+    <None Include="Views\Pedidos\Index.cshtml" />
+    <None Include="Views\Productos\Create.cshtml" />
+    <None Include="Views\Productos\Delete.cshtml" />
+    <None Include="Views\Productos\Details.cshtml" />
+    <None Include="Views\Productos\Edit.cshtml" />
+    <None Include="Views\Productos\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
+  </ItemGroup>
+
+</Project>

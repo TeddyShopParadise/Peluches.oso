@@ -1,0 +1,44 @@
+﻿@model TeddyShopWebApplication.Models.Categoria
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Crear Categoría</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="IdCategoria" class="control-label"></label>
+                <input asp-for="IdCategoria" class="form-control" />
+                <span asp-validation-for="IdCategoria" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DescripcionCategoria" class="control-label"></label>
+                <input asp-for="DescripcionCategoria" class="form-control" />
+                <span asp-validation-for="DescripcionCategoria" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NombreCategoria" class="control-label"></label>
+                <input asp-for="NombreCategoria" class="form-control" />
+                <span asp-validation-for="NombreCategoria" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-center">
+                <input type="submit" value="Crear" class="btn btn-create" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-back">Volver a la Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

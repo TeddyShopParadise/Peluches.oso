@@ -1,0 +1,49 @@
+﻿@model TeddyShopWebApplication.Models.Catalogo
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Crear Catálogo</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="IdCatalogo" class="control-label"></label>
+                <input asp-for="IdCatalogo" class="form-control" />
+                <span asp-validation-for="IdCatalogo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DisponibilidadCatalogo" class="control-label"></label>
+                <input asp-for="DisponibilidadCatalogo" class="form-control" />
+                <span asp-validation-for="DisponibilidadCatalogo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EstiloCatalogo" class="control-label"></label>
+                <input asp-for="EstiloCatalogo" class="form-control" />
+                <span asp-validation-for="EstiloCatalogo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Compañia_NIT" class="control-label"></label>
+                <select asp-for="Compañia_NIT" class="form-control" asp-items="ViewBag.Compañia_NIT"></select>
+            </div>
+
+            <div class="form-group text-center">
+                <input type="submit" value="Crear" class="btn btn-create" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-back">Volver a la Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

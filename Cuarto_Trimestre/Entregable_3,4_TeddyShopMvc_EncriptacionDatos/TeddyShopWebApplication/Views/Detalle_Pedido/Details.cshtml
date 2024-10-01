@@ -1,0 +1,39 @@
+﻿@model TeddyShopWebApplication.Models.Detalle_Pedido
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Detalles del Pedido</h2>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Información del Detalle del Pedido</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.PrecioDetallePedido)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.PrecioDetallePedido)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CantidadDetallePedido)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CantidadDetallePedido)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Pedido_NumPedidoNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Pedido_NumPedidoNavigation.NumPedido)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Producto_IdProductoNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Producto_IdProductoNavigation.IdProducto)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Edit" asp-route-id="@Model?.NumDetalle" class="btn btn-warning btn-lg">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

@@ -1,0 +1,64 @@
+﻿@model TeddyShopWebApplication.Models.Pedido
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<div class="container">
+    <h2 class="text-center">Eliminar Pedido</h2>
+    <h3 class="text-center">¿Está seguro de que desea eliminar esto?</h3>
+
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Detalles del Pedido</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TamañoOso)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.TamañoOso)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NombreComprador)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.NombreComprador)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NumeroComprador)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.NumeroComprador)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NombreAgendador)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.NombreAgendador)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NumeroAgendador)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.NumeroAgendador)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Localidad)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Localidad)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Direccion)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Direccion)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Barrio)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Barrio)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ApellidoAgendador)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.ApellidoAgendador)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ApellidoComprador)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.ApellidoComprador)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Cliente_DniClienteNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Cliente_DniClienteNavigation.DniCliente)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <form asp-action="Delete" class="d-inline">
+                <input type="hidden" asp-for="NumPedido" />
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            </form>
+            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

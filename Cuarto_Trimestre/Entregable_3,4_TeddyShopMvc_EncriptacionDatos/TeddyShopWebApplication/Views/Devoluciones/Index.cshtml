@@ -1,0 +1,60 @@
+﻿@model IEnumerable<TeddyShopWebApplication.Models.Devoluciones>
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Devoluciones</h2>
+
+<p class="text-center">
+    <a asp-action="Create" class="btn-create"><i class="fas fa-plus"></i> Crear Nueva Devolución</a>
+</p>
+
+<table id="devolucionesTable" class="table table-striped table-hover text-center">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.DetalleDevolucion)</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.DetalleDevolucion)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdDevolucion" class="btn btn-edit">
+                        <i class="fas fa-edit"></i> Editar
+                    </a> |
+                    <a asp-action="Details" asp-route-id="@item.IdDevolucion" class="btn btn-details">
+                        <i class="fas fa-info-circle"></i> Detalles
+                    </a> |
+                    <a href="javascript:void(0);" class="btn btn-delete" onclick="confirmDelete('@item.IdDevolucion')">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function confirmDelete(idDevolucion) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminarlo',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la acción de eliminación
+                    window.location.href = '@Url.Action("Delete", "Devoluciones")/' + idDevolucion;
+                }
+            });
+        }
+    </script>
+}

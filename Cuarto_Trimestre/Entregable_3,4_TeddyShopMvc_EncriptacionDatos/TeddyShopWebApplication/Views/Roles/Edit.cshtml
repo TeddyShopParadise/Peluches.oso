@@ -1,0 +1,33 @@
+﻿@model TeddyShopWebApplication.Models.ViewModels.RoleViewModel
+
+<link rel="stylesheet" href="~/css/roles.css" />
+
+<h2>Editar Rol</h2>
+
+<div class="form-container">
+    <form asp-action="Edit" asp-controller="Roles" method="post" class="role-form">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group mb-3">
+            <label asp-for="Name" class="form-label">Nombre del Rol</label>
+            <input asp-for="Name" class="form-control" placeholder="Ingresa el nombre del rol" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <!-- Agrega las validaciones de jQuery para el formulario -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+}

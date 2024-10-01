@@ -1,0 +1,39 @@
+﻿@model TeddyShopWebApplication.Models.Movimiento
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Detalles del Movimiento</h2>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Información del Movimiento</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Fecha)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Fecha)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CantidadIngreso)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CantidadIngreso)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CantidadVendida)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CantidadVendida)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Inventario_IdInventarioNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Inventario_IdInventarioNavigation.IdInventario)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Edit" asp-route-id="@Model?.IdMovimiento" class="btn btn-warning btn-lg">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

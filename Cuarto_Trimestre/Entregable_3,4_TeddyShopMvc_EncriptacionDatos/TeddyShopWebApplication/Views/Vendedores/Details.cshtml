@@ -1,0 +1,33 @@
+﻿@model TeddyShopWebApplication.Models.Vendedor
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Detalles del Vendedor</h2>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background-color: #957698; color: white;">
+            <h4>Información del Vendedor</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CodigoVendedor)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CodigoVendedor)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.DniEmpleadoNavigation)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.DniEmpleadoNavigation.DniEmpleado)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Edit" asp-route-id="@Model?.DniEmpleado" class="btn btn-warning btn-lg">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a asp-action="Index" asp-route-id="@Model?.DniEmpleado" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+}

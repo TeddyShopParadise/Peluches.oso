@@ -1,0 +1,54 @@
+﻿@model TeddyShopWebApplication.Models.Factura
+
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Crear Factura</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="IdFactura" class="control-label"></label>
+                <input asp-for="IdFactura" class="form-control" />
+                <span asp-validation-for="IdFactura" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FechaCreacion_Factura" class="control-label"></label>
+                <input asp-for="FechaCreacion_Factura" class="form-control" />
+                <span asp-validation-for="FechaCreacion_Factura" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="HoraCreacion_Factura" class="control-label"></label>
+                <input asp-for="HoraCreacion_Factura" class="form-control" />
+                <span asp-validation-for="HoraCreacion_Factura" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Pedido_NumPedido" class="control-label"></label>
+                <select asp-for="Pedido_NumPedido" class="form-control" asp-items="ViewBag.Pedido_NumPedido"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Cliente_DniCliente" class="control-label"></label>
+                <select asp-for="Cliente_DniCliente" class="form-control" asp-items="ViewBag.Cliente_DniCliente"></select>
+            </div>
+
+            <div class="form-group text-center">
+                <input type="submit" value="Crear" class="btn btn-create" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-back">Volver a la Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
