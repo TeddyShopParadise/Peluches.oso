@@ -29,6 +29,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Pedidos/Details/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,6 +49,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Pedidos/Create
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public IActionResult Create()
         {
             ViewData["Cliente_DniCliente"] = new SelectList(_context.Clientes, "DniCliente", "DniCliente");
@@ -59,6 +61,7 @@ namespace TeddyShopWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Create([Bind("NumPedido,TamañoOso,NombreComprador,NumeroComprador,NombreAgendador,NumeroAgendador,Localidad,Direccion,Barrio,Cliente_DniCliente,ApellidoAgendador,ApellidoComprador")] Pedido pedido)
         {
             //if (ModelState.IsValid)
@@ -72,6 +75,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Pedidos/Edit/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,6 +96,7 @@ namespace TeddyShopWebApplication.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("NumPedido,TamañoOso,NombreComprador,NumeroComprador,NombreAgendador,NumeroAgendador,Localidad,Direccion,Barrio,Cliente_DniCliente,ApellidoAgendador,ApellidoComprador")] Pedido pedido)
         {
@@ -125,6 +130,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Pedidos/Delete/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
