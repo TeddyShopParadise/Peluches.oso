@@ -1,49 +1,50 @@
 ﻿@model TeddyShopWebApplication.Models.Factura
 
-@{
-    ViewData["Title"] = "Edit";
-}
+<link rel="stylesheet" href="~/css/roles.css" />
 
-<h1>Edit</h1>
+<h2>Editar Factura</h2>
 
-<h4>Factura</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IdFactura" />
-            <div class="form-group">
-                <label asp-for="FechaCreacion_Factura" class="control-label"></label>
-                <input asp-for="FechaCreacion_Factura" class="form-control" />
-                <span asp-validation-for="FechaCreacion_Factura" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="HoraCreacion_Factura" class="control-label"></label>
-                <input asp-for="HoraCreacion_Factura" class="form-control" />
-                <span asp-validation-for="HoraCreacion_Factura" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pedido_NumPedido" class="control-label"></label>
-                <select asp-for="Pedido_NumPedido" class="form-control" asp-items="ViewBag.Pedido_NumPedido"></select>
-                <span asp-validation-for="Pedido_NumPedido" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cliente_DniCliente" class="control-label"></label>
-                <select asp-for="Cliente_DniCliente" class="form-control" asp-items="ViewBag.Cliente_DniCliente"></select>
-                <span asp-validation-for="Cliente_DniCliente" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+<div class="form-container">
+    <form asp-action="Edit" method="post" class="role-form">
+        <input type="hidden" asp-for="IdFactura" />
 
-<div>
-    <a asp-action="Index">Back to List</a>
+        <div class="form-group mb-3">
+            <label asp-for="FechaCreacion_Factura" class="form-label">Fecha de Creación</label>
+            <input asp-for="FechaCreacion_Factura" class="form-control" placeholder="Selecciona la fecha" />
+            <span asp-validation-for="FechaCreacion_Factura" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="HoraCreacion_Factura" class="form-label">Hora de Creación</label>
+            <input asp-for="HoraCreacion_Factura" class="form-control" placeholder="Ingresa la hora" />
+            <span asp-validation-for="HoraCreacion_Factura" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Pedido_NumPedido" class="form-label">Número de Pedido</label>
+            <select asp-for="Pedido_NumPedido" class="form-control" asp-items="ViewBag.Pedido_NumPedido"></select>
+            <span asp-validation-for="Pedido_NumPedido" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Cliente_DniCliente" class="form-label">DNI del Cliente</label>
+            <select asp-for="Cliente_DniCliente" class="form-control" asp-items="ViewBag.Cliente_DniCliente"></select>
+            <span asp-validation-for="Cliente_DniCliente" class="text-danger"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
 }
