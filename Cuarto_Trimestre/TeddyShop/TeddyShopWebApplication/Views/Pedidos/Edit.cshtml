@@ -1,84 +1,93 @@
 ﻿@model TeddyShopWebApplication.Models.Pedido
 
-@{
-    ViewData["Title"] = "Edit";
-}
+<link rel="stylesheet" href="~/css/roles.css" />
 
-<h1>Edit</h1>
+<h2>Editar Pedido</h2>
 
-<h4>Pedido</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="NumPedido" />
-            <div class="form-group">
-                <label asp-for="TamañoOso" class="control-label"></label>
-                <input asp-for="TamañoOso" class="form-control" />
-                <span asp-validation-for="TamañoOso" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NombreComprador" class="control-label"></label>
-                <input asp-for="NombreComprador" class="form-control" />
-                <span asp-validation-for="NombreComprador" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumeroComprador" class="control-label"></label>
-                <input asp-for="NumeroComprador" class="form-control" />
-                <span asp-validation-for="NumeroComprador" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NombreAgendador" class="control-label"></label>
-                <input asp-for="NombreAgendador" class="form-control" />
-                <span asp-validation-for="NombreAgendador" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumeroAgendador" class="control-label"></label>
-                <input asp-for="NumeroAgendador" class="form-control" />
-                <span asp-validation-for="NumeroAgendador" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Localidad" class="control-label"></label>
-                <input asp-for="Localidad" class="form-control" />
-                <span asp-validation-for="Localidad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Direccion" class="control-label"></label>
-                <input asp-for="Direccion" class="form-control" />
-                <span asp-validation-for="Direccion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Barrio" class="control-label"></label>
-                <input asp-for="Barrio" class="form-control" />
-                <span asp-validation-for="Barrio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cliente_DniCliente" class="control-label"></label>
-                <select asp-for="Cliente_DniCliente" class="form-control" asp-items="ViewBag.Cliente_DniCliente"></select>
-                <span asp-validation-for="Cliente_DniCliente" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApellidoAgendador" class="control-label"></label>
-                <input asp-for="ApellidoAgendador" class="form-control" />
-                <span asp-validation-for="ApellidoAgendador" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApellidoComprador" class="control-label"></label>
-                <input asp-for="ApellidoComprador" class="form-control" />
-                <span asp-validation-for="ApellidoComprador" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+<div class="form-container">
+    <form asp-action="Edit" method="post" class="role-form">
+        <input type="hidden" asp-for="NumPedido" />
 
-<div>
-    <a asp-action="Index">Back to List</a>
+        <div class="form-group mb-3">
+            <label asp-for="TamañoOso" class="form-label">Tamaño del Oso</label>
+            <input asp-for="TamañoOso" class="form-control" placeholder="Ingresa el tamaño del oso" />
+            <span asp-validation-for="TamañoOso" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NombreComprador" class="form-label">Nombre del Comprador</label>
+            <input asp-for="NombreComprador" class="form-control" placeholder="Ingresa el nombre del comprador" />
+            <span asp-validation-for="NombreComprador" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NumeroComprador" class="form-label">Número del Comprador</label>
+            <input asp-for="NumeroComprador" class="form-control" placeholder="Ingresa el número del comprador" />
+            <span asp-validation-for="NumeroComprador" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NombreAgendador" class="form-label">Nombre del Agendador</label>
+            <input asp-for="NombreAgendador" class="form-control" placeholder="Ingresa el nombre del agendador" />
+            <span asp-validation-for="NombreAgendador" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NumeroAgendador" class="form-label">Número del Agendador</label>
+            <input asp-for="NumeroAgendador" class="form-control" placeholder="Ingresa el número del agendador" />
+            <span asp-validation-for="NumeroAgendador" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Localidad" class="form-label">Localidad</label>
+            <input asp-for="Localidad" class="form-control" placeholder="Ingresa la localidad" />
+            <span asp-validation-for="Localidad" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Direccion" class="form-label">Dirección</label>
+            <input asp-for="Direccion" class="form-control" placeholder="Ingresa la dirección" />
+            <span asp-validation-for="Direccion" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Barrio" class="form-label">Barrio</label>
+            <input asp-for="Barrio" class="form-control" placeholder="Ingresa el barrio" />
+            <span asp-validation-for="Barrio" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Cliente_DniCliente" class="form-label">Cliente</label>
+            <select asp-for="Cliente_DniCliente" class="form-control" asp-items="ViewBag.Cliente_DniCliente"></select>
+            <span asp-validation-for="Cliente_DniCliente" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ApellidoAgendador" class="form-label">Apellido del Agendador</label>
+            <input asp-for="ApellidoAgendador" class="form-control" placeholder="Ingresa el apellido del agendador" />
+            <span asp-validation-for="ApellidoAgendador" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ApellidoComprador" class="form-label">Apellido del Comprador</label>
+            <input asp-for="ApellidoComprador" class="form-control" placeholder="Ingresa el apellido del comprador" />
+            <span asp-validation-for="ApellidoComprador" class="text-danger"></span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-create">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+
+            <a asp-action="Index" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <!-- Agrega las validaciones de jQuery para el formulario -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
 }
