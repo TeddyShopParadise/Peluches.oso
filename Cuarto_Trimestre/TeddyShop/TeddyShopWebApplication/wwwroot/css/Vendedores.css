@@ -1,0 +1,51 @@
+﻿body {
+    font-family: 'Arial', sans-serif;
+    background-color: #ccafcc;
+}
+
+h1 {
+    font-weight: 600;
+    color: black;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.table {
+    margin-top: 20px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+}
+
+    .table th, .table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2;
+}
+
+.btn-create, .btn-edit, .btn-details, .btn-delete {
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+    .btn-create:hover, .btn-edit:hover, .btn-details:hover, .btn-delete:hover {
+        background-color: #5e0e9e;
+    }
+
+.btn-delete {
+    background-color: #c0392b;
+}
+
+    .btn-delete:hover {
+        background-color: #a93226;
+    }

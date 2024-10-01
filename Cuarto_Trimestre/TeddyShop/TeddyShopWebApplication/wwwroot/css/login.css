@@ -1,0 +1,76 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('/img/login.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-box {
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.left-panel {
+    background-color: #B08CB2;
+    padding: 20px;
+    width: 300px;
+}
+
+.right-panel {
+    background-color: #9A79A2;
+    color: white;
+    padding: 40px;
+    width: 400px;
+    text-align: center;
+}
+
+.login-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #C8B4CC;
+    border: none;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+    button:hover {
+        background-color: #A0889B;
+    }
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+    .checkbox-label input {
+        margin-right: 10px;
+    }

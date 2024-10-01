@@ -1,0 +1,131 @@
+﻿body {
+    font-family: 'Arial', sans-serif;
+    background-color: #ccafcc;
+}
+h4 {
+    color: black;
+}
+
+h1 {
+    font-weight: 600;
+    color: black;
+    text-align: center;
+    margin-top: 20px;
+}
+
+h2 {
+    font-weight: 600;
+    color: black;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.form-check {
+    margin: 10px 0;
+}
+
+.form-check-input {
+    margin-right: 10px;
+}
+
+.role-form {
+    background: #ffffff;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    width: 60%;
+}
+
+
+.btn-create {
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    display: inline-block;
+}
+
+    .btn-create:hover {
+        background-color: #5e0e9e;
+    }
+
+.table {
+    margin: 20px auto;
+    width: 80%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+    .table th {
+        background-color: #9b7ebd;
+        color: white;
+        padding: 10px;
+    }
+
+    .table td {
+        padding: 12px;
+    }
+
+        .table td .btn {
+            margin: 0 5px;
+        }
+
+.btn-edit {
+    background-color: #5e4a8f;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+}
+
+    .btn-edit:hover {
+        background-color: #4b3977;
+    }
+
+.btn-delete {
+    background-color: #c94f6d;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+}
+
+    .btn-delete:hover {
+        background-color: #a83d55;
+    }
+
+.d-inline {
+    display: inline-block;
+}
+
+.btn-details {
+    background-color: #6c757d; /* Color de fondo gris */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    padding: 0.5rem 1rem; /* Espaciado interno */
+    border-radius: 0.25rem; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+}
+
+    .btn-details:hover {
+        background-color: #5a6268; /* Color de fondo al pasar el mouse */
+        color: white; /* Color del texto */
+        cursor: pointer; /* Cambiar cursor al pasar el mouse */
+    }
+
+
+.card-header {
+    background-color: #957698;
+    color: white; /* Cambia el color del texto si es necesario */
+}
+
