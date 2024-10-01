@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Categorias/Details/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,6 +46,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Categorias/Create
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +57,7 @@ namespace TeddyShopWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Create([Bind("IdCategoria,DescripcionCategoria,NombreCategoria")] Categoria categoria)
         {
             //if (ModelState.IsValid)
@@ -66,6 +70,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Categorias/Edit/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,6 +91,7 @@ namespace TeddyShopWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Edit(int id, [Bind("IdCategoria,DescripcionCategoria,NombreCategoria")] Categoria categoria)
         {
             if (id != categoria.IdCategoria)
@@ -117,6 +123,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Categorias/Delete/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,6 +143,7 @@ namespace TeddyShopWebApplication.Controllers
 
         // POST: Categorias/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
