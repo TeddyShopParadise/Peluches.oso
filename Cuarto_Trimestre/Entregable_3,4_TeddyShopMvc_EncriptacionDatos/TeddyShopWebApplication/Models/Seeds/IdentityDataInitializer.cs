@@ -9,7 +9,6 @@ namespace TeddyShopWebApplication.Models.Seeds
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             await EnsureRoleAsync(roleManager, "Administrador, Empleado, Vendedor");
-            await EnsureUserAsync(userManager, "admin@teddyshop.com", "T3ddy$h0p2024!", "Administrador");
         }
         private static async Task EnsureRoleAsync(RoleManager<IdentityRole> roleManager, string roleName)
         {
