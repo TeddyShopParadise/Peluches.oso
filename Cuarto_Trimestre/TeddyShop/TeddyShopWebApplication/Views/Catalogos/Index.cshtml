@@ -1,47 +1,64 @@
 ﻿@model IEnumerable<TeddyShopWebApplication.Models.Catalogo>
 
-@{
-    ViewData["Title"] = "Index";
-}
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Catálogo</h2>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
+<p class="text-center">
+    <a asp-action="Create" class="btn-create"><i class="fas fa-plus"></i> Crear Nuevo Catálogo</a>
 </p>
-<table class="table">
+
+<table id="catalogoTable" class="table table-striped table-hover text-center">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DisponibilidadCatalogo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EstiloCatalogo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Compañia_NITNavigation)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.DisponibilidadCatalogo)</th>
+            <th>@Html.DisplayNameFor(model => model.EstiloCatalogo)</th>
+            <th>@Html.DisplayNameFor(model => model.Compañia_NITNavigation.NIT)</th>
+            <th>Opciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DisponibilidadCatalogo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EstiloCatalogo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Compañia_NITNavigation.NIT)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdCatalogo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdCatalogo">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdCatalogo">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.DisponibilidadCatalogo)</td>
+                <td>@Html.DisplayFor(modelItem => item.EstiloCatalogo)</td>
+                <td>@Html.DisplayFor(modelItem => item.Compañia_NITNavigation.NIT)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdCatalogo" class="btn btn-edit">
+                        <i class="fas fa-edit"></i> Editar
+                    </a> |
+                    <a asp-action="Details" asp-route-id="@item.IdCatalogo" class="btn btn-details">
+                        <i class="fas fa-info-circle"></i> Detalles
+                    </a> |
+                    <a href="javascript:void(0);" class="btn btn-delete" onclick="confirmDelete('@item.IdCatalogo')">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminarlo',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la acción de eliminación
+                    window.location.href = '@Url.Action("Delete", "Catalogos")/' + id;
+                }
+            });
+        }
+    </script>
+}
