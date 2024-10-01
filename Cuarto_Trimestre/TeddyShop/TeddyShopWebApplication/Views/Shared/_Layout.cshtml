@@ -1,4 +1,4 @@
-﻿﻿@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @inject UserManager<IdentityUser> UserManager
 
 <!DOCTYPE html>
@@ -11,12 +11,50 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TeddyShopWebApplication.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
 
+        .container-fluid {
+            padding: 0;
+        }
+
+        footer {
+            margin: 0;
+        }
+
+        /* Estilo para el menú */
+        .navbar {
+            background-color: #6B467E;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .navbar-nav .nav-link {
+            color: white; /* Color de texto */
+            transition: background-color 0.3s; /* Efecto al pasar el ratón */
+        }
+
+            .navbar-nav .nav-link:hover {
+                background-color: #ccafcc; /* Fondo gris más oscuro al pasar el ratón */
+            }
+
+        .dropdown-menu {
+            background-color: #ccafcc; /* Fondo gris claro para el dropdown */
+        }
+
+        .dropdown-item:hover {
+            background-color: #957698; /* Fondo gris más oscuro al pasar el ratón en el dropdown */
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light">
             <div class="container-fluid">
+                <img src="./img/LogoTeddyShop.jpg" alt="Peluches.oso Logo" style="height: 80px;">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TeddyShopWebApplication</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -25,73 +63,111 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UserRoles" asp-action="Index">Administrar Roles</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var user = await UserManager.GetUserAsync(User);
+                            if (user != null && (await UserManager.IsInRoleAsync(user, "Administrador")))
+                            {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="adminRolesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Administrador de usuarios
+                                Administrador de Roles
                             </a>
+
                             <ul class="dropdown-menu shadow-sm" aria-labelledby="adminRolesDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Administradores" asp-action="Index">Administradores</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Vendedores" asp-action="Index">Vendedores</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="Index">Empleados</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Clientes" asp-action="Index">Clientes</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Roles" asp-action="Index">Administrar roles</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="UserRoles" asp-action="Index">Administrar roles de usuario</a></li>
                             </ul>
                         </li>
+                                }
+                            }
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="adminRolesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Administrador de pedidos
-                            </a>
-                            <ul class="dropdown-menu shadow-sm" aria-labelledby="adminRolesDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Pedidos" asp-action="Index">Pedidos</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Facturas" asp-action="Index">Facturas</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Detalle_Factura" asp-action="Index">Detalle de la Factura</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Detalle_Pedido" asp-action="Index">Detalle del pedido</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Devoluciones" asp-action="Index">Devoluciones</a></li>
-                            </ul>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var user = await UserManager.GetUserAsync(User);
+                            if (user != null && (await UserManager.IsInRoleAsync(user, "Administrador")))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="adminUsuariosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Administrador de usuarios
+                                    </a>
+                                    <ul class="dropdown-menu shadow-sm" aria-labelledby="adminUsuariosDropdown">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Vendedores" asp-action="Index">Vendedores</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="Index">Empleados</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Clientes" asp-action="Index">Clientes</a></li>
+                                    </ul>
+                                </li>
+                            }
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var user = await UserManager.GetUserAsync(User);
+                            if (user != null && (await UserManager.IsInRoleAsync(user, "Administrador") || await UserManager.IsInRoleAsync(user, "Empleado, Vendedor")))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="adminPedidosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Administrador de pedidos
+                                    </a>
+                                    <ul class="dropdown-menu shadow-sm" aria-labelledby="adminPedidosDropdown">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Pedidos" asp-action="Index">Pedidos</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Facturas" asp-action="Index">Facturas</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Detalle_Factura" asp-action="Index">Detalle de la Factura</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Detalle_Pedido" asp-action="Index">Detalle del pedido</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Devoluciones" asp-action="Index">Devoluciones</a></li>
+                                    </ul>
+                                </li>
+                            }
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var user = await UserManager.GetUserAsync(User);
+                            if (user != null && (await UserManager.IsInRoleAsync(user, "Administrador") || await UserManager.IsInRoleAsync(user, "Empleado, Vendedor")))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="adminProductosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Administrador de productos
+                                    </a>
+                                    <ul class="dropdown-menu shadow-sm" aria-labelledby="adminProductosDropdown">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Historial_Precio" asp-action="Index">Historial del precio</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventarios" asp-action="Index">Inventario</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Metodo_Pago" asp-action="Index">Metodo de pago</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Movimientos" asp-action="Index">Movimientos</a></li>
+                                    </ul>
+                                </li>
+                            }
+                        }
+
+                           <li class="nav-item dropdown">
+                         <a class="nav-link dropdown-toggle" href="#" id="adminProductosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                             Ver productos
+                         </a>
+                         <ul class="dropdown-menu shadow-sm" aria-labelledby="adminProductosDropdown">
+                           <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="Index">Productos</a></li>
+                          <li><a class="dropdown-item" asp-area="" asp-controller="Catalogos" asp-action="Index">Catalogos</a></li>
+                          <li><a class="dropdown-item" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a></li>
+
+                        </ul>
                         </li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="adminRolesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Administrador de productos
-                            </a>
-                            <ul class="dropdown-menu shadow-sm" aria-labelledby="adminRolesDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="Index">Productos</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Catalogos" asp-action="Index">Catalogos</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Historial_Precio" asp-action="Index">Historial del precio</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventarios" asp-action="Index">Inventario</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Metodo_Pago" asp-action="Index">Metodo de pago</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Movimientos" asp-action="Index">Movimientos</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventarios" asp-action="Index">Inventario</a></li>
-                            </ul>
-                        </li>
-
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
+    <footer class="footer text-muted">
+        <div class="container-fluid" style="text-align: center;">
             &copy; 2024 - TeddyShopWebApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
