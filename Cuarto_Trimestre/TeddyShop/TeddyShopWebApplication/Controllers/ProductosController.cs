@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Productos/Details/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,6 +46,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Productos/Create
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public IActionResult Create()
         {
             return View();
@@ -53,6 +56,7 @@ namespace TeddyShopWebApplication.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdProducto,EstiloProducto,CmCabezaColaProducto,MaterialProducto,DisponibilidadProducto,CmColaPataProducto,TamañoProducto")] Producto producto)
         {
@@ -66,6 +70,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Productos/Edit/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +90,7 @@ namespace TeddyShopWebApplication.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdProducto,EstiloProducto,CmCabezaColaProducto,MaterialProducto,DisponibilidadProducto,CmColaPataProducto,TamañoProducto")] Producto producto)
         {
@@ -117,6 +123,7 @@ namespace TeddyShopWebApplication.Controllers
         }
 
         // GET: Productos/Delete/5
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,6 +143,7 @@ namespace TeddyShopWebApplication.Controllers
 
         // POST: Productos/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador, Vendedor, Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
