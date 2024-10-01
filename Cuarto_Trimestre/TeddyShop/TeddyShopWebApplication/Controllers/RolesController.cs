@@ -10,7 +10,7 @@ using TeddyShopWebApplication.Models.ViewModels;
 
 namespace TeddyShopWebApplication.Controllers
 {
-    //[Authorize(Roles = "Root, Administrador")]
+    [Authorize(Roles = "Administrador")]
     public class RolesController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -116,7 +116,7 @@ namespace TeddyShopWebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Root")]
+        [Authorize(Roles = "Adminsitrador")]
         public async Task<IActionResult> Delete(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);

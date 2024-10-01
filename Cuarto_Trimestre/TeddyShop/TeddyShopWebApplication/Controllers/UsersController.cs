@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ public class UsuariosController : Controller
         _userManager = userManager;
     }
 
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Index()
     {
         // Obtener todos los usuarios
@@ -20,6 +22,7 @@ public class UsuariosController : Controller
     }
 
     // Método para editar un usuario
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Edit(string id)
     {
         var usuario = await _userManager.FindByIdAsync(id);
@@ -32,6 +35,7 @@ public class UsuariosController : Controller
 
     // Método para guardar los cambios de un usuario
     [HttpPost]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Edit(IdentityUser usuario)
     {
         if (ModelState.IsValid)
@@ -57,6 +61,7 @@ public class UsuariosController : Controller
     }
 
     // Método para confirmar eliminación de un usuario
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Delete(string id)
     {
         var usuario = await _userManager.FindByIdAsync(id);
@@ -68,6 +73,7 @@ public class UsuariosController : Controller
     }
 
     // Método para eliminar un usuario
+    [Authorize(Roles = "Administrador")]
     [HttpPost, ActionName("Delete")]
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
