@@ -1,41 +1,62 @@
 ﻿@model IEnumerable<TeddyShopWebApplication.Models.Categoria>
 
-@{
-    ViewData["Title"] = "Index";
-}
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Categorías</h2>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
+<p class="text-center">
+    <a asp-action="Create" class="btn-create"><i class="fas fa-plus"></i> Crear Nueva Categoría</a>
 </p>
-<table class="table">
+
+<table id="categoriasTable" class="table table-striped table-hover text-center">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DescripcionCategoria)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NombreCategoria)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.DescripcionCategoria)</th>
+            <th>@Html.DisplayNameFor(model => model.NombreCategoria)</th>
+            <th>Opciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DescripcionCategoria)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NombreCategoria)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdCategoria">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdCategoria">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdCategoria">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.DescripcionCategoria)</td>
+                <td>@Html.DisplayFor(modelItem => item.NombreCategoria)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdCategoria" class="btn btn-edit">
+                        <i class="fas fa-edit"></i> Editar
+                    </a> |
+                    <a asp-action="Details" asp-route-id="@item.IdCategoria" class="btn btn-details">
+                        <i class="fas fa-info-circle"></i> Detalles
+                    </a> |
+                    <a href="javascript:void(0);" class="btn btn-delete" onclick="confirmDelete('@item.IdCategoria')">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminarlo',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la acción de eliminación
+                    window.location.href = '@Url.Action("Delete", "Categorias")/' + id;
+                }
+            });
+        }
+    </script>
+}
