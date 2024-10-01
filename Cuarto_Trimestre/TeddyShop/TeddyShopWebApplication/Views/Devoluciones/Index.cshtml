@@ -1,35 +1,60 @@
 ﻿@model IEnumerable<TeddyShopWebApplication.Models.Devoluciones>
 
-@{
-    ViewData["Title"] = "Index";
-}
+<link rel="stylesheet" href="~/css/roles.css" />
+<h2 class="text-center">Devoluciones</h2>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
+<p class="text-center">
+    <a asp-action="Create" class="btn-create"><i class="fas fa-plus"></i> Crear Nueva Devolución</a>
 </p>
-<table class="table">
+
+<table id="devolucionesTable" class="table table-striped table-hover text-center">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DetalleDevolucion)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.DetalleDevolucion)</th>
+            <th>Opciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DetalleDevolucion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdDevolucion">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdDevolucion">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdDevolucion">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.DetalleDevolucion)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdDevolucion" class="btn btn-edit">
+                        <i class="fas fa-edit"></i> Editar
+                    </a> |
+                    <a asp-action="Details" asp-route-id="@item.IdDevolucion" class="btn btn-details">
+                        <i class="fas fa-info-circle"></i> Detalles
+                    </a> |
+                    <a href="javascript:void(0);" class="btn btn-delete" onclick="confirmDelete('@item.IdDevolucion')">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function confirmDelete(idDevolucion) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminarlo',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la acción de eliminación
+                    window.location.href = '@Url.Action("Delete", "Devoluciones")/' + idDevolucion;
+                }
+            });
+        }
+    </script>
+}
