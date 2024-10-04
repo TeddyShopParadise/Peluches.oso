@@ -23,9 +23,12 @@ namespace TeddyShopWebApplication.Controllers
         // GET: Catalogos
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Catalogos.Include(c => c.Compañia_NITNavigation);
+            var applicationDbContext = _context.Catalogos
+                .Include(c => c.Compañia_NITNavigation) // Incluye la compañía
+                .Include(c => c.Producto_IdProductos); // Incluye los productos
             return View(await applicationDbContext.ToListAsync());
         }
+
 
         // GET: Catalogos/Details/
         [Authorize(Roles = "Administrador, Vendedor, Empleado")]

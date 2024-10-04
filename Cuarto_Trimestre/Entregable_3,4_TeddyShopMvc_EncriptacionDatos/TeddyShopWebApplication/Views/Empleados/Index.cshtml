@@ -15,8 +15,8 @@
             <th>@Html.DisplayNameFor(model => model.First().FechaNaciminetoEmpleado)</th>
             <th>@Html.DisplayNameFor(model => model.First().NombreEmpleado)</th>
             <th>@Html.DisplayNameFor(model => model.First().Compañia_NITNavigation.NIT)</th>
-            <th>@Html.DisplayName("ID de Usuario")</th> <!-- Título de la columna para ID de usuario -->
-            <th>@Html.DisplayName("Nombre de Usuario")</th> <!-- Título de la columna para nombre de usuario -->
+@*             <th>@Html.DisplayName("ID de Usuario")</th> <!-- Título de la columna para ID de usuario --> *@
+@*             <th>@Html.DisplayName("Nombre de Usuario")</th> <!-- Título de la columna para nombre de usuario --> *@
             <th>Opciones</th>
         </tr>
     </thead>
@@ -29,8 +29,8 @@
                 <td>@Html.DisplayFor(modelItem => item.FechaNaciminetoEmpleado)</td>
                 <td>@Html.DisplayFor(modelItem => item.NombreEmpleado)</td>
                 <td>@Html.DisplayFor(modelItem => item.Compañia_NITNavigation.NIT)</td>
-                <td>@Html.DisplayFor(modelItem => item.User.Id)</td> <!-- Columna para ID de usuario -->
-                <td>@Html.DisplayFor(modelItem => item.User.UserName)</td> <!-- Columna para nombre de usuario -->
+@*                 <td>@Html.DisplayFor(modelItem => item.User.Id)</td> <!-- Columna para ID de usuario --> *@
+@*                 <td>@Html.DisplayFor(modelItem => item.User.UserName)</td> <!-- Columna para nombre de usuario --> *@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.DniEmpleado" class="btn btn-edit">
                         <i class="fas fa-edit"></i> Editar

@@ -10,11 +10,12 @@
 <table id="productosTable" class="table table-striped table-hover text-center">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.EstiloProducto)</th>
-            <th>@Html.DisplayNameFor(model => model.CmCabezaColaProducto)</th>
-            <th>@Html.DisplayNameFor(model => model.MaterialProducto)</th>
+@*             <th>@Html.DisplayNameFor(model => model.EstiloProducto)</th>
+            <th>@Html.DisplayNameFor(model => model.CmCabezaColaProducto)</th> *@
+@*             <th>@Html.DisplayNameFor(model => model.MaterialProducto)</th> *@
+            <th>@Html.DisplayNameFor(model => model.IdProducto)</th>
             <th>@Html.DisplayNameFor(model => model.DisponibilidadProducto)</th>
-            <th>@Html.DisplayNameFor(model => model.CmColaPataProducto)</th>
+@*             <th>@Html.DisplayNameFor(model => model.CmColaPataProducto)</th> *@
             <th>@Html.DisplayNameFor(model => model.TamañoProducto)</th>
             <th>Opciones</th>
         </tr>
@@ -23,11 +24,12 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.EstiloProducto)</td>
+@*                 <td>@Html.DisplayFor(modelItem => item.EstiloProducto)</td>
                 <td>@Html.DisplayFor(modelItem => item.CmCabezaColaProducto)</td>
-                <td>@Html.DisplayFor(modelItem => item.MaterialProducto)</td>
+                <td>@Html.DisplayFor(modelItem => item.MaterialProducto)</td> *@
+                <td>@Html.DisplayFor(modelItem => item.IdProducto)</td>
                 <td>@Html.DisplayFor(modelItem => item.DisponibilidadProducto)</td>
-                <td>@Html.DisplayFor(modelItem => item.CmColaPataProducto)</td>
+@*                 <td>@Html.DisplayFor(modelItem => item.CmColaPataProducto)</td> *@
                 <td>@Html.DisplayFor(modelItem => item.TamañoProducto)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.IdProducto" class="btn btn-edit">
