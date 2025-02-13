@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Swal from "sweetalert2";
 import {
   Container,
   TextField,
@@ -27,6 +28,8 @@ import {
 import { Edit, Delete, Info } from '@mui/icons-material';
 import { getApiUrl } from '../../utils/apiConfig';
 
+
+
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
 
@@ -48,6 +51,14 @@ const ProductoComponent = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedProducto, setSelectedProducto] = useState(null);
 
+
+  useEffect(() => {
+    fetchProductos();
+    fetchCategorias();
+    fetchCatalogos();
+  }, []);
+  
+
   const fetchProductos = async () => {
     try {
       const response = await fetch(`${apiUrl}/producto`);
@@ -65,24 +76,22 @@ const ProductoComponent = () => {
   const fetchCategorias = async () => {
     try {
       const response = await fetch(`${apiUrl}/categorias`);
-      if (!response.ok) {
-        throw new Error('Error al obtener las categorías');
-      }
+      if (!response.ok) throw new Error('Error al obtener las categorías');
       const data = await response.json();
+      console.log("Categorías cargadas:", data);  // 🔍 Verifica en la consola
       setCategorias(data);
     } catch (error) {
       console.error(error);
       alert(error.message);
     }
   };
-
+  
   const fetchCatalogos = async () => {
     try {
       const response = await fetch(`${apiUrl}/catalogos/activos`);
-      if (!response.ok) {
-        throw new Error('Error al obtener los catálogos');
-      }
+      if (!response.ok) throw new Error('Error al obtener los catálogos');
       const data = await response.json();
+      console.log("Catálogos cargados:", data);  // 🔍 Verifica en la consola
       setCatalogos(data);
     } catch (error) {
       console.error(error);
@@ -155,7 +164,7 @@ const ProductoComponent = () => {
   };
 
   const actualizarProducto = async () => {
-    if (!editingId || !estiloProducto || !cmCabezaColaProducto || !materialProducto || !disponibilidadProducto || !cmColaPataProducto || !tamañoProducto || categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
+    if (!editingId || !estiloProducto || !cmCabezaColaProducto || !materialProducto || !disponibilidadProducto || !cmColaPataProducto  || categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -174,15 +183,15 @@ const ProductoComponent = () => {
           cmColaPataProducto,
           tamañoProducto,
           imagen: imagenProducto, // Agregamos la imagengen también
-          categorias: categoriasSeleccionadas,
+          categorias: categoriasSeleccionadas || [],
           catalogos: catalogosSeleccionados,
         }),
       });
-
       if (!response.ok) {
+        const errorText = await response.text(); // Lee el cuerpo de la respuesta
+        console.error('Error:', errorText);
         throw new Error('Error al actualizar el producto');
       }
-
       fetchProductos();
       resetForm();
     } catch (error) {
@@ -191,40 +200,66 @@ const ProductoComponent = () => {
     }
   }
 
-  
-  const eliminarProducto = async (id) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+
+const eliminarProducto = async (id) => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "Esta acción no se puede deshacer",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
       try {
         const response = await fetch(`${apiUrl}/producto/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
         });
 
         if (!response.ok) {
-          throw new Error('Error al eliminar el producto');
+          throw new Error("Error al eliminar el producto");
         }
 
-        fetchProductos();
+        Swal.fire({
+          title: "Eliminado",
+          text: "El producto ha sido eliminado correctamente",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        });
+
+        fetchProductos(); // Refresca la lista después de eliminar
       } catch (error) {
         console.error(error);
-        alert(error.message);
+        Swal.fire({
+          title: "Error",
+          text: error.message,
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
       }
     }
-  };
+  });
+};
 
   const editarProducto = (producto) => {
+    console.log('Producto a editar:', producto);
     setEditingId(producto._id);
-    setEstiloProducto(producto.estiloProducto);
-    setCmCabezaColaProducto(producto.cmCabezaColaProducto);
-    setMaterialProducto(producto.materialProducto);
-    setDisponibilidadProducto(producto.disponibilidadProducto);
-    setCmColaPataProducto(producto.cmColaPataProducto);
-    setTamañoProducto(producto.tamañoProducto);
-    setImagenProducto(producto.imagen || ''); // Asignar la URL de la imagen
-    setCategoriasSeleccionadas(producto.categorias || []);
-    setCatalogosSeleccionados(producto.catalogos || []);
+    setEstiloProducto(producto.estiloProducto || '');
+    setCmCabezaColaProducto(producto.cmCabezaColaProducto || '');
+    setMaterialProducto(producto.materialProducto || '');
+    setDisponibilidadProducto(producto.disponibilidadProducto || '');
+    setCmColaPataProducto(producto.cmColaPataProducto || '');
+    setTamañoProducto(producto.tamañoProducto || '');
+    setImagenProducto(producto.imagen || '');
+    
+    // Asegúrate de que las categorías y catálogos sean arrays
+    const categorias = Array.isArray(producto.categorias) ? producto.categorias : [];
+    const catalogos = Array.isArray(producto.catalogos) ? producto.catalogos : [];
+    
    
   };
-
   const resetForm = () => {
     setEstiloProducto('');
     setCmCabezaColaProducto('');
@@ -256,6 +291,7 @@ const ProductoComponent = () => {
   };
 
   useEffect(() => {
+    
     fetchProductos();
     fetchCategorias();
     fetchCatalogos();
@@ -304,6 +340,13 @@ const ProductoComponent = () => {
           fullWidth
           margin="normal"
         />
+         <TextField
+          value={cmColaPataProducto}
+          onChange={(e) => setCmColaPataProducto(e.target.value)}
+          label="Cm Cola Pata"
+          fullWidth
+          margin="normal"
+        />
         <TextField
           value={materialProducto}
           onChange={(e) => setMaterialProducto(e.target.value)}
@@ -318,13 +361,7 @@ const ProductoComponent = () => {
           fullWidth
           margin="normal"
         />
-        <TextField
-          value={cmColaPataProducto}
-          onChange={(e) => setCmColaPataProducto(e.target.value)}
-          label="Cm Cola Pata"
-          fullWidth
-          margin="normal"
-        />
+       
         <TextField
           value={tamañoProducto}
           onChange={(e) => setTamañoProducto(e.target.value)}
@@ -332,37 +369,61 @@ const ProductoComponent = () => {
           fullWidth
           margin="normal"
         />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Categorías</InputLabel>
-          <Select
-            multiple
-            value={categoriasSeleccionadas}
-            onChange={(e) => setCategoriasSeleccionadas(e.target.value)}
-            label="Categorías"
-          >
-            {categorias.map((categoria) => (
-              <MenuItem key={categoria._id} value={categoria._id}>
-                {categoria.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Catálogos</InputLabel>
-          <Select
-            multiple
-            value={catalogosSeleccionados}
-            onChange={(e) => setCatalogosSeleccionados(e.target.value)}
-            label="Catálogos"
-          >
-            {catalogos.map((catalogo) => (
-              <MenuItem key={catalogo._id} value={catalogo._id}>
-                {catalogo.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <FormControl fullWidth margin="normal" required>
+  <InputLabel>Categorías</InputLabel>
+  <Select
+    multiple
+    value={categoriasSeleccionadas}
+    onChange={(e) => setCategoriasSeleccionadas(e.target.value)}
+    label="Categorías"
+    renderValue={(selected) => selected.map(id => {
+      const categoria = categorias.find(cat => cat._id === id);
+      return categoria ? categoria.nombreCategoria : "";
+    }).join(", ")}
+    MenuProps={{
+      PaperProps: {
+        style: {
+          maxHeight: 250,
+          overflow: 'auto',
+        },
+      },
+    }}
+  >
+    {categorias.map((cat) => (
+      <MenuItem key={cat._id} value={cat._id}>
+        {cat.nombreCategoria}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
 
+<FormControl fullWidth margin="normal" required>
+  <InputLabel>Catálogos</InputLabel>
+  <Select
+    multiple
+    value={catalogosSeleccionados}
+    onChange={(e) => setCatalogosSeleccionados(e.target.value)}
+    label="Catálogos"
+    renderValue={(selected) => selected.map(id => {
+      const catalogo = catalogos.find(cat => cat._id === id);
+      return catalogo ? catalogo.nombreCatalogo : "";
+    }).join(", ")}
+    MenuProps={{
+      PaperProps: {
+        style: {
+          maxHeight: 250,
+          overflow: 'auto',
+        },
+      },
+    }}
+  >
+    {catalogos.map((cat) => (
+      <MenuItem key={cat._id} value={cat._id}>
+        {cat.nombreCatalogo}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
         {/* Campo para subir imagen */}
         <TextField
           type="file"

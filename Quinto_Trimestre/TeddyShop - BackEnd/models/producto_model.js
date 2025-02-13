@@ -24,7 +24,7 @@ const productoSchema = new mongoose.Schema({
   },
   tamañoProducto: {
     type: String, // NVARCHAR en SQL
-    required: true
+    required: false
   },
   imagen: {
     type: String, 

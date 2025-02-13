@@ -7,7 +7,7 @@ const cloudinary = require('cloudinary').v2;
 const { v4: uuidv4 } = require('uuid'); // Para generar un nombre único para las imágenes
 
 const router = express.Router();
-const upload = multer(); // Para manejar las subidas de archivos
+const upload = multer(); 
 
 // Ruta para subir imágenes
 router.post('/upload', upload.single('image'), async (req, res) => {
@@ -18,7 +18,7 @@ router.post('/upload', upload.single('image'), async (req, res) => {
       resource_type: 'auto', // Deja que Cloudinary determine el tipo de archivo (image, video, etc.)
     });
 
-    // Devuelves la URL de la imagen subida
+   
     res.status(200).json({
       message: 'Imagen subida correctamente',
       imageUrl: result.secure_url, // URL de la imagen en Cloudinary

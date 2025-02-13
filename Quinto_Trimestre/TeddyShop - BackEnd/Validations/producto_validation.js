@@ -69,13 +69,9 @@ const productoSchemaValidation = Joi.object({
             'string.base': 'El ID del catálogo debe ser un ID válido',
             'string.length': 'El ID del catálogo debe tener 24 caracteres'
         }),
-    categorias: Joi.array()
+        categorias: Joi.array()
         .items(Joi.string().length(24).hex())
         .optional()
-        .messages({
-            'string.base': 'El ID de la categoría debe ser un ID válido',
-            'string.length': 'El ID de la categoría debe tener 24 caracteres'
-        })
 });
 
 // Exportar la validación

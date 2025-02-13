@@ -38,7 +38,6 @@ const CategoriaComponent = () => {
   const [productos, setProductos] = useState([]);
   const [nombreCategoria, setNombreCategoria] = useState('');
   const [descripcionCategoria, setDescripcionCategoria] = useState('');
-  const [productosSeleccionados, setProductosSeleccionados] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -73,7 +72,7 @@ const CategoriaComponent = () => {
   };
 
   const crearCategoria = async () => {
-    if (!nombreCategoria || !descripcionCategoria || productosSeleccionados.length === 0) {
+    if (!nombreCategoria || !descripcionCategoria ) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -86,8 +85,7 @@ const CategoriaComponent = () => {
         },
         body: JSON.stringify({
           nombreCategoria,
-          descripcionCategoria,
-          productos: productosSeleccionados,
+          descripcionCategoria
         }),
       });
 
@@ -104,7 +102,7 @@ const CategoriaComponent = () => {
   };
 
   const actualizarCategoria = async () => {
-    if (!editingId || !nombreCategoria || !descripcionCategoria || productosSeleccionados.length === 0) {
+    if (!editingId || !nombreCategoria || !descripcionCategoria) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -120,8 +118,8 @@ const CategoriaComponent = () => {
         },
         body: JSON.stringify({
           nombreCategoria,
-          descripcionCategoria,
-          productos: productosIds, // Enviar solo los IDs de los productos
+          descripcionCategoria
+       
         }),
       });
 
@@ -161,13 +159,12 @@ const CategoriaComponent = () => {
     setEditingId(categoria._id); // Establece el ID de la categoría que se está editando
     setNombreCategoria(categoria.nombreCategoria);
     setDescripcionCategoria(categoria.descripcionCategoria);
-    setProductosSeleccionados(categoria.productos || []);
+   
   };
 
   const resetForm = () => {
     setNombreCategoria('');
     setDescripcionCategoria('');
-    setProductosSeleccionados([]);
     setEditingId(null);
   };
 
@@ -261,30 +258,6 @@ const CategoriaComponent = () => {
                 '& .MuiInputBase-input': { fontSize: '1.2rem' },
               }}
             />
-
-            <FormControl fullWidth margin="normal" required>
-              <InputLabel>Productos</InputLabel>
-              <Select
-                multiple
-                value={productosSeleccionados}
-                onChange={(e) => setProductosSeleccionados(e.target.value)}
-                label="Productos"
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 250, // Tamaño máximo de la lista
-                      overflow: 'auto', // Permite el desplazamiento si la lista es muy larga
-                    },
-                  },
-                }}
-              >
-                {productos.map((prod) => (
-                  <MenuItem key={prod._id} value={prod._id}>
-                    {prod.estiloProducto} - {prod.tamañoProducto}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
 
 
             <Box display="flex" justifyContent="space-between" mt={2}>

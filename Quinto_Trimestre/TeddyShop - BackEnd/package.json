@@ -28,6 +28,7 @@
     "swagger": "^0.7.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "sweetalert2": "^11.16.0",
     "teddyshop": "file:",
     "uuid": "^11.0.3"
   },
