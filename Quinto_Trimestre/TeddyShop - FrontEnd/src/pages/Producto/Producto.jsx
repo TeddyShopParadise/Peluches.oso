@@ -245,7 +245,7 @@ const eliminarProducto = async (id) => {
     setDisponibilidadProducto(producto.disponibilidadProducto || '');
     setTamañoProducto(producto.tamañoProducto || '');
     setImagenProducto(producto.imagen || '');
-    // Asegúrate de que las categorías y catálogos sean arrays
+    //los categorías y catálogos son arrays
     const categorias = Array.isArray(producto.categorias) ? producto.categorias : [];
     const catalogos = Array.isArray(producto.catalogos) ? producto.catalogos : [];
     
@@ -409,7 +409,13 @@ const eliminarProducto = async (id) => {
           label="Imagen del Producto"
         />
         {imagenProducto && (
-          <img src={imagenProducto} alt="Imagen del Producto" width="100" />
+          <img src={imagenProducto} alt="Imagen del Producto" width="180 " height="auto"  style={{  objectFit: "cover", 
+            borderRadius: "12px", 
+            border: "2px solid rgba(255, 255, 255, 0.8)", 
+            background: "rgba(255, 255, 255, 0.1)", 
+            boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.25)"
+            }}  
+       />
         )}
 
         <Box sx={{ mt: 2 }}>
@@ -435,7 +441,7 @@ const eliminarProducto = async (id) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Descripción</TableCell>
+                <TableCell>Tamaño</TableCell>
                 <TableCell>Material</TableCell>
                 <TableCell>Disponibilidad</TableCell>
                 <TableCell>Acciones</TableCell>
@@ -446,7 +452,7 @@ const eliminarProducto = async (id) => {
                 .slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage)
                 .map((producto) => (
                   <TableRow key={producto._id}>
-                    <TableCell>{producto.estiloProducto}</TableCell>
+                    <TableCell>{producto.tamañoProducto}</TableCell>
                     <TableCell>{producto.materialProducto}</TableCell>
                     <TableCell>{producto.disponibilidadProducto}</TableCell>
                     <TableCell>
@@ -493,11 +499,18 @@ const eliminarProducto = async (id) => {
             {selectedProducto && (
               <Box>
                 <DialogContentText>Descripción: {selectedProducto.estiloProducto}</DialogContentText>
-                <DialogContentText>Material: {selectedProducto.materialProducto}</DialogContentText>
-                <DialogContentText>Disponibilidad: {selectedProducto.disponibilidadProducto}</DialogContentText>
                 {selectedProducto.imagen && (
                   <DialogContentText>
-                    <img src={selectedProducto.imagen} alt="Imagen del Producto" width="100" />
+                    <img src={selectedProducto.imagen} alt="Imagen del Producto" width="190" height="300"  style={{ 
+                    objectFit: "cover",
+                    display: "block",  
+                    borderRadius: "12px", 
+                    border: "2px solid rgba(137, 12, 227, 0.8)", 
+                    background: "rgba(255, 255, 255, 0.1)", 
+                    boxShadow: "0px 4px 15px   rgba(0, 0, 0, 0.25)", 
+                    margin: "0 auto"
+            }}  
+                    />
                   </DialogContentText>
                 )}
               </Box>
