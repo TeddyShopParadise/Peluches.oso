@@ -318,9 +318,7 @@ const ProductoUsuario = () => {
                   }}>
                     <Typography variant="body1"><strong>Material:</strong> {productoSeleccionado.materialProducto}</Typography>
                     <Typography variant="body1"><strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}</Typography>
-                    <Typography variant="body1"><strong>medida de Cabeza a Cola:</strong> {productoSeleccionado.cmCabezaColaProducto}</Typography>
-                    <Typography variant="body1"><strong>medida de Cola a Pata:</strong> {productoSeleccionado.cmColaPataProducto}</Typography>
-                    <Typography variant="body1"><strong>Disponibilidad:</strong> {productoSeleccionado.disponibilidadProducto}</Typography>
+                 <Typography variant="body1"><strong>Disponibilidad:</strong> {productoSeleccionado.disponibilidadProducto}</Typography>
                   </Box>
                 </>
               )}

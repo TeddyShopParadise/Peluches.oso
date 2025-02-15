@@ -29,7 +29,12 @@ import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
-// Componente principal
+
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+
 const HistorialPrecios = () => {
   const [historialPrecios, setHistorialPrecios] = useState([]);
   const [nuevoHistorial, setNuevoHistorial] = useState({
@@ -45,20 +50,15 @@ const HistorialPrecios = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const getAuthToken = () => {
-    const token = localStorage.getItem('authToken');
-    return token;
-  };
-
-  const token = getAuthToken();
 
   // Obtener historial de precios
   const fetchHistorialPrecios = async () => {
     try {
+      const token = getAuthToken();
       const response = await fetch(`${apiUrl}/historialPrecio`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`, // Aquí agregas el token en el encabezado
+          'Authorization': `Bearer ${token}`, 
         },
       });
       const data = await response.json();
@@ -72,15 +72,17 @@ const HistorialPrecios = () => {
     fetchHistorialPrecios();
   }, []);
 
+
   // Crear nuevo historial de precio
   const crearHistorialPrecio = async (e) => {
     e.preventDefault();
     try {
+	const token = getAuthToken();
       const response = await fetch(`${apiUrl}/historialPrecio`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Agregar el token aquí también
+          'Authorization': `Bearer ${token}`, 
         },
         body: JSON.stringify(nuevoHistorial),
       });
@@ -96,14 +98,16 @@ const HistorialPrecios = () => {
     }
   };
   
+  //Actualizar un historial de precio
   const actualizarHistorialPrecio = async (e) => {
     e.preventDefault();
     try {
+	const token = getAuthToken();
       const response = await fetch(`${apiUrl}/historialPrecio/${editingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Incluir el token aquí también
+          'Authorization': `Bearer ${token}`, 
         },
         body: JSON.stringify(nuevoHistorial),
       });
@@ -120,12 +124,14 @@ const HistorialPrecios = () => {
     }
   };
   
+  //Eliminar el historial de Precio
   const eliminarHistorialPrecio = async (id) => {
     try {
+	const token = getAuthToken();
       const response = await fetch(`${apiUrl}/historialPrecio/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`, // También agregar el token en la eliminación
+          'Authorization': `Bearer ${token}`, 
         },
       });
   
@@ -139,7 +145,6 @@ const HistorialPrecios = () => {
     }
   };
   
-
   // Maneja el cambio en el formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -356,4 +361,4 @@ const HistorialPrecios = () => {
   );
 };
 
-export default HistorialPrecios;
+export default HistorialPrecios ;
