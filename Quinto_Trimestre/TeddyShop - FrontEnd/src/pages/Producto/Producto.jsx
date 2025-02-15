@@ -33,6 +33,8 @@ import { getApiUrl } from '../../utils/apiConfig';
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
 
+
+
 const ProductoComponent = () => {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
