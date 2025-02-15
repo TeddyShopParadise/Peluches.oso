@@ -38,10 +38,8 @@ const ProductoComponent = () => {
   const [categorias, setCategorias] = useState([]);
   const [catalogos, setCatalogos] = useState([]);
   const [estiloProducto, setEstiloProducto] = useState('');
-  const [cmCabezaColaProducto, setCmCabezaColaProducto] = useState('');
   const [materialProducto, setMaterialProducto] = useState('');
   const [disponibilidadProducto, setDisponibilidadProducto] = useState('');
-  const [cmColaPataProducto, setCmColaPataProducto] = useState('');
   const [tamañoProducto, setTamañoProducto] = useState('');
   const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState([]);
   const [catalogosSeleccionados, setCatalogosSeleccionados] = useState([]);
@@ -127,7 +125,7 @@ const ProductoComponent = () => {
   };
 
   const crearProducto = async () => {
-    if (!estiloProducto || !cmCabezaColaProducto || !materialProducto || !disponibilidadProducto || !cmColaPataProducto || !tamañoProducto || categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
+    if (!estiloProducto || !materialProducto || !disponibilidadProducto || !tamañoProducto || categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -140,10 +138,8 @@ const ProductoComponent = () => {
         },
         body: JSON.stringify({
           estiloProducto,
-          cmCabezaColaProducto,
           materialProducto,
           disponibilidadProducto,
-          cmColaPataProducto,
           tamañoProducto,
           categorias: categoriasSeleccionadas,
           catalogos: catalogosSeleccionados,
@@ -164,7 +160,7 @@ const ProductoComponent = () => {
   };
 
   const actualizarProducto = async () => {
-    if (!editingId || !estiloProducto || !cmCabezaColaProducto || !materialProducto || !disponibilidadProducto || !cmColaPataProducto  || categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
+    if (!editingId || !estiloProducto || !materialProducto || !disponibilidadProducto || categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -177,10 +173,8 @@ const ProductoComponent = () => {
         },
         body: JSON.stringify({
           estiloProducto,
-          cmCabezaColaProducto,
           materialProducto,
           disponibilidadProducto,
-          cmColaPataProducto,
           tamañoProducto,
           imagen: imagenProducto, // Agregamos la imagengen también
           categorias: categoriasSeleccionadas || [],
@@ -247,13 +241,10 @@ const eliminarProducto = async (id) => {
     console.log('Producto a editar:', producto);
     setEditingId(producto._id);
     setEstiloProducto(producto.estiloProducto || '');
-    setCmCabezaColaProducto(producto.cmCabezaColaProducto || '');
     setMaterialProducto(producto.materialProducto || '');
     setDisponibilidadProducto(producto.disponibilidadProducto || '');
-    setCmColaPataProducto(producto.cmColaPataProducto || '');
     setTamañoProducto(producto.tamañoProducto || '');
     setImagenProducto(producto.imagen || '');
-    
     // Asegúrate de que las categorías y catálogos sean arrays
     const categorias = Array.isArray(producto.categorias) ? producto.categorias : [];
     const catalogos = Array.isArray(producto.catalogos) ? producto.catalogos : [];
@@ -262,10 +253,8 @@ const eliminarProducto = async (id) => {
   };
   const resetForm = () => {
     setEstiloProducto('');
-    setCmCabezaColaProducto('');
     setMaterialProducto('');
     setDisponibilidadProducto('');
-    setCmColaPataProducto('');
     setTamañoProducto('');
     setImagenProducto('');
     setCategoriasSeleccionadas([]);
@@ -329,21 +318,7 @@ const eliminarProducto = async (id) => {
         <TextField
           value={estiloProducto}
           onChange={(e) => setEstiloProducto(e.target.value)}
-          label="Estilo"
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          value={cmCabezaColaProducto}
-          onChange={(e) => setCmCabezaColaProducto(e.target.value)}
-          label="Cm Cabeza Cola"
-          fullWidth
-          margin="normal"
-        />
-         <TextField
-          value={cmColaPataProducto}
-          onChange={(e) => setCmColaPataProducto(e.target.value)}
-          label="Cm Cola Pata"
+          label="Descripción Producto"
           fullWidth
           margin="normal"
         />
@@ -460,7 +435,7 @@ const eliminarProducto = async (id) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Estilo</TableCell>
+                <TableCell>Descripción</TableCell>
                 <TableCell>Material</TableCell>
                 <TableCell>Disponibilidad</TableCell>
                 <TableCell>Acciones</TableCell>
@@ -517,7 +492,7 @@ const eliminarProducto = async (id) => {
           <DialogContent>
             {selectedProducto && (
               <Box>
-                <DialogContentText>Estilo: {selectedProducto.estiloProducto}</DialogContentText>
+                <DialogContentText>Descripción: {selectedProducto.estiloProducto}</DialogContentText>
                 <DialogContentText>Material: {selectedProducto.materialProducto}</DialogContentText>
                 <DialogContentText>Disponibilidad: {selectedProducto.disponibilidadProducto}</DialogContentText>
                 {selectedProducto.imagen && (

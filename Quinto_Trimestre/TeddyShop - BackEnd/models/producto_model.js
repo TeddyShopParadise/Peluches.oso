@@ -6,19 +6,11 @@ const productoSchema = new mongoose.Schema({
     type: String, // NVARCHAR en SQL
     required: true
   },
-  cmCabezaColaProducto: {
-    type: String, // NVARCHAR en SQL
-    required: true
-  },
   materialProducto: {
     type: String, // NVARCHAR en SQL
     required: true
   },
   disponibilidadProducto: {
-    type: String, // NVARCHAR en SQL
-    required: true
-  },
-  cmColaPataProducto: {
     type: String, // NVARCHAR en SQL
     required: true
   },

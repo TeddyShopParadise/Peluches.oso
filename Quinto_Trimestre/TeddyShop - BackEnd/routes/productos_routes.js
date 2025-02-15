@@ -30,18 +30,12 @@ const upload = multer({ storage: storage });
  *                   estiloProducto:
  *                     type: string
  *                     example: "Estilo 1"
- *                   cmCabezaColaProducto:
- *                     type: string
- *                     example: "10 cm"
  *                   materialProducto:
  *                     type: string
  *                     example: "Algodón"
  *                   disponibilidadProducto:
  *                     type: string
  *                     example: "Disponible"
- *                   cmColaPataProducto:
- *                     type: string
- *                     example: "15 cm"
  *                   tamañoProducto:
  *                     type: string
  *                     example: "Mediano"
@@ -86,18 +80,12 @@ router.get('/', productoController.listarProductos);
  *               estiloProducto:
  *                 type: string
  *                 example: "Estilo 1"
- *               cmCabezaColaProducto:
- *                 type: string
- *                 example: "10 cm"
  *               materialProducto:
  *                 type: string
  *                 example: "Algodón"
  *               disponibilidadProducto:
  *                 type: string
  *                 example: "Disponible"
- *               cmColaPataProducto:
- *                 type: string
- *                 example: "15 cm"
  *               tamañoProducto:
  *                 type: string
  *                 example: "Mediano"
@@ -179,18 +167,12 @@ router.get('/:id', productoController.obtenerProductoPorId);
  *               estiloProducto:
  *                 type: string
  *                 example: "Estilo 1"
- *               cmCabezaColaProducto:
- *                 type: string
- *                 example: "10 cm"
  *               materialProducto:
  *                 type: string
  *                 example: "Algodón"
  *               disponibilidadProducto:
  *                 type: string
  *                 example: "Disponible"
- *               cmColaPataProducto:
- *                 type: string
- *                 example: "15 cm"
  *               tamañoProducto:
  *                 type: string
  *                 example: "Mediano"

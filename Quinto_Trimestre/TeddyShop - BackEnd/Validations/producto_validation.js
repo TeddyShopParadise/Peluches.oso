@@ -8,12 +8,6 @@ const productoSchemaValidation = Joi.object({
             'string.base': 'El estilo del producto debe ser un texto',
             'any.required': 'El estilo del producto es un campo requerido'
         }),
-    cmCabezaColaProducto: Joi.string()
-        .required()
-        .messages({
-            'string.base': 'La medida de cabeza a cola debe ser un texto',
-            'any.required': 'La medida de cabeza a cola es un campo requerido'
-        }),
     materialProducto: Joi.string()
         .required()
         .messages({
@@ -25,12 +19,6 @@ const productoSchemaValidation = Joi.object({
         .messages({
             'string.base': 'La disponibilidad del producto debe ser un texto',
             'any.required': 'La disponibilidad del producto es un campo requerido'
-        }),
-    cmColaPataProducto: Joi.string()
-        .required()
-        .messages({
-            'string.base': 'La medida de cola a pata debe ser un texto',
-            'any.required': 'La medida de cola a pata es un campo requerido'
         }),
     tamañoProducto: Joi.string()
         .required()
