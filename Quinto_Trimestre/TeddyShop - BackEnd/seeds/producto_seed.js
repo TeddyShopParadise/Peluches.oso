@@ -3,11 +3,9 @@
 const Producto = require('../models/producto_model'); 
 
 const productoSeed = {
-  estiloProducto: 'Clásico', // Estilo del producto
-  cmCabezaColaProducto: '15', // Medida de la cabeza a la cola en centímetros
+  estiloProducto: 'Clásico', // Estilo del producto 
   materialProducto: 'Algodón', // Material del producto
   disponibilidadProducto: 'En stock', // Disponibilidad del producto
-  cmColaPataProducto: '20', // Medida de la cola a la pata en centímetros
   tamañoProducto: 'Grande', // Tamaño del producto
   imagen: ' ',
   historialPrecios: [], // Aquí puedes agregar IDs de historial de precios si los tienes

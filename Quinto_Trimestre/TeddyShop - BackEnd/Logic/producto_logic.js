@@ -6,11 +6,9 @@ const Categoria = require('../models/categoria_model');
 // Función asíncrona para crear un nuevo producto
 async function crearProducto(body) {
     const producto = new Producto({
-        estiloProducto: body.estiloProducto,
-        cmCabezaColaProducto: body.cmCabezaColaProducto,
+        estiloProducto: body.estiloProducto, 
         materialProducto: body.materialProducto,
         disponibilidadProducto: body.disponibilidadProducto,
-        cmColaPataProducto: body.cmColaPataProducto,
         tamañoProducto: body.tamañoProducto,
         imagen: body.imagen,
         historialPrecios: body.historialPrecios || [],
@@ -26,10 +24,8 @@ async function actualizarProducto(id, body) {
     const producto = await Producto.findByIdAndUpdate(id, {
         $set: {
             estiloProducto: body.estiloProducto,
-            cmCabezaColaProducto: body.cmCabezaColaProducto,
             materialProducto: body.materialProducto,
             disponibilidadProducto: body.disponibilidadProducto,
-            cmColaPataProducto: body.cmColaPataProducto,
             tamañoProducto: body.tamañoProducto,
             imagen: body.imagen,
             historialPrecios: body.historialPrecios || [],
