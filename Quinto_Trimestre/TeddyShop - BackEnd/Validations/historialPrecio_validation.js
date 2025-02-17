@@ -33,7 +33,7 @@ const historialPrecioSchemaValidation = Joi.object({
     producto: Joi.string()
         .length(24)
         .hex()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El ID del producto debe ser un ID válido',
             'string.length': 'El ID del producto debe tener 24 caracteres',

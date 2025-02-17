@@ -48,9 +48,6 @@ router.use(authorizeAccess('Administrador', 'Empleado'));
  *                   estadoPrecio:
  *                     type: boolean
  *                     example: true
- *                   producto:
- *                     type: string
- *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
  *       500:
  *         description: Error interno del servidor
  */
@@ -86,9 +83,6 @@ router.get('/', listarHistorialPrecios);
  *               estadoPrecio:
  *                 type: boolean
  *                 example: true
- *               producto:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
  *       201:
  *         description: Historial de precio creado exitosamente
@@ -163,9 +157,6 @@ router.get('/:id', obtenerHistorialPrecioPorId);
  *               estadoPrecio:
  *                 type: boolean
  *                 example: true
- *               producto:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
  *       200:
  *         description: Historial de precio actualizado exitosamente

@@ -6,8 +6,7 @@ const historialPrecioSeed = {
   precio: 19.99, // Precio del producto
   fechaInicio: new Date('2024-01-01'), // Fecha de inicio
   fechaFin: new Date('2024-12-31'), // Fecha de fin
-  estadoPrecio: true, // Estado del precio
-  producto: '60d21b4667d0d8992e610c85' // ID del producto (ajusta según tu base de datos)
+  estadoPrecio: true // Estado del precio
 };
 
 // Verificar si el registro ya existe

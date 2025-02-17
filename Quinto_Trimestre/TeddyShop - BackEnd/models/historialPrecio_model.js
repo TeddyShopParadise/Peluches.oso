@@ -4,8 +4,7 @@ const historialPrecioSchema = new mongoose.Schema({
   precio: {
     type: Number, 
     required: true,
-   set: v => parseFloat(v.toFixed(3)),
-   get: v => v.toFixed(3)
+  
   },
   fechaInicio: {
     type: Date,
@@ -22,7 +21,7 @@ const historialPrecioSchema = new mongoose.Schema({
   producto: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Producto', // Relación muchos a uno con Producto
-    required: true
+    required: false
   }
 }, {
   collection: 'Historial_Precio',

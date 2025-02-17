@@ -465,7 +465,7 @@ const eliminarProducto = async (id) => {
                         <Edit />
                       </IconButton>
                       <IconButton
-                        color="secondary"
+                        sx={{ color: "#d33" }}
                         onClick={() => eliminarProducto(producto._id)}
                       >
                         <Delete />

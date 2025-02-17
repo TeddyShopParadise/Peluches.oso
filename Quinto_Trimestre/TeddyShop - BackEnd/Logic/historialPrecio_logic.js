@@ -8,7 +8,7 @@ async function crearHistorialPrecio(body) {
         fechaInicio: body.fechaInicio,
         fechaFin: body.fechaFin,
         estadoPrecio: body.estadoPrecio,
-        producto: body.producto // Se espera un ObjectId de Producto
+       // producto: body.producto // Se espera un ObjectId de Producto
     });
 
     return await historialPrecio.save();
@@ -22,7 +22,7 @@ async function actualizarHistorialPrecio(id, body) {
             fechaInicio: body.fechaInicio,
             fechaFin: body.fechaFin,
             estadoPrecio: body.estadoPrecio,
-            producto: body.producto // Se espera un ObjectId de Producto
+            //producto: body.producto // Se espera un ObjectId de Producto
         }
     }, { new: true });
 
