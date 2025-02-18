@@ -31,10 +31,11 @@ import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
 
-  const getAuthToken = () => {
+  /*const getAuthToken = () => {
     const token = localStorage.getItem('authToken');
     return token;
-  };
+  };*/
+  
 
 const HistorialPrecios = () => {
   const [historialPrecios, setHistorialPrecios] = useState([]);
@@ -54,11 +55,12 @@ const HistorialPrecios = () => {
   // Obtener historial de precios
   const fetchHistorialPrecios = async () => {
     try {
-      const token = getAuthToken();
+      //const token = getAuthToken();
       const response = await fetch(`${apiUrl}/historialPrecio`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          //'Authorization': `Bearer ${token}`,
         },
       });
   
@@ -82,12 +84,12 @@ const HistorialPrecios = () => {
   const crearHistorialPrecio = async (e) => {
     e.preventDefault();
     try {
-	const token = getAuthToken();
+	//const token = getAuthToken();
       const response = await fetch(`${apiUrl}/historialPrecio`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, 
+          //'Authorization': `Bearer ${token}`, 
         },
         body: JSON.stringify(nuevoHistorial),
       });
@@ -108,7 +110,7 @@ const HistorialPrecios = () => {
   const actualizarHistorialPrecio = async (e) => {
     e.preventDefault();
     try {
-      const token = getAuthToken();
+      //const token = getAuthToken();
       const data = {
         precio: parseFloat(nuevoHistorial.precio),// Convertir a número
         fechaInicio: nuevoHistorial.fechaInicio,
@@ -120,7 +122,7 @@ const HistorialPrecios = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+         // 'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
@@ -154,10 +156,10 @@ const HistorialPrecios = () => {
 
     if (confirmDelete.isConfirmed) {
       try {
-        const token = getAuthToken();
+       // const token = getAuthToken();
         const response = await fetch(`${apiUrl}/historialPrecio/${id}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` },
+         // headers: { 'Authorization': `Bearer ${token}` },
         });
 
         if (response.ok) {
@@ -384,7 +386,7 @@ const HistorialPrecios = () => {
           <DialogTitle>Detalles del Historial de Precio</DialogTitle>
           <DialogContent>
             <DialogContentText>
-            <strong>Precio:</strong> {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(selectedHistorial.precio)}
+            
               <br />
               <strong>Fecha Inicio:</strong> {new Date(selectedHistorial.fechaInicio).toLocaleDateString()}
               <br />

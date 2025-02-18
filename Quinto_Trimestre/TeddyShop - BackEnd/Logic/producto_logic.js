@@ -5,6 +5,7 @@ const Categoria = require('../models/categoria_model');
 
 // Función asíncrona para crear un nuevo producto
 async function crearProducto(body) {
+    console.log('HistorialPrecios recibido:', body.historialPrecios);
     const producto = new Producto({
         estiloProducto: body.estiloProducto, 
         materialProducto: body.materialProducto,
@@ -21,7 +22,9 @@ async function crearProducto(body) {
 
 // Función asíncrona para actualizar un producto
 async function actualizarProducto(id, body) {
+    console.log('HistorialPrecios recibido:', body.historialPrecios);
     const producto = await Producto.findByIdAndUpdate(id, {
+        
         $set: {
             estiloProducto: body.estiloProducto,
             materialProducto: body.materialProducto,
@@ -43,6 +46,7 @@ async function listarProductos() {
         .populate('historialPrecios')
         .populate('catalogos')
         .populate('categorias');
+        
     return productos;
 }
 
