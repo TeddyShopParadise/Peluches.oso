@@ -9,6 +9,7 @@ const historialPrecioSeed = {
   estadoPrecio: true // Estado del precio
 };
 
+
 // Verificar si el registro ya existe
 HistorialPrecio.findOne({ producto: historialPrecioSeed.producto, fechaInicio: historialPrecioSeed.fechaInicio })
   .then(existingHistorial => {

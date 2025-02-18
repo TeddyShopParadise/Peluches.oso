@@ -28,37 +28,40 @@ import {
 import { Edit, Delete, Info } from '@mui/icons-material';
 import { getApiUrl } from '../../utils/apiConfig';
 
-
-
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
-
-
 
 const ProductoComponent = () => {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [catalogos, setCatalogos] = useState([]);
+  const [historialPrecios, setHistorialPrecios] = useState([]); 
   const [estiloProducto, setEstiloProducto] = useState('');
   const [materialProducto, setMaterialProducto] = useState('');
   const [disponibilidadProducto, setDisponibilidadProducto] = useState('');
   const [tamañoProducto, setTamañoProducto] = useState('');
   const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState([]);
   const [catalogosSeleccionados, setCatalogosSeleccionados] = useState([]);
+  const [preciosSeleccionados, setPreciosSeleccionados] = useState([]);
   const [editingId, setEditingId] = useState(null);
-  const [imagenProducto, setImagenProducto] = useState(null); // State para imagen
+  const [imagenProducto, setImagenProducto] = useState(null); 
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedProducto, setSelectedProducto] = useState(null);
 
+  /*const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+  */
 
   useEffect(() => {
     fetchProductos();
     fetchCategorias();
     fetchCatalogos();
+    fetchHistorialPrecios(); 
   }, []);
   
-
   const fetchProductos = async () => {
     try {
       const response = await fetch(`${apiUrl}/producto`);
@@ -66,12 +69,14 @@ const ProductoComponent = () => {
         throw new Error('Error al obtener los productos');
       }
       const data = await response.json();
+      console.log(data); // Verifica qué datos estás obteniendo
       setProductos(data);
     } catch (error) {
       console.error(error);
       alert(error.message);
     }
   };
+  
 
   const fetchCategorias = async () => {
     try {
@@ -98,6 +103,35 @@ const ProductoComponent = () => {
       alert(error.message);
     }
   };
+
+  const fetchHistorialPrecios = async () => {
+    try {
+        //const token = getAuthToken();
+        //console.log("Token enviado:", token); // 🔍 Verifica el token en la consola
+
+        const response = await fetch(`${apiUrl}/historialPrecio`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+               // "Authorization": `Bearer ${token}` // 🔥 Agregamos el token aquí
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al obtener los precios históricos');
+        }
+
+        const data = await response.json();
+        console.log(data); // Verifica los datos aquí
+
+        console.log("Historial de precios cargado:", data);
+
+        setHistorialPrecios(data);
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
+};
 
   // Función para manejar la carga de la imagen
   const handleImageChange = async (e) => {
@@ -131,12 +165,44 @@ const ProductoComponent = () => {
       alert('Por favor, completa todos los campos.');
       return;
     }
+  
+    console.log("Datos enviados al crear producto:", {
+      estiloProducto,
+      materialProducto,
+      disponibilidadProducto,
+      tamañoProducto,
+      categorias: categoriasSeleccionadas,
+      catalogos: catalogosSeleccionados,
+      imagen: imagenProducto,
+      historialPrecios: preciosSeleccionados
+    });
+    
+  
+    const productoData = {
+      estiloProducto,
+      materialProducto,
+      disponibilidadProducto,
+      tamañoProducto,
+      categorias: categoriasSeleccionadas,
+      catalogos: catalogosSeleccionados,
+      imagen: imagenProducto,
+      historialPrecios: preciosSeleccionados
+    };
+  
+    console.log('Datos a enviar:', productoData); // Aquí ya no hay problema
+    console.log('Precio seleccionado:', preciosSeleccionados);
+    console.log("Historial de precios en el producto:", productoData.historialPrecios);
+    console.log("ID de los precios seleccionados:", productoData.historialPrecios.map(precio => precio._id));
+   // console.log('Historial de precios del producto:', selectedProducto.historialPrecios);
 
+  
     try {
+      //const token = getAuthToken();
       const response = await fetch(`${apiUrl}/producto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          //"Authorization": `Bearer ${token}` // 🔥 Agregamos el token aquí
         },
         body: JSON.stringify({
           estiloProducto,
@@ -145,14 +211,15 @@ const ProductoComponent = () => {
           tamañoProducto,
           categorias: categoriasSeleccionadas,
           catalogos: catalogosSeleccionados,
-          imagen: imagenProducto, // Agregamos la imagen
+          historialPrecios: preciosSeleccionados, 
+          imagen: imagenProducto
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Error al crear el producto');
+        const errorText = await response.text(); // Lee el cuerpo de la respuesta
+        console.error('Error:', errorText);
       }
-
       fetchProductos();
       resetForm();
     } catch (error) {
@@ -166,12 +233,15 @@ const ProductoComponent = () => {
       alert('Por favor, completa todos los campos.');
       return;
     }
-
+   // console.log('HistorialPrecios recibido:', body.historialPrecios);
     try {
+     // const token = getAuthToken();
       const response = await fetch(`${apiUrl}/producto/${editingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+       //   "Authorization": `Bearer ${token}` // 🔥 Agregamos el token aquí
+       
         },
         body: JSON.stringify({
           estiloProducto,
@@ -181,6 +251,7 @@ const ProductoComponent = () => {
           imagen: imagenProducto, // Agregamos la imagengen también
           categorias: categoriasSeleccionadas || [],
           catalogos: catalogosSeleccionados,
+          historialPrecios: preciosSeleccionados || [] 
         }),
       });
       if (!response.ok) {
@@ -247,12 +318,10 @@ const eliminarProducto = async (id) => {
     setDisponibilidadProducto(producto.disponibilidadProducto || '');
     setTamañoProducto(producto.tamañoProducto || '');
     setImagenProducto(producto.imagen || '');
-    //los categorías y catálogos son arrays
     const categorias = Array.isArray(producto.categorias) ? producto.categorias : [];
     const catalogos = Array.isArray(producto.catalogos) ? producto.catalogos : [];
-    
-   
-  };
+    const historialPrecio = Array.isArray(producto.historialPrecio) ? producto.historialPrecio : [];
+};
   const resetForm = () => {
     setEstiloProducto('');
     setMaterialProducto('');
@@ -261,6 +330,7 @@ const eliminarProducto = async (id) => {
     setImagenProducto('');
     setCategoriasSeleccionadas([]);
     setCatalogosSeleccionados([]);
+    setPreciosSeleccionados([]);
     setEditingId(null);
   };
 
@@ -280,13 +350,6 @@ const eliminarProducto = async (id) => {
   const closeDetailsDialog = () => {
     setSelectedProducto(null);
   };
-
-  useEffect(() => {
-    
-    fetchProductos();
-    fetchCategorias();
-    fetchCatalogos();
-  }, []);
 
   return (
     <Box
@@ -312,8 +375,6 @@ const eliminarProducto = async (id) => {
           borderRadius: '30px',
           boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
           backdropFilter: 'blur(8px)',
-          
-
         }}
       > 
         {/* Formulario de creación o actualización de producto */}
@@ -338,7 +399,6 @@ const eliminarProducto = async (id) => {
           fullWidth
           margin="normal"
         />
-       
         <TextField
           value={tamañoProducto}
           onChange={(e) => setTamañoProducto(e.target.value)}
@@ -346,6 +406,7 @@ const eliminarProducto = async (id) => {
           fullWidth
           margin="normal"
         />
+
       <FormControl fullWidth margin="normal" required>
   <InputLabel>Categorías</InputLabel>
   <Select
@@ -401,6 +462,36 @@ const eliminarProducto = async (id) => {
     ))}
   </Select>
 </FormControl>
+
+<FormControl fullWidth margin="normal" required>
+  <InputLabel>Precio Histórico</InputLabel>
+  <Select
+    multiple
+    value={preciosSeleccionados}
+    onChange={(e) => { setPreciosSeleccionados(e.target.value); }}
+    label="Precio Histórico"
+    renderValue={(selected) => 
+      selected.map(id => {
+        const precio = historialPrecios.find(p => p._id === id);
+        return precio ? new Intl.NumberFormat('es-CO', { 
+          style: 'currency', 
+          currency: 'COP' 
+        }).format(precio.precio) : "";
+      }).join(", ")
+    }
+  >
+    {historialPrecios.map((precio) => (
+      <MenuItem key={precio._id} value={precio._id}>
+        {new Intl.NumberFormat('es-CO', { 
+          style: 'currency', 
+          currency: 'COP' 
+        }).format(precio.precio)}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+
+
         {/* Campo para subir imagen */}
         <TextField
           type="file"
@@ -409,6 +500,7 @@ const eliminarProducto = async (id) => {
           fullWidth
           margin="normal"
           label="Imagen del Producto"
+          InputLabelProps={{ shrink: true }}
         />
         {imagenProducto && (
           <img src={imagenProducto} alt="Imagen del Producto" width="180 " height="auto"  style={{  objectFit: "cover", 
@@ -447,18 +539,19 @@ const eliminarProducto = async (id) => {
                 <TableCell>Material</TableCell>
                 <TableCell>Disponibilidad</TableCell>
                 <TableCell>Acciones</TableCell>
+             
               </TableRow>
             </TableHead>
             <TableBody>
               {productos
                 .slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage)
                 .map((producto) => (
-                  <TableRow key={producto._id}>
-                    <TableCell>{producto.tamañoProducto}</TableCell>
-                    <TableCell>{producto.materialProducto}</TableCell>
-                    <TableCell>{producto.disponibilidadProducto}</TableCell>
-                    <TableCell>
-                      <IconButton
+                    <TableRow key={producto._id}>
+                      <TableCell>{producto.tamañoProducto}</TableCell>
+                      <TableCell>{producto.materialProducto}</TableCell>
+                      <TableCell>{producto.disponibilidadProducto}</TableCell>
+                      <TableCell>
+                        <IconButton
                         color="primary"
                         onClick={() => editarProducto(producto)}
                       >
@@ -501,11 +594,37 @@ const eliminarProducto = async (id) => {
             {selectedProducto && (
               <Box>
                 <DialogContentText>Descripción: {selectedProducto.estiloProducto}</DialogContentText>
+            
+                <strong>Precio:</strong>
+{selectedProducto.historialPrecios && selectedProducto.historialPrecios.length > 0 ? (
+  selectedProducto.historialPrecios.map((precioId, index) => {
+    const precio = historialPrecios.find(p => p._id === precioId);
+    return (
+      <div key={index}>
+        {precio ? (
+          new Intl.NumberFormat('es-CO', { 
+            style: 'currency', 
+            currency: 'COP' 
+          }).format(precio.precio)
+        ) : (
+          <span>Precio no disponible</span>
+        )}
+      </div>
+    );
+  })
+) : (
+  <div>No hay precios históricos disponibles.</div>
+)}
+  
+             
+
+
                 {selectedProducto.imagen && (
                   <DialogContentText>
                     <img src={selectedProducto.imagen} alt="Imagen del Producto" width="190" height="300"  style={{ 
                     objectFit: "cover",
                     display: "block",  
+
                     borderRadius: "12px", 
                     border: "2px solid rgba(137, 12, 227, 0.8)", 
                     background: "rgba(255, 255, 255, 0.1)", 
@@ -514,10 +633,14 @@ const eliminarProducto = async (id) => {
             }}  
                     />
                   </DialogContentText>
+
+                  
                 )}
               </Box>
             )}
           </DialogContent>
+
+          
           <DialogActions>
             <Button onClick={closeDetailsDialog}>Cerrar</Button>
           </DialogActions>
