@@ -184,7 +184,7 @@ const ProductoUsuario = () => {
 
   
 
-  const handleSubmitPedido = () => {
+  const handleSubmitPedido = async () => {
 
     const ultimoPrecio = (() => {
       if (!productoSeleccionado || !productoSeleccionado.historialPrecios || productoSeleccionado.historialPrecios.length === 0) {
@@ -200,6 +200,9 @@ const ProductoUsuario = () => {
     
       return ultimoRegistro ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio) : "No disponible";
     })();
+
+
+
     const mensaje = `¡Hola! Me gustaría realizar el siguiente pedido:  
 
     📌 **Imagen del Producto:**  
@@ -228,7 +231,53 @@ const ProductoUsuario = () => {
     const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
 
     window.open(urlWhatsApp, "_blank");
-    setSnackbarMessage('Pedido realizado exitosamente');
+
+    //Crear el pedido automaticamente
+    try {
+      const pedidoCompleto = {
+        tamañoOso: productoSeleccionado?.tamañoProducto || "Sin tamaño",
+        nombreComprador: pedido.nombreComprador || "Sin nombre",
+        apellidoComprador: pedido.apellidoComprador || "Sin apellido",
+        numeroComprador: pedido.numeroComprador || "0000000000",
+        nombreAgendador: pedido.nombreAgendador || "Sin nombre",
+        apellidoAgendador: pedido.apellidoAgendador || "Sin apellido",
+        numeroAgendador: pedido.numeroAgendador || "0000000000",
+        localidad: pedido.localidad || "Sin localidad",
+        direccion: pedido.direccion || "Sin dirección",
+        barrio: pedido.barrio || "Sin barrio",
+        cliente: "123456789123456789123456",
+        /*detallesPedido: [{
+          producto: productoSeleccionado?._id,
+          cantidad: 1,
+          precio: ultimoPrecio.numeric || 0
+        }],*/
+        facturas: [],
+        vendedores: []
+      };
+  
+      // Verificar datos antes de enviar
+      console.log("Enviando pedido:", JSON.stringify(pedidoCompleto, null, 2));
+  
+      const response = await fetch(`${apiUrl}/pedido`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pedidoCompleto)
+      });
+  
+      const responseData = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${JSON.stringify(responseData)}`);
+      }
+  
+      console.log('Pedido guardado:', responseData);
+      setSnackbarMessage('Pedido enviado y guardado exitosamente');
+      
+    } catch (error) {
+      console.error('Error completo:', error);
+      setSnackbarMessage(error.message || 'Error al guardar el pedido');
+    }
+
     setOpenSnackbar(true);
     handleCloseCarritoDialog();
   };

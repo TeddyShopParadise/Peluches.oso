@@ -166,6 +166,36 @@ const ProductoComponent = () => {
       return;
     }
   
+    console.log("Datos enviados al crear producto:", {
+      estiloProducto,
+      materialProducto,
+      disponibilidadProducto,
+      tamañoProducto,
+      categorias: categoriasSeleccionadas,
+      catalogos: catalogosSeleccionados,
+      imagen: imagenProducto,
+      historialPrecios: preciosSeleccionados
+    });
+    
+  
+    const productoData = {
+      estiloProducto,
+      materialProducto,
+      disponibilidadProducto,
+      tamañoProducto,
+      categorias: categoriasSeleccionadas,
+      catalogos: catalogosSeleccionados,
+      imagen: imagenProducto,
+      historialPrecios: preciosSeleccionados
+    };
+  
+    console.log('Datos a enviar:', productoData); // Aquí ya no hay problema
+    console.log('Precio seleccionado:', preciosSeleccionados);
+    console.log("Historial de precios en el producto:", productoData.historialPrecios);
+    console.log("ID de los precios seleccionados:", productoData.historialPrecios.map(precio => precio._id));
+   // console.log('Historial de precios del producto:', selectedProducto.historialPrecios);
+
+  
     try {
       //const token = getAuthToken();
       const response = await fetch(`${apiUrl}/producto`, {
@@ -585,6 +615,10 @@ const eliminarProducto = async (id) => {
 ) : (
   <div>No hay precios históricos disponibles.</div>
 )}
+  
+             
+
+
                 {selectedProducto.imagen && (
                   <DialogContentText>
                     <img src={selectedProducto.imagen} alt="Imagen del Producto" width="190" height="300"  style={{ 
@@ -599,6 +633,8 @@ const eliminarProducto = async (id) => {
             }}  
                     />
                   </DialogContentText>
+
+                  
                 )}
               </Box>
             )}
