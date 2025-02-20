@@ -149,6 +149,7 @@ export default function Navbar() {
                   open={Boolean(anchorElUsuarios)}
                   onClose={() => setAnchorElUsuarios(null)}
                 >
+                  <MenuItem component={LinkBehavior} to="/usuarios" onClick={() => setAnchorElUsuarios(null)}>Usuarios</MenuItem>
                   <MenuItem component={LinkBehavior} to="/vendedores" onClick={() => setAnchorElUsuarios(null)}>Vendedores</MenuItem>
                   <MenuItem component={LinkBehavior} to="/empleado" onClick={() => setAnchorElUsuarios(null)}>Empleados</MenuItem>
                   <MenuItem component={LinkBehavior} to="/cliente" onClick={() => setAnchorElUsuarios(null)}>Clientes</MenuItem>

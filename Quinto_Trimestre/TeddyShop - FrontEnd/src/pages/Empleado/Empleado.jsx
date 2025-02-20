@@ -201,6 +201,7 @@ const Empleado = () => {
   }, []);
 
   return (
+    
     <Container>
       <Box>
         <h2>{editingId ? 'Editar' : 'Crear'} Empleado</h2>
