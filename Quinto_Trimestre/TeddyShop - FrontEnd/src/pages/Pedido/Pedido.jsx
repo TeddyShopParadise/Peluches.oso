@@ -59,21 +59,24 @@ const Pedido = () => {
   const [sortBy, setSortBy] = useState('nombreComprador');
   const [sortOrder, setSortOrder] = useState('asc');
 
+  
+  useEffect(() => {
+    fetchPedidos();
+  }, []);
+
   const fetchPedidos = async () => {
     try {
       const response = await fetch(`${apiUrl}/pedido`);
+      if (!response.ok) throw new Error('Error al obtener los pedidos');
       const data = await response.json();
-      setPedidos(data);
+      setPedidos(data); 
     } catch (error) {
       console.error('Error fetching pedidos:', error);
+      setPedidos([]);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchPedidos();
-  }, []);
 
   const crearPedido = async () => {
     try {
@@ -107,6 +110,7 @@ const Pedido = () => {
         facturas: [],
         vendedores: []
       });
+      
     } catch (error) {
       console.error('Error creando pedido:', error);
       setSnackbarMessage('Error al crear el pedido: ' + error.message);
@@ -115,34 +119,39 @@ const Pedido = () => {
   };
 
   const actualizarPedido = async () => {
-    if (!pedidoEdicion) return;
+  if (!pedidoEdicion) return;
 
-    const pedidoActualizar = {
-      ...pedidoEdicion
-    };
+  const { _id, ...pedidoActualizar } = pedidoEdicion;
+  console.log("Datos enviados para actualizar:", pedidoActualizar); // Debug
 
-    try {
-      const response = await fetch(`${apiUrl}/pedido/${pedidoEdicion._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pedidoActualizar),
-      });
+  try {
+    const response = await fetch(`${apiUrl}/pedido/${_id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pedidoActualizar),
+    });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${response.statusText}`);
-      }
-
-      const updatedPedido = await response.json();
-      setPedidos(pedidos.map((pedido) => (pedido._id === updatedPedido._id ? updatedPedido : pedido)));
-      setSnackbarMessage('Pedido actualizado con éxito');
-      setOpenSnackbar(true);
-      setPedidoEdicion(null);
-    } catch (error) {
-      console.error('Error actualizando el pedido:', error);
-      setSnackbarMessage('Error al actualizar el pedido: ' + error.message);
-      setOpenSnackbar(true);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error de validación en el servidor:", errorData);
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
-  };
+
+    const updatedPedido = await response.json();
+    setPedidos(
+      pedidos.map((pedido) =>
+        pedido._id === updatedPedido._id ? updatedPedido : pedido
+      )
+    );
+    setSnackbarMessage('Pedido actualizado con éxito');
+    setOpenSnackbar(true);
+    setPedidoEdicion(null);
+  } catch (error) {
+    console.error('Error actualizando el pedido:', error);
+    setSnackbarMessage('Error al actualizar el pedido: ' + error.message);
+    setOpenSnackbar(true);
+  }
+};
 
   const eliminarPedido = async () => {
     if (!currentId) return;
@@ -163,9 +172,15 @@ const Pedido = () => {
     }
   };
 
+    const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNuevoPedido((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+  
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -449,6 +464,7 @@ const Pedido = () => {
                   <strong>Apellido del Agendador:</strong> {selectedPedido.apellidoAgendador} <br />
                   <strong>Numero del Agendador:</strong> {selectedPedido.numeroAgendador} <br /> <br />
                   <strong>Localidad:</strong> {selectedPedido.localidad} <br />
+                  <strong>Dirección:</strong> {selectedPedido.direccion} <br />
                   <strong>Barrio:</strong> {selectedPedido.barrio } <br />
                   <strong>Cliente:</strong> {selectedPedido.cliente} <br />
                   <strong>Detalles del Pedido:</strong> {selectedPedido.detallesPedido } <br />
