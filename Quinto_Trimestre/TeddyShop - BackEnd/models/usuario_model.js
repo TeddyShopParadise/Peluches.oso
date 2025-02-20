@@ -19,18 +19,14 @@ const usuarioSchema = new mongoose.Schema({
     type: String, // NVARCHAR en SQL
     required: true
   },
-  empleado: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Empleado', // Referencia a la colección Empleado
-    required: true
-  },
   estado: {
     type: Boolean, // BIT en SQL
-    required: true
+    required: false
   },
   roles: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Roles' // Referencia a la colección Roles
+    ref: 'Roles',
+    default: [] // Evita errores si no se envían roles
   }]
 }, {
   collection: 'Usuario',

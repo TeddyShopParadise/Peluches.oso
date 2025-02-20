@@ -10,7 +10,6 @@ const usuarioSeed = [
     telefono: '3101234567', // Número de teléfono
     contraseña: 'contraseñaSegura123', // Contraseña (asegúrate de encriptarla en un entorno real)
     username: 'Administrador', // Nombre de usuario
-    empleado: '64df1aa21e2c3d5f7a8b1e4c', // ID del empleado (ajusta según tu base de datos)
     estado: true, // Estado del usuario
     roles: '64df1a8f1c2b4e1d9a2b3c4f' // ID del rol
   },
@@ -18,9 +17,8 @@ const usuarioSeed = [
     _id: new mongoose.Types.ObjectId('64df1b194d3e2c5a7f1b9a8e'),
     email: 'Empleado@example.com', // Reemplaza con un email único
     telefono: '3204875521', // Número de teléfono
-    contraseña: 'contraseñaSegura123', // Contraseña (asegúrate de encriptarla en un entorno real)
-    username: 'Empleado', // Nombre de usuario
-    empleado: '64df1ab31f5d4b6e9c7e2d1a', // ID del empleado (ajusta según tu base de datos)
+    contraseña: 'contraseñaSegura123',
+    username: 'Empleado', // Contraseña (asegúrate de encriptarla en un entorno real)
     estado: true, // Estado del usuario
     roles: '64df1a9e1b7d4a5e8c6d9e2b' // ID del rol
   }

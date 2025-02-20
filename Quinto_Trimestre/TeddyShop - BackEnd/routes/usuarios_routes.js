@@ -77,9 +77,6 @@ router.get('/', listarUsuarios);
  *               username:
  *                 type: string
  *                 example: "usuario1"
- *               empleado:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7d"
  *               estado:
  *                 type: boolean
  *                 example: true
@@ -132,9 +129,6 @@ router.post('/', crearUsuario);
  *               username:
  *                 type: string
  *                 example: "usuario1"
- *               empleado:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7d"
  *               estado:
  *                 type: boolean
  *                 example: true

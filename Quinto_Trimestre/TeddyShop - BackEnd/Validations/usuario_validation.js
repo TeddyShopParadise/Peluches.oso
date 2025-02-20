@@ -24,7 +24,7 @@ const usuarioSchemaValidation = Joi.object({
         .min(8)
         .max(100)
         .required()
-        .pattern(/^[A-Za-z0-9@#\-_$%^&+=!?]*$/)
+        .pattern(/^[\x20-\x7E]*$/)
         .messages({
             'string.base': 'La contraseña debe ser un texto',
             'string.empty': 'La contraseña no puede estar vacía',
@@ -46,17 +46,8 @@ const usuarioSchemaValidation = Joi.object({
             'string.pattern.base': 'El nombre de usuario solo puede contener letras, números y guiones bajos',
             'any.required': 'El nombre de usuario es un campo requerido'
         }),
-    empleado: Joi.string()
-        .length(24)
-        .hex()
-        .required()
-        .messages({
-            'string.base': 'El empleado debe ser un ID válido',
-            'string.length': 'El ID del empleado debe tener 24 caracteres',
-            'any.required': 'El empleado es un campo requerido'
-        }),
     estado: Joi.boolean()
-        .required()
+        .optional()
         .messages({
             'boolean.base': 'El estado debe ser un valor booleano',
             'any.required': 'El estado es un campo requerido'

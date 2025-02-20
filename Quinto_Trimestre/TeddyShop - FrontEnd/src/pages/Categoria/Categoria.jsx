@@ -259,7 +259,6 @@ const CategoriaComponent = () => {
               }}
             />
 
-
             <Box display="flex" justifyContent="space-between" mt={2}>
               <Button
                 type="submit"

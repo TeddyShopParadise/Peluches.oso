@@ -29,11 +29,11 @@ const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
 
 const Usuarios = () => {
+  // Estados
   const [usuarios, setUsuarios] = useState([]);
   const [filteredUsuarios, setFilteredUsuarios] = useState([]);
-  const [usuario, setUsuario] = useState({ email: '', telefono: '', contraseña: '', username: '', empleado: '', roles: [], activo: true });
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentId, setCurrentId] = useState(null);
+  const [usuario, setUsuario] = useState({ email: '', telefono: '', contraseña: '', username: '', roles: [], estado: true });
+  const [editingId, setEditingId] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -45,6 +45,11 @@ const Usuarios = () => {
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [selectedUsuario, setSelectedUsuario] = useState(null);
 
+  useEffect(() => {
+    fetchUsuarios();
+  }, []);
+
+  // Funciones API
   const fetchUsuarios = async () => {
     try {
       const response = await fetch(`${apiUrl}/usuario`);
@@ -53,80 +58,108 @@ const Usuarios = () => {
       setFilteredUsuarios(data);
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
-      setSnackbarMessage("Error al obtener los usuarios");
-      setOpenSnackbar(true);
     }
   };
 
-  useEffect(() => {
-    fetchUsuarios();
-  }, []);
-
-  const handleInputChange = (e) => {
-    setUsuario({ ...usuario, [e.target.name]: e.target.value });
-  };
-
-  const handleToggleActivo = (event) => {
-    setUsuario({ ...usuario, activo: event.target.checked });
-  };
-
-  const handleSaveUsuario = async () => {
-    const url = isEditing ? `${apiUrl}/usuario/${currentId}` : `${apiUrl}/usuario`;
-    const method = isEditing ? 'PUT' : 'POST';
+  const crearUsuario = async () => {
+    if (!usuario.email || !usuario.telefono || !usuario.contraseña || !usuario.username) {
+      alert('Por favor, completa todos los campos del usuario.');
+      return;
+    }
 
     try {
-      const response = await fetch(url, {
-        method,
+      const response = await fetch(`${apiUrl}/usuario`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(usuario),
       });
 
-      if (response.ok) {
-        fetchUsuarios();
-        setUsuario({ email: '', telefono: '', contraseña: '', username: '', empleado: '', roles: [], activo: true });
-        setIsEditing(false);
-        setCurrentId(null);
-        setSnackbarMessage(isEditing ? "Usuario actualizado" : "Usuario creado");
-        setOpenSnackbar(true);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error:', errorText);
+        throw new Error('Error al crear el usuario');
       }
-    } catch (error) {
-      console.error(isEditing ? 'Error updating usuario:' : 'Error creating usuario:', error);
-      setSnackbarMessage("Error al guardar el usuario");
+      
+      fetchUsuarios();
+      resetUsuarioForm();
+      setSnackbarMessage("Usuario creado");
       setOpenSnackbar(true);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
     }
-  };
+};
 
-  const handleEditClick = (usuario) => {
-    setUsuario({ ...usuario });
-    setIsEditing(true);
-    setCurrentId(usuario._id);
-  };
+const actualizarUsuario = async () => {
+    if (!usuario.email || !usuario.telefono || !usuario.contraseña || !usuario.username) {
+      alert('Por favor, completa todos los campos del usuario.');
+      return;
+    }
 
-  const handleDeleteClick = (id) => {
-    setCurrentId(id);
-    setOpenDeleteDialog(true);
-  };
-
-  const handleDeleteUsuario = async () => {
     try {
-      const response = await fetch(`${apiUrl}/usuario/${currentId}`, { method: 'DELETE' });
+      const response = await fetch(`${apiUrl}/usuario/${editingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: usuario.email,
+          telefono: usuario.telefono,
+          contraseña: usuario.contraseña,
+          username: usuario.username,
+          estado: usuario.estado
+        })
+      });
 
-      if (response.ok) {
-        fetchUsuarios();
-        setOpenDeleteDialog(false);
-        setSnackbarMessage("Usuario eliminado");
-        setOpenSnackbar(true);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error:', errorText);
+        throw new Error('Error al actualizar el usuario');
       }
+      
+      fetchUsuarios();
+      resetUsuarioForm();
+      setSnackbarMessage("Usuario actualizado");
+      setOpenSnackbar(true);
     } catch (error) {
-      console.error('Error deleting usuario:', error);
-      setSnackbarMessage("Error al eliminar el usuario");
+      console.error(error);
+      alert(error.message);
+    }
+};
+
+const eliminarUsuario = async (id) => {
+  try {
+    const response = await fetch(`${apiUrl}/usuario/${id}`, { method: 'DELETE' });
+
+    if (response.ok) {
+      fetchUsuarios();
+      setOpenDeleteDialog(false);
+      setSnackbarMessage("Usuario eliminado");
       setOpenSnackbar(true);
     }
-  };
+  } catch (error) {
+    console.error('Error deleting usuario:', error);
+    setSnackbarMessage("Error al eliminar el usuario");
+    setOpenSnackbar(true);
+  }
+};
 
-  const handleCloseDeleteDialog = () => {
+// Funciones de ayuda
+const resetUsuarioForm = () => {
+  setUsuario({ email: '', telefono: '', contraseña: '', username: '', estado: true });
+  setEditingId(null);
+};
+//setUsuario({ email: '', telefono: '', contraseña: '', username: '', roles: [], estado: true });
+const mostrarMensaje = (mensaje) => {
+  setSnackbarMessage(mensaje);
+ setOpenSnackbar(true);
+};
+ 
+   // Manejo de eventos
+   const handleInputChange = (e) => setUsuario({ ...usuario, [e.target.name]: e.target.value });
+   const handleToggleActivo = (e) => setUsuario({ ...usuario, estado: e.target.checked });
+   const handleEditClick = (usuario) => { setUsuario({ ...usuario }); setEditingId(usuario._id); };
+   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    setCurrentId(null);
+    setEditingId(null);
   };
 
   const handleCloseSnackbar = () => {
@@ -153,7 +186,7 @@ const Usuarios = () => {
     setPage(0);
   };
 
-  const handleSearchChange = (event) => {
+   const handleSearchChange = (event) => {
     const term = event.target.value;
     setSearchTerm(term);
     setFilteredUsuarios(
@@ -177,27 +210,50 @@ const Usuarios = () => {
   };
 
   return (
-    <Box sx={{ height: { xs: "auto", md: "130vh" }, width: "100vw", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", margin: 0, padding: 0, py: 2 }}>
-      <Box sx={{ width: "90%", maxWidth: "100%", padding: { xs: "20px", md: "50px" }, background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5), rgba(150, 50, 150, 0.9), rgba(255, 182, 193, 0.7))", borderRadius: "30px", boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)", backdropFilter: "blur(8px)", backgroundSize: "200% 200%", animation: "shimmer 10s infinite linear" }}>
+    <Box sx={{ width: "100vw", display: "flex", justifyContent: "center", py: 2 }}>
+      <Box sx={{ width: "90%", padding: "50px", background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5))", borderRadius: "30px", boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)" }}>
         <Container>
           <h1>Gestión de Usuarios</h1>
+
+          {/* Formulario de usuario */}
           <form noValidate autoComplete="off">
             <TextField label="Email" name="email" value={usuario.email} onChange={handleInputChange} fullWidth margin="normal" required />
             <TextField label="Teléfono" name="telefono" value={usuario.telefono} onChange={handleInputChange} fullWidth margin="normal" />
             <TextField label="Contraseña" name="contraseña" value={usuario.contraseña} onChange={handleInputChange} fullWidth margin="normal" type="password" required />
             <TextField label="Nombre de usuario" name="username" value={usuario.username} onChange={handleInputChange} fullWidth margin="normal" required />
-            <Box display="flex" alignItems="center" marginTop={2}>
-              <Switch checked={usuario.activo} onChange={handleToggleActivo} />
-              <span>{usuario.activo ? "Activo" : "Inactivo"}</span>
+            <Box display="flex" alignItems="center" mt={2}>
+              <Switch checked={usuario.estado} onChange={handleToggleActivo} />
+              <span>{usuario.estado ? "Activo" : "Inactivo"}</span>
             </Box>
-            <Button variant="contained" onClick={handleSaveUsuario} style={{ marginTop: 16 }}>{isEditing ? "Actualizar Usuario" : "Crear Usuario"}</Button>
           </form>
+            <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2  }}>
+             {!editingId ? (
+           <Button
+           variant="contained"
+           color="primary"
+           onClick={crearUsuario}
+         >
+          Crear Usuario
+          </Button>
+       ) : (
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={actualizarUsuario}
+        >
+          Actualizar Usuario
+        </Button>
+      )}
+          <Button variant="outlined" color="secondary" onClick={resetUsuarioForm}>
+            Cancelar
+          </Button>
+        </Box>
 
           <Box display="flex" justifyContent="space-between" alignItems="center" mt={4}>
             <h2>Usuarios</h2>
             <TextField label="Buscar por nombre de usuario" variant="outlined" size="small" value={searchTerm} onChange={handleSearchChange} style={{ width: 250 }} />
           </Box>
-
+          
           <TableContainer component={Paper} style={{ marginTop: 20, maxHeight: 500, overflowY: "auto" }}>
             <Table stickyHeader>
               <TableHead>
@@ -216,11 +272,11 @@ const Usuarios = () => {
               </TableHead>
               <TableBody>
                 {filteredUsuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((usuario) => (
-                  <TableRow key={usuario._id}>
+                  <TableRow key={usuario.id}>
                     <TableCell>{usuario.username}</TableCell>
                     <TableCell>{usuario.telefono}</TableCell>
                     <TableCell>{usuario.email}</TableCell>
-                    <TableCell>{usuario.activo ? "Activo" : "Inactivo"}</TableCell>
+                    <TableCell>{usuario.estado ? "Activo" : "Inactivo"}</TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleOpenDetailDialog(usuario)}>
                         <Info />
@@ -228,7 +284,7 @@ const Usuarios = () => {
                       <IconButton onClick={() => handleEditClick(usuario)}>
                         <Edit />
                       </IconButton>
-                      <IconButton onClick={() => handleDeleteClick(usuario._id)}>
+                      <IconButton onClick={() => eliminarUsuario(usuario._id)}>
                         <Delete />
                       </IconButton>
                     </TableCell>
@@ -247,7 +303,6 @@ const Usuarios = () => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-
           <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
             <DialogTitle>Eliminar Usuario</DialogTitle>
             <DialogContent>
@@ -257,7 +312,7 @@ const Usuarios = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseDeleteDialog}>Cancelar</Button>
-              <Button onClick={handleDeleteUsuario} color="error">Eliminar</Button>
+              <Button onClick={eliminarUsuario} color="error">Eliminar</Button>
             </DialogActions>
           </Dialog>
 
@@ -268,7 +323,7 @@ const Usuarios = () => {
                 <strong>Nombre de usuario:</strong> {selectedUsuario?.username}<br />
                 <strong>Email:</strong> {selectedUsuario?.email}<br />
                 <strong>Teléfono:</strong> {selectedUsuario?.telefono}<br />
-                <strong>Estado:</strong> {selectedUsuario?.activo ? "Activo" : "Inactivo"}<br />
+                <strong>Estado:</strong> {selectedUsuario?.estado ? "Activo" : "Inactivo"}<br />
                 {/* Puedes añadir más detalles aquí si es necesario */}
               </DialogContentText>
             </DialogContent>
