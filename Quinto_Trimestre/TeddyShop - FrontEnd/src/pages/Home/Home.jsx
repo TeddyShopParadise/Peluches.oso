@@ -1,16 +1,51 @@
-import React, { useState } from "react";
-import { Grid, Container, Typography, Box, Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Grid, Container, Typography, Box, Button, IconButton } from "@mui/material";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import logoTeddyShop from "../../assets/img/LogoTeddyShop.jpg";
 import FaqSection from "../../assets/ts/FaqSection";
 import "./Home.css";
 
 const Home = () => {
+  // Estado para el carrusel
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselImages = [
+    {
+      id: "Sukuna",
+      url: "https://i.imgur.com/Je6A2XM.jpeg"
+    },
+    {
+      id: "Toji",
+      url: "https://i.imgur.com/o2l4WPS.jpeg"
+    },
+    {
+      id: "Yuta",
+      url: "https://i.imgur.com/PexTLvB.jpeg"
+    }
+  ];
 
-  const [selectedImage, setSelectedImage] = useState("Sukuna");
-
-  const handleChange = (e) => {
-    setSelectedImage(e.target.value);
+  // Función para ir a la siguiente imagen
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === carouselImages.length - 1 ? 0 : prevIndex + 1
+    );
   };
+
+  // Función para ir a la imagen anterior
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? carouselImages.length - 1 : prevIndex - 1
+    );
+  };
+
+  // Auto-rotación del carrusel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
 
   //PRODUCTOS MAS VENDIDOS
   const bestSellers = [
@@ -50,112 +85,132 @@ const Home = () => {
 
   return (
     <Container disableGutters sx={{ maxWidth: "100vw", padding: 0, margin: 0 }}>
-    <div className="background-image"></div>
+      <div className="background-image"></div>
 
-     {/* Sección de Carrusel */}
-      <Box
+      {/* Sección de Carrusel */}
+      <Box className="BoxInicial">
+        <Box className="Box"
           sx={{
-            height: { xs: "auto", md: "auto" },
-            width: "100vw",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            margin: 0,
-            padding: 0,
-            py: 2, // Ajuste de padding en pantallas pequeñas
+            width: "90%",
+            maxWidth: "1200px",
+            padding: { xs: "10px", sm: "20px", md: "30px" },
+            borderRadius: "30px",
+            position: "relative",
+            overflow: "hidden",
           }}
-      >
-      <Box
-            sx={{
-              width: "90%",
-              maxWidth: "100%",
-              padding: { xs: "20px", md: "50px" },
-              background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5), rgba(150, 50, 150, 0.9), rgba(255, 182, 193, 0.7))",
-              borderRadius: "30px",
-              boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)",
-              backdropFilter: "blur(8px)",
-              backgroundSize: "200% 200%",
-              animation: "shimmer 10s infinite linear",
-            }}
         >
-        <div>
-        <fieldset style={{ width: "125%", height: "500px", borderRadius: "30px", border: "none"}}>
-          <label
-            style={{
-              backgroundImage: `url('https://i.imgur.com/Je6A2XM.jpeg')`,
-            }}
-          >
-            <input
-              type="radio"
-              name="images"
-              value="Sukuna"
-              checked={selectedImage === "Sukuna"}
-              onChange={handleChange}
-              style={{ display: "none" }}//Ocultar recuadro de la imagen
-            />
-          </label>
-          <label
-            style={{
-              backgroundImage: `url('https://i.imgur.com/o2l4WPS.jpeg')`,
-            }}
-          >
-            <input
-              type="radio"
-              name="images"
-              value="Toji"
-              checked={selectedImage === "Toji"}
-              onChange={handleChange}
-              style={{ display: "none" }}//Ocultar recuadro de la imagen
-            />
-          </label>
-          <label
-            style={{
-              backgroundImage: `url('https://i.imgur.com/PexTLvB.jpeg')`,
-            }}
-          >
-            <input
-              type="radio"
-              name="images"
-              value="Yuta"
-              checked={selectedImage === "Yuta"}
-              onChange={handleChange}
-              style={{ display: "none" }}//Ocultar recuadro de la imagen
-            />
-          </label>
-        </fieldset>
-      </div>
+          <div className="carousel-container" style={{
+            position: "relative",
+            height: { xs: "300px", sm: "400px", md: "500px" },
+            borderRadius: "20px",
+            overflow: "hidden"
+          }}>
+            {/* Imágenes del carrusel */}
+            <div className="carousel-track" style={{
+              display: "flex",
+              transition: "transform 0.5s ease",
+              height: "100%",
+              transform: `translateX(-${currentIndex * 100}%)`
+            }}>
+              {carouselImages.map((image, index) => (
+                <div
+                  key={image.id}
+                  className="carousel-slide"
+                  style={{
+                    minWidth: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "rgba(0,0,0,0.03)",
+                    padding: "20px",
+                    boxSizing: "border-box"
+                  }}
+                >
+                  <img 
+                    src={image.url}
+                    alt={image.id}
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                      borderRadius: "10px"
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            
+            {/* Botones de navegación */}
+            <IconButton 
+              onClick={prevSlide}
+              sx={{
+                position: "absolute",
+                left: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                backgroundColor: "rgba(255,255,255,0.3)",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.5)" },
+                zIndex: 2
+              }}
+            >
+              <ArrowBackIosNewIcon />
+            </IconButton>
+            
+            <IconButton 
+              onClick={nextSlide}
+              sx={{
+                position: "absolute",
+                right: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                backgroundColor: "rgba(255,255,255,0.3)",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.5)" },
+                zIndex: 2
+              }}
+            >
+              <ArrowForwardIosIcon />
+            </IconButton>
+            
+            {/* Indicadores */}
+            <div style={{
+              position: "absolute",
+              bottom: "20px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              gap: "10px",
+              zIndex: 2
+            }}>
+              {carouselImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  style={{
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "50%",
+                    border: "none",
+                    background: index === currentIndex ? "#fff" : "rgba(255,255,255,0.5)",
+                    cursor: "pointer"
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </Box>
       </Box>
-      </Box>
-
 
 
       {/* Sección de bienvenida */}
-      <Box
-        sx={{
-          height: { xs: "auto", md: "auto" },
-          width: "100vw",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          margin: 0,
-          padding: 0,
-          py: 2, // Ajuste de padding en pantallas pequeñas
-        }}
-      >
-      <Box
+      <Box className="BoxInicial">
+      <Box className="Box"
           sx={{
             width: "98%",
             maxWidth: "600px",
             padding: { xs: "20px", md: "50px" },
-            background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5), rgba(150, 50, 150, 0.9), rgba(255, 182, 193, 0.7))",
             borderRadius: "30px",
             textAlign: "center",
-            backdropFilter: "blur(8px)",
-            boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)",
-            backgroundSize: "200% 200%",
-            animation: "shimmer 2s infinite linear",
           }}
       >
           <img
@@ -205,28 +260,13 @@ const Home = () => {
 
 
       {/* Sección de Catalogos */}
-      <Box
-        sx={{
-          minHeight: { xs: "auto", md: "auto" },
-          width: "100vw",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          py: 8,
-          position: "relative",
-        }}
-      >
-      <Box
+      <Box className="BoxInicial">
+      <Box className="Box"
           sx={{
             width: "90%",
             maxWidth: "1200px",
             padding: { xs: "20px", md: "50px" },
-            background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5), rgba(150, 50, 150, 0.9), rgba(255, 182, 193, 0.7))",
             borderRadius: "30px",
-            backdropFilter: "blur(8px)",
-            boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)",
-            backgroundSize: "200% 200%",
-            animation: "shimmer 2s infinite linear",
           }}
       >
           <Typography
@@ -287,28 +327,13 @@ const Home = () => {
 
 
       {/* Sección de los más vendidos */}
-      <Box
-        sx={{
-          minHeight: { xs: "auto", md: "auto" },
-          width: "100vw",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          py: 8,
-          position: "relative",
-        }}
-      >
-      <Box
+      <Box className="BoxInicial">
+      <Box className="Box"
           sx={{
             width: "90%",
             maxWidth: "1200px",
             padding: { xs: "20px", md: "50px" },
-            background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5), rgba(150, 50, 150, 0.9), rgba(255, 182, 193, 0.7))",
             borderRadius: "30px",
-            backdropFilter: "blur(8px)",
-            boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)",
-            backgroundSize: "200% 200%",
-            animation: "shimmer 2s infinite linear",
           }}
       >
           <Typography
@@ -370,28 +395,13 @@ const Home = () => {
 
 
       {/* Sección de preguntas frecuentes */}
-      <Box
-        sx={{
-          minHeight: { xs: "auto", md: "auto" },
-          width: "100vw",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          py: 8,
-          position: "relative",
-        }}
-      >
-        <Box
+      <Box className="BoxInicial">
+        <Box className="Box"
           sx={{
             width: "90%",
             maxWidth: "1200px",
             padding: { xs: "20px", md: "50px" },
-            background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5), rgba(150, 50, 150, 0.9), rgba(255, 182, 193, 0.7))",
             borderRadius: "30px",
-            backdropFilter: "blur(8px)",
-            boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)",
-            backgroundSize: "200% 200%",
-            animation: "shimmer 2s infinite linear",
           }}
         >
           <Typography
@@ -414,30 +424,14 @@ const Home = () => {
 
 
       {/* Sección de ubicación */}
-      <Box
-        sx={{
-          height: { xs: "auto", md: "auto" },
-          width: "100vw",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          padding: 0,
-          py: 2,
-        }}
-      >
-        <Box
+      <Box className="BoxInicial">
+        <Box className="Box"
           sx={{
             width: "98%",
             maxWidth: "800px",
             maxHeight: "1000px",
             padding: { xs: "20px", md: "50px" },
-            background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5), rgba(150, 50, 150, 0.9), rgba(255, 182, 193, 0.7))",
             borderRadius: "30px",
-            backdropFilter: "blur(8px)",
-            boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)",
-            backgroundSize: "200% 200%",
-            animation: "shimmer 2s infinite linear",
           }}
         >
           <Typography

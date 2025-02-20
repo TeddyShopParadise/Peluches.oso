@@ -1,10 +1,7 @@
 @import "https://unpkg.com/open-props";
 
-
 /* Estilo para el fondo de la página */
 .background-image {
-  /*background-image: url('https://i.imgur.com/ADemq0K.jpeg');*/
-  background: linear-gradient(135deg, rgba(201, 154, 201, 0.9), rgba(221, 160, 221, 0.5), rgba(216, 131, 216, 0.9), rgba(141, 80, 174, 0.7));
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -15,6 +12,37 @@
   top: 0;
   left: 0;
   z-index: -1;
+}
+
+.Box {
+  background: #FCFAF2;
+  box-shadow: 0 0 15px 5px rgba(150, 50, 150, 0.5), 0 0 25px 10px rgba(221, 160, 221, 0.1), 0 0 35px 15px rgba(255, 182, 193, 0.1);
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.BoxInicial {
+  height: auto; 
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  padding-top: 8px;
+  padding-bottom: 80px;
 }
 
 fieldset {

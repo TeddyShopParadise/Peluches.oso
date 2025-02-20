@@ -240,31 +240,13 @@ const CatalogoComponent = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        height: { xs: 'auto', md: 'auto' },
-        width: '100vw',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        margin: 0,
-        padding: 0,
-        py: 2,
-      }}
-    >
-      <Box
+    <Box className="BoxInicial">
+      <Box className="Box"
         sx={{
           width: '90%',
           maxWidth: '100%',
           padding: { xs: '20px', md: '50px' },
-          background:
-            'linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5), rgba(150, 50, 150, 0.9), rgba(255, 182, 193, 0.7))',
           borderRadius: '30px',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)',
-          backdropFilter: 'blur(8px)',
-          backgroundSize: '200% 200%',
-          animation: 'shimmer 10s infinite linear',
         }}
       >
         <Container>

@@ -210,8 +210,13 @@ const mostrarMensaje = (mensaje) => {
   };
 
   return (
-    <Box sx={{ width: "100vw", display: "flex", justifyContent: "center", py: 2 }}>
-      <Box sx={{ width: "90%", padding: "50px", background: "linear-gradient(135deg, rgba(150, 50, 150, 0.9), rgba(221, 160, 221, 0.5))", borderRadius: "30px", boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)" }}>
+    <Box className="BoxInicial">
+      <Box className="Box"
+        sx={{ 
+          width: "90%", 
+          padding: "50px", 
+          borderRadius: "30px", 
+        }}>
         <Container>
           <h1>Gestión de Usuarios</h1>
 

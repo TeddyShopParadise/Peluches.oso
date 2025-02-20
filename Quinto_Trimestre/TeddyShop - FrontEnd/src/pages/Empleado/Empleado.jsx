@@ -203,60 +203,67 @@ const Empleado = () => {
   return (
     
     <Container>
-      <Box>
-        <h2>{editingId ? 'Editar' : 'Crear'} Empleado</h2>
-        <form>
-          <TextField
-            label="DNI"
-            name="dniEmpleado"
-            value={formData.dniEmpleado || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            label="Teléfono"
-            name="telefonoEmpleado"
-            value={formData.telefonoEmpleado || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            label="Código"
-            name="codigoEmpleado"
-            value={formData.codigoEmpleado || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            label="Nombre"
-            name="nombreEmpleado"
-            value={formData.nombreEmpleado || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            label="Compañía"
-            name="compania"
-            value={formData.compania || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            label="Usuario"
-            name="usuario"
-            value={formData.usuario || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            label="Vendedor"
-            name="vendedor"
-            value={formData.vendedor || ''}
-            onChange={handleInputChange}
-          />
+      <Box className="BoxInicial" sx={{ justifySelf: 'center'}}>
+        <Box className="Box"
+          sx={{
+            width: '90%',
+            maxWidth: '100%',
+            padding: { xs: '2px', md: '50px' },
+            borderRadius: '30px',
+          }}
+        >
+          <h2>{editingId ? 'Editar' : 'Crear'} Empleado</h2>
+          <form>
+            <TextField
+              label="DNI"
+              name="dniEmpleado"
+              value={formData.dniEmpleado || ''}
+              onChange={handleInputChange}
+            />
+            <TextField
+              label="Teléfono"
+              name="telefonoEmpleado"
+              value={formData.telefonoEmpleado || ''}
+              onChange={handleInputChange}
+            />
+            <TextField
+              label="Código"
+              name="codigoEmpleado"
+              value={formData.codigoEmpleado || ''}
+              onChange={handleInputChange}
+            />
+            <TextField
+              label="Nombre"
+              name="nombreEmpleado"
+              value={formData.nombreEmpleado || ''}
+              onChange={handleInputChange}
+            />
+            <TextField
+              label="Compañía"
+              name="compania"
+              value={formData.compania || ''}
+              onChange={handleInputChange}
+            />
+            <TextField
+              label="Usuario"
+              name="usuario"
+              value={formData.usuario || ''}
+              onChange={handleInputChange}
+            />
+            <TextField
+              label="Vendedor"
+              name="vendedor"
+              value={formData.vendedor || ''}
+              onChange={handleInputChange}
+            />
 
-          <Button
-            variant="contained"
-            onClick={editingId ? actualizarEmpleado : crearEmpleado}
-          >
-            {editingId ? 'Actualizar' : 'Crear'} Empleado
-          </Button>
-        </form>
-      </Box>
+            <Button
+              variant="contained"
+              onClick={editingId ? actualizarEmpleado : crearEmpleado}
+            >
+              {editingId ? 'Actualizar' : 'Crear'} Empleado
+            </Button>
+          </form>
 
       <TableContainer component={Paper}>
         <Table>
@@ -291,6 +298,8 @@ const Empleado = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Box>
+      </Box>
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
         <DialogTitle>Detalles del Empleado</DialogTitle>
