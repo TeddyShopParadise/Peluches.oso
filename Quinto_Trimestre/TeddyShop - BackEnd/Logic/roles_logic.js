@@ -18,7 +18,7 @@ async function actualizarRol(id, body) {
         $set: {
             estado: body.estado,
             nombre: body.nombre,
-            usuarios: body.usuarios || [] // Permite actualizar usuarios si se proporciona
+            usuarios: body.usuarios || [] 
         }
     }, { new: true });
 
@@ -28,7 +28,7 @@ async function actualizarRol(id, body) {
 // Función asíncrona para listar todos los roles
 async function listarRoles() {
     const roles = await Roles.find()
-        .populate('usuarios', 'username email'); // Muestra el nombre de usuario y email de los usuarios
+        //opulate('usuarios', 'username email');
     return roles;
 }
 

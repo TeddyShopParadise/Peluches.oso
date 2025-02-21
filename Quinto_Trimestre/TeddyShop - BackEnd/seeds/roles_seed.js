@@ -3,13 +3,13 @@ const Roles = require('../models/roles_model');
 
 const rolesSeed = [
   {
-    _id: new mongoose.Types.ObjectId('64df1a8f1c2b4e1d9a2b3c4f'), // ID manual para el rol de Administrador
+    _id: new mongoose.Types.ObjectId('64df1a8f1c2b4e1d9a2b3c4f'), 
     estado: true,
     nombre: 'Administrador',
     usuarios: []
   },
   {
-    _id: new mongoose.Types.ObjectId('64df1a9e1b7d4a5e8c6d9e2b'), // ID manual para el rol de Empleado
+    _id: new mongoose.Types.ObjectId('64df1a9e1b7d4a5e8c6d9e2b'), 
     estado: true,
     nombre: 'Empleado',
     usuarios: []

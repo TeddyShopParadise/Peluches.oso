@@ -15,7 +15,8 @@ const rolesSchemaValidation = Joi.object({
             'any.required': 'El nombre es un campo requerido'
         }),
     usuarios: Joi.array()
-        .items(Joi.string().length(24).hex()) // Asegura que cada ID de usuario sea un ObjectId válido
+        .items(Joi.string().length(24).hex()) 
+        .optional()
         .messages({
             'array.base': 'Los usuarios deben ser un array',
             'string.length': 'Cada ID de usuario debe tener 24 caracteres',

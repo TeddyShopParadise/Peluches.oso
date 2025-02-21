@@ -12,7 +12,8 @@ const rolesSchema = new mongoose.Schema({
   },
   usuarios: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Usuario' // Referencia a la colección Usuario
+    ref: 'Usuario',// Referencia a la colección Usuario
+    required: false
   }]
 }, {
   collection: 'Roles',

@@ -11,7 +11,11 @@ import {
   TableRow,
   Paper,
   IconButton,
+  FormControl,
+  InputLabel,
+  MenuItem,
   Dialog,
+  Select,
   DialogTitle,
   DialogActions,
   DialogContent,
@@ -29,10 +33,10 @@ const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
 
 const Usuarios = () => {
-  // Estados
   const [usuarios, setUsuarios] = useState([]);
   const [filteredUsuarios, setFilteredUsuarios] = useState([]);
   const [usuario, setUsuario] = useState({ email: '', telefono: '', contraseña: '', username: '', roles: [], estado: true });
+  const [roles, setRoles] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -47,9 +51,9 @@ const Usuarios = () => {
 
   useEffect(() => {
     fetchUsuarios();
+    fetchRoles();
   }, []);
 
-  // Funciones API
   const fetchUsuarios = async () => {
     try {
       const response = await fetch(`${apiUrl}/usuario`);
@@ -60,26 +64,43 @@ const Usuarios = () => {
       console.error('Error al obtener usuarios:', error);
     }
   };
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/roles`);
+      if (!response.ok) {
+        throw new Error('Error al obtener los roles');
+      } 
+      const data = await response.json();
+      setRoles(data);
+      
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+      setSnackbarMessage("Error al obtener los roles");
+      setOpenSnackbar(true);
+    }
+  };
 
   const crearUsuario = async () => {
     if (!usuario.email || !usuario.telefono || !usuario.contraseña || !usuario.username) {
       alert('Por favor, completa todos los campos del usuario.');
       return;
     }
-
     try {
       const response = await fetch(`${apiUrl}/usuario`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(usuario),
-      });
+        body: JSON.stringify({
+          ...usuario,
+          roles: Array.isArray(usuario.roles) ? usuario.roles.map(id => id) : []
+          
+        }),
+      }); 
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error:', errorText);
         throw new Error('Error al crear el usuario');
       }
-      
       fetchUsuarios();
       resetUsuarioForm();
       setSnackbarMessage("Usuario creado");
@@ -95,8 +116,12 @@ const actualizarUsuario = async () => {
       alert('Por favor, completa todos los campos del usuario.');
       return;
     }
-
     try {
+
+      const rolesToSend = Array.isArray(usuario.roles) 
+      ? usuario.roles.map(role => typeof role === 'object' ? role._id : role) 
+      : [];
+
       const response = await fetch(`${apiUrl}/usuario/${editingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -105,7 +130,8 @@ const actualizarUsuario = async () => {
           telefono: usuario.telefono,
           contraseña: usuario.contraseña,
           username: usuario.username,
-          estado: usuario.estado
+          estado: usuario.estado,
+           roles: rolesToSend
         })
       });
 
@@ -113,8 +139,7 @@ const actualizarUsuario = async () => {
         const errorText = await response.text();
         console.error('Error:', errorText);
         throw new Error('Error al actualizar el usuario');
-      }
-      
+      } 
       fetchUsuarios();
       resetUsuarioForm();
       setSnackbarMessage("Usuario actualizado");
@@ -142,21 +167,22 @@ const eliminarUsuario = async (id) => {
   }
 };
 
-// Funciones de ayuda
 const resetUsuarioForm = () => {
-  setUsuario({ email: '', telefono: '', contraseña: '', username: '', estado: true });
+setUsuario({ email: '', telefono: '', contraseña: '', username: '', roles: [], estado: true });
+
   setEditingId(null);
 };
-//setUsuario({ email: '', telefono: '', contraseña: '', username: '', roles: [], estado: true });
 const mostrarMensaje = (mensaje) => {
   setSnackbarMessage(mensaje);
  setOpenSnackbar(true);
 };
- 
-   // Manejo de eventos
+
    const handleInputChange = (e) => setUsuario({ ...usuario, [e.target.name]: e.target.value });
    const handleToggleActivo = (e) => setUsuario({ ...usuario, estado: e.target.checked });
-   const handleEditClick = (usuario) => { setUsuario({ ...usuario }); setEditingId(usuario._id); };
+   const handleEditClick = (usuario) => { setUsuario({ ...usuario, roles: usuario.roles.map(role => role._id)  }); setEditingId(usuario._id); };
+   const handleChangeRoles = (event) => {
+    setUsuario({ ...usuario, roles: event.target.value });
+  };
    const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
     setEditingId(null);
@@ -220,12 +246,22 @@ const mostrarMensaje = (mensaje) => {
         <Container>
           <h1>Gestión de Usuarios</h1>
 
-          {/* Formulario de usuario */}
           <form noValidate autoComplete="off">
             <TextField label="Email" name="email" value={usuario.email} onChange={handleInputChange} fullWidth margin="normal" required />
             <TextField label="Teléfono" name="telefono" value={usuario.telefono} onChange={handleInputChange} fullWidth margin="normal" />
             <TextField label="Contraseña" name="contraseña" value={usuario.contraseña} onChange={handleInputChange} fullWidth margin="normal" type="password" required />
             <TextField label="Nombre de usuario" name="username" value={usuario.username} onChange={handleInputChange} fullWidth margin="normal" required />
+            <FormControl fullWidth margin="normal">
+            <InputLabel>Roles</InputLabel>
+            <Select multiple value={usuario.roles} onChange={handleChangeRoles}>
+            {roles.map((rol) => (
+              <MenuItem key={rol._id} value={rol._id}>
+                {rol.nombre}
+              </MenuItem>
+            ))}
+          </Select>
+          </FormControl>
+
             <Box display="flex" alignItems="center" mt={2}>
               <Switch checked={usuario.estado} onChange={handleToggleActivo} />
               <span>{usuario.estado ? "Activo" : "Inactivo"}</span>
@@ -269,27 +305,38 @@ const mostrarMensaje = (mensaje) => {
                       {sortBy === "username" && (sortOrder === "asc" ? <ArrowUpward /> : <ArrowDownward />)}
                     </Box>
                   </TableCell>
-                  <TableCell>Teléfono</TableCell>
                   <TableCell>Email</TableCell>
+                  <TableCell>Roles</TableCell>
                   <TableCell>Estado</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredUsuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((usuario) => (
-                  <TableRow key={usuario.id}>
+                  <TableRow key={usuario._id}>
                     <TableCell>{usuario.username}</TableCell>
-                    <TableCell>{usuario.telefono}</TableCell>
                     <TableCell>{usuario.email}</TableCell>
-                    <TableCell>{usuario.estado ? "Activo" : "Inactivo"}</TableCell>
                     <TableCell>
-                      <IconButton onClick={() => handleOpenDetailDialog(usuario)}>
+                    {usuario.roles && usuario.roles.length > 0
+                      ? usuario.roles.map((rol) => rol.nombre).join(", ")
+                      : "Sin roles"}
+                   </TableCell>
+                    <TableCell>{usuario.estado ? "Activo" : "Inactivo"}</TableCell>
+
+                    <TableCell>
+                      <IconButton 
+                      color="info"
+                      onClick={() => handleOpenDetailDialog(usuario)}>
                         <Info />
                       </IconButton>
-                      <IconButton onClick={() => handleEditClick(usuario)}>
+                      <IconButton
+                      color="primary" 
+                      onClick={() => handleEditClick(usuario)}>
                         <Edit />
                       </IconButton>
-                      <IconButton onClick={() => eliminarUsuario(usuario._id)}>
+                      <IconButton
+                        sx={{ color: "#d33" }}
+                       onClick={() => eliminarUsuario(usuario._id)}>
                         <Delete />
                       </IconButton>
                     </TableCell>
@@ -326,10 +373,7 @@ const mostrarMensaje = (mensaje) => {
             <DialogContent>
               <DialogContentText>
                 <strong>Nombre de usuario:</strong> {selectedUsuario?.username}<br />
-                <strong>Email:</strong> {selectedUsuario?.email}<br />
                 <strong>Teléfono:</strong> {selectedUsuario?.telefono}<br />
-                <strong>Estado:</strong> {selectedUsuario?.estado ? "Activo" : "Inactivo"}<br />
-                {/* Puedes añadir más detalles aquí si es necesario */}
               </DialogContentText>
             </DialogContent>
             <DialogActions>

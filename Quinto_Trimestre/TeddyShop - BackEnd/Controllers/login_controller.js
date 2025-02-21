@@ -1,10 +1,9 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/usuario_model'); // Asegúrate de que la ruta sea correcta
+const Usuario = require('../models/usuario_model'); 
 
 const login = async (req, res) => {
   const { email, contraseña } = req.body;
-
   try {
     // Buscar usuario por email
     const usuario = await Usuario.findOne({ email }).populate('roles');
@@ -22,7 +21,7 @@ const login = async (req, res) => {
     const payload = {
       userId: usuario._id,
       username: usuario.username,
-      roles: usuario.roles.map(role => role.nombre), // Suponiendo que el rol tiene el campo `nombre`
+      roles: usuario.roles.map(role => role.nombre), 
     };
 
     // Generar el token
@@ -32,7 +31,7 @@ const login = async (req, res) => {
     res.json({ token });
 
   } catch (err) {
-    console.error('Error en el login:', err); // Agrega más detalles para depurar
+    console.error('Error en el login:', err);
     res.status(500).json({ message: 'Error en el servidor', error: err.message });
   }
 };
