@@ -7,7 +7,7 @@ async function crearUsuario(body) {
     let usuario = new Usuario({
         email: body.email,
         telefono: body.telefono,
-        contraseña: body.contraseña, // Asegúrate de encriptar la contraseña antes de guardarla
+        contraseña: body.contraseña, 
         username: body.username,
         estado: body.estado,
         roles: body.roles
@@ -22,7 +22,7 @@ async function actualizarUsuario(id, body) {
         $set: {
             email: body.email,
             telefono: body.telefono,
-            contraseña: body.contraseña, // Asegúrate de encriptar la contraseña antes de guardarla
+            contraseña: body.contraseña, 
             username: body.username,
             estado: body.estado,
             roles: body.roles
@@ -35,7 +35,7 @@ async function actualizarUsuario(id, body) {
 // Función asíncrona para listar todos los usuarios
 async function listarUsuarios() {
     let usuarios = await Usuario.find()
-        .populate('roles', 'nombreRol'); // Reemplazar con los campos relevantes de Roles
+        .populate('roles', 'nombre'); 
     return usuarios;
 }
 
@@ -43,7 +43,7 @@ async function listarUsuarios() {
 async function buscarUsuarioPorId(id) {
     try {
         const usuario = await Usuario.findById(id)
-            .populate('roles', 'nombreRol'); // Reemplazar con los campos relevantes de Roles
+            .populate('roles', 'nombre');
         if (!usuario) {
             throw new Error(`Usuario con ID ${id} no encontrado`);
         }

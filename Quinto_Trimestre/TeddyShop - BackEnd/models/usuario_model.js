@@ -5,7 +5,7 @@ const usuarioSchema = new mongoose.Schema({
   email: {
     type: String, // NVARCHAR en SQL
     required: true,
-    unique: true // Asegura que el email sea único
+    unique: true 
   },
   telefono: {
     type: String, // NVARCHAR en SQL
@@ -26,7 +26,7 @@ const usuarioSchema = new mongoose.Schema({
   roles: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Roles',
-    default: [] // Evita errores si no se envían roles
+    required: true
   }]
 }, {
   collection: 'Usuario',

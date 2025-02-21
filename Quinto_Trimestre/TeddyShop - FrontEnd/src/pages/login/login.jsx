@@ -64,7 +64,6 @@ const Login = ({ setIsAuthenticated }) => {
           }
           return;
         }
-
         // Verificar los roles del usuario decodificado
         const userRoles = Array.isArray(decodedToken.roles) ? decodedToken.roles : [];
         console.log("Roles del usuario:", userRoles); // Verifica los roles

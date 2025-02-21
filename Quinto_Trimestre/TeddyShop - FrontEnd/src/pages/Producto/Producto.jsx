@@ -69,7 +69,7 @@ const ProductoComponent = () => {
         throw new Error('Error al obtener los productos');
       }
       const data = await response.json();
-      console.log(data); // Verifica qué datos estás obteniendo
+      console.log(data); 
       setProductos(data);
     } catch (error) {
       console.error(error);
@@ -83,7 +83,7 @@ const ProductoComponent = () => {
       const response = await fetch(`${apiUrl}/categorias`);
       if (!response.ok) throw new Error('Error al obtener las categorías');
       const data = await response.json();
-      console.log("Categorías cargadas:", data);  // 🔍 Verifica en la consola
+      console.log("Categorías cargadas:", data); 
       setCategorias(data);
     } catch (error) {
       console.error(error);
@@ -96,7 +96,7 @@ const ProductoComponent = () => {
       const response = await fetch(`${apiUrl}/catalogos/activos`);
       if (!response.ok) throw new Error('Error al obtener los catálogos');
       const data = await response.json();
-      console.log("Catálogos cargados:", data);  // 🔍 Verifica en la consola
+      console.log("Catálogos cargados:", data);  
       setCatalogos(data);
     } catch (error) {
       console.error(error);
@@ -107,13 +107,11 @@ const ProductoComponent = () => {
   const fetchHistorialPrecios = async () => {
     try {
         //const token = getAuthToken();
-        //console.log("Token enviado:", token); // 🔍 Verifica el token en la consola
-
         const response = await fetch(`${apiUrl}/historialPrecio`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-               // "Authorization": `Bearer ${token}` // 🔥 Agregamos el token aquí
+               // "Authorization": `Bearer ${token}` 
             }
         });
 
@@ -122,7 +120,6 @@ const ProductoComponent = () => {
         }
 
         const data = await response.json();
-        console.log(data); // Verifica los datos aquí
 
         console.log("Historial de precios cargado:", data);
 
@@ -152,7 +149,7 @@ const ProductoComponent = () => {
         }
 
         const data = await response.json();
-        setImagenProducto(data.secure_url); // La URL segura de la imagen
+        setImagenProducto(data.secure_url); 
       } catch (error) {
         console.error(error);
         alert("Error al cargar la imagen");
@@ -165,37 +162,6 @@ const ProductoComponent = () => {
       alert('Por favor, completa todos los campos.');
       return;
     }
-  
-    console.log("Datos enviados al crear producto:", {
-      estiloProducto,
-      materialProducto,
-      disponibilidadProducto,
-      tamañoProducto,
-      categorias: categoriasSeleccionadas,
-      catalogos: catalogosSeleccionados,
-      imagen: imagenProducto,
-      historialPrecios: preciosSeleccionados
-    });
-    
-  
-    const productoData = {
-      estiloProducto,
-      materialProducto,
-      disponibilidadProducto,
-      tamañoProducto,
-      categorias: categoriasSeleccionadas,
-      catalogos: catalogosSeleccionados,
-      imagen: imagenProducto,
-      historialPrecios: preciosSeleccionados
-    };
-  
-    console.log('Datos a enviar:', productoData); // Aquí ya no hay problema
-    console.log('Precio seleccionado:', preciosSeleccionados);
-    console.log("Historial de precios en el producto:", productoData.historialPrecios);
-    console.log("ID de los precios seleccionados:", productoData.historialPrecios.map(precio => precio._id));
-   // console.log('Historial de precios del producto:', selectedProducto.historialPrecios);
-
-  
     try {
       //const token = getAuthToken();
       const response = await fetch(`${apiUrl}/producto`, {
@@ -251,7 +217,7 @@ const ProductoComponent = () => {
           imagen: imagenProducto, // Agregamos la imagengen también
           categorias: categoriasSeleccionadas || [],
           catalogos: catalogosSeleccionados,
-          historialPrecios: preciosSeleccionados || [] 
+          historialPrecios: preciosSeleccionados   
         }),
       });
       if (!response.ok) {
@@ -269,49 +235,48 @@ const ProductoComponent = () => {
 
 
 const eliminarProducto = async (id) => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "Esta acción no se puede deshacer",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        const response = await fetch(`${apiUrl}/producto/${id}`, {
-          method: "DELETE",
-        });
+            Swal.fire({
+              title: "¿Estás seguro?",
+              text: "Esta acción no se puede deshacer",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6",
+              confirmButtonText: "Sí, eliminar",
+              cancelButtonText: "Cancelar",
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                try {
+                  const response = await fetch(`${apiUrl}/producto/${id}`, {
+                    method: "DELETE",
+                  });
 
-        if (!response.ok) {
-          throw new Error("Error al eliminar el producto");
-        }
+                  if (!response.ok) {
+                    throw new Error("Error al eliminar el producto");
+                  }
 
-        Swal.fire({
-          title: "Eliminado",
-          text: "El producto ha sido eliminado correctamente",
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-        });
+                  Swal.fire({
+                    title: "Eliminado",
+                    text: "El producto ha sido eliminado correctamente",
+                    icon: "success",
+                    confirmButtonColor: "#3085d6",
+                  });
 
-        fetchProductos(); // Refresca la lista después de eliminar
-      } catch (error) {
-        console.error(error);
-        Swal.fire({
-          title: "Error",
-          text: error.message,
-          icon: "error",
-          confirmButtonColor: "#d33",
+              fetchProductos(); 
+            } catch (error) {
+              console.error(error);
+              Swal.fire({
+                title: "Error",
+                text: error.message,
+                icon: "error",
+                confirmButtonColor: "#d33",
+              });
+            }
+          }
         });
-      }
-    }
-  });
-};
+      };
 
   const editarProducto = (producto) => {
-    console.log('Producto a editar:', producto);
     setEditingId(producto._id);
     setEstiloProducto(producto.estiloProducto || '');
     setMaterialProducto(producto.materialProducto || '');
@@ -362,7 +327,6 @@ const eliminarProducto = async (id) => {
         }}
       > 
         <h1>Gestión de Productos</h1>
-        {/* Formulario de creación o actualización de producto */}
         <TextField
           value={estiloProducto}
           onChange={(e) => setEstiloProducto(e.target.value)}
@@ -476,8 +440,6 @@ const eliminarProducto = async (id) => {
   </Select>
 </FormControl>
 
-
-        {/* Campo para subir imagen */}
         <TextField
           type="file"
           inputProps={{ accept: 'image/*' }}
@@ -515,7 +477,6 @@ const eliminarProducto = async (id) => {
           </Button>
         </Box>
 
-        {/* Tabla de productos */}
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -524,7 +485,6 @@ const eliminarProducto = async (id) => {
                 <TableCell>Material</TableCell>
                 <TableCell>Disponibilidad</TableCell>
                 <TableCell>Acciones</TableCell>
-             
               </TableRow>
             </TableHead>
             <TableBody>
@@ -537,7 +497,7 @@ const eliminarProducto = async (id) => {
                       <TableCell>{producto.disponibilidadProducto}</TableCell>
                       <TableCell>
                         <IconButton
-                        color="primary"
+                        color="primary" 
                         onClick={() => editarProducto(producto)}
                       >
                         <Edit />
@@ -568,8 +528,7 @@ const eliminarProducto = async (id) => {
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-
-        {/* Dialogo para mostrar detalles del producto */}
+        
         <Dialog
           open={selectedProducto !== null}
           onClose={closeDetailsDialog}
@@ -579,37 +538,31 @@ const eliminarProducto = async (id) => {
             {selectedProducto && (
               <Box>
                 <DialogContentText>Descripción: {selectedProducto.estiloProducto}</DialogContentText>
-            
                 <strong>Precio:</strong>
-{selectedProducto.historialPrecios && selectedProducto.historialPrecios.length > 0 ? (
-  selectedProducto.historialPrecios.map((precioId, index) => {
-    const precio = historialPrecios.find(p => p._id === precioId);
-    return (
-      <div key={index}>
-        {precio ? (
-          new Intl.NumberFormat('es-CO', { 
-            style: 'currency', 
-            currency: 'COP' 
-          }).format(precio.precio)
-        ) : (
-          <span>Precio no disponible</span>
-        )}
-      </div>
-    );
-  })
-) : (
-  <div>No hay precios históricos disponibles.</div>
-)}
-  
-             
-
-
+                {selectedProducto.historialPrecios && selectedProducto.historialPrecios.length > 0 ? (
+                  selectedProducto.historialPrecios.map((precioId, index) => {
+                    const precio = historialPrecios.find(p => p._id === precioId);
+                    return (
+                      <div key={index}>
+                        {precio ? (
+                          new Intl.NumberFormat('es-CO', { 
+                            style: 'currency', 
+                            currency: 'COP' 
+                          }).format(precio.precio)
+                        ) : (
+                          <span>Precio no disponible</span>
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div>No hay precios históricos disponibles.</div>
+                )}
                 {selectedProducto.imagen && (
                   <DialogContentText>
                     <img src={selectedProducto.imagen} alt="Imagen del Producto" width="190" height="300"  style={{ 
                     objectFit: "cover",
                     display: "block",  
-
                     borderRadius: "12px", 
                     border: "2px solid rgba(137, 12, 227, 0.8)", 
                     background: "rgba(255, 255, 255, 0.1)", 
@@ -618,14 +571,10 @@ const eliminarProducto = async (id) => {
             }}  
                     />
                   </DialogContentText>
-
-                  
                 )}
               </Box>
             )}
           </DialogContent>
-
-          
           <DialogActions>
             <Button onClick={closeDetailsDialog}>Cerrar</Button>
           </DialogActions>

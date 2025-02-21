@@ -8,7 +8,7 @@ const runAllSeeds = require('./seeds/seedDatabase');
 const cors = require('cors');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
-const { v4: uuidv4 } = require('uuid'); // Para generar un nombre único para las imágenes
+const { v4: uuidv4 } = require('uuid'); 
 
 
 require('dotenv').config();
@@ -42,12 +42,11 @@ const app = express();
 const upload = multer();
 
 app.use(cors({
-  origin: '*', // Origen permitido
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'], // No incluyas application/json, es redundante
+  allowedHeaders: ['Content-Type', 'Authorization'], 
   credentials: true
 }));
-
 
 // Conexión a la base de datos MongoDB
 mongoose.connect('mongodb+srv://sa:PM02s8wkGc77jfO3@cluster0.hhmn9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
@@ -80,7 +79,6 @@ cloudinary.config({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // Integrar las rutas
 app.use('/api/catalogos', catalogoRoutes);
 app.use('/api/categorias', categoriaRoutes);
@@ -102,7 +100,6 @@ app.use('/api/roles', rolesRoutes);
 app.use('/api/usuario', usuarioRoutes);
 app.use('/api/vendedor', vendedorRoutes);
 app.use('/api/auth', loginRoute);
-
 // Puerto
 const port = process.env.PORT || 3000;
 
