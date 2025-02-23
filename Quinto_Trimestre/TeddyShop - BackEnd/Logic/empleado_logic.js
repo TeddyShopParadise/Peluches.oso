@@ -6,14 +6,8 @@ async function crearEmpleado(body) {
     const empleado = new Empleado({
         dniEmpleado: body.dniEmpleado,
         telefonoEmpleado: body.telefonoEmpleado,
-        codigoEmpleado: body.codigoEmpleado,
-        fechaNacimientoEmpleado: body.fechaNacimientoEmpleado,
         nombreEmpleado: body.nombreEmpleado,
         compania: body.compania, // Asegurarse de que sea un ObjectId válido
-        usuario: body.usuario, // Puede ser null si no hay usuario
-        vendedor: body.vendedor, // Puede ser null si no hay vendedor
-        vendedorPedidos: body.vendedorPedidos || [], // Inicializa como array vacío si no hay pedidos
-        vendedorCatalogos: body.vendedorCatalogos || [] // Inicializa como array vacío si no hay catalogos
     });
 
     return await empleado.save();
@@ -25,14 +19,9 @@ async function actualizarEmpleado(id, body) {
         $set: {
             dniEmpleado: body.dniEmpleado,
             telefonoEmpleado: body.telefonoEmpleado,
-            codigoEmpleado: body.codigoEmpleado,
-            fechaNacimientoEmpleado: body.fechaNacimientoEmpleado,
             nombreEmpleado: body.nombreEmpleado,
             compania: body.compania, // Asegúrate de que sea un ObjectId válido
             usuario: body.usuario,
-            vendedor: body.vendedor,
-            vendedorPedidos: body.vendedorPedidos,
-            vendedorCatalogos: body.vendedorCatalogos
         }
     }, { new: true });
 
@@ -43,8 +32,6 @@ async function actualizarEmpleado(id, body) {
 async function listarEmpleados() {
     const empleados = await Empleado.find()
         .populate('compania', 'nombreEmpresa') // Muestra el nombre de la compañía
-        .populate('usuario', 'email username') // Muestra datos del usuario
-        .populate('vendedor', 'nombreVendedor'); // Muestra datos del vendedor
     return empleados;
 }
 
@@ -53,8 +40,6 @@ async function buscarEmpleadoPorId(id) {
     try {
         const empleado = await Empleado.findById(id)
             .populate('compania', 'nombreEmpresa')
-            .populate('usuario', 'email username')
-            .populate('vendedor', 'nombreVendedor');
         
         if (!empleado) {
             throw new Error(`Empleado con ID ${id} no encontrado`);
