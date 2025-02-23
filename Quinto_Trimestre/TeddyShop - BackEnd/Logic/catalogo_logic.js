@@ -18,7 +18,6 @@ async function crearCatalogo(body) {
         imagen: body.imagen,
         compania: body.compania,
         productos: body.productos,
-        vendedoresCatalogo: body.vendedoresCatalogo
     });
 
     return await catalogo.save();
@@ -35,7 +34,6 @@ async function actualizarCatalogo(id, body) {
             imagen: body.imagen,
             compania: body.compania,
             productos: body.productos,
-            vendedoresCatalogo: body.vendedoresCatalogo
         }
     }, { new: true });
 

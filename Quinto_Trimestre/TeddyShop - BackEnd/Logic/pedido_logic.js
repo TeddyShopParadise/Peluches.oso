@@ -1,8 +1,7 @@
-const Pedido = require('../models/pedido_model');
 const DetallePedido = require('../models/detallePedido_model'); 
 const Factura = require('../models/factura_model'); 
 const Cliente = require('../models/cliente_model'); 
-const Vendedor = require('../models/vendedor_model'); 
+
 
 // Función asíncrona para crear un nuevo pedido
 async function crearPedido(body) {
@@ -20,7 +19,6 @@ async function crearPedido(body) {
         apellidoComprador: body.apellidoComprador,
         detallesPedido: body.detallesPedido || [],
         facturas: body.facturas || [],
-        vendedores: body.vendedores || []
     });
 
     return await pedido.save();
@@ -42,8 +40,7 @@ async function actualizarPedido(id, body) {
             apellidoAgendador: body.apellidoAgendador,
             apellidoComprador: body.apellidoComprador,
             detallesPedido: body.detallesPedido || [],
-            facturas: body.facturas || [],
-            vendedores: body.vendedores || []
+            facturas: body.facturas || []
         }
     }, { new: true });
 
@@ -56,7 +53,6 @@ async function listarPedidos() {
         .populate('cliente', 'nombre email') // Personaliza según tu modelo de Cliente
         .populate('detallesPedido')
         .populate('facturas')
-        .populate('vendedores');
     return pedidos;
 }
 
@@ -67,7 +63,6 @@ async function buscarPedidoPorId(id) {
             .populate('cliente', 'nombre email')
             .populate('detallesPedido')
             .populate('facturas')
-            .populate('vendedores');
 
         if (!pedido) {
             throw new Error(`Pedido con ID ${id} no encontrado`);

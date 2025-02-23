@@ -6,11 +6,11 @@ const Roles = require('../models/roles_model');
 async function crearUsuario(body) {
     let usuario = new Usuario({
         email: body.email,
-        telefono: body.telefono,
         contraseña: body.contraseña, 
         username: body.username,
         estado: body.estado,
-        roles: body.roles
+        empleados: body.empleados, // Corregido a "empleados"
+        roles: body.roles // Corregido para asegurar que es un array
     });
 
     return await usuario.save();
@@ -21,29 +21,31 @@ async function actualizarUsuario(id, body) {
     let usuario = await Usuario.findByIdAndUpdate(id, {
         $set: {
             email: body.email,
-            telefono: body.telefono,
             contraseña: body.contraseña, 
             username: body.username,
             estado: body.estado,
-            roles: body.roles
+            empleados: body.empleados, // Corregido a "empleados"
+            roles: body.roles // Asegurar que se actualicen correctamente
         }
-    }, { new: true });
+    }, { new: true })
+    .populate('roles', 'nombre')
+    .populate('empleados', 'nombreEmpleado'); // Corregido a "empleados"
 
     return usuario;
 }
 
 // Función asíncrona para listar todos los usuarios
 async function listarUsuarios() {
-    let usuarios = await Usuario.find()
-        .populate('roles', 'nombre'); 
-    return usuarios;
+    return await Usuario.find()
+        .populate('roles', 'nombre')
+        .populate('empleados', 'nombreEmpleado'); // Corregido a "empleados"
 }
 
-// Función asíncrona para buscar un usuario por su ID
 async function buscarUsuarioPorId(id) {
     try {
         const usuario = await Usuario.findById(id)
-            .populate('roles', 'nombre');
+            .populate('roles', 'nombre')
+            .populate('empleados', 'nombreEmpleado'); // Corregido a "empleados"
         if (!usuario) {
             throw new Error(`Usuario con ID ${id} no encontrado`);
         }
@@ -53,7 +55,6 @@ async function buscarUsuarioPorId(id) {
         throw err;
     }
 }
-
 // Función asíncrona para eliminar un usuario por su ID
 async function eliminarUsuario(id) {
     try {
