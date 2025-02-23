@@ -39,11 +39,6 @@ const router = express.Router();
  *                 items:
  *                   type: string
  *                 example: ["60d2b6e3e6b0f99dbe0c5a76", "60d2b6e3e6b0f99dbe0c5a77"]
- *               vendedoresCatalogo:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["60d2b6e3e6b0f99dbe0c5a78"]
  *     responses:
  *       201:
  *         description: Catálogo creado exitosamente
@@ -99,11 +94,6 @@ router.post('/', catalogoController.crearCatalogo);
  *                 items:
  *                   type: string
  *                 example: ["60d2b6e3e6b0f99dbe0c5a76", "60d2b6e3e6b0f99dbe0c5a77"]
- *               vendedoresCatalogo:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["60d2b6e3e6b0f99dbe0c5a78"]
  *     responses:
  *       200:
  *         description: Catálogo actualizado exitosamente
@@ -181,11 +171,6 @@ router.patch('/:id/desactivar', catalogoController.desactivarCatalogo);
  *                     items:
  *                       type: string
  *                     example: ["60d2b6e3e6b0f99dbe0c5a76"]
- *                   vendedoresCatalogo:
- *                     type: array
- *                     items:
- *                       type: string
- *                     example: ["60d2b6e3e6b0f99dbe0c5a78"]
  *       204:
  *         description: No hay catálogos activos
  */
@@ -254,11 +239,6 @@ router.get('/:id', catalogoController.obtenerCatalogoPorId);
  *                   items:
  *                     type: string
  *                   example: ["60d2b6e3e6b0f99dbe0c5a76"]
- *                 vendedoresCatalogo:
- *                   type: array
- *                   items:
- *                     type: string
- *                   example: ["60d2b6e3e6b0f99dbe0c5a78"]
  *     responses:
  *       201:
  *         description: Catálogos guardados exitosamente

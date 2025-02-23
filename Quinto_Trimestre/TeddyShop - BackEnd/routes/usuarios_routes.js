@@ -31,15 +31,17 @@ const {
  *                   email:
  *                     type: string
  *                     example: "usuario@example.com"
- *                   telefono:
- *                     type: string
- *                     example: "123456789"
  *                   username:
  *                     type: string
  *                     example: "usuario1"
  *                   estado:
  *                     type: boolean
  *                     example: true
+ *                   empleados:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                       example: "60d2b6e3e6b0f99dbe0c3a7b"
  *                   roles:
  *                     type: array
  *                     items:
@@ -68,9 +70,6 @@ router.get('/', listarUsuarios);
  *               email:
  *                 type: string
  *                 example: "usuario@example.com"
- *               telefono:
- *                 type: string
- *                 example: "123456789"
  *               contraseña:
  *                 type: string
  *                 example: "miContraseñaSegura"
@@ -80,6 +79,11 @@ router.get('/', listarUsuarios);
  *               estado:
  *                 type: boolean
  *                 example: true
+ *               empleados:
+ *                  type: array
+ *                  items:
+ *                   type: string
+ *                   example: "60d2b6e3e6b0f99dbe0c3a7b"
  *               roles:
  *                 type: array
  *                 items:
@@ -120,9 +124,6 @@ router.post('/', crearUsuario);
  *               email:
  *                 type: string
  *                 example: "usuario@example.com"
- *               telefono:
- *                 type: string
- *                 example: "123456789"
  *               contraseña:
  *                 type: string
  *                 example: "miContraseñaSegura"
@@ -132,6 +133,11 @@ router.post('/', crearUsuario);
  *               estado:
  *                 type: boolean
  *                 example: true
+ *               empleados:
+ *                  type: array
+ *                  items:
+ *                   type: string
+ *                   example: "60d2b6e3e6b0f99dbe0c3a7b"
  *               roles:
  *                 type: array
  *                 items:

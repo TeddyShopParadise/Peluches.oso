@@ -6,7 +6,7 @@ const movimientoSeed = {
   fecha: new Date(), // Fecha actual
   cantidadIngreso: 100, // Cantidad ingresada al inventario
   cantidadVendida: 50, // Cantidad vendida
-  inventario: '60d21b4667d0d8992e610c85' // ID del inventario (ajusta según tu base de datos)
+  inventario: '60d21b4667d0d8992e610c85' 
 };
 
 // Verificar si el movimiento ya existe

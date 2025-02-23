@@ -3,8 +3,8 @@
 const MetodoPago = require('../models/metodoPago_model'); 
 
 const metodoPagoSeed = {
-  nombreMetodoPago: 'Tarjeta de Crédito', // Nombre del método de pago
-  factura: '60d21b4667d0d8992e610c85' // ID de la factura (ajusta según tu base de datos)
+  nombreMetodoPago: 'Tarjeta de Crédito',
+  factura: '60d21b4667d0d8992e610c85' 
 };
 
 // Verificar si el método de pago ya existe

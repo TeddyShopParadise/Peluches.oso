@@ -8,10 +8,10 @@ const {
     eliminarCompañia
 } = require('../Controllers/compañia_controller'); // Asegúrate de importar los controladores
 
-const authorizeAccess = require('../middlewares/authorizeAccess');
+//const authorizeAccess = require('../middlewares/authorizeAccess');
 
 // Pasar los roles permitidos como un solo array
-router.use(authorizeAccess('Administrador'));
+//router.use(authorizeAccess('Administrador'));
 
 /**
  * @swagger

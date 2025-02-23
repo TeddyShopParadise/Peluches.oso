@@ -51,9 +51,6 @@ const catalogoSchemaValidation = Joi.object({
         }),
     productos: Joi.array()
         .items(Joi.string().length(24).hex())
-        .optional(),
-    vendedoresCatalogo: Joi.array()
-        .items(Joi.string().length(24).hex())
         .optional()
 });
 

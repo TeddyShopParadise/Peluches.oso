@@ -32,37 +32,14 @@ const {
  *                     type: number
  *                     example: 12345678
  *                   telefonoEmpleado:
- *                     type: string
- *                     example: "555-1234"
- *                   codigoEmpleado:
- *                     type: string
- *                     example: "EMP001"
- *                   fechaNacimientoEmpleado:
- *                     type: string
- *                     format: date
- *                     example: "1990-01-01"
+ *                     type: number
+ *                     example: 5551234
  *                   nombreEmpleado:
  *                     type: string
  *                     example: "Juan Pérez"
  *                   compania:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
- *                   usuario:
- *                     type: string
- *                     example: "60d2b6e3e6b0f99dbe0c5a7c"
- *                   vendedor:
- *                     type: string
- *                     example: "60d2b6e3e6b0f99dbe0c5a7d"
- *                   vendedorPedidos:
- *                     type: array
- *                     items:
- *                       type: string
- *                       example: "60d2b6e3e6b0f99dbe0c5a7e"
- *                   vendedorCatalogos:
- *                     type: array
- *                     items:
- *                       type: string
- *                       example: "60d2b6e3e6b0f99dbe0c5a7f"
  *       500:
  *         description: Error interno del servidor
  */
@@ -89,27 +66,14 @@ router.get('/', listarEmpleados);
  *                 type: number
  *                 example: 12345678
  *               telefonoEmpleado:
- *                 type: string
- *                 example: "555-1234"
- *               codigoEmpleado:
- *                 type: string
- *                 example: "EMP001"
- *               fechaNacimientoEmpleado:
- *                 type: string
- *                 format: date
- *                 example: "1990-01-01"
+ *                 type: number
+ *                 example: 5551234
  *               nombreEmpleado:
  *                 type: string
  *                 example: "Juan Pérez"
  *               compania:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
- *               usuario:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7c"
- *               vendedor:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7d"
  *     responses:
  *       201:
  *         description: Empleado creado exitosamente
@@ -148,27 +112,14 @@ router.post('/', crearEmpleado);
  *                 type: number
  *                 example: 12345678
  *               telefonoEmpleado:
- *                 type: string
- *                 example: "555-1234"
- *               codigoEmpleado:
- *                 type: string
- *                 example: "EMP001"
- *               fechaNacimientoEmpleado:
- *                 type: string
- *                 format: date
- *                 example: "1990-01-01"
+ *                 type: number
+ *                 example: 555-1234
  *               nombreEmpleado:
  *                 type: string
  *                 example: "Juan Pérez"
  *               compania:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
- *               usuario:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7c"
- *               vendedor:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7d"
  *     responses:
  *       200:
  *         description: Empleado actualizado exitosamente

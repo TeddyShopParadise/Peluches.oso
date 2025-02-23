@@ -84,13 +84,6 @@ const pedidoSchemaValidation = Joi.object({
             'string.base': 'El ID de la factura debe ser un ID válido',
             'string.length': 'El ID de la factura debe tener 24 caracteres'
         }),
-    vendedores: Joi.array()
-        .items(Joi.string().length(24).hex())
-        .optional()
-        .messages({
-            'string.base': 'El ID del vendedor debe ser un ID válido',
-            'string.length': 'El ID del vendedor debe tener 24 caracteres'
-        })
 });
 
 // Exportar la validación

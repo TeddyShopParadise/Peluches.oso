@@ -65,11 +65,6 @@ const pedidoController = require('../Controllers/pedido_controller');
  *                     items:
  *                       type: string
  *                       example: "60d2b6e3e6b0f99dbe0c5a7c"
- *                   vendedores:
- *                     type: array
- *                     items:
- *                       type: string
- *                       example: "60d2b6e3e6b0f99dbe0c5a7d"
  *       500:
  *         description: Error interno del servidor
  */
@@ -134,11 +129,6 @@ router.get('/', pedidoController.listarPedidos);
  *                 items:
  *                   type: string
  *                   example: "60d2b6e3e6b0f99dbe0c5a7c"
- *               vendedores:
- *                 type: array
- *                 items:
- *                   type: string
- *                   example: "60d2b6e3e6b0f99dbe0c5a7d"
  *     responses:
  *       201:
  *         description: Pedido creado exitosamente
@@ -242,11 +232,6 @@ router.get('/:id', pedidoController.obtenerPedidoPorId);
  *                 items:
  *                   type: string
  *                   example: "60d2b6e3e6b0f99dbe0c5a7c"
- *               vendedores:
- *                 type: array
- *                 items:
- *                   type: string
- *                   example: "60d2b6e3e6b0f99dbe0c5a7d"
  *     responses:
  *       200:
  *         description: Pedido actualizado exitosamente

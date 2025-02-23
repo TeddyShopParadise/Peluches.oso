@@ -16,7 +16,7 @@ const pedidoSeed = {
   cliente: '60d21b4667d0d8992e610c85', // ID del cliente (ajusta según tu base de datos)
   detallesPedido: [], // Aquí puedes agregar IDs de detalles de pedido si los tienes
   facturas: [], // Aquí puedes agregar IDs de facturas si los tienes
-  vendedores: [] // Aquí puedes agregar IDs de vendedores si los tienes
+
 };
 
 // Verificar si el pedido ya existe
