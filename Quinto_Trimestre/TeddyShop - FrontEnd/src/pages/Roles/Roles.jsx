@@ -11,15 +11,10 @@ import {
   TableRow,
   Paper,
   IconButton,
-  DialogTitle,
-  DialogActions,
   Snackbar,
   Alert,
   Box,
-  Select,
   Switch,
-  MenuItem,
-  FormControl,
   FormControlLabel,
   TablePagination
 } from "@mui/material";
@@ -70,7 +65,6 @@ const Roles = () => {
   };
 
   const crearRol = async () => {
-    console.log("Datos enviados:", role); 
     try {
       const response = await fetch(`${apiUrl}/roles`, {
         method: 'POST',
@@ -125,6 +119,37 @@ const Roles = () => {
       setOpenSnackbar(true);
     }
   };
+
+  const EliminarRol = async (id) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`${apiUrl}/roles/${id}`, {
+            method: 'DELETE',
+          });
+  
+          if (response.ok) {
+            fetchRoles();
+            Swal.fire("Eliminado", "El rol ha sido eliminado correctamente.", "success");
+          } else {
+            Swal.fire("Error", "No se pudo eliminar el rol.", "error");
+          }
+        } catch (error) {
+          Swal.fire("Error", "Ocurrió un problema al eliminar el rol.", "error");
+        }
+      }
+    });
+  };
+
   const resetRoleForm = () => {
     setRole({ nombre: "", estado: true });
     setIsEditing(false);
@@ -154,36 +179,6 @@ const Roles = () => {
     setCurrentId(role._id);
   };
 
-  const EliminarRol = async (id) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción no se puede deshacer",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(`${apiUrl}/roles/${id}`, {
-            method: 'DELETE',
-          });
-  
-          if (response.ok) {
-            fetchRoles();
-            Swal.fire("Eliminado", "El rol ha sido eliminado correctamente.", "success");
-          } else {
-            Swal.fire("Error", "No se pudo eliminar el rol.", "error");
-          }
-        } catch (error) {
-          console.error('Error al eliminar el rol:', error);
-          Swal.fire("Error", "Ocurrió un problema al eliminar el rol.", "error");
-        }
-      }
-    });
-  };
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };

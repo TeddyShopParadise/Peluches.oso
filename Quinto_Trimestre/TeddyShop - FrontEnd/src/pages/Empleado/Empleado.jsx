@@ -13,32 +13,36 @@ import {
   Paper,
   IconButton,
   Dialog,
+  Select,
+  MenuItem,
   DialogTitle,
   DialogActions,
   DialogContent,
   Box,
 } from '@mui/material';
 import { getApiUrl } from '../../utils/apiConfig';
+import Swal from 'sweetalert2';
 
 const apiUrl = getApiUrl();
 
 const Empleado = () => {
-  // Definir el estado de los empleados y los campos del formulario
   const [formData, setFormData] = useState({
     dniEmpleado: '',
     telefonoEmpleado: '',
-    codigoEmpleado: '',
-    fechaNacimientoEmpleado: '',
     nombreEmpleado: '',
     compania: '',
-    usuario: '',
-    vendedor: ''
   });
   const [empleados, setEmpleados] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedEmpleado, setSelectedEmpleado] = useState(null);
+  const [companias, setCompanias] = useState([]);
   const [sortOrder, setSortOrder] = useState('asc');
+
+  useEffect(() => {
+    fetchEmpleados();
+    fetchCompanias();
+  }, []);
 
   // Obtener empleados desde el servidor
   const fetchEmpleados = async () => {
@@ -55,6 +59,28 @@ const Empleado = () => {
     }
   };
 
+  const fetchCompanias = async () => {
+    try {
+      //const token = getAuthToken();
+      const response = await fetch(`${apiUrl}/Compania`, {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+//'Authorization': `Bearer ${token}`, // Añadir el token al encabezado
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error al obtener las compañías');
+      }
+      const data = await response.json();
+      setCompanias(data); 
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
+
   // Manejo de cambios en el formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,12 +89,12 @@ const Empleado = () => {
 
   // Crear un nuevo empleado
   const crearEmpleado = async () => {
-    const { dniEmpleado, telefonoEmpleado, codigoEmpleado, nombreEmpleado, compania } = formData;
-    if (!dniEmpleado || !telefonoEmpleado || !codigoEmpleado || !nombreEmpleado || !compania) {
+    const { dniEmpleado, telefonoEmpleado, nombreEmpleado, compania } = formData;
+    if (!dniEmpleado || !telefonoEmpleado || !nombreEmpleado || !compania) {
       alert('Por favor, completa todos los campos.');
       return;
     }
-
+    console.log("Enviando datos:", JSON.stringify(formData));
     try {
       const response = await fetch(`${apiUrl}/empleado`, {
         method: 'POST',
@@ -78,10 +104,11 @@ const Empleado = () => {
         body: JSON.stringify(formData),
       });
 
+      const responseData = await response.json();
       if (!response.ok) {
-        throw new Error('Error al crear el empleado');
+        console.error("Error en el backend:", responseData);
+        throw new Error(responseData.message || 'Error al crear el empleado');
       }
-
       fetchEmpleados();
       resetForm();
     } catch (error) {
@@ -92,15 +119,11 @@ const Empleado = () => {
 
   // Actualizar un empleado
   const actualizarEmpleado = async () => {
-    const { dniEmpleado, telefonoEmpleado, codigoEmpleado, nombreEmpleado, compania } = formData;
-    if (!editingId || !dniEmpleado || !telefonoEmpleado || !codigoEmpleado || !nombreEmpleado || !compania) {
+    const { dniEmpleado, telefonoEmpleado, nombreEmpleado, compania } = formData;
+    if (!editingId || !dniEmpleado || !telefonoEmpleado  || !nombreEmpleado || !compania) {
       alert('Por favor, completa todos los campos.');
       return;
     }
-
-    // Depuración: mostrar URL y datos
-    console.log("Actualizando empleado con ID:", editingId);
-    console.log("Datos a actualizar:", formData);
 
     try {
       const response = await fetch(`${apiUrl}/empleado/${editingId}`, {
@@ -126,68 +149,72 @@ const Empleado = () => {
 
   // Eliminar un empleado
   const eliminarEmpleado = async (id) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este empleado?')) {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+  
+    if (result.isConfirmed) {
       try {
         const response = await fetch(`${apiUrl}/empleado/${id}`, {
           method: 'DELETE',
         });
-
+  
         if (!response.ok) {
           throw new Error('Error al eliminar el empleado');
         }
-
+  
+        await Swal.fire(
+          '¡Eliminado!',
+          'El empleado ha sido eliminado correctamente.',
+          'success'
+        );
         fetchEmpleados();
       } catch (error) {
         console.error(error);
-        alert(error.message);
+        Swal.fire('Error', error.message, 'error');
       }
     }
   };
-
-  // Cargar los datos del empleado a editar
+  
+ 
   const editarEmpleado = (empleado) => {
     setEditingId(empleado._id);
     setFormData({
       dniEmpleado: empleado.dniEmpleado || '',
       telefonoEmpleado: empleado.telefonoEmpleado || '',
-      codigoEmpleado: empleado.codigoEmpleado || '',
-      fechaNacimientoEmpleado: empleado.fechaNacimientoEmpleado || '',
       nombreEmpleado: empleado.nombreEmpleado || '',
-      compania: empleado.compania || '',
-      usuario: empleado.usuario || '',
-      vendedor: empleado.vendedor || ''
+      compania: empleado.compania || ''
+
     });
   };
 
-
-  // Ver detalles del empleado
   const verDetalles = (empleado) => {
     setSelectedEmpleado(empleado);
     setDialogOpen(true);
   };
 
-  // Cerrar el diálogo de detalles
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setSelectedEmpleado(null);
   };
 
-  // Restablecer el formulario
   const resetForm = () => {
     setFormData({
       dniEmpleado: '',
       telefonoEmpleado: '',
-      codigoEmpleado: '',
-      fechaNacimientoEmpleado: '',
       nombreEmpleado: '',
       compania: '',
-      usuario: '',
-      vendedor: ''
     });
     setEditingId(null);
   };
 
-  // Ordenar los empleados
   const sortedEmpleados = [...empleados].sort((a, b) => {
     if (sortOrder === 'asc') {
       return a.nombreEmpleado.localeCompare(b.nombreEmpleado);
@@ -195,10 +222,6 @@ const Empleado = () => {
       return b.nombreEmpleado.localeCompare(a.nombreEmpleado);
     }
   });
-
-  useEffect(() => {
-    fetchEmpleados();
-  }, []);
 
   return (
     
@@ -227,50 +250,55 @@ const Empleado = () => {
               onChange={handleInputChange}
             />
             <TextField
-              label="Código"
-              name="codigoEmpleado"
-              value={formData.codigoEmpleado || ''}
-              onChange={handleInputChange}
-            />
-            <TextField
               label="Nombre"
               name="nombreEmpleado"
               value={formData.nombreEmpleado || ''}
               onChange={handleInputChange}
             />
-            <TextField
-              label="Compañía"
-              name="compania"
-              value={formData.compania || ''}
-              onChange={handleInputChange}
-            />
-            <TextField
-              label="Usuario"
-              name="usuario"
-              value={formData.usuario || ''}
-              onChange={handleInputChange}
-            />
-            <TextField
-              label="Vendedor"
-              name="vendedor"
-              value={formData.vendedor || ''}
-              onChange={handleInputChange}
-            />
+           <Select
+            name="compania"
+            value={formData.compania}
+            onChange={(e) => setFormData({ ...formData, compania: e.target.value })}
+            displayEmpty
+          >
+            <MenuItem value="" disabled>Selecciona una Compañía</MenuItem>
+            {companias.map((comp) => (
+              <MenuItem key={comp._id} value={comp._id}>
+                {comp.nombreEmpresa}
+              </MenuItem>
+            ))}
+          </Select>
 
-            <Button
-              variant="contained"
-              onClick={editingId ? actualizarEmpleado : crearEmpleado}
-            >
-              {editingId ? 'Actualizar' : 'Crear'} Empleado
-            </Button>
+             <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2  }}>
+                          {!editingId ? (
+                        <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={crearEmpleado}
+                      >
+                       Crear Empleado
+                       </Button>
+                    ) : (
+                     <Button
+                       variant="contained"
+                       color="secondary"
+                       onClick={actualizarEmpleado}
+                     >
+                       Actualizar Empleado
+                     </Button>
+                   )}
+                       <Button variant="outlined" color="secondary" onClick={resetForm}>
+                         Cancelar
+                       </Button>
+                     </Box>
           </form>
 
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Nombre</TableCell>
               <TableCell>DNI</TableCell>
+              <TableCell>Nombre</TableCell>
               <TableCell>Teléfono</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
@@ -278,18 +306,23 @@ const Empleado = () => {
           <TableBody>
             {sortedEmpleados.map((empleado) => (
               <TableRow key={empleado._id}>
-                <TableCell>{empleado.nombreEmpleado}</TableCell>
                 <TableCell>{empleado.dniEmpleado}</TableCell>
+                <TableCell>{empleado.nombreEmpleado}</TableCell>
                 <TableCell>{empleado.telefonoEmpleado}</TableCell>
-
                 <TableCell>
-                  <IconButton onClick={() => editarEmpleado(empleado)}>
+                  <IconButton
+                 color='primary'
+                  onClick={() => editarEmpleado(empleado)}>
                     <Edit />
                   </IconButton>
-                  <IconButton onClick={() => eliminarEmpleado(empleado._id)}>
+                  <IconButton 
+                   sx={{ color: "#d33" }}
+                  onClick={() => eliminarEmpleado(empleado._id)}>
                     <Delete />
                   </IconButton>
-                  <IconButton onClick={() => verDetalles(empleado)}>
+                  <IconButton 
+                   color='info'
+                  onClick={() => verDetalles(empleado)}>
                     <Info />
                   </IconButton>
                 </TableCell>
@@ -308,13 +341,7 @@ const Empleado = () => {
             <Box>
               <p><strong>Nombre:</strong> {selectedEmpleado.nombreEmpleado}</p>
               <p><strong>DNI:</strong> {selectedEmpleado.dniEmpleado}</p>
-              <p><strong>Teléfono:</strong> {selectedEmpleado.telefonoEmpleado}</p>
-              <p><strong>Fecha de Nacimiento:</strong> {selectedEmpleado.fechaNacimientoEmpleado}</p>
               <p><strong>Compañía:</strong> {selectedEmpleado.compania ? selectedEmpleado.compania.nombreEmpresa : 'No disponible'}</p>
-              <p><strong>Usuario:</strong> {selectedEmpleado.usuario ? selectedEmpleado.usuario.email : 'No disponible'}</p>
-              <p><strong>Vendedor:</strong> {selectedEmpleado.vendedor ? selectedEmpleado.vendedor._id : 'No disponible'}</p>
-
-
             </Box>
           )}
         </DialogContent>

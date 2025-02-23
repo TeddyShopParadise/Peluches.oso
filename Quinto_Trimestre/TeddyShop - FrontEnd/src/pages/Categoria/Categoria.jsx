@@ -26,6 +26,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
+import Swal from 'sweetalert2';
 import { Edit, Delete, Info } from '@mui/icons-material';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
@@ -137,22 +138,27 @@ const CategoriaComponent = () => {
   };
 
   const eliminarCategoria = async (id) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
-      try {
-        const response = await fetch(`${apiUrl}/categorias/${id}`, {
-          method: 'DELETE',
-        });
-
-        if (!response.ok) {
-          throw new Error('Error al eliminar la categoría');
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`${apiUrl}/categorias/${id}`, { method: 'DELETE' });
+          if (!response.ok) throw new Error('Error al eliminar la categoría');
+          fetchCategorias();
+          Swal.fire('Eliminado', 'Categoría eliminada correctamente.', 'success');
+        } catch (error) {
+          Swal.fire('Error', error.message, 'error');
         }
-
-        fetchCategorias();
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
       }
-    }
+    });
   };
 
   const editarCategoria = (categoria) => {
@@ -241,28 +247,30 @@ const CategoriaComponent = () => {
               }}
             />
 
-            <Box display="flex" justifyContent="space-between" mt={2}>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ fontSize: '1.2rem', width: '48%' }}
-              >
-                {editingId ? 'Actualizar' : 'Crear'}
-              </Button>
-              <Button
-                type="button"
-                variant="outlined"
-                onClick={resetForm}
-                sx={{
-                  fontSize: '1.2rem',
-                  width: '48%',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                Cancelar
-              </Button>
-            </Box>
-          </form>
+           <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2  }}>
+             {!editingId ? (
+           <Button
+           variant="contained"
+           color="primary"
+           onClick={crearCategoria}
+         >
+          Crear Usuario
+          </Button>
+       ) : (
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={actualizarCategoria}
+        >
+          Actualizar Usuario
+        </Button>
+      )}
+          <Button variant="outlined" color="secondary" onClick={resetForm}>
+            Cancelar
+          </Button>
+
+        </Box>       
+         </form>
 
           <Box mt={4}>
             <h2>Lista de Categorías</h2>
@@ -281,14 +289,12 @@ const CategoriaComponent = () => {
                       <TableCell>{categoria.nombreCategoria}</TableCell>
                       <TableCell>{categoria.descripcionCategoria}</TableCell>
                       <TableCell>
-                        <IconButton onClick={() => editarCategoria(categoria)}>
+                        <IconButton 
+                        color='primary'onClick={() => editarCategoria(categoria)}>
                           <Edit />
                         </IconButton>
-                        <IconButton onClick={() => eliminarCategoria(categoria._id)}>
+                        <IconButton   sx={{ color: "#d33" }}onClick={() => eliminarCategoria(categoria._id)}>
                           <Delete />
-                        </IconButton>
-                        <IconButton onClick={() => openDetailsDialog(categoria)}>
-                          <Info />
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -308,25 +314,6 @@ const CategoriaComponent = () => {
           </Box>
         </Container>
       </Box>
-
-      {selectedCategoria && (
-        <Dialog open={true} onClose={closeDetailsDialog}>
-          <DialogTitle>Detalles de la Categoría</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <strong>Nombre:</strong> {selectedCategoria.nombreCategoria}
-            </DialogContentText>
-            <DialogContentText>
-              <strong>Descripción:</strong> {selectedCategoria.descripcionCategoria}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={closeDetailsDialog} color="primary">
-              Cerrar
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
     </Box>
   );
 };

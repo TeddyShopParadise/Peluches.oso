@@ -5,7 +5,7 @@ import { getApiUrl } from '../../utils/apiConfig';
 import './Login.css';
 
 const apiUrl = getApiUrl();
-console.log("URL de la API:", apiUrl); // Verifica si la URL está correcta
+console.log("URL de la API:", apiUrl); 
 
 const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState('');
@@ -19,7 +19,6 @@ const Login = ({ setIsAuthenticated }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Verificar si los campos no están vacíos
     if (!email || !contraseña) {
       setMessage('Por favor, ingresa el correo electrónico y la contraseña.');
       setOpen(true);
@@ -28,7 +27,7 @@ const Login = ({ setIsAuthenticated }) => {
 
     setLoading(true);
     const body = { email, contraseña };
-    console.log('Cuerpo de la solicitud:', body); // Para depurar los datos que se envían
+    console.log('Cuerpo de la solicitud:', body); 
 
     try {
       // Realizar la solicitud al servidor
@@ -42,7 +41,7 @@ const Login = ({ setIsAuthenticated }) => {
 
       // Verifica si la respuesta fue exitosa
       const data = await response.json();
-      console.log('Respuesta de la API:', data); // Para ver la respuesta completa
+      console.log('Respuesta de la API:', data); 
 
       setLoading(false);
 
@@ -55,7 +54,7 @@ const Login = ({ setIsAuthenticated }) => {
         let decodedToken;
         try {
           decodedToken = JSON.parse(atob(data.token.split('.')[1]));
-          console.log("Token decodificado:", decodedToken); // Verifica el contenido del token
+          console.log("Token decodificado:", decodedToken); 
         } catch (e) {
           setMessage('Error al decodificar el token');
           setOpen(true);
@@ -66,7 +65,7 @@ const Login = ({ setIsAuthenticated }) => {
         }
         // Verificar los roles del usuario decodificado
         const userRoles = Array.isArray(decodedToken.roles) ? decodedToken.roles : [];
-        console.log("Roles del usuario:", userRoles); // Verifica los roles
+        console.log("Roles del usuario:", userRoles); 
 
         let userRole = null;
         if (userRoles.includes('Administrador')) {
@@ -77,7 +76,7 @@ const Login = ({ setIsAuthenticated }) => {
         if (userRole) {
           setMessage(`Login exitoso como ${userRole.toLowerCase()}`);
           if (typeof setIsAuthenticated === 'function') {
-            setIsAuthenticated(true); // Actualiza el estado de autenticación
+            setIsAuthenticated(true); 
           }
           navigate(userRole === 'Administrador' ? '/home' : '/home');
             window.location.reload();
