@@ -15,16 +15,15 @@ const listarEmpleados = async (req, res) => {
 
 // Controlador para crear un nuevo empleado
 const crearEmpleado = async (req, res) => {
-    const body = req.body;
+    const { email, contraseña, username, roles, empleados, estado } = req.body;
 
-    const { error, value } = empleadoSchemaValidation.validate(body);
-
+    const { error, value } = empleadoSchemaValidation.validate(req.body, { abortEarly: false });
     if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+        return res.status(400).json({ message: "Validación fallida", details: error.details });
     }
-
+    
     try {
-        const nuevoEmpleado = await logic.crearEmpleado(value);
+        const nuevoEmpleado = await logic.crearEmpleado(value); // Ahora "value" está definido correctamente
         res.status(201).json(nuevoEmpleado);
     } catch (err) {
         res.status(500).json({ error: 'Error interno del servidor' });
@@ -34,7 +33,7 @@ const crearEmpleado = async (req, res) => {
 // Controlador para actualizar un empleado
 const actualizarEmpleado = async (req, res) => {
     const { id } = req.params;
-    const body = req.body;
+    const { email, contraseña, username, roles, empleados, estado } = req.body;
 
     const { error, value } = empleadoSchemaValidation.validate(body);
 
