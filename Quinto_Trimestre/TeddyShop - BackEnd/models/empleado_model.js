@@ -8,15 +8,7 @@ const empleadoSchema = new mongoose.Schema({
     unique: true // Atributo único, no como clave primaria
   },
   telefonoEmpleado: {
-    type: String,
-    required: true
-  },
-  codigoEmpleado: {
-    type: String,
-    required: true
-  },
-  fechaNacimientoEmpleado: {
-    type: Date,
+    type: Number,
     required: true
   },
   nombreEmpleado: {
@@ -28,22 +20,6 @@ const empleadoSchema = new mongoose.Schema({
     ref: 'Compañia', // Relación uno a muchos con Compañia
     required: true
   },
-  usuario: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Usuario' // Relación uno a uno con Usuario
-  },
-  vendedor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Vendedor' // Relación uno a uno con Vendedor
-  },
-  vendedorPedidos: [{
-    type: mongoose.Schema.Types.ObjectId, // Relación uno a muchos con Vendedor_Pedido
-    ref: 'Vendedor_Pedido'
-  }],
-  vendedorCatalogos: [{
-    type: mongoose.Schema.Types.ObjectId, // Relación uno a muchos con Vendedor_Catalogo
-    ref: 'Vendedor_Catalogo'
-  }]
 }, {
   collection: 'Empleado',
   timestamps: false

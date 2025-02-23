@@ -54,10 +54,6 @@ const pedidoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Factura' // Referencia a la colección Factura
   }],
-  vendedores: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Vendedor' // Referencia a la colección Vendedor
-  }]
 }, {
   collection: 'Pedido',
   timestamps: false

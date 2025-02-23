@@ -32,10 +32,6 @@ const catalogoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, // Relación muchos a muchos con Producto
     ref: 'Producto'
   }],
-  vendedoresCatalogo: [{
-    type: mongoose.Schema.Types.ObjectId, // Relación muchos a muchos con Vendedor
-    ref: 'Vendedor'
-  }]
 }, {
   collection: 'Catalogo',
   timestamps: false
