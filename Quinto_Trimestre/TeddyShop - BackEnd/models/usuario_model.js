@@ -7,10 +7,6 @@ const usuarioSchema = new mongoose.Schema({
     required: true,
     unique: true 
   },
-  telefono: {
-    type: String, // NVARCHAR en SQL
-    required: true
-  },
   contraseña: {
     type: String, // NVARCHAR en SQL
     required: true
@@ -23,12 +19,18 @@ const usuarioSchema = new mongoose.Schema({
     type: Boolean, // BIT en SQL
     required: false
   },
+  empleados: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Empleado',
+    required: true
+  }],
   roles: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Roles',
     required: true
   }]
-}, {
+},
+ {
   collection: 'Usuario',
   timestamps: false
 });
