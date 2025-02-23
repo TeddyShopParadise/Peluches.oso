@@ -3,10 +3,10 @@
 const HistorialPrecio = require('../models/historialPrecio_model'); 
 
 const historialPrecioSeed = {
-  precio: 19.99, // Precio del producto
-  fechaInicio: new Date('2024-01-01'), // Fecha de inicio
-  fechaFin: new Date('2024-12-31'), // Fecha de fin
-  estadoPrecio: true // Estado del precio
+  precio: 19.99, 
+  fechaInicio: new Date('2024-01-01'), 
+  fechaFin: new Date('2024-12-31'),
+  estadoPrecio: true 
 };
 
 

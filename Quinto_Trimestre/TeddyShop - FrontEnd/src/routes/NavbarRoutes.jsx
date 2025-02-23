@@ -19,7 +19,6 @@ import Pedido from "../pages/Pedido/Pedido";
 import Producto from "../pages/Producto/Producto";
 import Roles from "../pages/Roles/Roles";
 import Usuarios from "../pages/Usuario/Usuario";
-import Vendedores from "../pages/Vendedor/Vendedor";
 import Login from "../pages/login/login";
 import ProductoUsuario from "../pages/Producto/ProductoUsuario";
 import CatalogoUsuario from "../pages/Catalogo/CatalogoUsuario";
@@ -47,7 +46,6 @@ const NavbarRoutes = () => {
       <Route path="/productos" element={<Producto />} />
       <Route path="/roles" element={<Roles />} />
       <Route path="/usuarios" element={<Usuarios />} />
-      <Route path="/vendedores" element={<Vendedores />} />
       <Route path="/login" element={<Login />} />
       <Route path="/productos-usuario" element={<ProductoUsuario />} />
       <Route path="/catalogos-usuario" element={<CatalogoUsuario />} />

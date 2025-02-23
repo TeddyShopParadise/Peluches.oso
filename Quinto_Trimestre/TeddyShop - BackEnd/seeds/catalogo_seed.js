@@ -6,12 +6,10 @@ const catalogoSeed = {
   disponibilidadCatalogo: true,
   estiloCatalogo: 'Infantil',
   imagen : ' ', 
-  compania: '60d5f4847c31a91b8c8b4567', //ID válido de Compañia
-  productos: [], // Si tienes IDs de Producto, agréguelos aquí
-  vendedoresCatalogo: [] // Si tienes IDs de Vendedor, agréguelos aquí
+  compania: '60d5f4847c31a91b8c8b4567', 
+  productos: [], 
 };
 
-// Verificar si el nombre del catálogo ya existe en la base de datos
 Catalogo.findOne({ nombreCatalogo: catalogoSeed.nombreCatalogo })
   .then(existingCatalogo => {
     if (existingCatalogo) {

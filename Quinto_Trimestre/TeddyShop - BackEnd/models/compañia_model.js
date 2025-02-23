@@ -20,11 +20,13 @@ const compañiaSchema = new mongoose.Schema({
   },
   catalogos: [{
     type: mongoose.Schema.Types.ObjectId, // Relación uno a muchos con Catalogo
-    ref: 'Catalogo'
+    ref: 'Catalogo',
+    required: false
   }],
   empleados: [{
     type: mongoose.Schema.Types.ObjectId, // Relación uno a muchos con Empleado
-    ref: 'Empleado'
+    ref: 'Empleado',
+    required: false
   }]
 }, {
   collection: 'Compañia',

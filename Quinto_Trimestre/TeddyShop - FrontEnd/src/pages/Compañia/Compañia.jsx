@@ -1,465 +1,395 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Container,
-  TextField,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Snackbar,
-  Alert,
-  Box,
-  TablePagination,
-  Switch,
-} from '@mui/material';
-import { Edit, Delete, ArrowUpward, ArrowDownward, Info } from '@mui/icons-material';
-import '../PagesStyle.css';
-import { getApiUrl } from '../../utils/apiConfig'
-const apiUrl = getApiUrl();
-console.log("Url almacenada: ",apiUrl);
+  import React, { useEffect, useState } from 'react';
+  import {
+    Container,
+    TextField,
+    Button,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    Snackbar,
+    Box,
+    TablePagination,
+  } from '@mui/material';
+  import Swal from 'sweetalert2';
+  import { Edit, Delete, ArrowUpward, ArrowDownward, Info } from '@mui/icons-material';
+  import '../PagesStyle.css';
+  import { getApiUrl } from '../../utils/apiConfig'
+  const apiUrl = getApiUrl();
+  console.log("Url almacenada: ",apiUrl);
 
-const Compania = () => {
-  const [companias, setCompanias] = useState([]);
-  const [NIT, setNIT] = useState('');
-  const [telefonoEmpresa, setTelefonoEmpresa] = useState('');
-  const [nombreEmpresa, setNombreEmpresa] = useState('');
-  const [direccionEmpresa, setDireccionEmpresa] = useState('');
-  const [catalogos, setCatalogos] = useState([]); // Agregado para catalogos
-  const [empleados, setEmpleados] = useState([]);
-  const [editingId, setEditingId] = useState(null);
-  const [sortedBy, setSortedBy] = useState('nombreEmpresa');
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedCompania, setSelectedCompania] = useState(null);
+  const Compania = () => {
+    const [companias, setCompanias] = useState([]);
+    const [NIT, setNIT] = useState('');
+    const [telefonoEmpresa, setTelefonoEmpresa] = useState('');
+    const [nombreEmpresa, setNombreEmpresa] = useState('');
+    const [direccionEmpresa, setDireccionEmpresa] = useState('');
+    const [editingId, setEditingId] = useState(null);
+    const [sortedBy, setSortedBy] = useState('nombreEmpresa');
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedCompania, setSelectedCompania] = useState(null);
 
-  const getAuthToken = () => {
-    const token = localStorage.getItem('authToken');
-    return token;
-  };
+    /*const getAuthToken = () => {
+      const token = localStorage.getItem('authToken');
+      return token;
+    };
+  */
 
-  const token = getAuthToken();
-
-  // Obtener la lista de compañías
-  const fetchCompanias = async () => {
-    try {
-      const token = getAuthToken(); // Obtener el token
-      const response = await fetch(`${apiUrl}/compania`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`, // Añadir el token al encabezado
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error('Error al obtener las compañías');
-      }
-  
-      const data = await response.json();
-      setCompanias(data);
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
-  // Ordenar compañías
-  const sortCompanias = (field) => {
-    const order = sortedBy === field && sortOrder === 'asc' ? 'desc' : 'asc';
-    setSortedBy(field);
-    setSortOrder(order);
-
-    const sortedData = [...companias].sort((a, b) => {
-      if (a[field] < b[field]) return order === 'asc' ? -1 : 1;
-      if (a[field] > b[field]) return order === 'asc' ? 1 : -1;
-      return 0;
-    });
-    setCompanias(sortedData);
-  };
-
-  // Crear nueva compañía
-  const crearCompania = async () => {
-    if (!NIT || !telefonoEmpresa || !nombreEmpresa || !direccionEmpresa) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
-  
-    try {
-      const token = getAuthToken(); // Obtener el token
-      const response = await fetch(`${apiUrl}/compania`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Añadir el token al encabezado
-        },
-        body: JSON.stringify({ NIT, telefonoEmpresa, nombreEmpresa, direccionEmpresa, catalogos, empleados }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Error al crear la compañía');
-      }
-  
-      fetchCompanias();
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-  
-  const actualizarCompania = async () => {
-    if (!editingId || !NIT || !telefonoEmpresa || !nombreEmpresa || !direccionEmpresa) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
-  
-    try {
-      const token = getAuthToken(); // Obtener el token
-      const response = await fetch(`${apiUrl}/compania/${editingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Añadir el token al encabezado
-        },
-        body: JSON.stringify({ NIT, telefonoEmpresa, nombreEmpresa, direccionEmpresa, catalogos, empleados }),
-      });
-  
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`Error al actualizar la compañía: ${errorMessage}`);
-      }
-  
-      fetchCompanias();
-      resetForm();
-    } catch (error) {
-      console.error('Error en actualizarCompania:', error.message);
-      alert(error.message);
-    }
-  };
-  
-  const eliminarCompania = async (id) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar esta compañía?')) {
+    const fetchCompanias = async () => {
       try {
-        const token = getAuthToken(); // Obtener el token
-        const response = await fetch(`${apiUrl}/compania/${id}`, {
-          method: 'DELETE',
+        //const token = getAuthToken();
+        const response = await fetch(`${apiUrl}/Compania`, {
+          method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`, // Añadir el token al encabezado
+            "Content-Type": "application/json",
+  //'Authorization': `Bearer ${token}`, 
           },
         });
-  
+    
         if (!response.ok) {
-          throw new Error('Error al eliminar la compañía');
+          throw new Error('Error al obtener las compañías');
         }
-  
-        fetchCompanias();
+    
+        const data = await response.json();
+        setCompanias(data);
       } catch (error) {
         console.error(error);
         alert(error.message);
       }
-    }
-  };
+    };
 
-  // Cargar datos para editar
-  const editarCompania = (compania) => {
-    setEditingId(compania._id);
-    setNIT(compania.NIT);
-    setTelefonoEmpresa(compania.telefonoEmpresa);
-    setNombreEmpresa(compania.nombreEmpresa);
-    setDireccionEmpresa(compania.direccionEmpresa);
-    setCatalogos(compania.catalogos || []); // Cargar catalogos
-    setEmpleados(compania.empleados || []);
-  };
+    // Ordenar compañías
+    const sortCompanias = (field) => {
+      const order = sortedBy === field && sortOrder === 'asc' ? 'desc' : 'asc';
+      setSortedBy(field);
+      setSortOrder(order);
 
-  // Mostrar detalles de la compañía
-  const verDetalles = (compania) => {
-    setSelectedCompania(compania);
-    setDialogOpen(true);
-  };
+      const sortedData = [...companias].sort((a, b) => {
+        if (a[field] < b[field]) return order === 'asc' ? -1 : 1;
+        if (a[field] > b[field]) return order === 'asc' ? 1 : -1;
+        return 0;
+      });
+      setCompanias(sortedData);
+    };
 
-  // Cerrar el diálogo de detalles
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-    setSelectedCompania(null);
-  };
+    // Crear nueva compañía
+    const crearCompania = async () => {
+      if (!NIT || !telefonoEmpresa || !nombreEmpresa || !direccionEmpresa) {
+        alert('Por favor, completa todos los campos.');
+        return;
+      }
+    
+      try {
+      // const token = getAuthToken(); // Obtener el token
+        const response = await fetch(`${apiUrl}/compania`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ NIT, telefonoEmpresa, nombreEmpresa, direccionEmpresa}),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Error al crear la compañía');
+        }
+    
+        fetchCompanias();
+        resetForm();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    };
+    
+    const actualizarCompania = async () => {
+      if (!editingId || !NIT || !telefonoEmpresa || !nombreEmpresa || !direccionEmpresa) {
+        alert('Por favor, completa todos los campos.');
+        return;
+      }
+    
+      try {
+        //const token = getAuthToken(); // Obtener el token
+        const response = await fetch(`${apiUrl}/compania/${editingId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${token}`, 
+          },
+          body: JSON.stringify({ NIT, telefonoEmpresa, nombreEmpresa, direccionEmpresa  }),
+        });
+    
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(`Error al actualizar la compañía: ${errorMessage}`);
+        }
+    
+        fetchCompanias();
+        resetForm();
+      } catch (error) {
+        console.error('Error en actualizarCompania:', error.message);
+        alert(error.message);
+      }
+    };
+    
+    const eliminarCompania = async (id) => {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción no se puede deshacer',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(`${apiUrl}/compania/${id}`, {
+              method: 'DELETE',
+              headers: {
+                // 'Authorization': `Bearer ${token}`, 
+              },
+            });
+    
+            if (!response.ok) {
+              throw new Error('Error al eliminar la compañía');
+            }
+    
+            Swal.fire('Eliminado', 'La compañía ha sido eliminada.', 'success');
+            fetchCompanias();
+          } catch (error) {
+            console.error(error);
+            Swal.fire('Error', error.message, 'error');
+          }
+        }
+      });
+    };
+    // Cargar datos para editar
+    const editarCompania = (compania) => {
+      setEditingId(compania._id);
+      setNIT(compania.NIT);
+      setTelefonoEmpresa(compania.telefonoEmpresa);
+      setNombreEmpresa(compania.nombreEmpresa);
+      setDireccionEmpresa(compania.direccionEmpresa);
+    };
 
-  // Restablecer formulario
-  const resetForm = () => {
-    setNIT('');
-    setTelefonoEmpresa('');
-    setNombreEmpresa('');
-    setDireccionEmpresa('');
-    setEditingId(null);
-  };
+    const verDetalles = (compania) => {
+      setSelectedCompania(compania);
+      setDialogOpen(true);
+    };
 
-  useEffect(() => {
-    fetchCompanias();
-  }, []);
+    const handleCloseDialog = () => {
+      setDialogOpen(false);
+      setSelectedCompania(null);
+    };
 
-  // Funciones para gestionar catalogos
-const addCatalogo = () => setCatalogos([...catalogos, ""]);
-const handleCatalogoChange = (index, value) => {
-  const newCatalogos = [...catalogos];
-  newCatalogos[index] = value;
-  setCatalogos(newCatalogos);
-};
-const removeCatalogo = (index) => {
-  const newCatalogos = catalogos.filter((_, i) => i !== index);
-  setCatalogos(newCatalogos);
-};
+    const resetForm = () => {
+      setNIT('');
+      setTelefonoEmpresa('');
+      setNombreEmpresa('');
+      setDireccionEmpresa('');
+      setEditingId(null);
+    };
 
-// Funciones para gestionar empleados
-const addEmpleado = () => setEmpleados([...empleados, ""]);
-const handleEmpleadoChange = (index, value) => {
-  const newEmpleados = [...empleados];
-  newEmpleados[index] = value;
-  setEmpleados(newEmpleados);
-};
-const removeEmpleado = (index) => {
-  const newEmpleados = empleados.filter((_, i) => i !== index);
-  setEmpleados(newEmpleados);
-};
+    useEffect(() => {
+      fetchCompanias();
+    }, []);
 
-
-
-  return (
-    <Box className="BoxInicial">
-      <Box className="Box"
-        sx={{
-          width: '90%',
-          maxWidth: '100%',
-          padding: { xs: '20px', md: '50px' },
-          borderRadius: '30px',
-        }}
-      >
-        <Container>
-          <h1>Gestión de Compañías</h1>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              editingId ? actualizarCompania() : crearCompania();
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <TextField
-              type="number"
-              label="NIT"
-              value={NIT}
-              onChange={(e) => setNIT(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
+    return (
+      <Box className="BoxInicial">
+        <Box className="Box"
+          sx={{
+            width: '90%',
+            maxWidth: '100%',
+            padding: { xs: '20px', md: '50px' },
+            borderRadius: '30px',
+          }}
+        >
+          <Container>
+            <h1>Gestión de Compañías</h1>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                editingId ? actualizarCompania() : crearCompania();
               }}
-            />
-            <TextField
-              type="text"
-              label="Teléfono de la Empresa"
-              value={telefonoEmpresa}
-              onChange={(e) => setTelefonoEmpresa(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
-              }}
-            />
-            <TextField
-              type="text"
-              label="Nombre de la Empresa"
-              value={nombreEmpresa}
-              onChange={(e) => setNombreEmpresa(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
-              }}
-            />
-            <TextField
-              type="text"
-              label="Dirección de la Empresa"
-              value={direccionEmpresa}
-              onChange={(e) => setDireccionEmpresa(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
-              }}
-            />
-
-             {/* Campos para Catalogos */}
-          <h3>Catálogos</h3>
-          {catalogos.map((catalogo, index) => (
-            <Box display="flex" alignItems="center" key={index} mt={1}>
+              noValidate
+              autoComplete="off"
+            >
               <TextField
-                label={`Catálogo ${index + 1}`}
-                value={catalogo}
-                onChange={(e) => handleCatalogoChange(index, e.target.value)}
+                type="number"
+                label="NIT"
+                value={NIT}
+                onChange={(e) => setNIT(e.target.value)}
                 fullWidth
                 margin="normal"
+                required
+                variant="outlined"
+                sx={{
+                  '& .MuiInputLabel-root': { fontSize: '1.2rem' },
+                  '& .MuiInputBase-input': { fontSize: '1.2rem' },
+                  '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                    '-webkit-appearance': 'none',
+                    margin: 0
+                  },
+                  '& input[type=number]': {
+                    '-moz-appearance': 'textfield'
+                  }
+                }}
+              />
+              <TextField
+                type="text"
+                label="Teléfono de la Empresa"
+                value={telefonoEmpresa}
+                onChange={(e) => setTelefonoEmpresa(e.target.value)}
+                fullWidth
+                margin="normal"
+                required
                 variant="outlined"
                 sx={{
                   '& .MuiInputLabel-root': { fontSize: '1.2rem' },
                   '& .MuiInputBase-input': { fontSize: '1.2rem' },
                 }}
               />
-              <IconButton onClick={() => removeCatalogo(index)} color="secondary">
-                <Delete />
-              </IconButton>
-            </Box>
-          ))}
-          <Button variant="outlined" onClick={addCatalogo} sx={{ mt: 1 }}>
-            Añadir Catálogo
-          </Button>
-
-           {/* Campos para Empleados */}
-           <h3>Empleados</h3>
-          {empleados.map((empleado, index) => (
-            <Box display="flex" alignItems="center" key={index} mt={1}>
               <TextField
-                label={`Empleado ${index + 1}`}
-                value={empleado}
-                onChange={(e) => handleEmpleadoChange(index, e.target.value)}
+                type="text"
+                label="Nombre de la Empresa"
+                value={nombreEmpresa}
+                onChange={(e) => setNombreEmpresa(e.target.value)}
                 fullWidth
                 margin="normal"
+                required
                 variant="outlined"
                 sx={{
                   '& .MuiInputLabel-root': { fontSize: '1.2rem' },
                   '& .MuiInputBase-input': { fontSize: '1.2rem' },
                 }}
               />
-              <IconButton onClick={() => removeEmpleado(index)} color="secondary">
-                <Delete />
-              </IconButton>
-            </Box>
-          ))}
-          <Button variant="outlined" onClick={addEmpleado} sx={{ mt: 1 }}>
-            Añadir Empleado
-          </Button>
-
-
-
-            <Box display="flex" justifyContent="space-between" mt={2}>
-              <Button type="submit" variant="contained" sx={{ fontSize: '1.2rem' }}>
-                {editingId ? 'Actualizar' : 'Crear'}
-              </Button>
-              <Button
-                type="button"
-                onClick={resetForm}
+              <TextField
+                type="text"
+                label="Dirección de la Empresa"
+                value={direccionEmpresa}
+                onChange={(e) => setDireccionEmpresa(e.target.value)}
+                fullWidth
+                margin="normal"
+                required
                 variant="outlined"
-                sx={{ fontSize: '1.2rem' }}
-              >
-                Cancelar
-              </Button>
-            </Box>
-          </form>
-  
-          <Box mt={4}>
-            <h2>Lista de Compañías</h2>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        Nombre
-                        <IconButton onClick={() => sortCompanias('nombreEmpresa')}>
-                          {sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />}
-                        </IconButton>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        Teléfono
-                        <IconButton onClick={() => sortCompanias('telefonoEmpresa')}>
-                          {sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />}
-                        </IconButton>
-                      </Box>
-                    </TableCell>
-                    <TableCell>Dirección</TableCell>
-                    <TableCell>Catálogos</TableCell>
-                    <TableCell>Empleados</TableCell>
-                    <TableCell>Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {companias.map((comp) => (
-                    <TableRow key={comp._id}>
-                      <TableCell>{comp.nombreEmpresa}</TableCell>
-                      <TableCell>{comp.telefonoEmpresa}</TableCell>
-                      <TableCell>{comp.direccionEmpresa}</TableCell>
-                      <TableCell>{comp.catalogos.join(", ")}</TableCell> {/* Mostrar catalogos */}
-                      <TableCell>{comp.empleados.join(", ")}</TableCell> {/* Mostrar empleados */}
+                sx={{
+                  '& .MuiInputLabel-root': { fontSize: '1.2rem' },
+                  '& .MuiInputBase-input': { fontSize: '1.2rem' },
+                }}
+              />   
+              <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2  }}>
+                          {!editingId ? (
+                        <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={crearCompania}
+                      >
+                       Crear Compañia
+                       </Button>
+                    ) : (
+                     <Button
+                       variant="contained"
+                       color="secondary"
+                       onClick={actualizarCompania}
+                     >
+                       Actualizar Compañia
+                     </Button>
+                   )}
+                       <Button variant="outlined" color="secondary" onClick={resetForm}>
+                         Cancelar
+                       </Button>
+                     </Box>
+            </form>
+
+            <Box mt={4}>
+              <h2>Lista de Compañías</h2>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                    <TableCell>NIT</TableCell>
                       <TableCell>
-                        <IconButton onClick={() => verDetalles(comp)}>
-                          <Info />
-                        </IconButton>
-                        <IconButton onClick={() => editarCompania(comp)}>
-                          <Edit />
-                        </IconButton>
-                        <IconButton onClick={() => eliminarCompania(comp._id)}>
-                          <Delete />
-                        </IconButton>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          Nombre
+                          <IconButton onClick={() => sortCompanias('nombreEmpresa')}>
+                            {sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />}
+                          </IconButton>
+                        </Box>
                       </TableCell>
+                      
+                      <TableCell>Dirección</TableCell>
+                      <TableCell>Acciones</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
-  
-          {/* Diálogo de detalles */}
-          {selectedCompania && (
-            <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-              <DialogTitle>Detalles de la Compañía</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  <strong>Nombre:</strong> {selectedCompania.nombreEmpresa}
-                  <br />
+                  </TableHead>
+                  <TableBody>
+                    {companias.map((comp) => (
+                      <TableRow key={comp._id}>
+                         <TableCell>{comp.NIT}</TableCell>
+                        <TableCell>{comp.nombreEmpresa}</TableCell>
+                        <TableCell>{comp.direccionEmpresa}</TableCell>
+                        <TableCell>
+                          <IconButton
+                          color="info"
+                          onClick={() => verDetalles(comp)}>
+                            <Info />
+                          </IconButton>
+                          <IconButton
+                          color="primary" 
+                          onClick={() => editarCompania(comp)}>
+                            <Edit />
+                          </IconButton>
+                          <IconButton 
+                              sx={{ color: "#d33" }}
+                          onClick={() => eliminarCompania(comp._id)}>
+                            <Delete />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+    
+            {selectedCompania && (
+              <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+                <DialogTitle>Detalles de la Compañía</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
                   <strong>NIT:</strong> {selectedCompania.NIT}
-                  <br />
-                  <strong>Teléfono:</strong> {selectedCompania.telefonoEmpresa}
-                  <br />
+                  <br />  
+                  <strong>Nombre:</strong> {selectedCompania.nombreEmpresa}
+                   <br />
                   <strong>Dirección:</strong> {selectedCompania.direccionEmpresa}
-                  <br />
-                  <strong>Catálogos:</strong> {selectedCompania.catalogos.join(", ")}
-                  <br />
-                  <strong>Empleados:</strong> {selectedCompania.empleados.join(", ")}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCloseDialog} color="primary">
-                  Cerrar
-                </Button>
-              </DialogActions>
-            </Dialog>
-          )}
-        </Container>
+                    <br />
+                  <strong>Teléfono:</strong> {selectedCompania.telefonoEmpresa}
+                    <br /> 
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseDialog} color="primary">
+                    Cerrar
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
+          </Container>
+        </Box>
       </Box>
-    </Box>
-  );
-  
-};
+    );
+    
+  };
 
-export default Compania;
+  export default Compania;

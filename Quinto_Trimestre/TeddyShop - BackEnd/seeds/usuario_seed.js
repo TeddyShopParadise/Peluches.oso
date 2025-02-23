@@ -7,19 +7,19 @@ const usuarioSeed = [
   {
     _id: new mongoose.Types.ObjectId('64df1ac42b3d1e5f8c9a4b2f'),
     email: 'Administrador@example.com', 
-    telefono: '3101234567', 
     contraseña: 'contraseñaSegura123',
     username: 'Administrador', 
     estado: true, 
+    empleado:'64df1aa21e2c3d5f7a8b1e4c',
     roles: '64df1a8f1c2b4e1d9a2b3c4f' 
   },
   {
     _id: new mongoose.Types.ObjectId('64df1b194d3e2c5a7f1b9a8e'),
     email: 'Empleado@example.com', 
-    telefono: '3204875521', 
     contraseña: 'contraseñaSegura123',
     username: 'Empleado', 
     estado: true, 
+    empleado: '64df1ab31f5d4b6e9c7e2d1a',
     roles: '64df1a9e1b7d4a5e8c6d9e2b' 
   }
 ];

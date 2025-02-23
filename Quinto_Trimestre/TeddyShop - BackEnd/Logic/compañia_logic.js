@@ -35,8 +35,8 @@ async function actualizarCompañia(id, body) {
 // Función asíncrona para listar todas las compañías
 async function listarCompañias() {
     let compañias = await Compañia.find()
-        .populate('catalogos', 'nombreCatalogo estiloCatalogo') // Reemplazar con los campos relevantes de Catalogo
-        .populate('empleados', 'nombreEmpleado dniEmpleado'); // Reemplazar con los campos relevantes de Empleado
+        .populate('catalogos', 'nombreCatalogo estiloCatalogo') 
+        .populate('empleados', 'nombreEmpleado dniEmpleado'); 
     return compañias;
 }
 
@@ -44,8 +44,8 @@ async function listarCompañias() {
 async function buscarCompañiaPorId(id) {
     try {
         const compañia = await Compañia.findById(id)
-            .populate('catalogos', 'nombreCatalogo estiloCatalogo') // Reemplazar con los campos relevantes de Catalogo
-            .populate('empleados', 'nombreEmpleado dniEmpleado'); // Reemplazar con los campos relevantes de Empleado
+            .populate('catalogos', 'nombreCatalogo estiloCatalogo') 
+            .populate('empleados', 'nombreEmpleado dniEmpleado'); 
         if (!compañia) {
             throw new Error(`Compañía con ID ${id} no encontrada`);
         }

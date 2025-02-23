@@ -34,7 +34,6 @@ const pedidoRoutes = require('./routes/pedidos_routes');
 const productoRoutes = require('./routes/productos_routes');
 const rolesRoutes = require('./routes/roles_routes');
 const usuarioRoutes = require('./routes/usuarios_routes');
-const vendedorRoutes = require('./routes/vendedores_routes');
 const loginRoute = require('./routes/login_routes');
 
 // Middleware
@@ -98,7 +97,6 @@ app.use('/api/pedido', pedidoRoutes);
 app.use('/api/producto', productoRoutes);
 app.use('/api/roles', rolesRoutes);
 app.use('/api/usuario', usuarioRoutes);
-app.use('/api/vendedor', vendedorRoutes);
 app.use('/api/auth', loginRoute);
 // Puerto
 const port = process.env.PORT || 3000;

@@ -11,20 +11,11 @@ const usuarioSchemaValidation = Joi.object({
             'string.empty': 'El correo electrónico no puede estar vacío',
             'any.required': 'El correo electrónico es un campo requerido'
         }),
-    telefono: Joi.string()
-        .pattern(/^[0-9]{7,15}$/)
-        .required()
-        .messages({
-            'string.base': 'El teléfono debe ser un texto',
-            'string.empty': 'El teléfono no puede estar vacío',
-            'string.pattern.base': 'El teléfono debe tener entre 7 y 15 dígitos',
-            'any.required': 'El teléfono es un campo requerido'
-        }),
     contraseña: Joi.string()
         .min(8)
         .max(100)
         .required()
-        .pattern(/^[\x20-\x7E]*$/)
+        .pattern(/^[\x20-\x7EñÑáéíóúÁÉÍÓÚüÜ]*$/)
         .messages({
             'string.base': 'La contraseña debe ser un texto',
             'string.empty': 'La contraseña no puede estar vacía',
@@ -52,6 +43,13 @@ const usuarioSchemaValidation = Joi.object({
             'boolean.base': 'El estado debe ser un valor booleano',
             'any.required': 'El estado es un campo requerido'
         }),
+        empleados: Joi.array()
+            .items(Joi.string().length(24).hex())
+            .optional()
+            .messages({
+                'array.base': 'Los roles deben ser un arreglo de IDs válidos',
+                'string.length': 'Cada ID de empleado debe tener 24 caracteres'
+            }),
     roles: Joi.array()
         .items(Joi.string().length(24).hex())
         .optional()
