@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Swal from "sweetalert2";
 import {
-  Container,
   TextField,
   Button,
   Table,
@@ -19,7 +18,6 @@ import {
   DialogContentText,
   Box,
   TablePagination,
-  Switch,
   FormControl,
   InputLabel,
   Select,
@@ -69,7 +67,6 @@ const ProductoComponent = () => {
         throw new Error('Error al obtener los productos');
       }
       const data = await response.json();
-      console.log(data); 
       setProductos(data);
     } catch (error) {
       console.error(error);
@@ -77,13 +74,11 @@ const ProductoComponent = () => {
     }
   };
   
-
   const fetchCategorias = async () => {
     try {
       const response = await fetch(`${apiUrl}/categorias`);
       if (!response.ok) throw new Error('Error al obtener las categorías');
       const data = await response.json();
-      console.log("Categorías cargadas:", data); 
       setCategorias(data);
     } catch (error) {
       console.error(error);
@@ -96,7 +91,6 @@ const ProductoComponent = () => {
       const response = await fetch(`${apiUrl}/catalogos/activos`);
       if (!response.ok) throw new Error('Error al obtener los catálogos');
       const data = await response.json();
-      console.log("Catálogos cargados:", data);  
       setCatalogos(data);
     } catch (error) {
       console.error(error);
@@ -114,15 +108,10 @@ const ProductoComponent = () => {
                // "Authorization": `Bearer ${token}` 
             }
         });
-
         if (!response.ok) {
             throw new Error('Error al obtener los precios históricos');
         }
-
         const data = await response.json();
-
-        console.log("Historial de precios cargado:", data);
-
         setHistorialPrecios(data);
     } catch (error) {
         console.error(error);
@@ -168,7 +157,7 @@ const ProductoComponent = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          //"Authorization": `Bearer ${token}` // 🔥 Agregamos el token aquí
+          //"Authorization": `Bearer ${token}` 
         },
         body: JSON.stringify({
           estiloProducto,
@@ -183,7 +172,7 @@ const ProductoComponent = () => {
       });
 
       if (!response.ok) {
-        const errorText = await response.text(); // Lee el cuerpo de la respuesta
+        const errorText = await response.text(); 
         console.error('Error:', errorText);
       }
       fetchProductos();
@@ -199,14 +188,13 @@ const ProductoComponent = () => {
       alert('Por favor, completa todos los campos.');
       return;
     }
-   // console.log('HistorialPrecios recibido:', body.historialPrecios);
     try {
      // const token = getAuthToken();
       const response = await fetch(`${apiUrl}/producto/${editingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-       //   "Authorization": `Bearer ${token}` // 🔥 Agregamos el token aquí
+       //   "Authorization": `Bearer ${token}` 
        
         },
         body: JSON.stringify({
@@ -214,14 +202,14 @@ const ProductoComponent = () => {
           materialProducto,
           disponibilidadProducto,
           tamañoProducto,
-          imagen: imagenProducto, // Agregamos la imagengen también
+          imagen: imagenProducto, 
           categorias: categoriasSeleccionadas || [],
           catalogos: catalogosSeleccionados,
           historialPrecios: preciosSeleccionados   
         }),
       });
       if (!response.ok) {
-        const errorText = await response.text(); // Lee el cuerpo de la respuesta
+        const errorText = await response.text(); 
         console.error('Error:', errorText);
         throw new Error('Error al actualizar el producto');
       }
@@ -232,7 +220,6 @@ const ProductoComponent = () => {
       alert(error.message);
     }
   }
-
 
 const eliminarProducto = async (id) => {
             Swal.fire({
@@ -527,8 +514,7 @@ const eliminarProducto = async (id) => {
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-        
+        />  
         <Dialog
           open={selectedProducto !== null}
           onClose={closeDetailsDialog}

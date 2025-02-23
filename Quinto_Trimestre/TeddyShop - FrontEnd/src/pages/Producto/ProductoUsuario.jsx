@@ -252,7 +252,6 @@ const ProductoUsuario = () => {
           precio: ultimoPrecio.numeric || 0
         }],*/
         facturas: [],
-        vendedores: []
       };
   
       // Verificar datos antes de enviar

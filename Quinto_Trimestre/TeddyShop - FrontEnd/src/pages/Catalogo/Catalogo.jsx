@@ -35,14 +35,12 @@ const CatalogoComponent = () => {
   const [catalogos, setCatalogos] = useState([]);
   const [companias, setCompanias] = useState([]);
   const [productos, setProductos] = useState([]);
-  const [vendedores, setVendedores] = useState([]);
   const [nombreCatalogo, setNombreCatalogo] = useState('');
   const [descripcionCatalogo, setDescripcionCatalogo] = useState('');
   const [disponibilidadCatalogo, setDisponibilidadCatalogo] = useState(true);
   const [estiloCatalogo, setEstiloCatalogo] = useState('');
   const [companiaSeleccionada, setCompaniaSeleccionada] = useState('');
   const [productosSeleccionados, setProductosSeleccionados] = useState([]);
-  const [vendedoresSeleccionados, setVendedoresSeleccionados] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -90,22 +88,8 @@ const CatalogoComponent = () => {
     }
   };
 
-  const fetchVendedores = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/vendedor`);
-      if (!response.ok) {
-        throw new Error('Error al obtener los vendedores');
-      }
-      const data = await response.json();
-      setVendedores(data);
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
   const crearCatalogo = async () => {
-    if (!nombreCatalogo || !estiloCatalogo || !companiaSeleccionada || productosSeleccionados.length === 0 || vendedoresSeleccionados.length === 0) {
+    if (!nombreCatalogo || !estiloCatalogo || !companiaSeleccionada || productosSeleccionados.length === 0 ) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -122,8 +106,7 @@ const CatalogoComponent = () => {
           disponibilidadCatalogo,
           estiloCatalogo,
           compania: companiaSeleccionada,
-          productos: productosSeleccionados,
-          vendedoresCatalogo: vendedoresSeleccionados,
+          productos: productosSeleccionados
         }),
       });
 
@@ -140,7 +123,7 @@ const CatalogoComponent = () => {
   };
 
   const actualizarCatalogo = async () => {
-    if (!editingId || !nombreCatalogo || !estiloCatalogo || !companiaSeleccionada || productosSeleccionados.length === 0 || vendedoresSeleccionados.length === 0) {
+    if (!editingId || !nombreCatalogo || !estiloCatalogo || !companiaSeleccionada || productosSeleccionados.length === 0 ) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -157,8 +140,7 @@ const CatalogoComponent = () => {
           disponibilidadCatalogo,
           estiloCatalogo,
           compania: companiaSeleccionada,
-          productos: productosSeleccionados,
-          vendedoresCatalogo: vendedoresSeleccionados,
+          productos: productosSeleccionados
         }),
       });
 
@@ -201,7 +183,6 @@ const CatalogoComponent = () => {
     setEstiloCatalogo(catalogo.estiloCatalogo);
     setCompaniaSeleccionada(catalogo.compania );
     setProductosSeleccionados(catalogo.productos || []);
-    setVendedoresSeleccionados(catalogo.vendedoresCatalogo || []);
   };
 
   const resetForm = () => {
@@ -211,7 +192,6 @@ const CatalogoComponent = () => {
     setEstiloCatalogo('');
     setCompaniaSeleccionada('');
     setProductosSeleccionados([]);
-    setVendedoresSeleccionados([]);
     setEditingId(null);
   };
 
@@ -236,7 +216,6 @@ const CatalogoComponent = () => {
     fetchCatalogos();
     fetchCompanias();
     fetchProductos();
-    fetchVendedores();
   }, []);
 
   return (
@@ -330,22 +309,6 @@ const CatalogoComponent = () => {
                 {productos.map((prod) => (
                   <MenuItem key={prod._id} value={prod._id}>
                     {prod.estiloProducto} - {prod.tamañoProducto}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl fullWidth margin="normal" required>
-              <InputLabel>Vendedores</InputLabel>
-              <Select
-                multiple
-                value={vendedoresSeleccionados}
-                onChange={(e) => setVendedoresSeleccionados(e.target.value)}
-                label="Vendedores"
-              >
-                {vendedores.map((vend) => (
-                  <MenuItem key={vend._id} value={vend._id}>
-                    {vend.codigoVendedor} - {vend.dniEmpleado}
                   </MenuItem>
                 ))}
               </Select>

@@ -26,6 +26,7 @@ import {
   TablePagination,
   Switch
 } from "@mui/material";
+import Swal from 'sweetalert2';
 import { Edit, Delete, ArrowUpward, ArrowDownward, Info } from "@mui/icons-material";
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
@@ -34,8 +35,9 @@ console.log("Url almacenada: ",apiUrl);
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
+  const [empleados, setEmpleados] = useState([]);
   const [filteredUsuarios, setFilteredUsuarios] = useState([]);
-  const [usuario, setUsuario] = useState({ email: '', telefono: '', contraseña: '', username: '', roles: [], estado: true });
+  const [usuario, setUsuario] = useState({ email: '', contraseña: '', username: '', roles: [], empleados: [], estado: true });
   const [roles, setRoles] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -52,18 +54,27 @@ const Usuarios = () => {
   useEffect(() => {
     fetchUsuarios();
     fetchRoles();
+    fetchEmpleados();
   }, []);
 
   const fetchUsuarios = async () => {
     try {
       const response = await fetch(`${apiUrl}/usuario`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error en la respuesta del servidor:", response.status, errorText);
+        throw new Error(`Error ${response.status}: ${errorText}`);
+      }
       const data = await response.json();
       setUsuarios(data);
       setFilteredUsuarios(data);
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
+      setSnackbarMessage(`Error al obtener usuarios: ${error.message}`);
+      setOpenSnackbar(true);
     }
   };
+
   const fetchRoles = async () => {
     try {
       const response = await fetch(`${apiUrl}/roles`);
@@ -80,10 +91,26 @@ const Usuarios = () => {
     }
   };
 
+  const fetchEmpleados = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/empleado`);
+      if (!response.ok) {
+        throw new Error('Error al obtener los empleados');
+      }
+      const data = await response.json();
+      setEmpleados(data);
+    } catch (error) {
+      console.error(error);
+      setSnackbarMessage(error.message);
+    }
+  };
+
+
   const crearUsuario = async () => {
-    if (!usuario.email || !usuario.telefono || !usuario.contraseña || !usuario.username) {
+    if (!usuario.email  || !usuario.contraseña || !usuario.username) {
       alert('Por favor, completa todos los campos del usuario.');
       return;
+
     }
     try {
       const response = await fetch(`${apiUrl}/usuario`, {
@@ -91,7 +118,8 @@ const Usuarios = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...usuario,
-          roles: Array.isArray(usuario.roles) ? usuario.roles.map(id => id) : []
+          roles: Array.isArray(usuario.roles) ? usuario.roles.map(id => id) : [],
+          empleados: Array.isArray(usuario.empleados) ? usuario.empleados.map(id => id) : []
           
         }),
       }); 
@@ -112,7 +140,7 @@ const Usuarios = () => {
 };
 
 const actualizarUsuario = async () => {
-    if (!usuario.email || !usuario.telefono || !usuario.contraseña || !usuario.username) {
+    if (!usuario.email  || !usuario.contraseña || !usuario.username) {
       alert('Por favor, completa todos los campos del usuario.');
       return;
     }
@@ -122,16 +150,19 @@ const actualizarUsuario = async () => {
       ? usuario.roles.map(role => typeof role === 'object' ? role._id : role) 
       : [];
 
+      const empleadosToSend = Array.isArray(usuario.empleados) 
+      ? usuario.empleados.map(empleado => typeof empleado === 'object' ? empleado._id : empleado) 
+      : [];
       const response = await fetch(`${apiUrl}/usuario/${editingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: usuario.email,
-          telefono: usuario.telefono,
           contraseña: usuario.contraseña,
           username: usuario.username,
           estado: usuario.estado,
-           roles: rolesToSend
+           roles: rolesToSend,
+           empleados: empleadosToSend
         })
       });
 
@@ -146,29 +177,41 @@ const actualizarUsuario = async () => {
       setOpenSnackbar(true);
     } catch (error) {
       console.error(error);
-      alert(error.message);
+      setSnackbarMessage(error.message);
     }
 };
 
 const eliminarUsuario = async (id) => {
-  try {
-    const response = await fetch(`${apiUrl}/usuario/${id}`, { method: 'DELETE' });
+  const result = await Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'No podrás revertir esto.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  });
 
-    if (response.ok) {
-      fetchUsuarios();
-      setOpenDeleteDialog(false);
-      setSnackbarMessage("Usuario eliminado");
+  if (result.isConfirmed) {
+    try {
+      const response = await fetch(`${apiUrl}/usuario/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        fetchUsuarios();
+        Swal.fire('Eliminado', 'El usuario ha sido eliminado.', 'success');
+      } else {
+        throw new Error('Error al eliminar el usuario');
+      }
+    } catch (error) {
+      console.error('Error deleting usuario:', error);
+      setSnackbarMessage('Error al eliminar el usuario');
       setOpenSnackbar(true);
     }
-  } catch (error) {
-    console.error('Error deleting usuario:', error);
-    setSnackbarMessage("Error al eliminar el usuario");
-    setOpenSnackbar(true);
   }
 };
 
 const resetUsuarioForm = () => {
-setUsuario({ email: '', telefono: '', contraseña: '', username: '', roles: [], estado: true });
+setUsuario({ email: '', contraseña: '', username: '', roles: [], empleados: [], estado: true });
 
   setEditingId(null);
 };
@@ -179,13 +222,19 @@ const mostrarMensaje = (mensaje) => {
 
    const handleInputChange = (e) => setUsuario({ ...usuario, [e.target.name]: e.target.value });
    const handleToggleActivo = (e) => setUsuario({ ...usuario, estado: e.target.checked });
-   const handleEditClick = (usuario) => { setUsuario({ ...usuario, roles: usuario.roles.map(role => role._id)  }); setEditingId(usuario._id); };
+   const handleEditClick = (usuario) => { 
+    setUsuario({ 
+      ...usuario, 
+      roles: Array.isArray(usuario.roles) ? usuario.roles.map(role => role._id) : [], 
+      empleados: Array.isArray(usuario.empleados) ? usuario.empleados.map(empleado => empleado._id) : []  
+    }); 
+    setEditingId(usuario._id); 
+  };
    const handleChangeRoles = (event) => {
     setUsuario({ ...usuario, roles: event.target.value });
   };
-   const handleCloseDeleteDialog = () => {
-    setOpenDeleteDialog(false);
-    setEditingId(null);
+  const handleChangeEmpleados = (event) => {
+    setUsuario({ ...usuario, empleados: event.target.value });
   };
 
   const handleCloseSnackbar = () => {
@@ -245,23 +294,31 @@ const mostrarMensaje = (mensaje) => {
         }}>
         <Container>
           <h1>Gestión de Usuarios</h1>
-
           <form noValidate autoComplete="off">
             <TextField label="Email" name="email" value={usuario.email} onChange={handleInputChange} fullWidth margin="normal" required />
-            <TextField label="Teléfono" name="telefono" value={usuario.telefono} onChange={handleInputChange} fullWidth margin="normal" />
             <TextField label="Contraseña" name="contraseña" value={usuario.contraseña} onChange={handleInputChange} fullWidth margin="normal" type="password" required />
             <TextField label="Nombre de usuario" name="username" value={usuario.username} onChange={handleInputChange} fullWidth margin="normal" required />
             <FormControl fullWidth margin="normal">
-            <InputLabel>Roles</InputLabel>
-            <Select multiple value={usuario.roles} onChange={handleChangeRoles}>
-            {roles.map((rol) => (
-              <MenuItem key={rol._id} value={rol._id}>
-                {rol.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-          </FormControl>
+  <InputLabel>Roles</InputLabel>
+  <Select multiple value={usuario.roles || []} onChange={handleChangeRoles}>
+    {roles.map((rol) => (
+      <MenuItem key={rol._id} value={rol._id}>
+        {rol.nombre}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
 
+<FormControl fullWidth margin="normal">
+  <InputLabel>Empleados</InputLabel>
+  <Select multiple value={usuario.empleados || []} onChange={handleChangeEmpleados}>
+    {empleados.map((empleado) => (
+      <MenuItem key={empleado._id} value={empleado._id}>
+        {empleado.nombreEmpleado}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
             <Box display="flex" alignItems="center" mt={2}>
               <Switch checked={usuario.estado} onChange={handleToggleActivo} />
               <span>{usuario.estado ? "Activo" : "Inactivo"}</span>
@@ -306,23 +363,15 @@ const mostrarMensaje = (mensaje) => {
                     </Box>
                   </TableCell>
                   <TableCell>Email</TableCell>
-                  <TableCell>Roles</TableCell>
-                  <TableCell>Estado</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredUsuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((usuario) => (
+              {Array.isArray(filteredUsuarios) &&
+                filteredUsuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((usuario) => (
                   <TableRow key={usuario._id}>
                     <TableCell>{usuario.username}</TableCell>
                     <TableCell>{usuario.email}</TableCell>
-                    <TableCell>
-                    {usuario.roles && usuario.roles.length > 0
-                      ? usuario.roles.map((rol) => rol.nombre).join(", ")
-                      : "Sin roles"}
-                   </TableCell>
-                    <TableCell>{usuario.estado ? "Activo" : "Inactivo"}</TableCell>
-
                     <TableCell>
                       <IconButton 
                       color="info"
@@ -347,33 +396,26 @@ const mostrarMensaje = (mensaje) => {
           </TableContainer>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredUsuarios.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-          <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
-            <DialogTitle>Eliminar Usuario</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                ¿Estás seguro de que deseas eliminar este usuario?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDeleteDialog}>Cancelar</Button>
-              <Button onClick={eliminarUsuario} color="error">Eliminar</Button>
-            </DialogActions>
-          </Dialog>
-
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredUsuarios?.length ?? 0} 
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
           <Dialog open={openDetailDialog} onClose={handleCloseDetailDialog}>
             <DialogTitle>Detalles de Usuario</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                <strong>Nombre de usuario:</strong> {selectedUsuario?.username}<br />
-                <strong>Teléfono:</strong> {selectedUsuario?.telefono}<br />
+                <strong>Empleado asociado:</strong> 
+              {selectedUsuario?.empleados && selectedUsuario.empleados.length > 0
+                ? selectedUsuario.empleados.map((empleado) => empleado.nombreEmpleado).join(", ")
+                : "Sin Empleado"}<br /> 
+                <strong>Rol Asociado:</strong> 
+            {selectedUsuario?.roles && selectedUsuario.roles.length > 0
+              ? selectedUsuario.roles.map((rol) => rol.nombre).join(", ")
+              : "Sin roles"}
               </DialogContentText>
             </DialogContent>
             <DialogActions>
