@@ -19,4 +19,18 @@ class Movimiento (private var Fecha: String, private var CantidadIngreso: Int, p
     fun getCantidadVendida(): Int{
         return CantidadVendida
     }
+
+
+    fun setFecha(fecha: String) {
+        this.Fecha = fecha
+    }
+
+    fun setCantidadIngreso(cantidadIngreso: Int) {
+        this.CantidadIngreso = cantidadIngreso
+    }
+
+    fun setCantidadVendida(cantidadIngreso: Int) {
+        this.CantidadVendida = cantidadIngreso
+    }
+
 }

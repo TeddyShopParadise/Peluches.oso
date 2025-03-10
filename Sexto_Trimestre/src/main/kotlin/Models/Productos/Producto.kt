@@ -25,6 +25,24 @@ class Producto (private var EstiloProducto: String, private var MaterialProducto
         return DisponibilidadProducto
     }
 
+
+    fun setEstiloProducto(estiloProducto: String) {
+        this.EstiloProducto = estiloProducto
+    }
+
+    fun setMaterialProducto(materialProducto: String) {
+        this.MaterialProducto = materialProducto
+    }
+
+    fun setTamañoProducto(tamañoProducto: String) {
+        this.TamañoProducto = tamañoProducto
+    }
+
+    fun setDisponibilidadProducto(disponibilidadProducto: Boolean) {
+        this.DisponibilidadProducto = disponibilidadProducto
+    }
+}
+
     //fun arreglo() {
     //    var arregloProducto = (mutableSetOf<String>(estiloProducto, materialProducto, tamañoProducto))
     //    println("Los datos del arreglo son: ")
@@ -45,8 +63,6 @@ class Producto (private var EstiloProducto: String, private var MaterialProducto
     //        println("Estilo: ${i[0]}, Material: ${i[1]}, Tamaño: ${i[2]}")
     //    }
     //}
-
-}
 
 //fun matriz2(){
 //    print("Cuantos productos quieres agregar: ")
