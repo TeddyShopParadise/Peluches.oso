@@ -1,6 +1,6 @@
 package Models.Productos
 
-class HistorialPrecio(private var Precio: Double, private var FechaInicio: String, private var FechaFin: String, private var EstadoPrecio: Boolean) {
+class HistorialPrecio(private var Precio: Double?, private var FechaInicio: String, private var FechaFin: String, private var EstadoPrecio: Boolean) {
 
     fun HistorialPrecio(precio: Double, fechaInicio: String, fechaFin: String, estadoPrecio: Boolean){
         this.Precio  = precio
@@ -9,7 +9,7 @@ class HistorialPrecio(private var Precio: Double, private var FechaInicio: Strin
         this.EstadoPrecio = estadoPrecio
     }
 
-    fun getPrecio(): Double{
+    fun getPrecio(): Double? {
         return Precio
     }
 
@@ -23,5 +23,21 @@ class HistorialPrecio(private var Precio: Double, private var FechaInicio: Strin
 
     fun getEstadoPrecio(): Boolean {
         return EstadoPrecio
+    }
+
+    fun setPrecio(precio: Double?){
+        this.Precio = precio
+    }
+
+    fun setFechaInicio(fechaInicio: String){
+        this.FechaInicio = fechaInicio
+    }
+
+    fun setFechaFin(fechaFin: String){
+        this.FechaFin = fechaFin
+    }
+
+    fun setEstadoPrecio(estadoPrecio: Boolean){
+        this.EstadoPrecio = estadoPrecio
     }
 }
