@@ -1,6 +1,7 @@
 package Models.Menus
 
 import Controllers.Productos.ProductoController
+import Servicios.CategoriaService
 import Servicios.MovimientoService
 import Servicios.ProductoService
 
@@ -59,7 +60,7 @@ class Menu {
 
         when(opcion) {
             1 -> (print(""))
-            2 -> (print(""))
+            2 -> administrarCategorias()
             3 -> administrarProductos()
             4 -> (print(""))
             5 -> (print(""))
@@ -92,5 +93,10 @@ class Menu {
     private fun administrarMovimientos(){
         val adminMovimientos = MovimientoService()
         adminMovimientos.AdminMovimientos()
+    }
+
+    private fun administrarCategorias(){
+        val adminCategorias = CategoriaService()
+        adminCategorias.AdminCategorias()
     }
 }
