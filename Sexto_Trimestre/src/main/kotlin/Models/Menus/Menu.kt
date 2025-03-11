@@ -58,18 +58,26 @@ class Menu {
         val opcion = readln().toInt()
 
         when (opcion) {
-            1 -> (print(""))
-            2 -> administrarCatalogos()
+            1 -> administrarCatalogos()
             2 -> administrarCategorias()
             3 -> administrarProductos()
             4 -> administrarHistorialPrecios()
-            5 -> (print(""))
+            5 -> println("")
             6 -> administrarMovimientos()
         }
     }
 
     private fun gestionarPedidosAdmin() {
         println("\nGestionar pedidos:\n1. Administrar facturas\n2. Administrar detalle factura\n3. Administrar pedido\n4. Administrar detalle pedido\n5. Administrar devoluciones\n6. Administrar metodo pago")
+        val opcion = readln().toInt()
+
+        when (opcion) {
+            1 -> administrarFacturas()
+            2 -> administrarDetalleFactura()
+            3 -> administrarDetallePedido()
+            4 -> println("")
+            5 -> println("")
+        }
     }
 
     private fun gestionarUsuariosAdmin() {
@@ -95,7 +103,6 @@ class Menu {
         adminMovimientos.AdminMovimientos()
     }
 
-
     private fun administrarHistorialPrecios() {
         val adminHistorialPrecio = HistorialPrecioService()
         adminHistorialPrecio.AdminHistorialPrecios()
@@ -111,4 +118,19 @@ class Menu {
         adminCategorias.AdminCategorias()
     }
 
+    private fun administrarFacturas() {
+        val adminFacturas = DetalleFacturaService()
+        adminFacturas.AdminDetallesFactura()
+    }
+
+    private fun administrarDetalleFactura() {
+        val adminDetalleFactura = DetalleFacturaService()
+        adminDetalleFactura.AdminDetallesFactura()
+    }
+
+
+    private fun administrarDetallePedido() {
+        val adminDetallePedido = DetallePedidoService()
+        adminDetallePedido.AdminDetallesPedido()
+    }
 }
