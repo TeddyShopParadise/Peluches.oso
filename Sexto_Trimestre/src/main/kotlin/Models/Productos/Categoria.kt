@@ -13,4 +13,12 @@ class Categoria (private var NombreCategoria: String, private var DescripcionCat
     fun getDescripcionCategoria(): String {
         return DescripcionCategoria
     }
+
+    fun setNombreCategoria(nombreCategoria: String) {
+        this.NombreCategoria = nombreCategoria
+    }
+
+    fun setDescripcionCategoria(descripcionCategoria: String) {
+        this.DescripcionCategoria = descripcionCategoria
+    }
 }
