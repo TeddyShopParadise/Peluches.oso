@@ -25,4 +25,20 @@ class Catalogo (private var NombreCatalogo: String,  private var DescripcionCata
         return EstiloCatalogo
     }
 
+    fun setNombreCatalogo(nombreCatalogo: String){
+        this.NombreCatalogo = nombreCatalogo
+    }
+
+    fun setDescripcionCatalogo(descripcionCatalogo: String){
+        this.DescripcionCatalogo = descripcionCatalogo
+    }
+
+    fun setDisponibilidadCatalogo(disponibilidadCatalogo: Boolean){
+        this.DisponibilidadCatalogo = DisponibilidadCatalogo
+    }
+
+    fun setEstiloCatalogo(estiloCatalogo: String){
+        this.EstiloCatalogo = estiloCatalogo
+    }
+
 }

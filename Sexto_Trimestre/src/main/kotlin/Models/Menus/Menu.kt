@@ -1,9 +1,8 @@
 package Models.Menus
 
+import Servicios.*
+
 import Controllers.Productos.ProductoController
-import Servicios.CategoriaService
-import Servicios.MovimientoService
-import Servicios.ProductoService
 
 class Menu {
 
@@ -58,11 +57,12 @@ class Menu {
         println("\nGestionar productos:\n1. Administrar catalogos\n2. Administrar categoria\n3. Administrar productos\n4. Administrar historial precio\n5. Administrar inventario\n6. Administrar movimientos")
         val opcion = readln().toInt()
 
-        when(opcion) {
+        when (opcion) {
             1 -> (print(""))
+            2 -> administrarCatalogos()
             2 -> administrarCategorias()
             3 -> administrarProductos()
-            4 -> (print(""))
+            4 -> administrarHistorialPrecios()
             5 -> (print(""))
             6 -> administrarMovimientos()
         }
@@ -85,18 +85,30 @@ class Menu {
         println("\nGestionar pedidos:\n1. Listar facturas\n2. Listar detalle factura\n3. Listar pedido\n4. Listar detalle pedido\n5. Listar devoluciones")
     }
 
-    private fun administrarProductos(){
+    private fun administrarProductos() {
         val adminProductos = ProductoService()
         adminProductos.AdminProductos()
     }
 
-    private fun administrarMovimientos(){
+    private fun administrarMovimientos() {
         val adminMovimientos = MovimientoService()
         adminMovimientos.AdminMovimientos()
     }
 
-    private fun administrarCategorias(){
+
+    private fun administrarHistorialPrecios() {
+        val adminHistorialPrecio = HistorialPrecioService()
+        adminHistorialPrecio.AdminHistorialPrecios()
+    }
+
+    private fun administrarCatalogos() {
+        val adminCatalogo = CatalogoService()
+        adminCatalogo.AdminCatalogos()
+    }
+
+    private fun administrarCategorias() {
         val adminCategorias = CategoriaService()
         adminCategorias.AdminCategorias()
     }
+
 }
