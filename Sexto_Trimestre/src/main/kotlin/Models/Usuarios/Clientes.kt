@@ -24,4 +24,20 @@ class Clientes (private var DniCliente: Int, private var NombreCliente: String, 
     fun getApellidoCliente(): String{
         return ApellidoCliente
     }
+
+    fun setDniCliente(dniCliente: Int){
+        this.DniCliente = dniCliente
+    }
+
+    fun setNombreCliente(nombreCliente: String){
+        this.NombreCliente =nombreCliente
+    }
+
+    fun setTelefonoCliente(telefonoCliente: Int){
+        this.TelefonoCliente = telefonoCliente
+    }
+
+    fun setApellidoCliente(apellidoCliente: String){
+        this.ApellidoCliente = apellidoCliente
+    }
 }
