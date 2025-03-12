@@ -8,4 +8,8 @@ class MetodoPago (private var NombreMetodoPago: String) {
     fun getNombreMetodoPago(): String{
         return NombreMetodoPago
     }
+
+    fun setNombreMetodoPago(nombreMetodoPago: String){
+        this.NombreMetodoPago = nombreMetodoPago
+    }
 }
