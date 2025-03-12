@@ -14,4 +14,12 @@ class Factura (private var FechaCreacionFactura: String, private var HoraCreacio
     fun getHoraCreacionFacura(): String{
         return HoraCreacionFacura
     }
+
+    fun setFechaCreacionFacura(fechaCreacionFactura: String){
+        this.FechaCreacionFactura = fechaCreacionFactura
+    }
+
+    fun setHoraCreacionFacura(horaCreacionFacura: String){
+        this.HoraCreacionFacura = horaCreacionFacura
+    }
 }

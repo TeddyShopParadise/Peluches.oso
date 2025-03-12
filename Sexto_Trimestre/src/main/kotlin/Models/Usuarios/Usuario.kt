@@ -24,4 +24,19 @@ class Usuario (private var Email: String, private var Telefono: Int, private var
     fun getUsername(): String{
         return Username
     }
+
+    fun setEmail(email: String){
+        this.Email = email
+    }
+
+    fun setTelefono(telefono: Int){
+        this.Telefono = telefono
+    }
+
+    fun setContrasena(contrasena: String){
+        this.Contrasena = contrasena
+    }
+    fun setUsername(username: String){
+        this.Username = username
+    }
 }
