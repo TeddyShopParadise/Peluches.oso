@@ -1,55 +1,71 @@
 package Controller
 
 import Models.Compania
+import java.util.*
 
 class CompaniaController {
-    private var compania = Compania()
+    private val compania = mutableMapOf<String, Compania>()
 
-    fun mostrarInformacion() {
-        println("\n--- Información de la Compañía ---")
-        println("NIT: ${compania.getNIT()}")
-        println("Teléfono: ${compania.getTelefonoEmpresa()}")
-        println("Nombre: ${compania.getNombreEmpresa()}")
-        println("Dirección: ${compania.getDireccionEmpresa()}")
+    fun crearCompania(): String {
+        println("Ingrese el NIT de la compañía: ")
+        val nit = readln()
+
+        println("Ingrese el teléfono de la compañía: ")
+        val telefono = readln()
+
+        println("Ingrese el nombre de la compañía: ")
+        val nombre = readln()
+
+        println("Ingrese la dirección de la compañía: ")
+        val direccion = readln()
+
+        val id = UUID.randomUUID().toString()
+        val nuevaCompania = Compania(nit, telefono, nombre, direccion)
+
+        compania[id] = nuevaCompania
+        return "Compañía creada con éxito."
     }
 
-    fun actualizarInformacion() {
-        println("\nIngrese los nuevos datos de la compañía:")
+    fun listarCompanias(): String {
+        if (compania.isEmpty()) {
+            return "No hay compañías disponibles."
+        }
+        return compania.entries.joinToString("\n") {
+            "ID: ${it.key}, NIT: ${it.value.getNIT()}, Teléfono: ${it.value.getTelefonoEmpresa()}, Nombre: ${it.value.getNombreEmpresa()}, Dirección: ${it.value.getDireccionEmpresa()}"
+        }
+    }
 
-        print("Nuevo NIT: ")
+    fun buscarCompaniaPorId(id: String): String {
+        val comp = compania[id]
+        return comp?.let {
+            "Compañía encontrada: NIT: ${it.getNIT()}, Teléfono: ${it.getTelefonoEmpresa()}, Nombre: ${it.getNombreEmpresa()}, Dirección: ${it.getDireccionEmpresa()}"
+        } ?: "Compañía no encontrada."
+    }
+
+    fun actualizarCompania(id: String): String {
+        val comp = compania[id] ?: return "Compañía no encontrada."
+
+        println("Ingrese el nuevo NIT de la compañía (actual: ${comp.getNIT()}):")
         val nuevoNit = readln()
 
-        print("Nuevo Teléfono: ")
+        println("Ingrese el nuevo teléfono de la compañía (actual: ${comp.getTelefonoEmpresa()}):")
         val nuevoTelefono = readln()
 
-        print("Nuevo Nombre: ")
+        println("Ingrese el nuevo nombre de la compañía (actual: ${comp.getNombreEmpresa()}):")
         val nuevoNombre = readln()
 
-        print("Nueva Dirección: ")
+        println("Ingrese la nueva dirección de la compañía (actual: ${comp.getDireccionEmpresa()}):")
         val nuevaDireccion = readln()
 
-        compania = Compania(nuevoNit, nuevoTelefono, nuevoNombre, nuevaDireccion)
-
-        println("\nInformación de la compañía actualizada correctamente.")
+        compania[id] = Compania(nuevoNit, nuevoTelefono, nuevoNombre, nuevaDireccion)
+        return "Compañía actualizada con éxito."
     }
 
-    fun menuCompania() {
-        while (true) {
-            println("\n--- Menú de Compañía ---")
-            println("1. Mostrar información de la compañía")
-            println("2. Actualizar información de la compañía")
-            println("3. Salir")
-            print("Seleccione una opción: ")
-
-            when (readln().toIntOrNull()) {
-                1 -> mostrarInformacion()
-                2 -> actualizarInformacion()
-                3 -> {
-                    println("Saliendo del menú de compañía...")
-                    break
-                }
-                else -> println("Opción no válida, intente nuevamente.")
-            }
+    fun eliminarCompania(id: String): String {
+        return if (compania.remove(id) != null) {
+            "Compañía eliminada con éxito."
+        } else {
+            "Compañía no encontrada."
         }
     }
 }
