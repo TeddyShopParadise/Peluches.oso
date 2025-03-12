@@ -13,4 +13,12 @@ class Roles (private var Estado: Boolean, private var Nombre: String){
     fun getNombre(): String{
         return Nombre
     }
+
+    fun setEstado(estado: Boolean){
+        this.Estado = estado
+    }
+
+    fun setNombre(nombre: String){
+        this.Nombre = nombre
+    }
 }
