@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical"
+			  android:padding="16dp">
+
+	<!-- Botón para crear usuario -->
+	<Button
+			android:id="@+id/btnCrearUsuario"
+			android:text="Crear Usuario"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="mostrarFormulario" />
+
+	<LinearLayout
+			android:id="@+id/contenedorFormulario"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:visibility="gone">
+
+		<EditText
+				android:id="@+id/emailUsuario"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Email"
+				android:inputType="textEmailAddress"/>
+
+		<EditText
+				android:id="@+id/telefonoUsuario"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Teléfono"
+				android:inputType="phone"/>
+
+		<EditText
+				android:id="@+id/contrasenaUsuario"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Contraseña"
+				android:inputType="textPassword"/>
+
+		<EditText
+				android:id="@+id/usernameUsuario"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Nombre de Usuario"
+				android:inputType="text"/>
+
+		<Button
+				android:id="@+id/btnEnviarFormulario"
+				android:text="Enviar"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:onClick="crearUsuario"/>
+	</LinearLayout>
+
+	<Button
+			android:id="@+id/btnBuscarUsuario"
+			android:text="Buscar Usuario"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="mostrarFormularioBuscar"/>
+
+
+	<LinearLayout
+			android:id="@+id/contenedorFormularioBuscar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:visibility="gone">
+
+		<EditText
+				android:id="@+id/idUsuario"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="ID o Nombre de Usuario"
+				android:inputType="text"/>
+
+		<Button
+				android:id="@+id/btnBuscar"
+				android:text="Buscar"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:onClick="buscarUsuario"/>
+	</LinearLayout>
+
+	<!-- Botón para mostrar el formulario de actualización de usuario -->
+	<Button
+			android:id="@+id/btnActualizarUsuario"
+			android:text="Actualizar Usuario"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="mostrarFormularioActualizar"/>
+
+	<LinearLayout
+			android:id="@+id/contenedorFormularioActualizar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:visibility="gone">
+
+		<EditText
+				android:id="@+id/idUsuarioActualizar"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="ID de Usuario"
+				android:inputType="text"/>
+
+		<EditText
+				android:id="@+id/emailUsuarioActualizar"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Nuevo Email"
+				android:inputType="textEmailAddress"/>
+
+		<EditText
+				android:id="@+id/telefonoUsuarioActualizar"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Nuevo Teléfono"
+				android:inputType="phone"/>
+
+		<EditText
+				android:id="@+id/contrasenaUsuarioActualizar"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Nueva Contraseña"
+				android:inputType="textPassword"/>
+
+		<EditText
+				android:id="@+id/usernameUsuarioActualizar"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Nuevo Nombre de Usuario"
+				android:inputType="text"/>
+
+		<Button
+				android:id="@+id/btnActualizar"
+				android:text="Actualizar"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:onClick="actualizarUsuario"/>
+	</LinearLayout>
+
+	<!-- Botón para mostrar el formulario de eliminación de usuario -->
+	<Button
+			android:id="@+id/btnEliminarUsuario"
+			android:text="Eliminar Usuario"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="mostrarFormularioEliminar"/>
+
+	<LinearLayout
+			android:id="@+id/contenedorFormularioEliminar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:visibility="gone">
+
+		<EditText
+				android:id="@+id/idUsuarioEliminar"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="ID de Usuario"
+				android:inputType="text"/>
+
+		<Button
+				android:id="@+id/btnEliminar"
+				android:text="Eliminar"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:onClick="eliminarUsuario"/>
+	</LinearLayout>
+
+	<TextView
+			android:id="@+id/textViewUsuarios"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="____________"
+			android:textSize="16sp"
+			android:paddingTop="16dp"/>
+
+	<Button
+			android:id="@+id/btnListarUsuarios"
+			android:text="Listar Usuarios"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="listarUsuarios"/>
+
+</LinearLayout>

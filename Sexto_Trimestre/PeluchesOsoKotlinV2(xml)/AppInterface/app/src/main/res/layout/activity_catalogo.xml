@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/main"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".Views.Productos.CatalogoActivity">
+
+	<TextView
+			android:id="@+id/textViewTitulo"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Formulario Catalogos"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintHorizontal_bias="0.498" app:layout_constraintVertical_bias="0.008"/>
+
+	<EditText
+			android:id="@+id/precio"
+			android:layout_width="411dp"
+			android:layout_height="wrap_content"
+			android:hint="Nombre"
+			android:inputType="text"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent" app:layout_constraintVertical_bias="0.055"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"/>
+
+	<EditText
+			android:id="@+id/estiloCatalogo"
+			android:layout_width="411dp"
+			android:layout_height="wrap_content"
+			android:hint="Estilo"
+			android:inputType="text"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent" app:layout_constraintVertical_bias="0.234"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"/>
+	<EditText
+			android:id="@+id/descripcionCatalogo"
+			android:layout_width="403dp"
+			android:layout_height="39dp"
+			android:hint="Descripción"
+			android:inputType="text"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.145"/>
+	<Button
+			android:id="@+id/crearCatalogo"
+			android:text="Crear Catalogo"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="crearCatalogo"
+			app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintHorizontal_bias="0.847" app:layout_constraintVertical_bias="0.42"/>
+
+	<TextView
+			android:id="@+id/textViewListado"
+			android:text="Visualización de los catalogos"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"/>
+	<Button
+			android:id="@+id/listarCatalogos"
+			android:text="Listar Catalogos"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="listarCatalogos"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintHorizontal_bias="0.114" app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.42"/>
+	<Switch
+			android:text="Disponibilidad"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/disponibilidadCatalogoo"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.498"
+			app:layout_constraintVertical_bias="0.328"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

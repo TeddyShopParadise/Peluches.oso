@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/main"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".Views.Productos.MainProductosActivity">
+
+	<TextView
+			android:id="@+id/textViewTitulo"
+			android:layout_width="220dp"
+			android:layout_height="48dp"
+			android:text="Gestionar Productos"
+			android:textSize="24sp"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintVertical_bias="0.023"/>
+	<Button
+            android:id="@+id/btnGestionarCatalogos"
+            android:text="Gestionar Catalogos"
+            android:layout_width="199dp"
+            android:layout_height="63dp"
+            android:onClick="catalogoMenu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.163"
+            app:layout_constraintHorizontal_bias="0.476"/>
+	<Button
+			android:id="@+id/btnEmpleado"
+			android:text="Gestionar Categorias"
+			android:layout_width="198dp"
+			android:layout_height="64dp"
+			android:onClick="categoriaMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.283" app:layout_constraintHorizontal_bias="0.474"/>
+	<Button
+			android:id="@+id/btnInventario"
+			android:text="Gestionar Inventario"
+			android:layout_width="198dp"
+			android:layout_height="64dp"
+			android:onClick="inventarioMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.521" app:layout_constraintHorizontal_bias="0.474"/>
+	<Button
+			android:id="@+id/btnMovimientos"
+			android:text="Gestionar Movimientos"
+			android:layout_width="198dp"
+			android:layout_height="64dp"
+			android:onClick="movimientoMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.638" app:layout_constraintHorizontal_bias="0.474"/>
+	<Button
+			android:id="@+id/btnProductos"
+			android:text="Gestionar Productos"
+			android:layout_width="198dp"
+			android:layout_height="64dp"
+			android:onClick="productoMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.757" app:layout_constraintHorizontal_bias="0.474"/>
+	<Button
+			android:id="@+id/btnHistorialPrecio"
+			android:text="Gestionar Historial Precio"
+			android:layout_width="198dp"
+			android:layout_height="64dp"
+			android:onClick="historialMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.4" app:layout_constraintHorizontal_bias="0.474"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

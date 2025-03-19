@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/main"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".Views.Productos.CategoriaActivity">
+
+	<TextView
+			android:id="@+id/textViewTituloCategoria"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Formulario Categorias"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintHorizontal_bias="0.498" app:layout_constraintVertical_bias="0.008"/>
+
+	<EditText
+			android:id="@+id/nombreCategoria"
+			android:layout_width="411dp"
+			android:layout_height="wrap_content"
+			android:hint="Nombre"
+			android:inputType="text"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent" app:layout_constraintVertical_bias="0.055"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"/>
+	<EditText
+			android:id="@+id/descripcionCategoria"
+			android:layout_width="403dp"
+			android:layout_height="39dp"
+			android:hint="Descripción de la categoria"
+			android:inputType="text"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.145"/>
+
+	<Button
+			android:id="@+id/crearCategoria"
+			android:text="Crear Categoria"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="crearCategoria"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintHorizontal_bias="0.882"
+			app:layout_constraintVertical_bias="0.254"/>
+
+	<TextView
+			android:id="@+id/textViewListado"
+			android:text="Visualización de las Categorias"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.355"
+			app:layout_constraintHorizontal_bias="0.074"/>
+
+	<Button
+			android:id="@+id/listarCategorias"
+			android:text="Listar Categorias"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="listarCategorias"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintHorizontal_bias="0.062"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.254"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
