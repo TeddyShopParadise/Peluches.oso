@@ -14,7 +14,7 @@ class CatalogoController {
 
         val id = UUID.randomUUID().toString()  // Generar ID único
         val catalogo = Catalogo(nombreCatalogo, descripcionCatalogo, disponibilidadCatalogo, estiloCatalogo)
-        catalogos[id] = catalogo
+        catalogos[nombreCatalogo] = catalogo
         return "Catalogo  creado con éxito."
     }
 
@@ -67,9 +67,8 @@ class CatalogoController {
         }
     }
 
-    // Eliminar un Catalogo por ID
-    fun eliminarCatalogo(id: String): String {
-        return if (catalogos.remove(id) != null) {
+    fun eliminarCatalogo(nombreCatalogo: String): String {
+        return if (catalogos.remove(nombreCatalogo) != null) {
             "Catalogo eliminado con éxito."
         } else {
             "Catalogo no encontrado."

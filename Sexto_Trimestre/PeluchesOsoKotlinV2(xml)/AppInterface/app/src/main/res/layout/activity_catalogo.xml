@@ -8,6 +8,7 @@
 		android:layout_height="match_parent"
 		tools:context=".Views.Productos.CatalogoActivity">
 
+
 	<TextView
 			android:id="@+id/textViewTitulo"
 			android:layout_width="wrap_content"
@@ -65,8 +66,11 @@
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintTop_toTopOf="parent"/>
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.613"/>
+
 	<Button
+
 			android:id="@+id/listarCatalogos"
 			android:text="Listar Catalogos"
 			android:layout_width="wrap_content"
@@ -76,6 +80,19 @@
 			app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintHorizontal_bias="0.114" app:layout_constraintTop_toTopOf="parent"
 			app:layout_constraintVertical_bias="0.42"/>
+
+	<Button
+			android:id="@+id/eliminarCatalogo"
+			android:text="Eliminar Catalogo"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="eliminarCatalogo"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.527"/>
+
 	<Switch
 			android:text="Disponibilidad"
 			android:layout_width="wrap_content"
@@ -84,4 +101,17 @@
 			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.498"
 			app:layout_constraintVertical_bias="0.328"/>
+
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/textViewCatalogo"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.498"
+			app:layout_constraintVertical_bias="0.73"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
