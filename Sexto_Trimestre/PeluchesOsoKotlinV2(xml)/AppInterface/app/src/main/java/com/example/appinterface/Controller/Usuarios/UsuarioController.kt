@@ -1,5 +1,4 @@
 package Controller.Usuarios
-
 import Models.Usuarios.Usuario
 import java.util.*
 
@@ -7,7 +6,6 @@ class UsuarioController {
 
     private val usuarios = mutableMapOf<String, Usuario>()
 
-    // Crear un usuario
     fun crearUsuario(email: String, telefono: Int, contrasena: String, username: String): String {
         val id = UUID.randomUUID().toString()
         val usuario = Usuario(email, telefono, contrasena, username)
@@ -15,7 +13,7 @@ class UsuarioController {
         return "Usuario creado con éxito."
     }
 
-    // Listar todos los usuarios
+
     fun listarUsuarios(): String {
         if (usuarios.isEmpty()) {
             return "No hay usuarios disponibles."
@@ -26,7 +24,6 @@ class UsuarioController {
         }
     }
 
-    // Buscar un usuario por ID
     fun buscarUsuarioPorId(id: String): String {
         val usuario = usuarios[id]
         return if (usuario != null) {
@@ -36,7 +33,6 @@ class UsuarioController {
         }
     }
 
-    // Actualizar un usuario por ID
     fun actualizarUsuario(id: String, email: String, telefono: Int, contrasena: String, username: String): String {
         val usuario = usuarios[id]
         if (usuario != null) {
@@ -44,13 +40,13 @@ class UsuarioController {
             usuario.setTelefono(telefono)
             usuario.setContrasena(contrasena)
             usuario.setUsername(username)
+
             return "Usuario actualizado con éxito."
         } else {
             return "El usuario con ID: $id no se encontró."
         }
     }
 
-    // Eliminar un usuario por ID
     fun eliminarUsuario(id: String): String {
         return if (usuarios.remove(id) != null) {
             "Usuario eliminado con éxito."

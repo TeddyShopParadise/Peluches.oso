@@ -1,28 +1,18 @@
 package Controller.Pedidos
 
 import Models.Pedidos.DetallePedido
-
 import java.util.*
 
 class DetallePedidoController {
 
     private val detallesPedido = mutableMapOf<String, DetallePedido>()
 
-    fun crearDetallePedido(): String {
-        println("Ingrese el número de detalle del pedido: ")
-        val numDetalle = readln().toInt()
-
-        println("Ingrese el precio del detalle del pedido: ")
-        val precio = readln().toDouble()
-
-        println("Ingrese la cantidad del detalle del pedido: ")
-        val cantidad = readln().toInt()
-
+    fun crearDetallePedido(numDetalle: Int, precio: Double, cantidad: Int): String {
         val id = UUID.randomUUID().toString()
         val detalle = DetallePedido(numDetalle, precio, cantidad)
 
         detallesPedido[id] = detalle
-        return "Detalle de pedido creado con éxito."
+        return "Detalle de pedido creado con éxito con ID: $id"
     }
 
     fun listarDetallesPedido(): String {
@@ -41,14 +31,9 @@ class DetallePedidoController {
         } ?: "Detalle de pedido no encontrado."
     }
 
-    fun actualizarDetallePedido(id: String): String {
+
+    fun actualizarDetallePedido(id: String, nuevoPrecio: Double, nuevaCantidad: Int): String {
         val detalle = detallesPedido[id] ?: return "Detalle de pedido no encontrado."
-
-        println("Ingrese el nuevo precio del detalle del pedido (actual: ${detalle.getPrecioDetallePedido()}):")
-        val nuevoPrecio = readln().toDouble()
-
-        println("Ingrese la nueva cantidad del detalle del pedido (actual: ${detalle.getCantidadDetallePedido()}):")
-        val nuevaCantidad = readln().toInt()
 
         detallesPedido[id] = DetallePedido(detalle.getNumDetallePedido(), nuevoPrecio, nuevaCantidad)
         return "Detalle de pedido actualizado con éxito."

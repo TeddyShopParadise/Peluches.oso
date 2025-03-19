@@ -8,6 +8,33 @@
 		android:layout_height="match_parent"
 		tools:context=".Views.Pedidos.MainPedidoActivity">
 
+
+	<Button
+			android:id="@+id/btnDetallesPedido"
+			android:text="Gestionar Detalles de pedido"
+			android:layout_width="198dp"
+			android:layout_height="64dp"
+			android:onClick="detallepedidoMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.8"
+			app:layout_constraintHorizontal_bias="0.455"/>
+
+	<Button
+			android:id="@+id/btnDetallesFactura4"
+			android:text="Gestionar Detalles de Factura"
+			android:layout_width="198dp"
+			android:layout_height="64dp"
+			android:onClick="detallefacturaMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.682"
+			app:layout_constraintHorizontal_bias="0.455"/>
+
 	<TextView
 			android:id="@+id/textViewTituloPedido"
 			android:layout_width="220dp"
@@ -16,8 +43,10 @@
 			android:textSize="24sp"
 			app:layout_constraintTop_toTopOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintVertical_bias="0.023"/>
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintVertical_bias="0.023"
+			app:layout_constraintHorizontal_bias="0.507"/>
 
 	<Button
 			android:id="@+id/btnGestionarPedidos"
@@ -42,8 +71,8 @@
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintVertical_bias="0.328"
-			app:layout_constraintHorizontal_bias="0.455"/>
+			app:layout_constraintVertical_bias="0.296"
+			app:layout_constraintHorizontal_bias="0.45"/>
 
 	<Button
 			android:id="@+id/btnDevoluciones"
@@ -55,7 +84,22 @@
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintVertical_bias="0.457"
-			app:layout_constraintHorizontal_bias="0.497"/>
+			app:layout_constraintVertical_bias="0.418"
+			app:layout_constraintHorizontal_bias="0.45"/>
+
+	<Button
+			android:id="@+id/btnFacturas2"
+			android:text="Gestionar Facturas"
+			android:layout_width="198dp"
+			android:layout_height="64dp"
+			android:onClick="facturaMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.529"
+			app:layout_constraintHorizontal_bias="0.455"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

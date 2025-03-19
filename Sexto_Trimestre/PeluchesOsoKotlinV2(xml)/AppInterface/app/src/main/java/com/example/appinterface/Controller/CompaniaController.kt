@@ -1,5 +1,6 @@
 package Controller
-import com.example.appinterface.Models.Usuarios.Compania
+
+import Models.Compania
 import java.util.*
 
 class CompaniaController {
