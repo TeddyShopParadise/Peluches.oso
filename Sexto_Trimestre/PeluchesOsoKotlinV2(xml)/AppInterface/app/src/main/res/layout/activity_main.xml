@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/main"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".MainActivity">
+
+	<ImageView
+			android:id="@+id/imageView"
+			android:layout_width="329dp"
+			android:layout_height="256dp"
+			android:src="@drawable/imagen1"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.143"/>
+
+	<TextView
+			android:id="@+id/textViewTitulo"
+			android:layout_width="379dp"
+			android:layout_height="44dp"
+			android:text="Bienvenido a TeddyShopParadise"
+			android:textSize="24sp"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintVertical_bias="0.023"/>
+	<Button
+			android:id="@+id/btnAdmin"
+			android:text="Administrador"
+			android:layout_width="199dp"
+			android:layout_height="63dp"
+			android:onClick="adminMenu"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.622"/>
+	<Button
+			android:id="@+id/btnEmpleado"
+			android:text="Empleado"
+			android:layout_width="189dp"
+			android:layout_height="63dp"
+			android:onClick="empleadoMenu"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.761"/>
+	<TextView
+			android:text="Seleccione su rol: "
+			android:layout_width="193dp"
+			android:textSize="24sp"
+			android:layout_height="32dp" android:id="@+id/textView"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

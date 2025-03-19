@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical"
+			  android:padding="16dp">
+
+	<!-- Campo para DNI del Cliente -->
+	<EditText
+			android:id="@+id/dniCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="DNI del Cliente"
+			android:inputType="number" />
+
+	<!-- Campo para Nombre del Cliente -->
+	<EditText
+			android:id="@+id/nombreCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nombre del Cliente" />
+
+	<!-- Campo para Teléfono del Cliente -->
+	<EditText
+			android:id="@+id/telefonoCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Teléfono del Cliente"
+			android:inputType="phone" />
+
+	<!-- Campo para Apellido del Cliente -->
+	<EditText
+			android:id="@+id/apellidoCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Apellido del Cliente" />
+
+	<!-- Botón para Crear Cliente -->
+	<Button
+			android:onClick="crearCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Crear Cliente" />
+
+	<!-- Campo para Buscar Cliente por DNI -->
+	<EditText
+			android:id="@+id/dniClienteBuscar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="DNI del Cliente a buscar" />
+
+	<!-- Botón para Buscar Cliente -->
+	<Button
+			android:onClick="buscarClientePorDni"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Buscar Cliente" />
+
+	<!-- Campo para Actualizar Cliente -->
+	<EditText
+			android:id="@+id/dniClienteActualizar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="DNI del Cliente a actualizar" />
+
+	<EditText
+			android:id="@+id/nuevoNombreCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nuevo Nombre del Cliente" />
+
+	<EditText
+			android:id="@+id/nuevoTelefonoCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nuevo Teléfono del Cliente"
+			android:inputType="phone" />
+
+	<EditText
+			android:id="@+id/nuevoApellidoCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nuevo Apellido del Cliente" />
+
+	<!-- Botón para Actualizar Cliente -->
+	<Button
+			android:onClick="actualizarCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Actualizar Cliente" />
+
+	<!-- Campo para Eliminar Cliente -->
+	<EditText
+			android:id="@+id/dniClienteEliminar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="DNI del Cliente a eliminar" />
+
+	<!-- Botón para Eliminar Cliente -->
+	<Button
+			android:onClick="eliminarCliente"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Eliminar Cliente" />
+
+	<!-- Área para mostrar el mensaje o lista de clientes -->
+	<TextView
+			android:id="@+id/textViewListadoClientes"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Resultados de los clientes aparecerán aquí"
+			android:paddingTop="16dp" />
+</LinearLayout>

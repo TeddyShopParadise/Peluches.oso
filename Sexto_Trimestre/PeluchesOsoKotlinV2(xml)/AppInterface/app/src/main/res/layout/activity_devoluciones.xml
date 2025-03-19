@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical"
+			  android:padding="16dp">
+
+	<!-- Campo para Detalle Devolución -->
+	<EditText
+			android:id="@+id/detalleDevolucion"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Detalle de la devolución" />
+
+	<!-- Botón para Crear Devolución -->
+	<Button
+			android:onClick="crearDevolucion"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Crear Devolución" />
+
+	<!-- Campo para Buscar Devolución por ID -->
+	<EditText
+			android:id="@+id/idDevolucionBuscar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="ID de devolución a buscar" />
+
+	<!-- Botón para Buscar Devolución -->
+	<Button
+			android:onClick="buscarDevolucionPorId"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Buscar Devolución" />
+
+	<!-- Campo para Actualizar Detalles de la Devolución -->
+	<EditText
+			android:id="@+id/idDevolucionActualizar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="ID de devolución a actualizar" />
+
+	<EditText
+			android:id="@+id/nuevoDetalleDevolucion"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nuevo detalle de la devolución" />
+
+	<!-- Botón para Actualizar Devolución -->
+	<Button
+			android:onClick="actualizarDevolucion"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Actualizar Devolución" />
+
+	<!-- Campo para Eliminar Devolución por ID -->
+	<EditText
+			android:id="@+id/idDevolucionEliminar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="ID de devolución a eliminar" />
+
+	<!-- Botón para Eliminar Devolución -->
+	<Button
+			android:onClick="eliminarDevolucion"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Eliminar Devolución" />
+
+	<!-- Área para mostrar el mensaje o lista de devoluciones -->
+	<TextView
+			android:id="@+id/textViewListadoDevoluciones"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Resultados de las devoluciones aparecerán aquí"
+			android:paddingTop="16dp" />
+</LinearLayout>
