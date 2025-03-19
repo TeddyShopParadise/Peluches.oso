@@ -25,4 +25,21 @@ class MainPedidoActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    fun facturaMenu (view: View){
+        val intent = Intent(this, FacturasActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun detallefacturaMenu (view: View){
+        val intent = Intent(this, DetalleFacturaActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun detallepedidoMenu (view: View){
+        val intent = Intent(this, DetalleFacturaActivity::class.java)
+        startActivity(intent)
+    }
+
+
+
 }

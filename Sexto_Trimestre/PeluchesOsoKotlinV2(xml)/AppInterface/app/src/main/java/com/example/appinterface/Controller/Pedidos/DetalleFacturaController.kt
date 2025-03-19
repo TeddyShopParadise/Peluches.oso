@@ -7,57 +7,52 @@ class DetalleFacturaController {
 
     private val detallesFactura = mutableMapOf<String, DetalleFactura>()
 
-    fun crearDetalleFactura(): String {
-        println("Ingrese el número de detalle de la factura: ")
-        val numDetalle = readln().toInt()
-
-        println("Ingrese el precio del detalle de la factura: ")
-        val precio = readln().toDouble()
-
-        println("Ingrese la cantidad del detalle de la factura: ")
-        val cantidad = readln().toInt()
-
+    // Crear un nuevo detalle de factura con número de factura
+    fun crearDetalleFactura(numFactura: Int, numDetalle: Int, precio: Double, cantidad: Int): String {
         val id = UUID.randomUUID().toString()
-        val detalle = DetalleFactura(numDetalle, precio, cantidad)
+        val detalle = DetalleFactura(numFactura, numDetalle, precio, cantidad)
 
         detallesFactura[id] = detalle
-        return "Detalle de factura creado con éxito."
+        return "Detalle de factura creado con éxito con el ID: $id"
     }
 
+    // Listar todos los detalles de factura
     fun listarDetallesFactura(): String {
         if (detallesFactura.isEmpty()) {
             return "No hay detalles de facturas disponibles."
         }
         return detallesFactura.entries.joinToString("\n") {
-            "ID: ${it.key}, Número: ${it.value.getNumDetalle()}, Precio: ${it.value.getPrecioDetalleFactura()}, Cantidad: ${it.value.getCantidadDetallePedido()}"
+            "ID: ${it.key}, Número Factura: ${it.value.getNumFactura()}, Número Detalle: ${it.value.getNumDetalle()}, Precio: ${it.value.getPrecioDetalleFactura()}, Cantidad: ${it.value.getCantidadDetallePedido()}"
         }
     }
 
+    // Buscar un detalle de factura por ID
     fun buscarDetalleFacturaPorId(id: String): String {
         val detalle = detallesFactura[id]
-        return detalle?.let {
-            "Detalle encontrado: Número: ${it.getNumDetalle()}, Precio: ${it.getPrecioDetalleFactura()}, Cantidad: ${it.getCantidadDetallePedido()}"
-        } ?: "Detalle de factura no encontrado."
+        return if (detalle != null) {
+            "Detalle encontrado: Número Factura: ${detalle.getNumFactura()}, Número Detalle: ${detalle.getNumDetalle()}, Precio: ${detalle.getPrecioDetalleFactura()}, Cantidad: ${detalle.getCantidadDetallePedido()}"
+        } else {
+            "Detalle de factura no encontrado."
+        }
     }
 
-    fun actualizarDetalleFactura(id: String): String {
-        val detalle = detallesFactura[id] ?: return "Detalle de factura no encontrado."
-
-        println("Ingrese el nuevo precio del detalle de la factura (actual: ${detalle.getPrecioDetalleFactura()}):")
-        val nuevoPrecio = readln().toDouble()
-
-        println("Ingrese la nueva cantidad del detalle de la factura (actual: ${detalle.getCantidadDetallePedido()}):")
-        val nuevaCantidad = readln().toInt()
-
-        detallesFactura[id] = DetalleFactura(detalle.getNumDetalle(), nuevoPrecio, nuevaCantidad)
-        return "Detalle de factura actualizado con éxito."
+    // Actualizar un detalle de factura por ID
+    fun actualizarDetalleFactura(id: String, nuevoPrecio: Double, nuevaCantidad: Int): String {
+        val detalle = detallesFactura[id]
+        return if (detalle != null) {
+            detallesFactura[id] = DetalleFactura(detalle.getNumFactura(), detalle.getNumDetalle(), nuevoPrecio, nuevaCantidad)
+            "Detalle de factura actualizado con éxito."
+        } else {
+            "El detalle de factura con ID: $id no se encontró."
+        }
     }
 
+    // Eliminar un detalle de factura por ID
     fun eliminarDetalleFactura(id: String): String {
         return if (detallesFactura.remove(id) != null) {
             "Detalle de factura eliminado con éxito."
         } else {
-            "Detalle de factura no encontrado."
+            "El detalle de factura con ID: $id no se encontró."
         }
     }
 }

@@ -28,15 +28,18 @@
 		<activity android:name=".Views.Productos.MovimientoActivity"/>
 		<activity android:name=".Views.Pedidos.MainPedidoActivity"/>
 		<activity android:name=".Views.Pedidos.PedidoActivity"/>
+		<activity android:name=".Views.Pedidos.DetallePedidoActivity"/>|
 		<activity android:name=".Views.Pedidos.MetodoPagoActivity"/>
 		<activity android:name=".Views.Pedidos.DevolucionesActivity"/>
+		<activity android:name=".Views.Pedidos.FacturasActivity"/>|
+		<activity android:name=".Views.Pedidos.DetalleFacturaActivity"/>|
 		<activity android:name=".Views.Usuarios.MainUsuariosActivity"/>
 		<activity android:name=".Views.Usuarios.RolesActivity"/>
 		<activity android:name=".Views.Usuarios.ClientesActivity"/>
+		<activity android:name=".Views.Usuarios.UsuarioActivity"/>
 		<activity android:name=".Views.Usuarios.EmpleadosActivity"/>
 		<activity android:name=".Views.AdministradorActivity"/>
 		<activity android:name=".Views.EmpleadoActivity"/>
-		<activity android:name=".Views.Usuarios.UsuarioActivity"/>
 	</application>
 
 </manifest>

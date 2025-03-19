@@ -18,12 +18,12 @@ class MainUsuariosActivity : AppCompatActivity() {
     }
 
     fun clienteMenu (view: View){
-        val intent = Intent(this, ClientesActivity()::class.java)
+        val intent = Intent(this, ClientesActivity::class.java)
         startActivity(intent)
     }
 
     fun empleadoMenu (view: View){
-        val intent = Intent(this, EmpleadosActivity()::class.java)
+        val intent = Intent(this, EmpleadosActivity::class.java)
         startActivity(intent)
     }
 

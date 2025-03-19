@@ -40,20 +40,4 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
-
-    //fun crearCategoria(v: View) {
-    //    val nombre = findViewById<EditText>(R.id.nombre).text.toString()
-    //    val descripcion = findViewById<EditText>(R.id.descripcion).text.toString()
-//
-    //    val mensaje = categoriaController.crearCategoria(nombre, descripcion)
-    //    findViewById<TextView>(R.id.textViewListado).text = mensaje
-//
-    //}
-//
-    //fun listarCategorias(v: View) {
-    //    val categoriasTexto = categoriaController.listarCategorias()
-    //    val textViewCategorias = findViewById<TextView>(R.id.textViewListado)
-    //    textViewCategorias.text = categoriasTexto
-    //}
 }
