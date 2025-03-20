@@ -38,34 +38,34 @@ class CatalogoController {
             "historial de precio no encontrado."
         }
     }
-
-    // Actualizar un Catalogo por ID
-    fun actualizarCatalogo(id: String): String {
-        val catalogo = catalogos[id]
-        if (catalogo != null) {
-            println("Ingresa el nuevo Nombre (actual: ${catalogo.getNombreCatalogo()}):")
-            val nuevoNombre = readLine() ?: catalogo.getNombreCatalogo()
-
-            println("Ingresa la nueva descripción(actual: ${catalogo.getDescripcionCatalogo()}):")
-            val nuevaDescripcion = readLine() ?: catalogo.getDescripcionCatalogo()
-
-            println("¿Está disponible el catalogo? (true/false, actual: ${catalogo.getDisponibilidadCatalogo()}):")
-            val nuevoEstado = readLine()?.toBoolean() ?: catalogo.getDisponibilidadCatalogo()
-
-            println("Ingresa el nuevo etilo del catalogo (actual: ${catalogo.getEstiloCatalogo()}):")
-            val nuevoEstilo = readLine() ?: catalogo.getEstiloCatalogo()
-
-            // Actualizar Catalogo
+    fun buscarCatalogoPorNombre(nombre: String): Catalogo? {
+        return catalogos[nombre]
+    }
+    fun actualizarCatalogo(
+        nombreActual: String,
+        nuevoNombre: String,
+        nuevaDescripcion: String,
+        nuevaDisponibilidad: Boolean,
+        nuevoEstilo: String
+    ): String {
+        val catalogo = catalogos[nombreActual]
+        return if (catalogo != null) {
             catalogo.setNombreCatalogo(nuevoNombre)
             catalogo.setDescripcionCatalogo(nuevaDescripcion)
-            catalogo.setDisponibilidadCatalogo(nuevoEstado)
+            catalogo.setDisponibilidadCatalogo(nuevaDisponibilidad)
             catalogo.setEstiloCatalogo(nuevoEstilo)
 
-            return "Catalogo actualizado con éxito."
+            if (nombreActual != nuevoNombre) {
+                catalogos.remove(nombreActual)  // Eliminar entrada antigua
+                catalogos[nuevoNombre] = catalogo // Agregar con nuevo nombre
+            }
+
+            "Catálogo actualizado con éxito."
         } else {
-            return "Catalogo con ID $id no encontrado."
+            "Catálogo no encontrado."
         }
     }
+
 
     fun eliminarCatalogo(nombreCatalogo: String): String {
         return if (catalogos.remove(nombreCatalogo) != null) {

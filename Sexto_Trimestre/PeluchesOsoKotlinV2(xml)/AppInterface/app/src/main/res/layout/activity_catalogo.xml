@@ -8,110 +8,221 @@
 		android:layout_height="match_parent"
 		tools:context=".Views.Productos.CatalogoActivity">
 
-
 	<TextView
 			android:id="@+id/textViewTitulo"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Formulario Catalogos"
+			android:text="Formulario Catálogos"
 			app:layout_constraintTop_toTopOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintHorizontal_bias="0.498" app:layout_constraintVertical_bias="0.008"/>
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintVertical_bias="0.008"
+			app:layout_constraintBottom_toBottomOf="parent"/>
 
 	<EditText
-			android:id="@+id/precio"
-			android:layout_width="411dp"
+			android:id="@+id/nombreCatalogo"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:hint="Nombre"
 			android:inputType="text"
-			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintStart_toStartOf="parent" app:layout_constraintVertical_bias="0.055"
-			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"/>
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.061"/>
+
 
 	<EditText
 			android:id="@+id/estiloCatalogo"
-			android:layout_width="411dp"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:hint="Estilo"
 			android:inputType="text"
-			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintStart_toStartOf="parent" app:layout_constraintVertical_bias="0.234"
-			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"/>
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/textViewTitulo"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintVertical_bias="0.15"/>
+
 	<EditText
 			android:id="@+id/descripcionCatalogo"
-			android:layout_width="403dp"
-			android:layout_height="39dp"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
 			android:hint="Descripción"
 			android:inputType="text"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
-			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintVertical_bias="0.145"/>
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintTop_toTopOf="@+id/textViewTitulo"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintVertical_bias="0.232"/>
+
+	<Switch
+			android:id="@+id/disponibilidadCatalogo"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Disponibilidad"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.313"/>
+
 	<Button
 			android:id="@+id/crearCatalogo"
-			android:text="Crear Catalogo"
+			android:text="Crear Catálogo"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:onClick="crearCatalogo"
-			app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintHorizontal_bias="0.847" app:layout_constraintVertical_bias="0.42"/>
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.059"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintVertical_bias="0.401"/>
 
 	<TextView
 			android:id="@+id/textViewListado"
-			android:text="Visualización de los catalogos"
+			android:text="Visualización de los catálogos"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			android:layout_marginTop="8dp"
+			app:layout_constraintHorizontal_bias="0.013"
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintVertical_bias="0.613"/>
+			app:layout_constraintVertical_bias="0.585"
+			app:layout_constraintTop_toTopOf="parent"/>
 
 	<Button
-
 			android:id="@+id/listarCatalogos"
-			android:text="Listar Catalogos"
+			android:text="Listar Catálogos"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:onClick="listarCatalogos"
+			app:layout_constraintStart_toStartOf="parent"
+
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintHorizontal_bias="0.114" app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintVertical_bias="0.42"/>
+			app:layout_constraintHorizontal_bias="0.061"
+			app:layout_constraintVertical_bias="0.521"/>
+
+	<Button
+			android:id="@+id/actualizarCatalogo"
+			android:text="Actualizar Catálogo"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="actualizarCatalogoDialog"
+			app:layout_constraintEnd_toEndOf="parent"
+
+
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/textViewTitulo"
+			app:layout_constraintHorizontal_bias="0.806"
+			app:layout_constraintVertical_bias="0.395"/>
 
 	<Button
 			android:id="@+id/eliminarCatalogo"
-			android:text="Eliminar Catalogo"
+			android:text="Eliminar Catálogo"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:onClick="eliminarCatalogo"
 			app:layout_constraintEnd_toEndOf="parent"
+
+			android:layout_marginTop="32dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintVertical_bias="0.527"/>
+			app:layout_constraintHorizontal_bias="0.768"
+			app:layout_constraintVertical_bias="0.497"/>
 
-	<Switch
-			android:text="Disponibilidad"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/disponibilidadCatalogoo"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.498"
-			app:layout_constraintVertical_bias="0.328"/>
-
-	<TextView
-			android:layout_width="wrap_content"
+	<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/layoutActualizarCatalogo"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:id="@+id/textViewCatalogo"
+			android:padding="16dp"
+			android:visibility="gone"
 			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.498"
-			app:layout_constraintVertical_bias="0.73"/>
+			android:background="@android:color/white">
 
+		<TextView
+				android:id="@+id/textViewTituloDialog"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Actualizar Catálogo"
+				android:textSize="18sp"
+				android:textStyle="bold"
+				app:layout_constraintTop_toTopOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent" />
+
+		<EditText
+				android:id="@+id/editTextNombre"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:hint="Nombre"
+				android:inputType="text"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/textViewTituloDialog"
+				android:layout_marginTop="8dp"/>
+
+		<EditText
+				android:id="@+id/editTextEstilo"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:hint="Estilo"
+				android:inputType="text"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/editTextNombre"
+				android:layout_marginTop="8dp"/>
+
+		<EditText
+				android:id="@+id/editTextDescripcion"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:hint="Descripción"
+				android:inputType="textMultiLine"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/editTextEstilo"
+				android:layout_marginTop="8dp"/>
+
+		<Switch
+				android:id="@+id/switchDisponibilidad"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Disponible"
+				app:layout_constraintTop_toBottomOf="@id/editTextDescripcion"
+				app:layout_constraintStart_toStartOf="parent"
+				android:layout_marginTop="8dp"/>
+
+		<Button
+				android:id="@+id/btnActualizarCatalogo"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Actualizar"
+				app:layout_constraintTop_toBottomOf="@id/switchDisponibilidad"
+				app:layout_constraintStart_toStartOf="parent"
+				android:layout_marginTop="16dp"/>
+
+		<Button
+				android:id="@+id/btnCancelarActualizar"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Cancelar"
+				app:layout_constraintTop_toBottomOf="@id/switchDisponibilidad"
+				app:layout_constraintEnd_toEndOf="parent"
+				android:layout_marginTop="16dp"/>
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
