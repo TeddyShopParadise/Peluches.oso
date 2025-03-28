@@ -73,15 +73,29 @@
 	<Button
 			android:id="@+id/crearCatalogo"
 			android:text="Crear Catálogo"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_width="159dp"
+			android:layout_height="47dp"
 			android:onClick="crearCatalogo"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.059"
+			app:layout_constraintHorizontal_bias="0.13"
 			app:layout_constraintTop_toTopOf="parent"
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintVertical_bias="0.401"/>
+			app:layout_constraintVertical_bias="0.402"/>
+
+
+	<Button
+			android:id="@+id/listarCatalogos"
+			android:text="Listar Catálogos"
+			android:layout_width="159dp"
+			android:layout_height="47dp"
+			android:onClick="listarCatalogos"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.869"
+			app:layout_constraintVertical_bias="0.402"/>
 
 	<TextView
 			android:id="@+id/textViewListado"
@@ -91,54 +105,66 @@
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			android:layout_marginTop="8dp"
-			app:layout_constraintHorizontal_bias="0.013"
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintVertical_bias="0.585"
+			app:layout_constraintVertical_bias="0.583"
 			app:layout_constraintTop_toTopOf="parent"/>
 
-	<Button
-			android:id="@+id/listarCatalogos"
-			android:text="Listar Catálogos"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:onClick="listarCatalogos"
+	<!-- DataTable para mostrar los elementos -->
+	<ScrollView
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			app:layout_constraintTop_toBottomOf="@id/textViewListado"
 			app:layout_constraintStart_toStartOf="parent"
-
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.061"
-			app:layout_constraintVertical_bias="0.521"/>
-
-	<Button
-			android:id="@+id/actualizarCatalogo"
-			android:text="Actualizar Catálogo"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:onClick="actualizarCatalogoDialog"
-			app:layout_constraintEnd_toEndOf="parent"
-
-
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="@+id/textViewTitulo"
-			app:layout_constraintHorizontal_bias="0.806"
-			app:layout_constraintVertical_bias="0.395"/>
+			android:fillViewport="true">
 
-	<Button
-			android:id="@+id/eliminarCatalogo"
-			android:text="Eliminar Catálogo"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:onClick="eliminarCatalogo"
-			app:layout_constraintEnd_toEndOf="parent"
+		<TableLayout
+				android:id="@+id/tableCatalogos"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:stretchColumns="*"
+				android:padding="8dp">
 
-			android:layout_marginTop="32dp"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintHorizontal_bias="0.768"
-			app:layout_constraintVertical_bias="0.497"/>
+			<TableRow
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="#DDDDDD">
+
+				<TextView
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="Nombre"
+						android:padding="8dp"
+						android:textStyle="bold"/>
+
+				<TextView
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="Descripción"
+						android:padding="8dp"
+						android:textStyle="bold"/>
+
+				<TextView
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="Disponible"
+						android:padding="8dp"
+						android:textStyle="bold"/>
+
+				<TextView
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1.5"
+						android:text="Acciones"
+						android:padding="8dp"
+						android:textStyle="bold"/>
+			</TableRow>
+		</TableLayout>
+	</ScrollView>
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 			android:id="@+id/layoutActualizarCatalogo"
@@ -183,7 +209,6 @@
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/editTextNombre"
 				android:layout_marginTop="8dp"/>
-
 		<EditText
 				android:id="@+id/editTextDescripcion"
 				android:layout_width="0dp"

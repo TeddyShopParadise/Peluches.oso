@@ -1,13 +1,11 @@
 package com.example.appinterface.Views.Productos
 import Controller.Productos.CatalogoController
+import Models.Productos.Catalogo
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Switch
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.appinterface.R
@@ -20,8 +18,21 @@ class CatalogoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_catalogo)
     }
 
+    private fun createCell(text: String): TextView {
+        return TextView(this).apply {
+            this.text = text
+            setPadding(16, 8, 16, 8)
+            gravity = Gravity.CENTER
+            layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
+        }
+    }
+
     // Método para limpiar los textview
     private fun limpiarPantalla() {
+        val table = findViewById<TableLayout>(R.id.tableCatalogos)
+        if (table.childCount > 1) {
+            table.removeViews(1, table.childCount - 1)
+        }
         findViewById<TextView>(R.id.textViewListado).text = ""
     }
 
@@ -47,103 +58,134 @@ class CatalogoActivity : AppCompatActivity() {
     }
 
     fun listarCatalogos(v: View) {
-        limpiarPantalla()
+        // Limpiar tabla (excepto encabezado)
+        val table = findViewById<TableLayout>(R.id.tableCatalogos)
+        if (table.childCount > 1) {
+            table.removeViews(1, table.childCount - 1)
+        }
 
-        val catalogosTexto = catalogoController.listarCatalogos()
-        val textViewCatalogos = findViewById<TextView>(R.id.textViewListado)
-        textViewCatalogos.text = catalogosTexto
+        val catalogos = catalogoController.listarCatalogos(false) as List<Catalogo>
+
+        for (catalogo in catalogos) {
+            val row = TableRow(this).apply {
+                // Datos del catálogo
+                addView(createCell(catalogo.getNombreCatalogo()))
+                addView(createCell(catalogo.getDescripcionCatalogo()))
+                addView(createCell(if (catalogo.getDisponibilidadCatalogo()) "Sí" else "No"))
+
+                // Contenedor para botones de acción
+                val actionsLayout = LinearLayout(this@CatalogoActivity).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1.5f)
+                    gravity = Gravity.CENTER
+                }
+
+                // Botón Editar
+                ImageButton(this@CatalogoActivity).apply {
+                    setImageResource(R.drawable.ic_baseline_edit_24)
+                    contentDescription = "Editar"
+                    setOnClickListener { editarCatalogo(catalogo) }
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(8, 0, 8, 0)
+                    }
+                    background = null
+                }.also { actionsLayout.addView(it) }
+
+                // Botón Eliminar
+                ImageButton(this@CatalogoActivity).apply {
+                    setImageResource(R.drawable.ic_baseline_delete_24)
+                    contentDescription = "Eliminar"
+                    setOnClickListener { eliminarCatalogo(catalogo) }
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(8, 0, 8, 0)
+                    }
+                    background = null
+                }.also { actionsLayout.addView(it) }
+
+                // Botón Detalles
+                ImageButton(this@CatalogoActivity).apply {
+                    setImageResource(R.drawable.ic_baseline_info_24)
+                    contentDescription = "Detalles"
+                    setOnClickListener { verDetalles(catalogo) }
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(8, 0, 8, 0)
+                    }
+                    background = null
+                }.also { actionsLayout.addView(it) }
+
+                addView(actionsLayout)
+            }
+            table.addView(row)
+        }
     }
 
-    fun actualizarCatalogoDialog(v: View) {
-        limpiarPantalla()
-
+    private fun editarCatalogo(catalogo: Catalogo) {
         val layoutActualizar = findViewById<ConstraintLayout>(R.id.layoutActualizarCatalogo)
         layoutActualizar.visibility = View.VISIBLE
 
-        val btnActualizar = findViewById<Button>(R.id.btnActualizarCatalogo)
-        val btnCancelar = findViewById<Button>(R.id.btnCancelarActualizar)
+        findViewById<EditText>(R.id.editTextNombre).setText(catalogo.getNombreCatalogo())
+        findViewById<EditText>(R.id.editTextEstilo).setText(catalogo.getEstiloCatalogo()) // Añadir esta línea
+        findViewById<EditText>(R.id.editTextDescripcion).setText(catalogo.getDescripcionCatalogo())
+        findViewById<Switch>(R.id.switchDisponibilidad).isChecked = catalogo.getDisponibilidadCatalogo()
 
-        val editTextNombre = findViewById<EditText>(R.id.editTextNombre)
-        val editTextDescripcion = findViewById<EditText>(R.id.editTextDescripcion)
-        val switchDisponibilidad = findViewById<Switch>(R.id.switchDisponibilidad)
-        val editTextEstilo = findViewById<EditText>(R.id.editTextEstilo)
+        findViewById<Button>(R.id.btnActualizarCatalogo).setOnClickListener {
+            val nuevoNombre = findViewById<EditText>(R.id.editTextNombre).text.toString()
+            val nuevoEstilo = findViewById<EditText>(R.id.editTextEstilo).text.toString() // Añadir esta línea
+            val nuevaDescripcion = findViewById<EditText>(R.id.editTextDescripcion).text.toString()
+            val nuevaDisponibilidad = findViewById<Switch>(R.id.switchDisponibilidad).isChecked
 
-        // Mostrar un cuadro de texto para buscar el catálogo
-        val editTextBuscar = EditText(this)
-        editTextBuscar.hint = "Ingresa el nombre del catálogo"
-
-        val dialogBuscar = AlertDialog.Builder(this)
-            .setTitle("Buscar Catálogo")
-            .setMessage("Ingrese el nombre del catálogo a actualizar")
-            .setView(editTextBuscar)
-            .setPositiveButton("Buscar") { _, _ ->
-                val nombreCatalogo = editTextBuscar.text.toString()
-
-                val catalogo = catalogoController.buscarCatalogoPorNombre(nombreCatalogo)
-                if (catalogo != null) {
-                    // Llenar los campos con la información actual
-                    editTextNombre.setText(catalogo.getNombreCatalogo())
-                    editTextDescripcion.setText(catalogo.getDescripcionCatalogo())
-                    switchDisponibilidad.isChecked = catalogo.getDisponibilidadCatalogo()
-                    editTextEstilo.setText(catalogo.getEstiloCatalogo())
-                } else {
-                    mostrarToast("Catálogo no encontrado.")
-                    layoutActualizar.visibility = View.GONE
-                }
-            }
-            .setNegativeButton("Cancelar") { _, _ ->
-                layoutActualizar.visibility = View.GONE
-            }
-            .create()
-
-        dialogBuscar.show()
-
-        btnActualizar.setOnClickListener {
-            val nuevoNombre = editTextNombre.text.toString()
-            val nuevaDescripcion = editTextDescripcion.text.toString()
-            val nuevaDisponibilidad = switchDisponibilidad.isChecked
-            val nuevoEstilo = editTextEstilo.text.toString()
-
-            val mensaje = catalogoController.actualizarCatalogo(
-                editTextBuscar.text.toString(), nuevoNombre, nuevaDescripcion, nuevaDisponibilidad, nuevoEstilo
+            catalogoController.actualizarCatalogo(
+                catalogo.getNombreCatalogo(),
+                nuevoNombre,
+                nuevaDescripcion,
+                nuevaDisponibilidad,
+                nuevoEstilo // Usar el nuevo valor
             )
-            mostrarToast(mensaje)
+
             layoutActualizar.visibility = View.GONE
+            listarCatalogos(findViewById(R.id.listarCatalogos))
         }
 
-        btnCancelar.setOnClickListener {
+        findViewById<Button>(R.id.btnCancelarActualizar).setOnClickListener {
             layoutActualizar.visibility = View.GONE
         }
     }
-    fun eliminarCatalogo(v: View) {
-        limpiarPantalla()
-        // Crear el EditText donde el usuario ingresará el nombre del catálogo a eliminar
-        val editText = EditText(this)
-        editText.hint = "Ingresa el nombre del catálogo"
 
-        // Crear el AlertDialog
-        val alertDialog = AlertDialog.Builder(this)
-            .setTitle("Eliminar Catálogo")
-            .setMessage("Por favor ingresa el nombre exacto del catálogo a eliminar.")
-            .setView(editText)
-            .setPositiveButton("Eliminar") { dialog, which ->
-                val nombreCatalogo = editText.text.toString()
+    private fun eliminarCatalogo(catalogo: Catalogo) {
+        // Obtener referencia al botón de listar
+        val listarButton = findViewById<Button>(R.id.listarCatalogos)
 
-                val mensaje = if (nombreCatalogo.isNotEmpty()) {
-                    catalogoController.eliminarCatalogo(nombreCatalogo)
-                } else {
-                    "Por favor ingresa un nombre válido."
-                }
-
-                mostrarToast(mensaje)  // Mostrar mensaje con Toast
+        AlertDialog.Builder(this)
+            .setTitle("Confirmar eliminación")
+            .setMessage("¿Estás seguro de eliminar el catálogo ${catalogo.getNombreCatalogo()}?")
+            .setPositiveButton("Eliminar") { _, _ ->
+                catalogoController.eliminarCatalogo(catalogo.getNombreCatalogo())
+                listarCatalogos(listarButton) // Usar la referencia obtenida
             }
-            .setNegativeButton("Cancelar") { dialog, which ->
-                dialog.dismiss() // Cerrar el diálogo si se cancela
-            }
-            .create()
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
 
-        // Mostrar el diálogo
-        alertDialog.show()
+    private fun verDetalles(catalogo: Catalogo) {
+        AlertDialog.Builder(this)
+            .setTitle("Detalles del Catálogo")
+            .setMessage("""
+            Nombre: ${catalogo.getNombreCatalogo()}
+            Descripción: ${catalogo.getDescripcionCatalogo()}
+            Estilo: ${catalogo.getEstiloCatalogo()}
+            Disponible: ${if (catalogo.getDisponibilidadCatalogo()) "Sí" else "No"}
+        """.trimIndent())
+            .setPositiveButton("Cerrar", null)
+            .show()
     }
 }
 

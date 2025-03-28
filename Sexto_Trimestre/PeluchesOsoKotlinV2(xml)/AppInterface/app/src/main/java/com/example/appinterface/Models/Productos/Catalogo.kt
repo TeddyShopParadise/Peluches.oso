@@ -9,6 +9,7 @@ class Catalogo (private var NombreCatalogo: String,  private var DescripcionCata
         this.EstiloCatalogo = estiloCatalogo
     }
 
+
     fun getNombreCatalogo(): String {
         return NombreCatalogo
     }
