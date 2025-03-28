@@ -19,16 +19,16 @@ class CatalogoController {
     }
 
     //LIstar Catalogos
-    fun listarCatalogos(): String {
-        if (catalogos.isEmpty()) {
-            return "No hay Catalogos disponibles."
-        }
-
-        return catalogos.entries.joinToString("\n") {
-            "ID: ${it.key}, Nombre: ${it.value.getNombreCatalogo()}, Descripción de Catalogo : ${it.value.getDescripcionCatalogo()}, Disponibilidad de Catalogo : ${it.value.getDisponibilidadCatalogo()}, Estilo de catalogo:  ${it.value.getEstiloCatalogo()}"
+    fun listarCatalogos(formatoTexto: Boolean = true): Any {
+        return if (formatoTexto) {
+            if (catalogos.isEmpty()) "No hay Catálogos disponibles."
+            else catalogos.values.joinToString("\n") {
+                "Nombre: ${it.getNombreCatalogo()}, Estilo: ${it.getEstiloCatalogo()}, Disponibilidad: ${it.getDisponibilidadCatalogo()}"
+            }
+        } else {
+            catalogos.values.toList()
         }
     }
-
     //Buscar un Catalogo de precio por ID
     fun buscarCatalogoPorId(id: String): String {
         val catalogo =  catalogos[id]
@@ -48,24 +48,24 @@ class CatalogoController {
         nuevaDisponibilidad: Boolean,
         nuevoEstilo: String
     ): String {
-        val catalogo = catalogos[nombreActual]
-        return if (catalogo != null) {
-            catalogo.setNombreCatalogo(nuevoNombre)
-            catalogo.setDescripcionCatalogo(nuevaDescripcion)
-            catalogo.setDisponibilidadCatalogo(nuevaDisponibilidad)
-            catalogo.setEstiloCatalogo(nuevoEstilo)
+        val catalogo = catalogos[nombreActual] ?: return "Catálogo no encontrado"
 
-            if (nombreActual != nuevoNombre) {
-                catalogos.remove(nombreActual)  // Eliminar entrada antigua
-                catalogos[nuevoNombre] = catalogo // Agregar con nuevo nombre
-            }
-
-            "Catálogo actualizado con éxito."
-        } else {
-            "Catálogo no encontrado."
+        // Actualizar campos
+        catalogo.apply {
+            setDescripcionCatalogo(nuevaDescripcion)
+            setDisponibilidadCatalogo(nuevaDisponibilidad)
+            setEstiloCatalogo(nuevoEstilo)
         }
-    }
 
+        // Manejar cambio de nombre
+        if (nombreActual != nuevoNombre) {
+            catalogo.setNombreCatalogo(nuevoNombre)
+            catalogos.remove(nombreActual)
+            catalogos[nuevoNombre] = catalogo
+        }
+
+        return "Catálogo actualizado con éxito"
+    }
 
     fun eliminarCatalogo(nombreCatalogo: String): String {
         return if (catalogos.remove(nombreCatalogo) != null) {
