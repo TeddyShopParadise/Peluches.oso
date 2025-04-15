@@ -10,7 +10,7 @@ using TeddyShopWebApplication.Models.ViewModels;
 
 namespace TeddyShopWebApplication.Controllers
 {
-    [Authorize(Roles = "Administrador")]
+    //[Authorize(Roles = "Administrador")]
     public class RolesController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
