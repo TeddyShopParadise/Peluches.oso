@@ -279,8 +279,8 @@ const Facturas = () => {
                     <TableRow key={factura._id}>
                       <TableCell>{new Date(factura.fechaCreacionFactura).toLocaleDateString()}</TableCell>
                       <TableCell>{factura.horaCreacionFactura}</TableCell>
-                      <TableCell>{factura.pedido}</TableCell>
-                      <TableCell>{factura.cliente}</TableCell>
+                      <TableCell>{factura.pedido?._id || 'Sin ID'}</TableCell>
+<TableCell>{factura.cliente?.nombreCliente || 'Sin nombre'}</TableCell>
                       <TableCell>
                         <IconButton onClick={() => obtenerFacturaPorId(factura._id)}>
                           <Edit />
@@ -315,10 +315,9 @@ const Facturas = () => {
           <DialogContent>
             {selectedFactura && (
               <DialogContentText>
-                <strong>Pedido:</strong> {selectedFactura.pedido}
-                <br />
-                <strong>Cliente:</strong> {selectedFactura.cliente}
-                <br />
+                <strong>Pedido:</strong> {selectedFactura.pedido?._id || 'Sin ID'}
+  <br />
+  <strong>Cliente:</strong> {selectedFactura.cliente?.nombreCliente || 'Sin nombre'}
                 <strong>Detalles:</strong> {selectedFactura.detallesFactura.join(', ')}
                 <br />
                 <strong>Método de Pago:</strong> {selectedFactura.metodoPago}

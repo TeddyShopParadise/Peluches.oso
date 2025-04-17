@@ -36,8 +36,8 @@ const DetallePedido = () => {
     numDetalle: '',
     precioDetallePedido: '',
     cantidadDetallePedido: '',
-    pedidoNumPedido: '',
-    productoIdProducto: '',
+    idPedido: '',
+    idProducto: '',
   });
   const [pedidos, setPedidos] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -69,7 +69,7 @@ const DetallePedido = () => {
   // Función para obtener los pedidos
   const fetchPedidos = async () => {
     try {
-      const response = await fetch(`${apiUrl}/pedidos`, {
+      const response = await fetch(`${apiUrl}/pedido`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -88,12 +88,7 @@ const DetallePedido = () => {
   // Función para obtener los productos
   const fetchProductos = async () => {
     try {
-      const response = await fetch(`${apiUrl}/productos`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
+      const response = await fetch(`${apiUrl}/producto`);
       if (!response.ok) {
         throw new Error('Error al obtener los productos');
       }
@@ -101,9 +96,9 @@ const DetallePedido = () => {
       setProductos(data);
     } catch (error) {
       console.error(error);
+      alert(error.message);
     }
   };
-
   // Efecto para cargar detalles, pedidos y productos al montar el componente
   useEffect(() => {
     fetchDetalles();
@@ -160,8 +155,8 @@ const DetallePedido = () => {
         numDetalle: '',
         precioDetallePedido: '',
         cantidadDetallePedido: '',
-        pedidoNumPedido: '',
-        productoIdProducto: '',
+        idPedido: '',
+        idProducto: '',
       });
       setEditingId(null);
     } catch (error) {
@@ -266,9 +261,9 @@ const DetallePedido = () => {
 
 <TextField
   type="text"
-  name="pedidoNumPedido"
+  name="idProducto"
   label="Pedido (ID)"
-  value={detalle.pedidoNumPedido}
+  value={detalle.idProducto}
   onChange={handleChange}
   fullWidth
   margin="normal"
@@ -278,9 +273,9 @@ const DetallePedido = () => {
 
 <TextField
   type="text"
-  name="productoIdProducto"
+  name="idProducto"
   label="Producto (ID)"
-  value={detalle.productoIdProducto}
+  value={detalle.idProducto}
   onChange={handleChange}
   fullWidth
   margin="normal"
@@ -312,8 +307,9 @@ const DetallePedido = () => {
                     <TableCell>{detalle.numDetalle}</TableCell>
                     <TableCell>{detalle.precioDetallePedido}</TableCell>
                     <TableCell>{detalle.cantidadDetallePedido}</TableCell>
-                    <TableCell>{detalle.pedidoNumPedido}</TableCell>
-                    <TableCell>{detalle.productoIdProducto}</TableCell>
+                    <TableCell>{detalle.idPedido ? detalle.idPedido._id : 'N/A'}</TableCell>
+<TableCell>{detalle.idProducto ? detalle.idProducto._id : 'N/A'}</TableCell>
+
                     <TableCell>
                       <IconButton onClick={() => handleEdit(detalle)}>
                         <Edit />
@@ -355,11 +351,11 @@ const DetallePedido = () => {
             <strong>Cantidad:</strong> {detalleSeleccionado?.cantidadDetallePedido}
           </DialogContentText>
           <DialogContentText>
-            <strong>Pedido:</strong> {detalleSeleccionado?.pedidoNumPedido}
-          </DialogContentText>
-          <DialogContentText>
-            <strong>Producto:</strong> {detalleSeleccionado?.productoIdProducto}
-          </DialogContentText>
+  <strong>Pedido:</strong> {detalleSeleccionado?.idPedido?._id ?? 'N/A'}
+</DialogContentText>
+<DialogContentText>
+  <strong>Producto:</strong> {detalleSeleccionado?.idProducto?._id ?? 'N/A'}
+</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cerrar</Button>
