@@ -19,7 +19,7 @@ const detalleFacturaSchema = new mongoose.Schema({
     ref: 'Inventario',
     required: true
   },
-  productoIdProducto: {
+  idProducto: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Producto por ObjectId
     ref: 'Producto',
     required: true
@@ -34,8 +34,8 @@ const detalleFacturaSchema = new mongoose.Schema({
   timestamps: false
 });
 
-// Definir el índice único compuesto para numDetalle y productoIdProducto
-detalleFacturaSchema.index({ numDetalle: 1, productoIdProducto: 1 }, { unique: true });
+// Definir el índice único compuesto para numDetalle y idProducto
+detalleFacturaSchema.index({ numDetalle: 1, idProductoo: 1 }, { unique: true });
 
 //exportar el modelo
 module.exports = mongoose.model('DetalleFactura', detalleFacturaSchema);

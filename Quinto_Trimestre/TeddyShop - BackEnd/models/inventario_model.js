@@ -2,43 +2,35 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const inventarioSchema = new Schema({
-    idInventario: {
-        type: Number,
-        required: false,
-        unique: true 
-    },
     stockMinimo: {
-        type: String,
-        maxlength: 256,
+        type: Number,
         required: true
     },
     precioVenta: {
-        type: mongoose.Schema.Types.Decimal128,
-        precision: 3 
+        type: Number, 
+        required: true,
     },
     precioCompra: {
-        type: mongoose.Schema.Types.Decimal128,
-        precision: 3 
+        type: Number, 
+    required: true,
     },
     stock: {
-        type: String,
-        maxlength: 256,
+        type: Number,
         required: true
     },
     stockMaximo: {
-        type: String,
-        maxlength: 256,
+        type: Number,
         required: true
-    },
+    },  
     idDevolucion: {
         type: Schema.Types.ObjectId,
         ref: 'Devoluciones', 
         required: false
     },
-    productoIdProducto: {
+    idProducto: {
         type: Schema.Types.ObjectId,
         ref: 'Producto', 
-        required: true
+        required: false
     },
     detalleFacturas: [{
         type: Schema.Types.ObjectId,

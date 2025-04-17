@@ -17,8 +17,8 @@ const empleadoSchema = new mongoose.Schema({
   },
   compania: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Compañia', // Relación uno a muchos con Compañia
-    required: true
+    ref: 'Compañia',
+    required: false
   },
 }, {
   collection: 'Empleado',
