@@ -38,3 +38,16 @@ input, textarea {
   width: 100%; /* Ajuste de ancho */
   margin: 10px 0; /* Espaciado vertical */
 }
+
+
+/* Elimina las flechas en todos los inputs number */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
