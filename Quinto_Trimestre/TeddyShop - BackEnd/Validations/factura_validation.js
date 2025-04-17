@@ -2,7 +2,7 @@
 const Joi = require('@hapi/joi');
 
 const facturaSchemaValidation = Joi.object({
-    fechaCreacionFactura: Joi.date()
+    fechaCreacionFactura: Joi.string()
         .required()
         .messages({
             'date.base': 'La fecha de creación de la factura debe ser una fecha válida',
@@ -19,7 +19,7 @@ const facturaSchemaValidation = Joi.object({
     pedido: Joi.string()
         .length(24)
         .hex()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El ID del pedido debe ser un ID válido en formato hexadecimal',
             'string.length': 'El ID del pedido debe tener 24 caracteres',
@@ -28,7 +28,7 @@ const facturaSchemaValidation = Joi.object({
     cliente: Joi.string()
         .length(24)
         .hex()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El ID del cliente debe ser un ID válido en formato hexadecimal',
             'string.length': 'El ID del cliente debe tener 24 caracteres',

@@ -22,6 +22,8 @@ import {
 } from '@mui/material';
 import { getApiUrl } from '../../utils/apiConfig';
 import Swal from 'sweetalert2';
+import useApiRequest from '../../hooks/useApiRequest';
+
 
 const apiUrl = getApiUrl();
 
@@ -44,7 +46,6 @@ const Empleado = () => {
     fetchCompanias();
   }, []);
 
-  // Obtener empleados desde el servidor
   const fetchEmpleados = async () => {
     try {
       const response = await fetch(`${apiUrl}/empleado`);
@@ -66,7 +67,7 @@ const Empleado = () => {
         method: 'GET',
         headers: {
           "Content-Type": "application/json",
-//'Authorization': `Bearer ${token}`, // Añadir el token al encabezado
+      //'Authorization': `Bearer ${token}`, // Añadir el token al encabezado
         },
       });
   
@@ -81,108 +82,181 @@ const Empleado = () => {
     }
   };
 
-  // Manejo de cambios en el formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const { makeRequest } = useApiRequest();
+
   // Crear un nuevo empleado
   const crearEmpleado = async () => {
     const { dniEmpleado, telefonoEmpleado, nombreEmpleado, compania } = formData;
+    
     if (!dniEmpleado || !telefonoEmpleado || !nombreEmpleado || !compania) {
-      alert('Por favor, completa todos los campos.');
+      await Swal.fire({
+        icon: 'error',
+        title: 'Campos incompletos',
+        text: 'Por favor, completa todos los campos requeridos.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3085d6',
+        backdrop: `
+          rgba(0,0,0,0.7)
+          url("/images/empty-field.gif")
+          center top
+          no-repeat
+        `
+      });
       return;
     }
+  
     console.log("Enviando datos:", JSON.stringify(formData));
-    try {
-      const response = await fetch(`${apiUrl}/empleado`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const responseData = await response.json();
-      if (!response.ok) {
-        console.error("Error en el backend:", responseData);
-        throw new Error(responseData.message || 'Error al crear el empleado');
+  
+    await makeRequest({
+      url: `${apiUrl}/empleado`,
+      method: 'POST',
+      data: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      confirm: {
+        title: 'Crear nuevo empleado',
+        text: '¿Estás seguro de que deseas crear este empleado?',
+        icon: 'question',
+        confirmButtonText: 'Sí, crear',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+      },
+      loading: {
+        title: 'Procesando...',
+        html: 'Estamos creando el empleado',
+        allowOutsideClick: false
+      },
+      success: {
+        icon: 'success',
+        title: '¡Empleado creado!',
+        text: 'El empleado se ha creado correctamente',
+        timer: 2000,
+        timerProgressBar: true
+      },
+      error: {
+        icon: 'error',
+        title: 'Error al crear empleado',
+        text: (error) => error.message || 'Ocurrió un error al crear el empleado',
+        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+      },
+      onSuccess: () => {
+        fetchEmpleados();
+        resetForm();
       }
-      fetchEmpleados();
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
+    });
   };
-
-  // Actualizar un empleado
+  
   const actualizarEmpleado = async () => {
     const { dniEmpleado, telefonoEmpleado, nombreEmpleado, compania } = formData;
-    if (!editingId || !dniEmpleado || !telefonoEmpleado  || !nombreEmpleado || !compania) {
-      alert('Por favor, completa todos los campos.');
+    
+    if (!editingId || !dniEmpleado || !telefonoEmpleado || !nombreEmpleado || !compania) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Campos incompletos',
+        text: 'Por favor, completa todos los campos requeridos.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3085d6',
+        backdrop: `
+          rgba(0,0,0,0.7)
+          url("/images/empty-field.gif")
+          center top
+          no-repeat
+        `,
+        background: '#f8f9fa'
+      });
       return;
     }
-
-    try {
-      const response = await fetch(`${apiUrl}/empleado/${editingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error al actualizar el empleado: ${response.statusText}`);
+  
+    await makeRequest({
+      url: `${apiUrl}/empleado/${editingId}`,
+      method: 'PUT',
+      data: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      confirm: {
+        title: 'Actualizar empleado',
+        text: '¿Estás seguro de que deseas actualizar este empleado?',
+        icon: 'question',
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+      },
+      loading: {
+        title: 'Procesando...',
+        html: 'Estamos actualizando el empleado',
+        allowOutsideClick: false
+      },
+      success: {
+        icon: 'success',
+        title: '¡Empleado actualizado!',
+        text: 'El empleado se ha actualizado correctamente',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      },
+      error: {
+        icon: 'error',
+        title: 'Error en la actualización',
+        html: (error) => `<div style="text-align:left;">
+               <p>${error.message}</p>
+               <small>Si el problema persiste, contacte al administrador</small>
+             </div>`,
+        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+      },
+      onSuccess: () => {
+        fetchEmpleados();
+        resetForm();
       }
-
-      fetchEmpleados();
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
+    });
   };
-
-
+  
   // Eliminar un empleado
   const eliminarEmpleado = async (id) => {
-    const result = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
+    await makeRequest({
+      url: `${apiUrl}/empleado/${id}`,
+      method: 'DELETE',
+      confirm: {
+        title: 'Eliminar empleado',
+        text: '¿Estás seguro de que deseas eliminar este empleado? Esta acción no se puede deshacer.',
+        icon: 'warning',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        backdrop: `
+          rgba(0,0,0,0.7)
+          url("/images/warning.gif")
+          center top
+          no-repeat
+        `
+      },
+      loading: {
+        title: 'Eliminando...',
+        html: 'Estamos eliminando el empleado',
+        allowOutsideClick: false
+      },
+      success: {
+        icon: 'success',
+        title: '¡Empleado eliminado!',
+        text: 'El empleado ha sido eliminado correctamente.',
+        timer: 2000,
+        timerProgressBar: true
+      },
+      error: {
+        icon: 'error',
+        title: 'Error al eliminar empleado',
+        text: (error) => error.message || 'Ocurrió un error al eliminar el empleado',
+        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+      },
+      onSuccess: fetchEmpleados
     });
-  
-    if (result.isConfirmed) {
-      try {
-        const response = await fetch(`${apiUrl}/empleado/${id}`, {
-          method: 'DELETE',
-        });
-  
-        if (!response.ok) {
-          throw new Error('Error al eliminar el empleado');
-        }
-  
-        await Swal.fire(
-          '¡Eliminado!',
-          'El empleado ha sido eliminado correctamente.',
-          'success'
-        );
-        fetchEmpleados();
-      } catch (error) {
-        console.error(error);
-        Swal.fire('Error', error.message, 'error');
-      }
-    }
   };
-  
  
   const editarEmpleado = (empleado) => {
     setEditingId(empleado._id);
@@ -270,27 +344,27 @@ const Empleado = () => {
           </Select>
 
              <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2  }}>
-                          {!editingId ? (
-                        <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={crearEmpleado}
-                      >
-                       Crear Empleado
-                       </Button>
-                    ) : (
-                     <Button
-                       variant="contained"
-                       color="secondary"
-                       onClick={actualizarEmpleado}
-                     >
-                       Actualizar Empleado
-                     </Button>
-                   )}
-                       <Button variant="outlined" color="secondary" onClick={resetForm}>
-                         Cancelar
-                       </Button>
-                     </Box>
+              {!editingId ? (
+            <Button
+            variant="contained"
+            color="primary"
+            onClick={crearEmpleado}
+          >
+            Crear Empleado
+            </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={actualizarEmpleado}
+          >
+            Actualizar Empleado
+          </Button>
+        )}
+            <Button variant="outlined" color="secondary" onClick={resetForm}>
+              Cancelar
+            </Button>
+          </Box>
           </form>
 
       <TableContainer component={Paper}>

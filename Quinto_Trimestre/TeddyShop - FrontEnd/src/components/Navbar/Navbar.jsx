@@ -25,19 +25,19 @@ export default function Navbar() {
   const [anchorElRoles, setAnchorElRoles] = useState(null);
   const [anchorElUsuarios, setAnchorElUsuarios] = useState(null);
   const [anchorElProductos, setAnchorElProductos] = useState(null);
+  const [anchorElPedidos, setAnchorElPedidos] = useState(null);
+  const [anchorElVerProductos, setAnchorElVerProductos] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [userRole, setUserRole] = useState(null);
-  const [anchorElVerProductos, setAnchorElVerProductos] = useState(null);
 
-  // Se ejecuta cuando el estado de isAuthenticated cambia
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
       const decodedToken = JSON.parse(atob(token.split('.')[1]));
       setUserRole(decodedToken.roles && decodedToken.roles[0]);
     }
-  }, [isAuthenticated]); // Cuando isAuthenticated cambie, vuelve a ejecutarse este useEffect
+  }, [isAuthenticated]);
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
@@ -55,23 +55,21 @@ export default function Navbar() {
     localStorage.removeItem('authToken');
     setIsAuthenticated(false);
     setUserRole(null);
-    navigate('/'); // Redirigir al home después de cerrar sesión
+    navigate('/');
   };
 
   const handleLoginSuccess = (token) => {
     localStorage.setItem('authToken', token);
-
     const decodedToken = JSON.parse(atob(token.split('.')[1]));
     setUserRole(decodedToken.roles && decodedToken.roles[0]);
     setIsAuthenticated(true);
-    
     setLoginModalOpen(false); 
     navigate('/'); 
   };
 
   const drawer = (
     <List sx={{ width: 250 }}>
-      {['Productos-usuario', 'Catalogos-usuario'].map((text, index) => (
+      {['Productos-usuario', 'Catalogos-usuario', 'metodoPago'].map((text) => (
         <ListItem 
           button 
           component={LinkBehavior} 
@@ -109,6 +107,7 @@ export default function Navbar() {
               <Typography variant="h4">TeddyShop</Typography>
             </Button>
           </Typography>
+
           <IconButton
             edge="start"
             color="inherit"
@@ -118,8 +117,8 @@ export default function Navbar() {
           >
             <MenuIcon />
           </IconButton>
+
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            {/* Mostrar opciones según el rol del usuario */}
             {userRole === 'Administrador' && (
               <>
                 <Button
@@ -177,6 +176,26 @@ export default function Navbar() {
                   <MenuItem component={LinkBehavior} to="/categoria" onClick={() => setAnchorElProductos(null)}>Categorías</MenuItem>
                   <MenuItem component={LinkBehavior} to="/HistorialPrecio" onClick={() => setAnchorElProductos(null)}>Historial de Precios</MenuItem>
                 </Menu>
+
+                <Button
+                  color="inherit"
+                  onClick={(event) => setAnchorElPedidos(event.currentTarget)}
+                  style={{ color: '#2F2F2F', fontSize: '20px' }}
+                >
+                  Gestión de Pedido
+                </Button>
+                <Menu
+                  anchorEl={anchorElPedidos}
+                  open={Boolean(anchorElPedidos)}
+                  onClose={() => setAnchorElPedidos(null)}
+                >
+                  <MenuItem component={LinkBehavior} to="/pedido" onClick={() => setAnchorElPedidos(null)}>Pedidos</MenuItem>
+                  <MenuItem component={LinkBehavior} to="/detallePedido" onClick={() => setAnchorElPedidos(null)}>Detalle Pedido</MenuItem>
+                  <MenuItem component={LinkBehavior} to="/Factura" onClick={() => setAnchorElPedidos(null)}>Facturas</MenuItem>
+                  <MenuItem component={LinkBehavior} to="/detalleFactura" onClick={() => setAnchorElPedidos(null)}>detalle de Factura</MenuItem>
+                  <MenuItem component={LinkBehavior} to="/metodoPago" onClick={() => setAnchorElPedidos(null)}>Método de Pago</MenuItem>
+
+                </Menu>
               </>
             )}
 
@@ -196,7 +215,6 @@ export default function Navbar() {
               <MenuItem component={LinkBehavior} to="/productos-usuario" onClick={() => setAnchorElVerProductos(null)}>Productos</MenuItem>
             </Menu>   
 
-            {/* Botón de login/logout */}
             {!isAuthenticated ? (
               <Button
                 color="inherit"
@@ -219,14 +237,11 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer personalizado para móviles */}
       <Drawer
         anchor="left"
         open={drawerOpen}
         onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true,
-        }}
+        ModalProps={{ keepMounted: true }}
         PaperProps={{
           sx: {
             backgroundColor: '#F3E5F5',

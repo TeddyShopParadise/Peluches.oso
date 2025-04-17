@@ -24,6 +24,8 @@ import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
+import useApiRequest from '../../hooks/useApiRequest';
+
 
 const Roles = () => {
   const [roles, setRoles] = useState([]);
@@ -38,6 +40,9 @@ const Roles = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("nombre");
   const [sortOrder, setSortOrder] = useState("asc");
+  const { makeRequest } = useApiRequest();
+  
+  
 
   const getAuthToken = () => {
     const token = localStorage.getItem('authToken');
@@ -64,91 +69,127 @@ const Roles = () => {
     }
   };
 
-  const crearRol = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/roles`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(role),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al crear el rol');
-      }
-  
+const crearRol = async () => {
+  if (!role.nombre) {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Campo incompleto',
+      text: 'Por favor, ingresa el nombre del rol',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#3085d6',
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/empty-field.gif")
+        center top
+        no-repeat
+      `
+    });
+    return;
+  }
+
+  await makeRequest({
+    url: `${apiUrl}/roles`,
+    method: 'POST',
+    data: role,
+    confirm: {
+      title: 'Crear nuevo rol',
+      text: '¿Estás seguro de que deseas crear este rol?',
+      icon: 'question',
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar'
+    },
+    loading: {
+      title: 'Procesando...',
+      html: 'Estamos creando el rol'
+    },
+    success: {
+      title: '¡Rol creado!',
+      text: 'El rol se ha creado correctamente',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      title: 'Error',
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: () => {
       fetchRoles();
       setRole({ nombre: '', estado: true });
-      setSnackbarMessage("Rol creado correctamente");
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error('Error al crear el rol:', error);
-      setSnackbarMessage(error.message || "Error al guardar el rol");
-      setOpenSnackbar(true);
     }
-  };
-  
-  const actualizarRol = async () => {
-    if (!currentId) return;
-  
-    try {
-      const response = await fetch(`${apiUrl}/roles/${currentId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(role),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al actualizar el rol');
-      }
-  
+  });
+};
+
+const actualizarRol = async () => {
+  if (!currentId) return;
+
+  await makeRequest({
+    url: `${apiUrl}/roles/${currentId}`,
+    method: 'PUT',
+    data: role,
+    confirm: {
+      title: 'Actualizar rol',
+      text: '¿Estás seguro de que deseas actualizar este rol?',
+      icon: 'question',
+      confirmButtonText: 'Sí, actualizar',
+      cancelButtonText: 'Cancelar'
+    },
+    loading: {
+      title: 'Procesando...',
+      html: 'Estamos actualizando el rol'
+    },
+    success: {
+      title: '¡Rol actualizado!',
+      text: 'El rol se ha actualizado correctamente',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      title: 'Error',
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: () => {
       fetchRoles();
       setRole({ nombre: '', estado: true });
       setIsEditing(false);
       setCurrentId(null);
-      setSnackbarMessage("Rol actualizado correctamente");
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error('Error al actualizar el rol:', error);
-      setSnackbarMessage(error.message || "Error al guardar el rol");
-      setOpenSnackbar(true);
     }
-  };
+  });
+};
 
-  const EliminarRol = async (id) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción no se puede deshacer",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(`${apiUrl}/roles/${id}`, {
-            method: 'DELETE',
-          });
-  
-          if (response.ok) {
-            fetchRoles();
-            Swal.fire("Eliminado", "El rol ha sido eliminado correctamente.", "success");
-          } else {
-            Swal.fire("Error", "No se pudo eliminar el rol.", "error");
-          }
-        } catch (error) {
-          Swal.fire("Error", "Ocurrió un problema al eliminar el rol.", "error");
-        }
-      }
-    });
-  };
+const EliminarRol = async (id) => {
+  await makeRequest({
+    url: `${apiUrl}/roles/${id}`,
+    method: 'DELETE',
+    confirm: {
+      title: 'Eliminar rol',
+      text: '¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer',
+      icon: 'warning',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/warning.gif")
+        center top
+        no-repeat
+      `
+    },
+    loading: {
+      title: 'Eliminando...',
+      html: 'Estamos eliminando el rol'
+    },
+    success: {
+      title: '¡Rol eliminado!',
+      text: 'El rol se ha eliminado correctamente',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      title: 'Error',
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: fetchRoles
+  });
+};
 
   const resetRoleForm = () => {
     setRole({ nombre: "", estado: true });
@@ -241,13 +282,9 @@ const Roles = () => {
           >
             {isEditing ? "Actualizar Rol" : "Crear Rol"}
           </Button>
-          <Button 
-           variant="outlined" 
-           color="secondary" 
-           sx={{ borderRadius: "8px", padding: "8px 18px" }}
-           onClick={resetRoleForm}>
-            Cancelar
-          </Button>
+           <Button variant="outlined" color="secondary" onClick={resetRoleForm}>
+             Cancelar
+           </Button>
         </Box>
 
           </form>

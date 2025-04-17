@@ -32,6 +32,8 @@ import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
+import useApiRequest from '../../hooks/useApiRequest';
+
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -56,6 +58,8 @@ const Usuarios = () => {
     fetchRoles();
     fetchEmpleados();
   }, []);
+
+  const { makeRequest } = useApiRequest();
 
   const fetchUsuarios = async () => {
     try {
@@ -105,109 +109,178 @@ const Usuarios = () => {
     }
   };
 
+const crearUsuario = async () => {
+  if (!usuario.email || !usuario.contraseña || !usuario.username) {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Campos incompletos',
+      text: 'Por favor, completa todos los campos obligatorios.',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#3085d6',
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/empty-field.gif")
+        center top
+        no-repeat
+      `
+    });
+    return;
+  }
 
-  const crearUsuario = async () => {
-    if (!usuario.email  || !usuario.contraseña || !usuario.username) {
-      alert('Por favor, completa todos los campos del usuario.');
-      return;
+  const usuarioData = {
+    ...usuario,
+    roles: Array.isArray(usuario.roles) ? usuario.roles.map(id => id) : [],
+    empleados: Array.isArray(usuario.empleados) ? usuario.empleados.map(id => id) : []
+  };
 
-    }
-    try {
-      const response = await fetch(`${apiUrl}/usuario`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...usuario,
-          roles: Array.isArray(usuario.roles) ? usuario.roles.map(id => id) : [],
-          empleados: Array.isArray(usuario.empleados) ? usuario.empleados.map(id => id) : []
-          
-        }),
-      }); 
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error:', errorText);
-        throw new Error('Error al crear el usuario');
-      }
+  await makeRequest({
+    url: `${apiUrl}/usuario`,
+    method: 'POST',
+    data: usuarioData,
+    confirm: {
+      title: 'Crear nuevo usuario',
+      text: '¿Estás seguro de que deseas crear este usuario?',
+      icon: 'question',
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    },
+    loading: {
+      title: 'Procesando...',
+      html: 'Estamos creando el usuario',
+      allowOutsideClick: false
+    },
+    success: {
+      icon: 'success',
+      title: '¡Usuario creado!',
+      text: 'El usuario se ha registrado correctamente',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      icon: 'error',
+      title: 'Error al crear usuario',
+      html: (error) => `<div style="text-align:left;">
+        <p>${error.message}</p>
+        <small>Verifica los datos e intenta nuevamente</small>
+      </div>`,
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: () => {
       fetchUsuarios();
       resetUsuarioForm();
-      setSnackbarMessage("Usuario creado");
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
     }
+  });
 };
 
 const actualizarUsuario = async () => {
-    if (!usuario.email  || !usuario.contraseña || !usuario.username) {
-      alert('Por favor, completa todos los campos del usuario.');
-      return;
-    }
-    try {
+  if (!usuario.email || !usuario.contraseña || !usuario.username) {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Campos incompletos',
+      text: 'Por favor, completa todos los campos obligatorios.',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#3085d6',
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/empty-field.gif")
+        center top
+        no-repeat
+      `
+    });
+    return;
+  }
 
-      const rolesToSend = Array.isArray(usuario.roles) 
+  const usuarioData = {
+    email: usuario.email,
+    contraseña: usuario.contraseña,
+    username: usuario.username,
+    estado: usuario.estado,
+    roles: Array.isArray(usuario.roles) 
       ? usuario.roles.map(role => typeof role === 'object' ? role._id : role) 
-      : [];
-
-      const empleadosToSend = Array.isArray(usuario.empleados) 
+      : [],
+    empleados: Array.isArray(usuario.empleados) 
       ? usuario.empleados.map(empleado => typeof empleado === 'object' ? empleado._id : empleado) 
-      : [];
-      const response = await fetch(`${apiUrl}/usuario/${editingId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: usuario.email,
-          contraseña: usuario.contraseña,
-          username: usuario.username,
-          estado: usuario.estado,
-           roles: rolesToSend,
-           empleados: empleadosToSend
-        })
-      });
+      : []
+  };
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error:', errorText);
-        throw new Error('Error al actualizar el usuario');
-      } 
+  await makeRequest({
+    url: `${apiUrl}/usuario/${editingId}`,
+    method: 'PUT',
+    data: usuarioData,
+    confirm: {
+      title: 'Actualizar usuario',
+      text: '¿Estás seguro de que deseas actualizar este usuario?',
+      icon: 'question',
+      confirmButtonText: 'Sí, actualizar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    },
+    loading: {
+      title: 'Procesando...',
+      html: 'Estamos actualizando el usuario',
+      allowOutsideClick: false
+    },
+    success: {
+      icon: 'success',
+      title: '¡Usuario actualizado!',
+      text: 'El usuario se ha actualizado correctamente',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      icon: 'error',
+      title: 'Error al actualizar usuario',
+      text: (error) => error.message || 'Ocurrió un error al actualizar el usuario',
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: () => {
       fetchUsuarios();
       resetUsuarioForm();
-      setSnackbarMessage("Usuario actualizado");
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error(error);
-      setSnackbarMessage(error.message);
     }
+  });
 };
 
 const eliminarUsuario = async (id) => {
-  const result = await Swal.fire({
-    title: '¿Estás seguro?',
-    text: 'No podrás revertir esto.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  });
-
-  if (result.isConfirmed) {
-    try {
-      const response = await fetch(`${apiUrl}/usuario/${id}`, { method: 'DELETE' });
-      if (response.ok) {
-        fetchUsuarios();
-        Swal.fire('Eliminado', 'El usuario ha sido eliminado.', 'success');
-      } else {
-        throw new Error('Error al eliminar el usuario');
-      }
-    } catch (error) {
-      console.error('Error deleting usuario:', error);
-      setSnackbarMessage('Error al eliminar el usuario');
-      setOpenSnackbar(true);
+  await makeRequest({
+    url: `${apiUrl}/usuario/${id}`,
+    method: 'DELETE',
+    confirm: {
+      title: 'Eliminar usuario',
+      text: '¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer',
+      icon: 'warning',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/warning.gif")
+        center top
+        no-repeat
+      `
+    },
+    loading: {
+      title: 'Eliminando...',
+      html: 'Estamos eliminando el usuario',
+      allowOutsideClick: false
+    },
+    success: {
+      icon: 'success',
+      title: '¡Usuario eliminado!',
+      text: 'El usuario se ha eliminado correctamente',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      icon: 'error',
+      title: 'Error al eliminar usuario',
+      text: (error) => error.message || 'Ocurrió un problema al eliminar el usuario',
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: () => {
+      fetchUsuarios();
     }
-  }
+  });
 };
 
 const resetUsuarioForm = () => {
@@ -299,26 +372,26 @@ const mostrarMensaje = (mensaje) => {
             <TextField label="Contraseña" name="contraseña" value={usuario.contraseña} onChange={handleInputChange} fullWidth margin="normal" type="password" required />
             <TextField label="Nombre de usuario" name="username" value={usuario.username} onChange={handleInputChange} fullWidth margin="normal" required />
             <FormControl fullWidth margin="normal">
-  <InputLabel>Roles</InputLabel>
-  <Select multiple value={usuario.roles || []} onChange={handleChangeRoles}>
-    {roles.map((rol) => (
-      <MenuItem key={rol._id} value={rol._id}>
-        {rol.nombre}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+            <InputLabel>Roles</InputLabel>
+            <Select multiple value={usuario.roles || []} onChange={handleChangeRoles}>
+              {roles.map((rol) => (
+                <MenuItem key={rol._id} value={rol._id}>
+                  {rol.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-<FormControl fullWidth margin="normal">
-  <InputLabel>Empleados</InputLabel>
-  <Select multiple value={usuario.empleados || []} onChange={handleChangeEmpleados}>
-    {empleados.map((empleado) => (
-      <MenuItem key={empleado._id} value={empleado._id}>
-        {empleado.nombreEmpleado}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Empleados</InputLabel>
+            <Select multiple value={usuario.empleados || []} onChange={handleChangeEmpleados}>
+              {empleados.map((empleado) => (
+                <MenuItem key={empleado._id} value={empleado._id}>
+                  {empleado.nombreEmpleado}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
             <Box display="flex" alignItems="center" mt={2}>
               <Switch checked={usuario.estado} onChange={handleToggleActivo} />
               <span>{usuario.estado ? "Activo" : "Inactivo"}</span>
@@ -341,10 +414,9 @@ const mostrarMensaje = (mensaje) => {
         >
           Actualizar Usuario
         </Button>
-      )}
-          <Button variant="outlined" color="secondary" onClick={resetUsuarioForm}>
-            Cancelar
-          </Button>
+      )}<Button variant="outlined" color="secondary" onClick={resetUsuarioForm}>
+      Cancelar
+    </Button>
         </Box>
 
           <Box display="flex" justifyContent="space-between" alignItems="center" mt={4}>
