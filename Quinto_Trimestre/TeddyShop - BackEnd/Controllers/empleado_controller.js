@@ -13,32 +13,37 @@ const listarEmpleados = async (req, res) => {
     }
 };
 
-// Controlador para crear un nuevo empleado
 const crearEmpleado = async (req, res) => {
-    const { email, contraseña, username, roles, empleados, estado } = req.body;
+    const body = req.body;
 
-    const { error, value } = empleadoSchemaValidation.validate(req.body, { abortEarly: false });
+    // 🟡 Log para verificar qué está llegando desde Android
+    console.log('📦 Body recibido desde Android:', body);
+
+    // Validación con Joi
+    const { error, value } = empleadoSchemaValidation.validate(body, { abortEarly: false });
     if (error) {
+        console.log('❌ Error de validación:', error.details); // 🟡 Log de errores de validación
         return res.status(400).json({ message: "Validación fallida", details: error.details });
     }
-    
+
     try {
-        const nuevoEmpleado = await logic.crearEmpleado(value); // Ahora "value" está definido correctamente
+        const nuevoEmpleado = await logic.crearEmpleado(value);
+        console.log('✅ Empleado creado exitosamente:', nuevoEmpleado); // 🟢 Confirmación
         res.status(201).json(nuevoEmpleado);
     } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error('🔥 Error en lógica de creación de empleado:', err); // 🔴 Log de error del servidor
+        res.status(500).json({ error: 'Error interno del servidor', details: err.message });
     }
 };
 
 // Controlador para actualizar un empleado
 const actualizarEmpleado = async (req, res) => {
     const { id } = req.params;
-    const { email, contraseña, username, roles, empleados, estado } = req.body;
+    const body = req.body;
 
-    const { error, value } = empleadoSchemaValidation.validate(body);
-
+    const { error, value } = empleadoSchemaValidation.validate(body, { abortEarly: false });
     if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+        return res.status(400).json({ error: error.details });
     }
 
     try {
@@ -48,10 +53,9 @@ const actualizarEmpleado = async (req, res) => {
         }
         res.json(empleadoActualizado);
     } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor' });
+        res.status(500).json({ error: 'Error interno del servidor', details: err.message });
     }
 };
-
 // Controlador para obtener un empleado por su ID
 const obtenerEmpleadoPorId = async (req, res) => {
     const { id } = req.params;
