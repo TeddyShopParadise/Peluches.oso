@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Define el esquema para la colección Factura
 const facturaSchema = new mongoose.Schema({
   fechaCreacionFactura: {
-    type: Date,
+    type: String, 
     required: true
   },
   horaCreacionFactura: {
@@ -13,12 +13,12 @@ const facturaSchema = new mongoose.Schema({
   pedido: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Pedido', // Relación muchos a uno con Pedido
-    required: true
+    required: false
   },
   cliente: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Cliente', // Relación muchos a uno con Cliente
-    required: true
+    required: false
   },
   detallesFactura: [{
     type: mongoose.Schema.Types.ObjectId, // Relación uno a muchos con DetalleFactura
