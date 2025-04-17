@@ -97,7 +97,6 @@ const ProductoUsuario = () => {
     }
   };
 
-  // Obtener categorías de la API
   const fetchCategorias = async () => {
     try {
       const response = await fetch(CATEGORIAS_API_URL);
@@ -121,7 +120,6 @@ const ProductoUsuario = () => {
     fetchHistorialPrecios();
   }, []);
 
-  // Filtrar productos según la categoría seleccionada
   const handleCategoriaFiltroChange = (event) => {
     const selectedCategoria = event.target.value;
     setCategoriaFiltro(selectedCategoria);
@@ -190,13 +188,11 @@ const ProductoUsuario = () => {
       if (!productoSeleccionado || !productoSeleccionado.historialPrecios || productoSeleccionado.historialPrecios.length === 0) {
         return "No disponible";
       }
-    
-      // Buscar el último precio dentro del historial
       const historialCompleto = productoSeleccionado.historialPrecios.map(precioId =>
         historialPrecios.find(p => p._id === precioId)
       );
     
-      const ultimoRegistro = historialCompleto.filter(Boolean).at(-1); // Obtener el último objeto válido
+      const ultimoRegistro = historialCompleto.filter(Boolean).at(-1); 
     
       return ultimoRegistro ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio) : "No disponible";
     })();
@@ -281,7 +277,6 @@ const ProductoUsuario = () => {
     handleCloseCarritoDialog();
   };
 
-  // Manejar el cambio de página
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
@@ -299,7 +294,6 @@ const ProductoUsuario = () => {
           <Typography variant="h4" align="center" gutterBottom>
             PRODUCTOS
           </Typography>
-          {/* Filtro de categoría */}
           <FormControl style={{ width: "260px", height:"40px" }} sx={{ marginBottom: 5 }}>
             <InputLabel id="categoriaFiltro-label">Filtrar por Categoría</InputLabel>
             <Select
@@ -370,7 +364,6 @@ const ProductoUsuario = () => {
             ))}
           </Grid>
 
-          {/* Paginación */}
           <Box mt={4} display="flex" justifyContent="center">
             <Pagination
               count={Math.ceil(filteredProductos.length / productosPerPage)}
@@ -380,7 +373,6 @@ const ProductoUsuario = () => {
             />
           </Box>
 
-          {/* Diálogo para detalles */}
           <Dialog open={openDetalleDialog} onClose={handleCloseDetalleDialog} maxWidth="sm" fullWidth={false}>
             <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 2, textAlign: "center", position: "relative", maxWidth: "400px", margin: "auto" }}>
               {productoSeleccionado && (
@@ -412,7 +404,6 @@ const ProductoUsuario = () => {
             </DialogContent>
           </Dialog>
 
-          {/* Diálogo para carrito */}
           <Dialog open={openCarritoDialog} onClose={handleCloseCarritoDialog} maxWidth="sm" fullWidth={false}>
             <DialogTitle>Detalles del pedido</DialogTitle>
             <DialogContent>

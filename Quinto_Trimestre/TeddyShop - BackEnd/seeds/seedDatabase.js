@@ -9,7 +9,7 @@ const facturaSeed = require('./factura_seed.js');
 const historialPrecioSeed = require('./historialPrecio_seed.js');
 const rolesSeed = require('./roles_seed.js');
 const usuarioSeed = require('./usuario_seed.js');
-
+const detallePedidoSeed = require('./detallePedido_seed.js')
 
 async function runAllSeeds() {
   try {
@@ -21,6 +21,7 @@ async function runAllSeeds() {
    await clienteSeed;
    await categoriaSeed;
    await detalleFacturaSeed;
+   await detallePedidoSeed;
    await facturaSeed;
    await historialPrecioSeed;
    await rolesSeed;

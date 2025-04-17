@@ -230,4 +230,34 @@ router.put('/:id', upload.single('image'), productoController.actualizarProducto
 
 router.delete('/:id', productoController.eliminarProducto);
 
+/**
+ * @swagger
+ * /producto/catalogo/{id}:
+ *   get:
+ *     summary: Obtiene productos por ID de catálogo
+ *     tags:
+ *       - Productos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del catálogo
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de productos asociados al catálogo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Producto'
+ *       404:
+ *         description: No se encontraron productos para este catálogo
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get('/catalogo/:id', productoController.getProductosByCatalogo);
+
 module.exports = router;

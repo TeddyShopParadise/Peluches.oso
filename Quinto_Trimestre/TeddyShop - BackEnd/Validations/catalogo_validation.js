@@ -44,7 +44,7 @@ const catalogoSchemaValidation = Joi.object({
             'string.uri': 'La imagen debe tener un formato de URL válido'
         }),
     compania: Joi.string()
-        .required()
+        .optional()
         .messages({
             'string.base': 'La compañía debe ser un ID válido',
             'any.required': 'La compañía es un campo requerido'
