@@ -9,7 +9,8 @@ const devolucionesSchemaValidation = Joi.object({
             'any.required': 'El detalle de la devolución es un campo requerido'
         }),
     inventarios: Joi.array()
-        .items(Joi.string().length(24).hex()) // Asegura que cada ID de inventario sea un ObjectId válido
+        .items(Joi.string().length(24).hex())
+        .optional() // Asegura que cada ID de inventario sea un ObjectId válido
         .messages({
             'array.base': 'Los inventarios deben ser un array',
             'string.length': 'Cada ID de inventario debe tener 24 caracteres',
