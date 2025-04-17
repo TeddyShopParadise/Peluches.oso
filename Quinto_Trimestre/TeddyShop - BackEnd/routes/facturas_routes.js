@@ -77,7 +77,7 @@ router.get('/', listarFacturas);
  *                 example: "2024-10-22"
  *               horaCreacionFactura:
  *                 type: string
- *                 example: "14:30"
+ *                 example: "14:30:00"
  *               pedido:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"

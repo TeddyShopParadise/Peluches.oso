@@ -25,7 +25,7 @@ const {
  *               items:
  *                 type: object
  *                 properties:
- *                   idInventario:
+ *                   _id:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a79"
  *                   stockMinimo:
@@ -43,7 +43,7 @@ const {
  *                   stockMaximo:
  *                     type: number
  *                     example: 100
- *                   productoIdProducto:
+ *                   idProducto:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
  *       500:
@@ -81,7 +81,7 @@ router.get('/', listarInventarios);
  *               stockMaximo:
  *                 type: number
  *                 example: 100
- *               productoIdProducto:
+ *               idProducto:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
@@ -156,7 +156,7 @@ router.get('/:id', obtenerInventarioPorId);
  *               stockMaximo:
  *                 type: number
  *                 example: 100
- *               productoIdProducto:
+ *               idProducto:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:

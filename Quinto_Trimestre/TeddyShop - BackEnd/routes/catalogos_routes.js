@@ -1,6 +1,9 @@
 const express = require('express');
 const catalogoController = require('../Controllers/catalogo_controller');
 const router = express.Router();
+const multer = require('multer');
+const storage = multer.memoryStorage(); 
+const upload = multer({ storage: storage });
 
 /**
  * @swagger
@@ -48,7 +51,7 @@ const router = express.Router();
  *         description: Ya existe un catálogo con ese nombre
  */
 
-router.post('/', catalogoController.crearCatalogo);
+router.post('/',upload.single('image'), catalogoController.crearCatalogo);
 
 /**
  * @swagger
