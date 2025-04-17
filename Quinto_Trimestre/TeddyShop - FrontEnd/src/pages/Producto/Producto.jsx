@@ -25,6 +25,7 @@ import {
 } from '@mui/material';
 import { Edit, Delete, Info } from '@mui/icons-material';
 import { getApiUrl } from '../../utils/apiConfig';
+import useApiRequest from '../../hooks/useApiRequest';
 
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
@@ -46,6 +47,17 @@ const ProductoComponent = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedProducto, setSelectedProducto] = useState(null);
+  const [openInventarioDialog, setOpenInventarioDialog] = useState(false);
+  const [newProductId, setNewProductId] = useState(null);
+  const [inventarioData, setInventarioData] = useState({
+    stock: 0,
+    stockMinimo: 0,
+    stockMaximo: 0,
+    precioVenta: '',
+    precioCompra: ''
+  });
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [inventarioExistente, setInventarioExistente] = useState(null);
 
   /*const getAuthToken = () => {
     const token = localStorage.getItem('authToken');
@@ -119,7 +131,6 @@ const ProductoComponent = () => {
     }
 };
 
-  // Función para manejar la carga de la imagen
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -145,123 +156,132 @@ const ProductoComponent = () => {
       }
     }
   };
+  const { makeRequest } = useApiRequest();
 
   const crearProducto = async () => {
-    if (!estiloProducto || !materialProducto || !disponibilidadProducto || !tamañoProducto || categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
-      alert('Por favor, completa todos los campos.');
+    if (!estiloProducto || !materialProducto || !disponibilidadProducto || !tamañoProducto || 
+        categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
+      await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
       return;
     }
-    try {
-      //const token = getAuthToken();
-      const response = await fetch(`${apiUrl}/producto`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          //"Authorization": `Bearer ${token}` 
-        },
-        body: JSON.stringify({
-          estiloProducto,
-          materialProducto,
-          disponibilidadProducto,
-          tamañoProducto,
-          categorias: categoriasSeleccionadas,
-          catalogos: catalogosSeleccionados,
-          historialPrecios: preciosSeleccionados, 
-          imagen: imagenProducto
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text(); 
-        console.error('Error:', errorText);
+  
+    const productoData = {
+      estiloProducto,
+      materialProducto,
+      disponibilidadProducto,
+      tamañoProducto,
+      categorias: categoriasSeleccionadas,
+      catalogos: catalogosSeleccionados,
+      historialPrecios: preciosSeleccionados,
+      imagen: imagenProducto
+    };
+  
+    await makeRequest({
+      url: `${apiUrl}/producto`,
+      method: 'POST',
+      data: productoData,
+      success: {
+        title: 'Éxito',
+        text: 'Producto creado correctamente',
+        icon: 'success'
+      },
+      error: {
+        title: 'Error',
+        text: (error) => error.message || 'Error al crear el producto',
+        icon: 'error'
+      },
+      onSuccess: (data) => {
+        setNewProductId(data._id);
+        setOpenInventarioDialog(true);
       }
-      fetchProductos();
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
+    });
   };
-
+  
   const actualizarProducto = async () => {
-    if (!editingId || !estiloProducto || !materialProducto || !disponibilidadProducto || categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
-      alert('Por favor, completa todos los campos.');
+    if (!editingId || !estiloProducto || !materialProducto || !disponibilidadProducto || 
+        categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
+      await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
       return;
     }
-    try {
-     // const token = getAuthToken();
-      const response = await fetch(`${apiUrl}/producto/${editingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-       //   "Authorization": `Bearer ${token}` 
-       
-        },
-        body: JSON.stringify({
-          estiloProducto,
-          materialProducto,
-          disponibilidadProducto,
-          tamañoProducto,
-          imagen: imagenProducto, 
-          categorias: categoriasSeleccionadas || [],
-          catalogos: catalogosSeleccionados,
-          historialPrecios: preciosSeleccionados   
-        }),
-      });
-      if (!response.ok) {
-        const errorText = await response.text(); 
-        console.error('Error:', errorText);
-        throw new Error('Error al actualizar el producto');
-      }
-      fetchProductos();
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  }
-
-const eliminarProducto = async (id) => {
-            Swal.fire({
-              title: "¿Estás seguro?",
-              text: "Esta acción no se puede deshacer",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#d33",
-              cancelButtonColor: "#3085d6",
-              confirmButtonText: "Sí, eliminar",
-              cancelButtonText: "Cancelar",
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                try {
-                  const response = await fetch(`${apiUrl}/producto/${id}`, {
-                    method: "DELETE",
-                  });
-
-                  if (!response.ok) {
-                    throw new Error("Error al eliminar el producto");
-                  }
-
-                  Swal.fire({
-                    title: "Eliminado",
-                    text: "El producto ha sido eliminado correctamente",
-                    icon: "success",
-                    confirmButtonColor: "#3085d6",
-                  });
-
-              fetchProductos(); 
-            } catch (error) {
-              console.error(error);
-              Swal.fire({
-                title: "Error",
-                text: error.message,
-                icon: "error",
-                confirmButtonColor: "#d33",
-              });
+  
+    const productoData = {
+      estiloProducto,
+      materialProducto,
+      disponibilidadProducto,
+      tamañoProducto,
+      imagen: imagenProducto,
+      categorias: categoriasSeleccionadas || [],
+      catalogos: catalogosSeleccionados,
+      historialPrecios: preciosSeleccionados
+    };
+  
+    await makeRequest({
+      url: `${apiUrl}/producto/${editingId}`,
+      method: 'PUT',
+      data: productoData,
+      success: {
+        title: 'Éxito',
+        text: 'Producto actualizado correctamente',
+        icon: 'success'
+      },
+      error: {
+        title: 'Error',
+        text: (error) => error.message || 'Error al actualizar el producto',
+        icon: 'error'
+      },
+      onSuccess: async () => {
+        try {
+          const inventarioResponse = await fetch(`${apiUrl}/inventario?producto=${editingId}`);
+          if (inventarioResponse.ok) {
+            const inventarioData = await inventarioResponse.json();
+            if (inventarioData && inventarioData.length > 0) {
+              setInventarioExistente(inventarioData[0]);
+              setOpenConfirmDialog(true);
+              return;
             }
           }
-        });
-      };
+          resetForm();
+          fetchProductos();
+        } catch (error) {
+          console.error('Error al buscar inventario:', error);
+          resetForm();
+          fetchProductos();
+        }
+      }
+    });
+  };
+  
+  const eliminarProducto = async (id) => {
+    await makeRequest({
+      url: `${apiUrl}/producto/${id}`,
+      method: 'DELETE',
+      confirm: {
+        title: '¿Estás seguro?',
+        text: 'Esta acción no se puede deshacer',
+        icon: 'warning',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6'
+      },
+      success: {
+        title: 'Eliminado',
+        text: 'El producto ha sido eliminado correctamente',
+        icon: 'success',
+        confirmButtonColor: '#3085d6'
+      },
+      error: {
+        title: 'Error',
+        text: (error) => error.message || 'Error al eliminar el producto',
+        icon: 'error',
+        confirmButtonColor: '#d33'
+      },
+      onSuccess: fetchProductos
+    });
+  };
+  
+  
+  
 
   const editarProducto = (producto) => {
     setEditingId(producto._id);
@@ -274,6 +294,66 @@ const eliminarProducto = async (id) => {
     const catalogos = Array.isArray(producto.catalogos) ? producto.catalogos : [];
     const historialPrecio = Array.isArray(producto.historialPrecio) ? producto.historialPrecio : [];
 };
+
+const crearInventario = async () => {
+  try {
+    const productId = inventarioExistente ? editingId : newProductId;
+    
+    if (!productId) {
+      throw new Error('No se encontró el ID del producto');
+    }
+
+    let response;
+    if (inventarioExistente) {
+      response = await fetch(`${apiUrl}/inventario/${inventarioExistente._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...inventarioData, idProducto: productId })
+      });
+    } else {
+      response = await fetch(`${apiUrl}/inventario`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...inventarioData, idProducto: productId })
+      });
+    }
+
+    if (!response.ok) throw new Error(await response.text());
+
+    Swal.fire('Éxito', inventarioExistente 
+      ? 'Inventario actualizado correctamente' 
+      : 'Inventario creado correctamente', 'success');
+      
+    setOpenInventarioDialog(false);
+    resetForm();
+    fetchProductos();
+    setInventarioExistente(null);
+  } catch (error) {
+    Swal.fire('Error', error.message, 'error');
+  }
+};
+const handleActualizarInventario = async () => {
+  setOpenConfirmDialog(false);
+  setOpenInventarioDialog(true);
+  if (inventarioExistente) {
+    setInventarioData({
+      stock: inventarioExistente.stock,
+      stockMinimo: inventarioExistente.stockMinimo,
+      stockMaximo: inventarioExistente.stockMaximo,
+      precioVenta: inventarioExistente.precioVenta,
+      precioCompra: inventarioExistente.precioCompra
+    });
+  }
+};
+
+const handleNoActualizarInventario = () => {
+  setOpenConfirmDialog(false);
+  Swal.fire('Éxito', 'Producto actualizado correctamente', 'success');
+  resetForm();
+  fetchProductos();
+};
+
+
   const resetForm = () => {
     setEstiloProducto('');
     setMaterialProducto('');
@@ -563,6 +643,216 @@ const eliminarProducto = async (id) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={closeDetailsDialog}>Cerrar</Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog
+          open={openConfirmDialog}
+          onClose={() => {
+            setOpenConfirmDialog(false);
+            Swal.fire('Éxito', 'Producto actualizado correctamente', 'success');
+            resetForm();
+            fetchProductos();
+          }}
+          maxWidth="xs"
+          fullWidth
+        >
+          <DialogTitle>¿Actualizar inventario?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Se encontró un inventario asociado a este producto. ¿Deseas actualizarlo también?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+              onClick={() => {
+                setOpenConfirmDialog(false);
+                Swal.fire('Éxito', 'Producto actualizado correctamente', 'success');
+                resetForm();
+                fetchProductos();
+              }}
+              color="primary"
+              variant="outlined"
+            >
+              No, solo producto
+            </Button>
+            <Button 
+              onClick={() => {
+                setOpenConfirmDialog(false);
+                setOpenInventarioDialog(true);
+              }}
+              color="primary" 
+              variant="contained"
+            >
+              Sí, actualizar ambos
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+       
+        <Dialog
+          open={openInventarioDialog}
+          onClose={() => {
+            setOpenInventarioDialog(false);
+            setInventarioData({
+              stock: null, 
+              stockMinimo: null,
+              stockMaximo: null,
+              precioVenta: '',
+              precioCompra: ''
+            });
+          }}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>
+            {inventarioExistente ? 'Actualizar Inventario' : 'Crear Inventario'}
+          </DialogTitle>
+          <DialogContent>
+            <Box sx={{ mt: 2 }}>
+              <TextField
+                label="Stock Inicial"
+                type="number"
+                fullWidth
+                margin="normal"
+                value={inventarioData.stock ?? ''}
+                onChange={(e) => setInventarioData({
+                  ...inventarioData,
+                  stock: e.target.value === '' ? null : parseInt(e.target.value)
+                })}
+                InputProps={{
+                  inputProps: { 
+                    min: 0,
+                    placeholder: 'Ej: 100'
+                  },
+                  sx: {
+                    '& input::placeholder': {
+                      color: 'rgba(0, 0, 0, 0.38)',
+                      opacity: 1
+                    }
+                  }
+                }}
+              />
+              <TextField
+                label="Stock Mínimo"
+                type="number"
+                fullWidth
+                margin="normal"
+                value={inventarioData.stockMinimo ?? ''}
+                onChange={(e) => setInventarioData({
+                  ...inventarioData,
+                  stockMinimo: e.target.value === '' ? null : parseInt(e.target.value)
+                })}
+                InputProps={{
+                  inputProps: { 
+                    min: 0,
+                    placeholder: 'Ej: 10'
+                  },
+                  sx: {
+                    '& input::placeholder': {
+                      color: 'rgba(0, 0, 0, 0.38)',
+                      opacity: 1
+                    }
+                  }
+                }}
+              />
+              <TextField
+                label="Stock Máximo"
+                type="number"
+                fullWidth
+                margin="normal"
+                value={inventarioData.stockMaximo ?? ''}
+                onChange={(e) => setInventarioData({
+                  ...inventarioData,
+                  stockMaximo: e.target.value === '' ? null : parseInt(e.target.value)
+                })}
+                InputProps={{
+                  inputProps: { 
+                    min: 0,
+                    placeholder: 'Ej: 200'
+                  },
+                  sx: {
+                    '& input::placeholder': {
+                      color: 'rgba(0, 0, 0, 0.38)',
+                      opacity: 1
+                    }
+                  }
+                }}
+              />
+              <TextField
+                label="Precio de Venta"
+                type="number"
+                fullWidth
+                margin="normal"
+                value={inventarioData.precioVenta}
+                onChange={(e) => setInventarioData({
+                  ...inventarioData,
+                  precioVenta: e.target.value
+                })}
+                InputProps={{
+                  inputProps: { 
+                    min: 0, 
+                    step: "0.01",
+                    placeholder: 'Ej: 19.99'
+                  },
+                  sx: {
+                    '& input::placeholder': {
+                      color: 'rgba(0, 0, 0, 0.38)',
+                      opacity: 1
+                    }
+                  }
+                }}
+              />
+              <TextField
+                label="Precio de Compra"
+                type="number"
+                fullWidth
+                margin="normal"
+                value={inventarioData.precioCompra}
+                onChange={(e) => setInventarioData({
+                  ...inventarioData,
+                  precioCompra: e.target.value
+                })}
+                InputProps={{
+                  inputProps: { 
+                    min: 0, 
+                    step: "0.01",
+                    placeholder: 'Ej: 15.50'
+                  },
+                  sx: {
+                    '& input::placeholder': {
+                      color: 'rgba(0, 0, 0, 0.38)',
+                      opacity: 1
+                    }
+                  }
+                }}
+              />
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+              onClick={() => {
+                setOpenInventarioDialog(false);
+                setInventarioData({
+                  stock: null,
+                  stockMinimo: null,
+                  stockMaximo: null,
+                  precioVenta: '',
+                  precioCompra: ''
+                });
+              }}
+              color="secondary"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={crearInventario}
+              variant="contained" 
+              color="primary"
+              disabled={!inventarioData.precioVenta || !inventarioData.precioCompra}
+            >
+              {inventarioExistente ? 'Actualizar Inventario' : 'Crear Inventario'}
+            </Button>
           </DialogActions>
         </Dialog>
       </Box>

@@ -25,8 +25,11 @@ import {
   MenuItem,
 } from '@mui/material';
 import { Edit, Delete, Info } from '@mui/icons-material';
+import Swal from 'sweetalert2';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig';
+import useApiRequest from '../../hooks/useApiRequest';
+
 
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
@@ -34,13 +37,12 @@ console.log("Url almacenada: ", apiUrl);
 const CatalogoComponent = () => {
   const [catalogos, setCatalogos] = useState([]);
   const [companias, setCompanias] = useState([]);
-  const [productos, setProductos] = useState([]);
   const [nombreCatalogo, setNombreCatalogo] = useState('');
   const [descripcionCatalogo, setDescripcionCatalogo] = useState('');
   const [disponibilidadCatalogo, setDisponibilidadCatalogo] = useState(true);
   const [estiloCatalogo, setEstiloCatalogo] = useState('');
+  const [imagenCatalogo, setImagenCatalogo] = useState(null);
   const [companiaSeleccionada, setCompaniaSeleccionada] = useState('');
-  const [productosSeleccionados, setProductosSeleccionados] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -73,104 +75,185 @@ const CatalogoComponent = () => {
       alert(error.message);
     }
   };
-
-  const fetchProductos = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/producto`);
-      if (!response.ok) {
-        throw new Error('Error al obtener los productos');
-      }
-      const data = await response.json();
-      setProductos(data);
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
+  const { makeRequest } = useApiRequest();
 
   const crearCatalogo = async () => {
-    if (!nombreCatalogo || !estiloCatalogo || !companiaSeleccionada || productosSeleccionados.length === 0 ) {
-      alert('Por favor, completa todos los campos.');
+    if (!nombreCatalogo || !estiloCatalogo || !companiaSeleccionada) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Campos incompletos',
+        text: 'Por favor, completa todos los campos obligatorios.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3085d6',
+        backdrop: `
+          rgba(0,0,0,0.7)
+          url("/images/empty-field.gif")
+          center top
+          no-repeat
+        `
+      });
       return;
     }
-
-    try {
-      const response = await fetch(`${apiUrl}/catalogos/activos`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombreCatalogo,
-          descripcionCatalogo,
-          disponibilidadCatalogo,
-          estiloCatalogo,
-          compania: companiaSeleccionada,
-          productos: productosSeleccionados
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al crear el catálogo');
-      }
-
-      fetchCatalogos();
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
-  const actualizarCatalogo = async () => {
-    if (!editingId || !nombreCatalogo || !estiloCatalogo || !companiaSeleccionada || productosSeleccionados.length === 0 ) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
-
-    try {
-      const response = await fetch(`${apiUrl}/catalogos/${editingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombreCatalogo,
-          descripcionCatalogo,
-          disponibilidadCatalogo,
-          estiloCatalogo,
-          compania: companiaSeleccionada,
-          productos: productosSeleccionados
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar el catálogo');
-      }
-
-      fetchCatalogos();
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
-  const eliminarCatalogo = async (id) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este catálogo?')) {
-      try {
-        const response = await fetch(`${apiUrl}/catalogos/activos${id}`, {
-          method: 'DELETE',
-        });
-
-        if (!response.ok) {
-          throw new Error('Error al eliminar el catálogo');
-        }
-
+  
+    const catalogoData = {
+      nombreCatalogo,
+      descripcionCatalogo,
+      disponibilidadCatalogo,
+      estiloCatalogo,
+      compania: companiaSeleccionada,
+      imagen: imagenCatalogo
+    };
+  
+    await makeRequest({
+      url: `${apiUrl}/catalogos`,
+      method: 'POST',
+      data: catalogoData,
+      confirm: {
+        title: 'Crear nuevo catálogo',
+        text: '¿Estás seguro de que deseas crear este catálogo?',
+        icon: 'question',
+        confirmButtonText: 'Sí, crear',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#d33',
+        reverseButtons: true
+      },
+      loading: {
+        title: 'Procesando...',
+        html: 'Estamos creando tu catálogo',
+        allowOutsideClick: false
+      },
+      success: {
+        icon: 'success',
+        title: '¡Catálogo creado!',
+        text: 'El catálogo se ha creado correctamente',
+        confirmButtonColor: '#28a745',
+        timer: 2000,
+        timerProgressBar: true
+      },
+      error: {
+        icon: 'error',
+        title: 'Error',
+        text: (error) => error.message || 'Ocurrió un error al crear el catálogo',
+        confirmButtonColor: '#d33',
+        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+      },
+      onSuccess: () => {
         fetchCatalogos();
+        resetForm();
+      }
+    });
+  };
+  
+  const actualizarCatalogo = async () => {
+    if (!editingId || !nombreCatalogo || !estiloCatalogo || !companiaSeleccionada) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Campos incompletos',
+        text: 'Por favor, completa todos los campos obligatorios.',
+        confirmButtonColor: '#3085d6',
+      });
+      return;
+    }
+  
+    const requestBody = {
+      nombreCatalogo,
+      descripcionCatalogo: descripcionCatalogo || undefined,
+      disponibilidadCatalogo,
+      estiloCatalogo,
+      compania: companiaSeleccionada,
+      imagen: imagenCatalogo || undefined
+    };
+  
+    Object.keys(requestBody).forEach(key => 
+      requestBody[key] === undefined && delete requestBody[key]
+    );
+  
+    await makeRequest({
+      url: `${apiUrl}/catalogos/${editingId}`,
+      method: 'PUT',
+      data: requestBody,
+      confirm: {
+        title: '¿Confirmar cambios?',
+        text: '¿Estás seguro de que deseas actualizar este catálogo?',
+        icon: 'question',
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33'
+      },
+      loading: {
+        title: 'Actualizando...',
+        allowOutsideClick: false
+      },
+      success: {
+        icon: 'success',
+        title: '¡Actualizado!',
+        text: 'El catálogo ha sido actualizado correctamente.',
+        confirmButtonColor: '#3085d6'
+      },
+      error: {
+        icon: 'error',
+        title: 'Error',
+        text: (error) => error.message || 'Ocurrió un error al actualizar el catálogo',
+        confirmButtonColor: '#3085d6'
+      },
+      onSuccess: () => {
+        fetchCatalogos();
+        resetForm();
+      }
+    });
+  };
+  
+  const eliminarCatalogo = async (id) => {
+    await makeRequest({
+      url: `${apiUrl}/catalogos/${id}/desactivar`,
+      method: 'PATCH',
+      confirm: {
+        title: '¿Estás seguro?',
+        text: '¿Estás seguro de que deseas eliminar este catálogo?',
+        icon: 'warning',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33'
+      },
+      success: {
+        title: 'Eliminado!',
+        text: 'El catálogo ha sido eliminado.',
+        icon: 'success'
+      },
+      error: {
+        title: 'Error',
+        text: (error) => error.message || 'Ocurrió un error al eliminar el catálogo',
+        icon: 'error'
+      },
+      onSuccess: fetchCatalogos
+    });
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "peluches"); 
+  
+        const response = await fetch("https://api.cloudinary.com/v1_1/peluches/image/upload", {
+          method: "POST",
+          body: formData,
+        });
+  
+        if (!response.ok) {
+          throw new Error("Error al subir la imagen");
+        }
+  
+        const data = await response.json();
+        setImagenCatalogo(data.secure_url); 
       } catch (error) {
         console.error(error);
-        alert(error.message);
+        alert("Error al cargar la imagen");
       }
     }
   };
@@ -181,8 +264,8 @@ const CatalogoComponent = () => {
     setDescripcionCatalogo(catalogo.descripcionCatalogo || '');
     setDisponibilidadCatalogo(catalogo.disponibilidadCatalogo);
     setEstiloCatalogo(catalogo.estiloCatalogo);
-    setCompaniaSeleccionada(catalogo.compania );
-    setProductosSeleccionados(catalogo.productos || []);
+    setCompaniaSeleccionada(catalogo.compania._id || catalogo.compania);
+    setImagenCatalogo(catalogo.imagen || null);
   };
 
   const resetForm = () => {
@@ -191,7 +274,7 @@ const CatalogoComponent = () => {
     setDisponibilidadCatalogo(true);
     setEstiloCatalogo('');
     setCompaniaSeleccionada('');
-    setProductosSeleccionados([]);
+    setImagenCatalogo(null);
     setEditingId(null);
   };
 
@@ -215,7 +298,6 @@ const CatalogoComponent = () => {
   useEffect(() => {
     fetchCatalogos();
     fetchCompanias();
-    fetchProductos();
   }, []);
 
   return (
@@ -297,44 +379,58 @@ const CatalogoComponent = () => {
                 ))}
               </Select>
             </FormControl>
+            <TextField
+              type="file"
+              inputProps={{ accept: 'image/*' }}
+              onChange={handleImageChange}
+              fullWidth
+              margin="normal"
+              label="Imagen del Catálogo"
+              InputLabelProps={{ shrink: true }}
+            />
 
-            <FormControl fullWidth margin="normal" required>
-              <InputLabel>Productos</InputLabel>
-              <Select
-                multiple
-                value={productosSeleccionados}
-                onChange={(e) => setProductosSeleccionados(e.target.value)}
-                label="Productos"
-              >
-                {productos.map((prod) => (
-                  <MenuItem key={prod._id} value={prod._id}>
-                    {prod.estiloProducto} - {prod.tamañoProducto}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            {imagenCatalogo && (
+              <img 
+                src={imagenCatalogo} 
+                alt="Imagen del Catálogo" 
+                width="180" 
+                height="auto"  
+                style={{  
+                  objectFit: "cover", 
+                  borderRadius: "12px", 
+                  border: "2px solid rgba(255, 255, 255, 0.8)", 
+                  background: "rgba(255, 255, 255, 0.1)", 
+                  boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.25)",
+                  marginTop: "10px"
+                }}  
+              />
+            )}
 
-            <Box display="flex" justifyContent="space-between" mt={2}>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ fontSize: '1.2rem', width: '48%' }}
-              >
-                {editingId ? 'Actualizar' : 'Crear'}
-              </Button>
-              <Button
-                type="button"
-                variant="outlined"
-                onClick={resetForm}
-                sx={{
-                  fontSize: '1.2rem',
-                  width: '48%',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                Cancelar
-              </Button>
-            </Box>
+          <Box display="flex" justifyContent="space-between" mt={2} gap={2}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ 
+                fontSize: '1.2rem', 
+                flex: 1, // Ocupa el espacio disponible
+                minWidth: 0 // Permite que el flex funcione mejor
+              }}
+            >
+              {editingId ? 'Actualizar' : 'Crear'}
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={resetForm}
+              sx={{ 
+                fontSize: '1.2rem', 
+                flex: 1, // Ocupa el espacio disponible
+                minWidth: 0 // Permite que el flex funcione mejor
+              }}
+            >
+              Cancelar
+            </Button>
+          </Box>
           </form>
 
           <Box mt={4}>
@@ -350,23 +446,31 @@ const CatalogoComponent = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {catalogos.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage).map((catalogo) => (
-                    <TableRow key={catalogo._id}>
-                      <TableCell>{catalogo.nombreCatalogo}</TableCell>
-                      <TableCell>{catalogo.estiloCatalogo}</TableCell>
-                      <TableCell>{catalogo.compania.nombreEmpresa}</TableCell>
-                      <TableCell>
-                        <IconButton onClick={() => editarCatalogo(catalogo)}>
-                          <Edit />
-                        </IconButton>
-                        <IconButton onClick={() => eliminarCatalogo(catalogo._id)}>
-                          <Delete />
-                        </IconButton>
-                        <IconButton onClick={() => openDetailsDialog(catalogo)}>
-                          <Info />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
+        {catalogos.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage).map((catalogo) => (
+          <TableRow key={catalogo._id}>
+            <TableCell>{catalogo.nombreCatalogo}</TableCell>
+            <TableCell>{catalogo.estiloCatalogo}</TableCell>
+            <TableCell>
+                  {catalogo.compania?.nombreEmpresa || 'Sin compañía'}
+            </TableCell>
+                <TableCell>
+                  <IconButton
+                  color='primary'
+                  onClick={() => editarCatalogo(catalogo)}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton 
+                  sx={{ color: "#d33" }}
+                  onClick={() => eliminarCatalogo(catalogo._id)}>
+                    <Delete />
+                  </IconButton>
+                  <IconButton
+                  color="info"
+                  onClick={() => openDetailsDialog(catalogo)}>
+                    <Info />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
                   ))}
                 </TableBody>
               </Table>
@@ -395,14 +499,31 @@ const CatalogoComponent = () => {
               <strong>Estilo:</strong> {selectedCatalogo.estiloCatalogo}
             </DialogContentText>
             <DialogContentText>
-              <strong>Compañías:</strong> {selectedCatalogo.compania}
+              <strong>Compañía:</strong> {selectedCatalogo.compania?.nombreEmpresa || 'Sin compañía'}
             </DialogContentText>
             <DialogContentText>
-              <strong>Productos:</strong> {selectedCatalogo.productos}
+              <strong>Descripción:</strong> {selectedCatalogo.descripcionCatalogo || 'Sin descripción'}
             </DialogContentText>
-            <DialogContentText>
-              <strong>Descripción:</strong> {selectedCatalogo.descripcionCatalogo}
-            </DialogContentText>
+            
+            {selectedCatalogo.imagen && (
+              <Box mt={2}>
+                <img 
+                  src={selectedCatalogo.imagen} 
+                  alt="Imagen del Catálogo" 
+                  width="190" 
+                  height="300"  
+                  style={{ 
+                    objectFit: "cover",
+                    display: "block",  
+                    borderRadius: "12px", 
+                    border: "2px solid rgba(137, 12, 227, 0.8)", 
+                    background: "rgba(255, 255, 255, 0.1)", 
+                    boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.25)", 
+                    margin: "0 auto"
+                  }}  
+                />
+              </Box>
+            )}
           </DialogContent>
           <DialogActions>
             <Button onClick={closeDetailsDialog} color="primary">
