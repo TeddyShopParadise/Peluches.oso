@@ -27,9 +27,11 @@ const crearFactura = async (req, res) => {
         const nuevaFactura = await logic.crearFactura(value);
         res.status(201).json(nuevaFactura);
     } catch (err) {
+        console.error("Error al crear factura:", err); // <--- Agregado
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
 
 // Controlador para actualizar una factura
 const actualizarFactura = async (req, res) => {
