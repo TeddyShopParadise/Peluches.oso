@@ -40,7 +40,7 @@ const {
  *                   pedidoNumPedido:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a79"
- *                   productoIdProducto:
+ *                   idProducto:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
  *       500:
@@ -76,7 +76,7 @@ router.get('/', listarDetallesPedido);
  *               pedidoNumPedido:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a79"
- *               productoIdProducto:
+ *               idProducto:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
@@ -124,7 +124,7 @@ router.post('/', crearDetallePedido);
  *               pedidoNumPedido:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a79"
- *               productoIdProducto:
+ *               idProducto:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
