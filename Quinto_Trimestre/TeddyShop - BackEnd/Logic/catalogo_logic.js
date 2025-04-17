@@ -53,14 +53,16 @@ async function desactivarCatalogo(id) {
 
 // Función asíncrona para listar catálogos activos
 async function listarCatalogosActivos() {
-    let catalogos = await Catalogo.find({ disponibilidadCatalogo: true });
+    let catalogos = await Catalogo.find({ disponibilidadCatalogo: true })
+    .populate('compania', 'nombreEmpresa'); // Solo trae el nombre de la compañía
     return catalogos;
 }
 
 // Función asíncrona para buscar un catálogo por su ID
 async function buscarCatalogoPorId(id) {
     try {
-        const catalogo = await Catalogo.findById(id).populate('compania').populate('productos').populate('vendedoresCatalogo');
+        const catalogo = await Catalogo.findById(id)
+            .populate('compania', 'nombreEmpresa') // Solo trae el nombre
         if (!catalogo) {
             throw new Error(`Catálogo con ID ${id} no encontrado`);
         }
