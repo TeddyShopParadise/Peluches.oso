@@ -35,7 +35,7 @@ const detalleFacturaSchemaValidation = Joi.object({
             'string.length': 'El ID del inventario debe tener 24 caracteres',
             'any.required': 'El ID del inventario es un campo requerido'
         }),
-    productoIdProducto: Joi.string()
+    idProducto: Joi.string()
         .length(24)
         .hex()
         .required()

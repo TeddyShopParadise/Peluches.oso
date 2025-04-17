@@ -26,7 +26,7 @@ const empleadoSchemaValidation = Joi.object({
     compania: Joi.string()
         .length(24)
         .hex()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El ID de la compañía debe ser un texto en formato hexadecimal',
             'string.length': 'El ID de la compañía debe tener exactamente 24 caracteres',
