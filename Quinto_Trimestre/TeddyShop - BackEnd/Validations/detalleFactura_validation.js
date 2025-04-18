@@ -4,18 +4,17 @@ const Joi = require('@hapi/joi');
 const detalleFacturaSchemaValidation = Joi.object({
     numDetalle: Joi.number()
         .integer()
-        .required()
         .messages({
             'number.base': 'El número de detalle debe ser un número',
             'number.integer': 'El número de detalle debe ser un entero',
             'any.required': 'El número de detalle es un campo requerido'
         }),
-    precioDetalleFactura: Joi.number()
-        .precision(3) // Permite hasta tres decimales para representar un precio
+    precioDetalleFactura: Joi.string()
+       //.precision(3) // Permite hasta tres decimales para representar un precio
         .required()
         .messages({
-            'number.base': 'El precio del detalle de factura debe ser un número',
-            'number.precision': 'El precio del detalle de factura debe tener hasta 2 decimales',
+            'string.base': 'El precio del detalle de factura debe ser un número',
+            'string.precision': 'El precio del detalle de factura debe tener hasta 2 decimales',
             'any.required': 'El precio del detalle de factura es un campo requerido'
         }),
     cantidadDetalleFactura: Joi.number()
@@ -29,7 +28,6 @@ const detalleFacturaSchemaValidation = Joi.object({
     inventarioIdInventario: Joi.string()
         .length(24)
         .hex()
-        .required()
         .messages({
             'string.base': 'El ID del inventario debe ser un ID válido',
             'string.length': 'El ID del inventario debe tener 24 caracteres',

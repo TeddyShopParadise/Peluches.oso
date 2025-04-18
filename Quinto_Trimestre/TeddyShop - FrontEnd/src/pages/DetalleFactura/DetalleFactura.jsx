@@ -344,7 +344,6 @@ const DetalleFactura = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Detalle #</TableCell>
                     <TableCell>Precio</TableCell>
                     <TableCell>Cantidad</TableCell>
                     <TableCell>Acciones</TableCell>
@@ -355,7 +354,6 @@ const DetalleFactura = () => {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((d) => (
                       <TableRow key={d._id}>
-                        <TableCell>{d.numDetalle}</TableCell>
                         <TableCell>{d.precioDetalleFactura}</TableCell>
                         <TableCell>{d.cantidadDetalleFactura}</TableCell>
                         <TableCell>
@@ -395,8 +393,6 @@ const DetalleFactura = () => {
         <DialogTitle>Detalles del Pedido</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            <strong>Detalle #</strong> {detalleDialog?.numDetalle}
-            <br />
             <strong>Precio:</strong> {detalleDialog?.precioDetalleFactura}
             <br />
             <strong>Cantidad:</strong> {detalleDialog?.cantidadDetalleFactura}

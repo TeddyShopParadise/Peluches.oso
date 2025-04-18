@@ -3,6 +3,7 @@ const Factura = require('../models/factura_model');
 const Cliente = require('../models/cliente_model'); 
 const Pedido = require('../models/pedido_model')
 
+
 // Función asíncrona para crear un nuevo pedido
 async function crearPedido(body) {
     const pedido = new Pedido({
