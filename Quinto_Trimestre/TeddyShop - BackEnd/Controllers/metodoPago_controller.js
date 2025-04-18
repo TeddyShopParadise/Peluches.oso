@@ -16,7 +16,6 @@ const listarMetodosPago = async (req, res) => {
 // Controlador para crear un nuevo método de pago
 const crearMetodoPago = async (req, res) => {
     const body = req.body;
-
     const { error, value } = metodoPagoSchemaValidation.validate(body);
 
     if (error) {
