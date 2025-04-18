@@ -263,33 +263,29 @@ const DetallePedido = () => {
               required
               variant="outlined"
             />
+              <TextField
+                type="text"
+                name="pedidoNumPedido"
+                label="Pedido (ID)"
+                value={detalle.pedidoNumPedido}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+                variant="outlined"
+              />
 
-<TextField
-  type="text"
-  name="pedidoNumPedido"
-  label="Pedido (ID)"
-  value={detalle.pedidoNumPedido}
-  onChange={handleChange}
-  fullWidth
-  margin="normal"
-  required
-  variant="outlined"
-/>
-
-<TextField
-  type="text"
-  name="productoIdProducto"
-  label="Producto (ID)"
-  value={detalle.productoIdProducto}
-  onChange={handleChange}
-  fullWidth
-  margin="normal"
-  required
-  variant="outlined"
-/>
-
-
-
+              <TextField
+                type="text"
+                name="productoIdProducto"
+                label="Producto (ID)"
+                value={detalle.productoIdProducto}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+                variant="outlined"
+              />
             <Button type="submit" variant="contained" color="primary" fullWidth>
               {editingId ? 'Actualizar' : 'Crear'} Detalle
             </Button>
@@ -301,8 +297,8 @@ const DetallePedido = () => {
                   <TableCell>Num Detalle</TableCell>
                   <TableCell>Precio</TableCell>
                   <TableCell>Cantidad</TableCell>
-                  <TableCell>Pedido</TableCell>
                   <TableCell>Producto</TableCell>
+                  <TableCell>Pedido</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
@@ -312,8 +308,8 @@ const DetallePedido = () => {
                     <TableCell>{detalle.numDetalle}</TableCell>
                     <TableCell>{detalle.precioDetallePedido}</TableCell>
                     <TableCell>{detalle.cantidadDetallePedido}</TableCell>
-                    <TableCell>{detalle.pedidoNumPedido}</TableCell>
-                    <TableCell>{detalle.productoIdProducto}</TableCell>
+                    <TableCell>{detalle.productoIdProducto?._id || detalle.productoIdProducto}</TableCell>
+                    <TableCell>{detalle.pedidoNumPedido?._id || detalle.pedidoNumPedido}</TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleEdit(detalle)}>
                         <Edit />
@@ -355,10 +351,10 @@ const DetallePedido = () => {
             <strong>Cantidad:</strong> {detalleSeleccionado?.cantidadDetallePedido}
           </DialogContentText>
           <DialogContentText>
-            <strong>Pedido:</strong> {detalleSeleccionado?.pedidoNumPedido}
+            <strong>Pedido:</strong> {detalleSeleccionado?.pedidoNumPedido?._id || detalle.pedidoNumPedido}
           </DialogContentText>
           <DialogContentText>
-            <strong>Producto:</strong> {detalleSeleccionado?.productoIdProducto}
+            <strong>Producto:</strong> {detalleSeleccionado?.productoIdProducto?._id || detalle.productoIdProducto}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -28,6 +28,7 @@ console.log("Url almacenada: ",apiUrl);
 
 const Facturas = () => {
   const [facturas, setFacturas] = useState([]);
+  const [metodosPago, setMetodosPago] = useState([]);
   const [factura, setFactura] = useState({
     fechaCreacionFactura: '',
     horaCreacionFactura: '',
@@ -43,8 +44,19 @@ const Facturas = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const cargarMetodosPago = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/metodoPago`);
+      const data = await response.json();
+      setMetodosPago(data);
+    } catch (error) {
+      console.error("Error cargando métodos de pago:", error);
+    }
+  };
+
   useEffect(() => {
     listarFacturas();
+    cargarMetodosPago();
   }, []);
 
   const listarFacturas = async () => {
@@ -179,6 +191,12 @@ const Facturas = () => {
     setSelectedFactura(null);
   };
 
+  //Obtener el nombre del metodo de pago
+  const obtenerNombreMetodoPago = (metodoPagoId) => {
+    const metodo = metodosPago.find((m) => m._id === metodoPagoId);
+    return metodo ? metodo.nombreMetodoPago : "No especificado";
+  };
+
   return (
     <Box className="BoxInicial">
       <Box className="Box"
@@ -225,17 +243,6 @@ const Facturas = () => {
             />
             <TextField
               type="text"
-              name="cliente"
-              value={factura.cliente}
-              onChange={handleChange}
-              placeholder="ID del cliente"
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-            <TextField
-              type="text"
               name="detallesFactura"
               value={factura.detallesFactura.join(', ')}
               onChange={(e) => handleChange({ target: { name: 'detallesFactura', value: e.target.value.split(', ') } })}
@@ -270,7 +277,6 @@ const Facturas = () => {
                     <TableCell>Fecha</TableCell>
                     <TableCell>Hora</TableCell>
                     <TableCell>Pedido</TableCell>
-                    <TableCell>Cliente</TableCell>
                     <TableCell>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
@@ -279,8 +285,7 @@ const Facturas = () => {
                     <TableRow key={factura._id}>
                       <TableCell>{new Date(factura.fechaCreacionFactura).toLocaleDateString()}</TableCell>
                       <TableCell>{factura.horaCreacionFactura}</TableCell>
-                      <TableCell>{factura.pedido}</TableCell>
-                      <TableCell>{factura.cliente}</TableCell>
+                      <TableCell>{factura.pedido?._id || factura.pedido}</TableCell>
                       <TableCell>
                         <IconButton onClick={() => obtenerFacturaPorId(factura._id)}>
                           <Edit />
@@ -315,13 +320,11 @@ const Facturas = () => {
           <DialogContent>
             {selectedFactura && (
               <DialogContentText>
-                <strong>Pedido:</strong> {selectedFactura.pedido}
+                <strong>Pedido:</strong> {selectedFactura.pedido?._id || selectedFactura.pedido}
                 <br />
-                <strong>Cliente:</strong> {selectedFactura.cliente}
+                <strong>Detalles:</strong> {selectedFactura.detallesFactura?._id || selectedFactura.detallesFactura}
                 <br />
-                <strong>Detalles:</strong> {selectedFactura.detallesFactura.join(', ')}
-                <br />
-                <strong>Método de Pago:</strong> {selectedFactura.metodoPago}
+                <strong>Método de Pago:</strong> {selectedFactura.metodoPago?.nombreMetodoPago || "No especificado"}
                 <br />
                 <strong>Fecha:</strong> {new Date(selectedFactura.fechaCreacionFactura).toLocaleDateString()}
                 <br />
