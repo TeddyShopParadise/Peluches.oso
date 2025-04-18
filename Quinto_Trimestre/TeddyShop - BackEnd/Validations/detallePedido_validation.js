@@ -10,8 +10,8 @@ const detallePedidoSchemaValidation = Joi.object({
             'number.integer': 'El número de detalle debe ser un entero',
             'any.required': 'El número de detalle es un campo requerido'
         }),
-    precioDetallePedido: Joi.number()
-        .precision(3) // Permite hasta tres decimales para representar un precio
+    precioDetallePedido: Joi.string()
+        //.precision(3) // Permite hasta tres decimales para representar un precio
         .required()
         .messages({
             'number.base': 'El precio del detalle de pedido debe ser un número',

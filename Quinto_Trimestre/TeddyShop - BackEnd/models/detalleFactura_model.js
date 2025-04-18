@@ -4,10 +4,9 @@ const mongoose = require('mongoose');
 const detalleFacturaSchema = new mongoose.Schema({
   numDetalle: {
     type: Number, // INTEGER en SQL
-    required: true
   },
   precioDetalleFactura: {
-    type: Number, // FLOAT o DECIMAL en SQL
+    type: String, // FLOAT o DECIMAL en SQL
     required: true
   },
   cantidadDetalleFactura: {
@@ -17,7 +16,6 @@ const detalleFacturaSchema = new mongoose.Schema({
   inventarioIdInventario: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Inventario por ObjectId
     ref: 'Inventario',
-    required: true
   },
   idProducto: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Producto por ObjectId
