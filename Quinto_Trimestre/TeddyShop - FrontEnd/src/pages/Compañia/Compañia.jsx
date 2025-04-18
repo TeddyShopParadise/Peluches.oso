@@ -24,6 +24,7 @@
   import { Edit, Delete, ArrowUpward, ArrowDownward, Info } from '@mui/icons-material';
   import '../PagesStyle.css';
   import { getApiUrl } from '../../utils/apiConfig'
+  import useApiRequest from '../../hooks/useApiRequest';
   const apiUrl = getApiUrl();
   console.log("Url almacenada: ",apiUrl);
 
@@ -38,6 +39,8 @@
     const [sortOrder, setSortOrder] = useState('asc');
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedCompania, setSelectedCompania] = useState(null);
+    const { makeRequest } = useApiRequest();
+    
 
     /*const getAuthToken = () => {
       const token = localStorage.getItem('authToken');
@@ -52,7 +55,7 @@
           method: 'GET',
           headers: {
             "Content-Type": "application/json",
-  //'Authorization': `Bearer ${token}`, 
+             //'Authorization': `Bearer ${token}`, 
           },
         });
     
@@ -68,7 +71,6 @@
       }
     };
 
-    // Ordenar compañías
     const sortCompanias = (field) => {
       const order = sortedBy === field && sortOrder === 'asc' ? 'desc' : 'asc';
       setSortedBy(field);
@@ -85,96 +87,169 @@
     // Crear nueva compañía
     const crearCompania = async () => {
       if (!NIT || !telefonoEmpresa || !nombreEmpresa || !direccionEmpresa) {
-        alert('Por favor, completa todos los campos.');
+        await Swal.fire({
+          icon: 'error',
+          title: 'Campos incompletos',
+          text: 'Por favor, completa todos los campos obligatorios.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#3085d6',
+          backdrop: `
+            rgba(0,0,0,0.7)
+            url("/images/empty-field.gif")
+            center top
+            no-repeat
+          `
+        });
         return;
       }
     
-      try {
-      // const token = getAuthToken(); // Obtener el token
-        const response = await fetch(`${apiUrl}/compania`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ NIT, telefonoEmpresa, nombreEmpresa, direccionEmpresa}),
-        });
+      const companiaData = { NIT, telefonoEmpresa, nombreEmpresa, direccionEmpresa };
     
-        if (!response.ok) {
-          throw new Error('Error al crear la compañía');
+      await makeRequest({
+        url: `${apiUrl}/compania`,
+        method: 'POST',
+        data: companiaData,
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${token}`, // Token comentado por ahora
+        },
+        confirm: {
+          title: 'Crear nueva compañía',
+          text: '¿Estás seguro de que deseas crear esta compañía?',
+          icon: 'question',
+          confirmButtonText: 'Sí, crear',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true
+        },
+        loading: {
+          title: 'Procesando...',
+          html: 'Estamos creando la compañía',
+          allowOutsideClick: false
+        },
+        success: {
+          icon: 'success',
+          title: '¡Compañía creada!',
+          text: 'La compañía se ha creado correctamente',
+          timer: 2000,
+          timerProgressBar: true
+        },
+        error: {
+          icon: 'error',
+          title: 'Error al crear compañía',
+          text: (error) => error.message || 'Ocurrió un error al crear la compañía',
+          footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+        },
+        onSuccess: () => {
+          fetchCompanias();
+          resetForm();
         }
-    
-        fetchCompanias();
-        resetForm();
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      }
+      });
     };
     
     const actualizarCompania = async () => {
       if (!editingId || !NIT || !telefonoEmpresa || !nombreEmpresa || !direccionEmpresa) {
-        alert('Por favor, completa todos los campos.');
+        await Swal.fire({
+          icon: 'error',
+          title: 'Campos incompletos',
+          text: 'Por favor, completa todos los campos obligatorios.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#3085d6',
+          backdrop: `
+            rgba(0,0,0,0.7)
+            url("/images/empty-field.gif")
+            center top
+            no-repeat
+          `
+        });
         return;
       }
     
-      try {
-        //const token = getAuthToken(); // Obtener el token
-        const response = await fetch(`${apiUrl}/compania/${editingId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${token}`, 
-          },
-          body: JSON.stringify({ NIT, telefonoEmpresa, nombreEmpresa, direccionEmpresa  }),
-        });
+      const companiaData = { NIT, telefonoEmpresa, nombreEmpresa, direccionEmpresa };
     
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          throw new Error(`Error al actualizar la compañía: ${errorMessage}`);
-        }
-    
-        fetchCompanias();
-        resetForm();
-      } catch (error) {
-        console.error('Error en actualizarCompania:', error.message);
-        alert(error.message);
-      }
-    };
-    
-    const eliminarCompania = async (id) => {
-      Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Esta acción no se puede deshacer',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            const response = await fetch(`${apiUrl}/compania/${id}`, {
-              method: 'DELETE',
-              headers: {
-                // 'Authorization': `Bearer ${token}`, 
-              },
-            });
-    
-            if (!response.ok) {
-              throw new Error('Error al eliminar la compañía');
-            }
-    
-            Swal.fire('Eliminado', 'La compañía ha sido eliminada.', 'success');
-            fetchCompanias();
-          } catch (error) {
-            console.error(error);
-            Swal.fire('Error', error.message, 'error');
-          }
+      await makeRequest({
+        url: `${apiUrl}/compania/${editingId}`,
+        method: 'PUT',
+        data: companiaData,
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${token}`, // Token comentado por ahora
+        },
+        confirm: {
+          title: 'Actualizar compañía',
+          text: '¿Estás seguro de que deseas actualizar esta compañía?',
+          icon: 'question',
+          confirmButtonText: 'Sí, actualizar',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true
+        },
+        loading: {
+          title: 'Procesando...',
+          html: 'Estamos actualizando la compañía',
+          allowOutsideClick: false
+        },
+        success: {
+          icon: 'success',
+          title: '¡Compañía actualizada!',
+          text: 'La compañía se ha actualizado correctamente',
+          timer: 2000,
+          timerProgressBar: true
+        },
+        error: {
+          icon: 'error',
+          title: 'Error al actualizar compañía',
+          text: (error) => error.message || 'Ocurrió un error al actualizar la compañía',
+          footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+        },
+        onSuccess: () => {
+          fetchCompanias();
+          resetForm();
         }
       });
     };
+    
+    const eliminarCompania = async (id) => {
+      await makeRequest({
+        url: `${apiUrl}/compania/${id}`,
+        method: 'DELETE',
+        headers: {
+          // 'Authorization': `Bearer ${token}`, // Token comentado por ahora
+        },
+        confirm: {
+          title: 'Eliminar compañía',
+          text: '¿Estás seguro de que deseas eliminar esta compañía? Esta acción no se puede deshacer',
+          icon: 'warning',
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true,
+          backdrop: `
+            rgba(0,0,0,0.7)
+            url("/images/warning.gif")
+            center top
+            no-repeat
+          `
+        },
+        loading: {
+          title: 'Eliminando...',
+          html: 'Estamos eliminando la compañía',
+          allowOutsideClick: false
+        },
+        success: {
+          icon: 'success',
+          title: '¡Compañía eliminada!',
+          text: 'La compañía se ha eliminado correctamente',
+          timer: 2000,
+          timerProgressBar: true
+        },
+        error: {
+          icon: 'error',
+          title: 'Error al eliminar compañía',
+          text: (error) => error.message || 'Ocurrió un problema al eliminar la compañía',
+          footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+        },
+        onSuccess: fetchCompanias
+      });
+    };
+
     // Cargar datos para editar
     const editarCompania = (compania) => {
       setEditingId(compania._id);

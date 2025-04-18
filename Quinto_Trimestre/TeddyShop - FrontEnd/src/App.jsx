@@ -7,6 +7,7 @@ import NavbarRoutes from './routes/NavbarRoutes';
 import Footer from './components/footer/Footer';
 import theme from './theme/theme';
 
+
 function App() {
   return (
     <ThemeProvider theme={theme}>

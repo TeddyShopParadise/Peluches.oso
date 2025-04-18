@@ -40,7 +40,7 @@ const {
  *                   inventarioIdInventario:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
- *                   productoIdProducto:
+ *                   idProducto:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7b"
  *                   facturaIdFactura:
@@ -79,7 +79,7 @@ router.get('/', listarDetallesFactura);
  *               inventarioIdInventario:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
- *               productoIdProducto:
+ *               idProducto:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7b"
  *               facturaIdFactura:
@@ -130,7 +130,7 @@ router.post('/', crearDetalleFactura);
  *               inventarioIdInventario:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
- *               productoIdProducto:
+ *               idProducto:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7b"
  *               facturaIdFactura:
