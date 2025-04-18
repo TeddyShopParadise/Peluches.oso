@@ -31,9 +31,6 @@ const {
  *                   nombreMetodoPago:
  *                     type: string
  *                     example: "Tarjeta de Crédito"
- *                   factura:
- *                     type: string
- *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
  *       500:
  *         description: Error interno del servidor
  */
@@ -58,9 +55,6 @@ router.get('/', listarMetodosPago);
  *               nombreMetodoPago:
  *                 type: string
  *                 example: "Tarjeta de Crédito"
- *               factura:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
  *       201:
  *         description: Método de pago creado exitosamente
@@ -123,9 +117,6 @@ router.get('/:id', obtenerMetodoPagoPorId);
  *               nombreMetodoPago:
  *                 type: string
  *                 example: "Tarjeta de Crédito"
- *               factura:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
  *       200:
  *         description: Método de pago actualizado exitosamente
