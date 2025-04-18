@@ -18,7 +18,6 @@ const facturaSchema = new mongoose.Schema({
   cliente: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Cliente', // Relación muchos a uno con Cliente
-    required: true
   },
   detallesFactura: [{
     type: mongoose.Schema.Types.ObjectId, // Relación uno a muchos con DetalleFactura
@@ -27,7 +26,7 @@ const facturaSchema = new mongoose.Schema({
   metodoPago: {
     type: mongoose.Schema.Types.ObjectId, // Relación uno a uno con Metodo_Pago
     ref: 'MetodoPago'
-  }
+  },
 }, {
   collection: 'Factura',
   timestamps: false

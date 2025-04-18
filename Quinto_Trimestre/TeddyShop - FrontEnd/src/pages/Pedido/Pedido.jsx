@@ -450,10 +450,7 @@ const Pedido = () => {
                   <strong>Localidad:</strong> {selectedPedido.localidad} <br />
                   <strong>Dirección:</strong> {selectedPedido.direccion} <br />
                   <strong>Barrio:</strong> {selectedPedido.barrio } <br />
-                  <strong>Cliente:</strong> {selectedPedido.cliente} <br />
-                  <strong>Detalles del Pedido:</strong> {selectedPedido.detallesPedido } <br />
-                  <strong>Facturas:</strong> {selectedPedido.facturas } <br />
-                  <strong>Vendedores:</strong> {selectedPedido.vendedores } <br />
+                  <strong>Facturas:</strong> {selectedPedido.facturas?._id || selectedPedido.facturas } <br />
                 </DialogContentText>
               )}
             </DialogContent>

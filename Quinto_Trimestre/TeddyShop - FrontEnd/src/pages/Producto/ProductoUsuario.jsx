@@ -28,10 +28,12 @@ const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
 const API_URL = apiUrl + "/producto";
 const CATEGORIAS_API_URL = apiUrl + "/categorias";
+const METODOSPAGO_API_URL = apiUrl + "/metodoPago";
 
 const ProductoUsuario = () => {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [metodosPago, setMetodosPago] = useState([]);
   const [historialPrecios, setHistorialPrecios] = useState([]);
   const [openCarritoDialog, setOpenCarritoDialog] = useState(false);
   const [openDetalleDialog, setOpenDetalleDialog] = useState(false);
@@ -46,6 +48,7 @@ const ProductoUsuario = () => {
 
   const [pedido, setPedido] = useState({
     tamañoOso: '',
+    metodoPago: '',
     nombreComprador: '',
     apellidoComprador: '',
     numeroComprador: '',
@@ -97,6 +100,25 @@ const ProductoUsuario = () => {
     }
   };
 
+
+  
+  //Obtener los metodos de pago
+  const fetchMetodosPago = async () => {
+    try {
+      const response = await fetch(METODOSPAGO_API_URL);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setMetodosPago(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching Metodos de pago:', error);
+      setSnackbarMessage('Error al obtener los Metodos de pago');
+      setOpenSnackbar(true);
+    }
+  };
+
+
   // Obtener categorías de la API
   const fetchCategorias = async () => {
     try {
@@ -116,8 +138,10 @@ const ProductoUsuario = () => {
   useEffect(() => {
     console.log('Producto seleccionado:', productoSeleccionado);
     console.log('Historial de precios:', historialPrecios);
+    console.log('Metodos de pago:', metodosPago);
     fetchProductos();
     fetchCategorias();
+    fetchMetodosPago();
     fetchHistorialPrecios();
   }, []);
 
@@ -182,6 +206,18 @@ const ProductoUsuario = () => {
     setPedido({ ...pedido, [e.target.name]: e.target.value });
   };
 
+
+  const obtenerNumDetalle = async (pedidoId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/detallesPedido?pedidoNumPedido=${pedidoId}`);
+      const detalles = await response.json();
+      return detalles.length + 1;
+    } catch (error) {
+      console.error("Error al obtener numDetalle:", error);
+      return 1;
+    }
+  };
+
   
 
   const handleSubmitPedido = async () => {
@@ -202,6 +238,10 @@ const ProductoUsuario = () => {
     })();
 
 
+    //Mostrar el nombre del metodo de pago enves del ID
+    const metodoPagoNombre = metodosPago.find(
+      (metodo) => metodo._id === pedido.metodoPago
+    )?.nombreMetodoPago || 'No seleccionado';
 
     const mensaje = `¡Hola! Me gustaría realizar el siguiente pedido:  
 
@@ -211,7 +251,8 @@ const ProductoUsuario = () => {
     🆔 **ID del Producto:** ${productoSeleccionado?._id || 'No disponible'}  
     📦 **Producto:** ${productoSeleccionado?.estiloProducto || ''}  
     📏 **Tamaño:** ${productoSeleccionado?.tamañoProducto || ''}  
-    🛠 **Material:** ${productoSeleccionado?.materialProducto || ''}  
+    🛠 **Material:** ${productoSeleccionado?.materialProducto || ''}
+    💵 **Metodo de pago seleccionado:** ${metodoPagoNombre}
     💰 **Total:** ${ultimoPrecio}  
     
     🔹 **Datos del Pedido**  
@@ -232,8 +273,9 @@ const ProductoUsuario = () => {
 
     window.open(urlWhatsApp, "_blank");
 
-    //Crear el pedido automaticamente
+    
     try {
+      //Crear el pedido automaticamente
       const pedidoCompleto = {
         tamañoOso: productoSeleccionado?.tamañoProducto || "Sin tamaño",
         nombreComprador: pedido.nombreComprador || "Sin nombre",
@@ -245,41 +287,125 @@ const ProductoUsuario = () => {
         localidad: pedido.localidad || "Sin localidad",
         direccion: pedido.direccion || "Sin dirección",
         barrio: pedido.barrio || "Sin barrio",
-        cliente: "123456789123456789123456",
-        /*detallesPedido: [{
-          producto: productoSeleccionado?._id,
-          cantidad: 1,
-          precio: ultimoPrecio.numeric || 0
-        }],*/
+        cliente: "671976d2269e33c817066681",
         facturas: [],
       };
-  
-      // Verificar datos antes de enviar
+    
       console.log("Enviando pedido:", JSON.stringify(pedidoCompleto, null, 2));
-  
+    
       const response = await fetch(`${apiUrl}/pedido`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pedidoCompleto)
       });
-  
+    
       const responseData = await response.json();
-      
+    
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${JSON.stringify(responseData)}`);
       }
-  
+    
       console.log('Pedido guardado:', responseData);
-      setSnackbarMessage('Pedido enviado y guardado exitosamente');
-      
+    
+
+      // Crear el detalle del pedido
+      const siguienteNumDetalle = await obtenerNumDetalle(responseData._id);
+
+      const detallePedido = {
+        numDetalle: siguienteNumDetalle,
+        precioDetallePedido: ultimoPrecio,
+        cantidadDetallePedido: 1,
+        pedidoNumPedido: responseData._id,
+        productoIdProducto: productoSeleccionado._id
+      };
+
+    
+      console.log("Enviando detallePedido:", detallePedido);
+    
+      const detalleResponse = await fetch(`${apiUrl}/detallesPedido`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(detallePedido)
+      });
+    
+      const detalleData = await detalleResponse.json();
+    
+      if (!detalleResponse.ok) {
+        throw new Error(`Error en detallePedido: ${JSON.stringify(detalleData)}`);
+      }
+    
+      console.log('DetallePedido guardado:', detalleData);
+
+
+      //Crear la factura automaticamente
+      const factura = {
+        fechaCreacionFactura: new Date().toISOString(),
+        horaCreacionFactura: new Date().toLocaleTimeString('es-CO', { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit',
+            hour12: false 
+        }),
+        pedido: responseData._id,
+        detallesFactura: [detalleData._id],
+        metodoPago: pedido.metodoPago,
+      };
+    
+      console.log("Enviando Factura:", factura);
+        
+      const facturaResponse = await fetch(`${apiUrl}/factura`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(factura)
+      });
+    
+      const facturaData = await facturaResponse.json();
+        
+      if (!facturaResponse.ok) {
+        throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
+      }
+    
+      console.log('Factura guardada:', facturaData);
+  
+
+
+      //Crear el detalle de la factura
+      const detalleFactura = {
+        precioDetalleFactura: ultimoPrecio,
+        cantidadDetalleFactura: 1,
+        productoIdProducto: productoSeleccionado._id,
+        facturaIdFactura: facturaData._id,
+      }
+
+      console.log("Enviando Detalle Factura:", detalleFactura);
+        
+      const detalleFacturaResponse = await fetch(`${apiUrl}/detallesFactura`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(detalleFactura)
+      });
+    
+      const detalleFacturaData = await detalleFacturaResponse.json();
+        
+      if (!detalleFacturaResponse.ok) {
+        throw new Error(`Error en Detalle Factura: ${JSON.stringify(detalleFacturaData)}`);
+      }
+    
+      console.log('Detalle Factura guardada:', detalleFacturaData);
+  
+      setSnackbarMessage('Pedido, detalle Pedido, detalle factura y factura guardados exitosamente');
+  
+    
     } catch (error) {
       console.error('Error completo:', error);
       setSnackbarMessage(error.message || 'Error al guardar el pedido');
     }
-
+    
     setOpenSnackbar(true);
     handleCloseCarritoDialog();
+    
   };
+
 
   // Manejar el cambio de página
   const handlePageChange = (event, value) => {
@@ -439,7 +565,23 @@ const ProductoUsuario = () => {
                       ) : (
                         <div>No hay precios históricos disponibles.</div>
                       )}
-                    </Typography>
+                  </Typography>
+                  <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                    <InputLabel id="metodo-pago-label">Método de Pago</InputLabel>
+                    <Select
+                      labelId="metodo-pago-label"
+                      name="metodoPago"
+                      value={pedido.metodoPago}
+                      label="Método de Pago"
+                      onChange={handleInputChange}
+                    >
+                      {metodosPago.map((metodo) => (
+                        <MenuItem key={metodo._id} value={metodo._id}>
+                          {metodo.nombreMetodoPago}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                   <TextField
                     label="Nombre del Comprador"
                     fullWidth

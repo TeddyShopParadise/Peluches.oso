@@ -28,11 +28,8 @@ const facturaSchemaValidation = Joi.object({
     cliente: Joi.string()
         .length(24)
         .hex()
-        .required()
         .messages({
-            'string.base': 'El ID del cliente debe ser un ID válido en formato hexadecimal',
             'string.length': 'El ID del cliente debe tener 24 caracteres',
-            'any.required': 'El cliente es un campo requerido'
         }),
     detallesFactura: Joi.array().items(Joi.string().length(24).hex()).optional()
         .messages({
