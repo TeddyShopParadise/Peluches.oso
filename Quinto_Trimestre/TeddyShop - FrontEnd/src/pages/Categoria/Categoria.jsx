@@ -30,6 +30,8 @@ import Swal from 'sweetalert2';
 import { Edit, Delete, Info } from '@mui/icons-material';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
+import useApiRequest from '../../hooks/useApiRequest';
+
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
 
@@ -44,19 +46,6 @@ const CategoriaComponent = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedCategoria, setSelectedCategoria] = useState(null);
 
-  const fetchCategorias = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/categorias`);
-      if (!response.ok) {
-        throw new Error('Error al obtener las categorías');
-      }
-      const data = await response.json();
-      setCategorias(data);
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
 
   const fetchProductos = async () => {
     try {
@@ -72,106 +61,122 @@ const CategoriaComponent = () => {
     }
   };
 
-  const crearCategoria = async () => {
-    if (!nombreCategoria || !descripcionCategoria ) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
+  const { makeRequest } = useApiRequest();
 
+  const fetchCategorias = async () => {
     try {
-      const response = await fetch(`${apiUrl}/categorias`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombreCategoria,
-          descripcionCategoria
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al crear la categoría');
-      }
-
-      fetchCategorias();
-      resetForm();
+      const response = await fetch(`${apiUrl}/categorias`);
+      if (!response.ok) throw new Error('Error al obtener las categorías');
+      const data = await response.json();
+      setCategorias(data);
     } catch (error) {
-      console.error(error);
-      alert(error.message);
+      Swal.fire('Error', error.message, 'error');
     }
   };
 
-  const actualizarCategoria = async () => {
-    if (!editingId || !nombreCategoria || !descripcionCategoria) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
-
-    // Extraer solo los _id de los productos seleccionados si es necesario
-    const productosIds = productosSeleccionados.map(producto => producto._id || producto);
-
-    try {
-      const response = await fetch(`${apiUrl}/categorias/${editingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombreCategoria,
-          descripcionCategoria
-       
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar la categoría');
-      }
-
-      console.log('Categoría actualizada', await response.json());
-      fetchCategorias();
-      resetForm();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
-
-  const eliminarCategoria = async (id) => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(`${apiUrl}/categorias/${id}`, { method: 'DELETE' });
-          if (!response.ok) throw new Error('Error al eliminar la categoría');
-          fetchCategorias();
-          Swal.fire('Eliminado', 'Categoría eliminada correctamente.', 'success');
-        } catch (error) {
-          Swal.fire('Error', error.message, 'error');
-        }
-      }
-    });
-  };
-
-  const editarCategoria = (categoria) => {
-    setEditingId(categoria._id); // Establece el ID de la categoría que se está editando
-    setNombreCategoria(categoria.nombreCategoria);
-    setDescripcionCategoria(categoria.descripcionCategoria);
-   
-  };
+  useEffect(() => {
+    fetchCategorias();
+  }, []);
 
   const resetForm = () => {
     setNombreCategoria('');
     setDescripcionCategoria('');
     setEditingId(null);
+  };
+
+  const crearCategoria = async () => {
+    if (!nombreCategoria || !descripcionCategoria) {
+      return Swal.fire('Campos incompletos', 'Completa todos los campos.', 'warning');
+    }
+
+    await makeRequest({
+      url: `${apiUrl}/categorias`,
+      method: 'POST',
+      data: { nombreCategoria, descripcionCategoria },
+      confirm: {
+        title: 'Crear categoría',
+        text: '¿Deseas crear esta categoría?',
+      },
+      loading: {
+        title: 'Creando categoría...',
+        html: 'Procesando solicitud',
+      },
+      success: {
+        title: '¡Categoría creada!',
+        text: 'La categoría se ha guardado correctamente.',
+      },
+      onSuccess: () => {
+        fetchCategorias();
+        resetForm();
+      },
+    });
+  };
+
+  const actualizarCategoria = async () => {
+    if (!nombreCategoria || !descripcionCategoria) {
+      return Swal.fire('Campos incompletos', 'Completa todos los campos.', 'warning');
+    }
+
+    await makeRequest({
+      url: `${apiUrl}/categorias/${editingId}`,
+      method: 'PUT',
+      data: { nombreCategoria, descripcionCategoria },
+      confirm: {
+        title: 'Actualizar categoría',
+        text: '¿Deseas actualizar esta categoría?',
+      },
+      loading: {
+        title: 'Actualizando...',
+        html: 'Estamos actualizando la categoría.',
+      },
+      success: {
+        title: '¡Categoría actualizada!',
+        text: 'Se actualizó correctamente.',
+      },
+      onSuccess: () => {
+        fetchCategorias();
+        resetForm();
+      },
+      error: {
+        title: 'Error al actualizar',
+        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>',
+      },
+    });
+  };
+
+  const eliminarCategoria = async (id) => {
+    await makeRequest({
+      url: `${apiUrl}/categorias/${id}`,
+      method: 'DELETE',
+      confirm: {
+        title: '¿Eliminar categoría?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      },
+      loading: {
+        title: 'Eliminando...',
+        html: 'Estamos eliminando la categoría.',
+      },
+      success: {
+        title: '¡Categoría eliminada!',
+        text: 'La categoría ha sido eliminada correctamente.',
+      },
+      onSuccess: () => {
+        fetchCategorias();
+      },
+      error: {
+        title: 'Error al eliminar',
+        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>',
+      },
+    });
+  };
+
+  const editarCategoria = (categoria) => {
+    setEditingId(categoria._id);
+    setNombreCategoria(categoria.nombreCategoria);
+    setDescripcionCategoria(categoria.descripcionCategoria);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -317,5 +322,6 @@ const CategoriaComponent = () => {
     </Box>
   );
 };
+
 
 export default CategoriaComponent;

@@ -4,7 +4,7 @@ const Factura = require('../models/factura_model');
 
 const facturaSeed = {
   fechaCreacionFactura: new Date(),
-  horaCreacionFactura: new Date().toLocaleTimeString(), 
+  horaCreacionFactura: new Date(), 
   pedido: ['67180ae2e3ebf5bd0a1e3302'], 
   cliente: ['6718250470b162afd002a79a'], 
   detallesFactura: ['671824ea70b162afd002a797'], 

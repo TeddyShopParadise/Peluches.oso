@@ -2,24 +2,50 @@
 //Importación para que funcione correctamente
 const logic = require('../Logic/catalogo_logic');
 const { catalogoSchemaValidation } = require('../Validations/catalogo_validation');
+const cloudinary = require('cloudinary').v2;
+const { v4: uuidv4 } = require('uuid'); 
+
+cloudinary.config({
+    cloud_name: 'peluches',    
+    api_key: '381838619856281',          
+    api_secret: 'K3bBlaVv-cGj1A0LopGfOLstHs4'    
+  });
 
 // Controlador para crear un catálogo
 const crearCatalogo = async (req, res) => {
     const body = req.body;
+    const { imagen, ...resto } = body;  
 
-    const { error, value } = catalogoSchemaValidation.validate(body);
+    const { error, value } = catalogoSchemaValidation.validate(resto);
 
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
     }
-
     try {
-        const nuevoCatalogo = await logic.crearCatalogo(value);
+        let imageUrl = ''; 
+
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.buffer, {
+                public_id: uuidv4(), 
+                resource_type: 'auto',  
+            });
+            imageUrl = result.secure_url; 
+        }
+
+        const catalogoConImagen = { 
+            ...value, 
+            imagen: imageUrl || imagen || '' 
+        };
+
+        const nuevoCatalogo = await logic.crearCatalogo(catalogoConImagen);
         res.status(201).json(nuevoCatalogo);
     } catch (err) {
+        console.error('Error al crear catálogo:', err);
+        
         if (err.message === 'Ya existe un catálogo con este nombre') {
             return res.status(409).json({ error: err.message });
         }
+        
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

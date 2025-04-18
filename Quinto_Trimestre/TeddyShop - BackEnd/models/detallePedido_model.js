@@ -17,20 +17,20 @@ const detallePedidoSchema = new mongoose.Schema({
   pedidoNumPedido: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Pedido por ObjectId
     ref: 'Pedido',
-    required: true
+    required: false
   },
-  productoIdProducto: {
+  idProducto: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Producto por ObjectId
     ref: 'Producto',
-    required: true
+    required: false
   }
 }, {
   collection: 'Detalle_Pedido',
   timestamps: false
 });
 
-// Definir el índice único compuesto para numDetalle y productoIdProducto
-detallePedidoSchema.index({ numDetalle: 1, productoIdProducto: 1 }, { unique: true });
+// Definir el índice único compuesto para numDetalle y idProducto
+detallePedidoSchema.index({ numDetalle: 1, idProducto: 1 }, { unique: true });
 
 // exportar el modelo
 module.exports = mongoose.model('DetallePedido', detallePedidoSchema);

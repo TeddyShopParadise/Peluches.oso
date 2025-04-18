@@ -2,28 +2,38 @@ const Inventario = require('../models/inventario_model');
 
 // Función asíncrona para crear un inventario
 async function crearInventario(body) {
-    // Verificar si ya existe un inventario con el mismo idInventario
-    const inventarioExistente = await Inventario.findOne({ idInventario: body.idInventario });
-
-    if (inventarioExistente) {
-        throw new Error('Ya existe un inventario con este ID');
+    // Validar que los precios sean positivos
+    if (body.precioVenta <= 0 || body.precioCompra <= 0) {
+        throw new Error('Los precios deben ser valores positivos');
     }
 
-    let inventario = new Inventario({
-        idInventario: body.idInventario,
-        stockMinimo: body.stockMinimo,
-        precioVenta: body.precioVenta,
-        precioCompra: body.precioCompra,
-        stock: body.stock,
-        stockMaximo: body.stockMaximo,
-        idDevolucion: body.idDevolucion,
-        productoIdProducto: body.productoIdProducto,
-        detalleFacturas: body.detalleFacturas,
-        movimientos: body.movimientos
-    });
+    // Validar que precioVenta > precioCompra
+    if (body.precioVenta <= body.precioCompra) {
+        throw new Error('El precio de venta debe ser mayor al precio de compra');
+    }
 
-    return await inventario.save();
+    // Validar stocks
+    if (body.stockMinimo > body.stockMaximo) {
+        throw new Error('El stock mínimo no puede ser mayor al stock máximo');
+    }
+
+    try {
+        const inventario = new Inventario({
+            stockMinimo: body.stockMinimo,
+            precioVenta: body.precioVenta,
+            precioCompra: body.precioCompra,
+            stock: body.stock,
+            stockMaximo: body.stockMaximo,
+            idProducto: body.idProducto
+        });
+    
+        return await inventario.save();
+    } catch (error) {
+        console.error('Error guardando inventario en MongoDB:', error); // <- log útil
+        throw error;
+    }
 }
+
 
 // Función asíncrona para actualizar un inventario
 async function actualizarInventario(id, body) {
@@ -35,7 +45,7 @@ async function actualizarInventario(id, body) {
             stock: body.stock,
             stockMaximo: body.stockMaximo,
             idDevolucion: body.idDevolucion,
-            productoIdProducto: body.productoIdProducto,
+            idProducto: body.idProducto,
             detalleFacturas: body.detalleFacturas,
             movimientos: body.movimientos
         }
@@ -52,7 +62,7 @@ async function actualizarInventario(id, body) {
 async function listarInventarios() {
     let inventarios = await Inventario.find()
         .populate('idDevolucion', 'descripcion')
-        .populate('productoIdProducto', 'nombreProducto')
+        .populate('idProducto', 'nombreProducto')
         .populate('detalleFacturas', 'detalle')
         .populate('movimientos', 'descripcionMovimiento');
     return inventarios;
@@ -63,7 +73,7 @@ async function buscarInventarioPorId(id) {
     try {
         const inventario = await Inventario.findById(id)
             .populate('idDevolucion', 'descripcion')
-            .populate('productoIdProducto', 'nombreProducto')
+            .populate('idProducto', 'nombreProducto')
             .populate('detalleFacturas', 'detalle')
             .populate('movimientos', 'descripcionMovimiento');
 

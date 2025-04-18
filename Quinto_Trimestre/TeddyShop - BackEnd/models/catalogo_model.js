@@ -26,11 +26,12 @@ const catalogoSchema = new mongoose.Schema({
   compania: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Compañia', // Relación uno a uno con Compañia
-    required: true
+    required: false
   },
   productos: [{
     type: mongoose.Schema.Types.ObjectId, // Relación muchos a muchos con Producto
-    ref: 'Producto'
+    ref: 'Producto',
+    required: false
   }],
 }, {
   collection: 'Catalogo',

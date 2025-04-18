@@ -1,94 +1,87 @@
 const Joi = require('joi');
 
-// Esquema de validación para el modelo Inventario
-const validarInventario = Joi.object({
-    idInventario: Joi.number()
-        .integer()
-        .messages({
-            'number.base': 'El ID del inventario debe ser un número.',
-            'number.integer': 'El ID del inventario debe ser un número entero.',
-            'any.required': 'El ID del inventario es obligatorio.'
-        }),
-    
-    stockMinimo: Joi.number()
-        .max(256)
-        .required()
-        .messages({
-            'number.base': 'El stock mínimo debe ser un entero.',
-            'number.max': 'El stock mínimo no debe exceder los 256 caracteres.',
-            'any.required': 'El stock mínimo es obligatorio.'
-        }),
-
-    precioVenta: Joi.number()
-        .precision(3)
-        .positive()
-        .optional()
-        .messages({
-            'number.base': 'El precio de venta debe ser un número.',
-            'number.positive': 'El precio de venta debe ser un valor positivo.',
-            'number.precision': 'El precio de venta debe tener hasta 3 decimales.'
-        }),
-
-    precioCompra: Joi.number()
-        .precision(3)
-        .positive()
-        .optional()
-        .messages({
-            'number.base': 'El precio de compra debe ser un número.',
-            'number.positive': 'El precio de compra debe ser un valor positivo.',
-            'number.precision': 'El precio de compra debe tener hasta 3 decimales.'
-        }),
-
+const inventariosSchemaValidation = Joi.object({
     stock: Joi.number()
-        .max(256)
+        .integer()
+        .min(0)
+        .max(10000)
         .required()
         .messages({
-            'number.base': 'El stock debe ser un texto.',
-            'number.max': 'El stock no debe exceder los 256 caracteres.',
-            'any.required': 'El stock es obligatorio.'
+            'number.base': 'El stock debe ser un número entero',
+            'number.min': 'El stock no puede ser negativo',
+            'number.max': 'El stock no puede exceder {#limit} unidades',
+            'any.required': 'El campo stock es requerido'
+        }),
+
+    stockMinimo: Joi.number()
+        .integer()
+        .min(0)
+        .required()
+        .messages({
+            'number.base': 'El stock mínimo debe ser un número entero',
+            'number.min': 'El stock mínimo no puede ser negativo',
+            'any.required': 'El campo stock mínimo es requerido'
         }),
 
     stockMaximo: Joi.number()
-        .max(256)
+        .integer()
+        .min(Joi.ref('stockMinimo'))
+        .max(10000)
         .required()
         .messages({
-            'number.base': 'El stock máximo debe ser un texto.',
-            'number.max': 'El stock máximo no debe exceder los 256 caracteres.',
-            'any.required': 'El stock máximo es obligatorio.'
+            'number.base': 'El stock máximo debe ser un número entero',
+            'number.min': 'El stock máximo no puede ser menor al stock mínimo',
+            'any.required': 'El campo stock máximo es requerido'
         }),
 
+    // Resto de las validaciones permanecen igual
+    precioVenta: Joi.number()
+        .positive()
+        .precision(2)
+        .required()
+        .messages({
+            'number.base': 'El precio de venta debe ser un número',
+            'number.positive': 'El precio de venta debe ser mayor a cero',
+            'any.required': 'El precio de venta es requerido'
+        }),
+
+    precioCompra: Joi.number()
+        .positive()
+        .precision(2)
+        .max(Joi.ref('precioVenta'))
+        .required()
+        .messages({
+            'number.base': 'El precio de compra debe ser un número',
+            'number.positive': 'El precio de compra debe ser mayor a cero',
+            'number.max': 'El precio de compra no puede ser mayor al precio de venta',
+            'any.required': 'El precio de compra es requerido'
+        }),
+
+    idProducto: Joi.string()
+        .length(24)
+        .hex()
+        .required()
+        .messages({
+            'string.length': 'El ID del producto debe tener 24 caracteres',
+            'string.hex': 'El ID del producto debe ser hexadecimal',
+            'any.required': 'El ID del producto es requerido'
+        }),
+
+    // Los campos opcionales permanecen igual
     idDevolucion: Joi.string()
-        .messages({
-            'string.base': 'El ID de devolución debe ser un identificador válido.',
-            'any.required': 'El ID de devolución es obligatorio.'
-        }),
-
-    productoIdProducto: Joi.string()
-        .required()
-        .messages({
-            'string.base': 'El ID del producto debe ser un identificador válido.',
-            'any.required': 'El ID del producto es obligatorio.'
-        }),
+        .length(24)
+        .hex()
+        .optional(),
 
     detalleFacturas: Joi.array()
-        .items(Joi.string().messages({
-            'string.base': 'El ID de la factura debe ser un identificador válido.'
-        }))
-        .optional()
-        .messages({
-            'array.base': 'El detalle de facturas debe ser un arreglo de identificadores.'
-        }),
+        .items(Joi.string().length(24).hex())
+        .optional(),
 
     movimientos: Joi.array()
-        .items(Joi.string().messages({
-            'string.base': 'El ID del movimiento debe ser un identificador válido.'
-        }))
+        .items(Joi.string().length(24).hex())
         .optional()
-        .messages({
-            'array.base': 'Los movimientos deben ser un arreglo de identificadores.'
-        })
+}).options({
+    abortEarly: false
 });
 
-module.exports = {
-    validarInventario
-};
+module.exports = { inventariosSchemaValidation };

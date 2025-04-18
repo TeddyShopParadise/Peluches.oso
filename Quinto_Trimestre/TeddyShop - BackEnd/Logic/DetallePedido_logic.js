@@ -9,7 +9,7 @@ async function crearDetallePedido(body) {
         precioDetallePedido: body.precioDetallePedido,
         cantidadDetallePedido: body.cantidadDetallePedido,
         pedidoNumPedido: body.pedidoNumPedido,
-        productoIdProducto: body.productoIdProducto
+        idProducto: body.idProducto
     });
 
     return await detallePedido.save();
@@ -23,7 +23,7 @@ async function actualizarDetallePedido(id, body) {
             precioDetallePedido: body.precioDetallePedido,
             cantidadDetallePedido: body.cantidadDetallePedido,
             pedidoNumPedido: body.pedidoNumPedido,
-            productoIdProducto: body.productoIdProducto
+            idProducto: body.idProducto
         }
     }, { new: true });
 
@@ -34,7 +34,7 @@ async function actualizarDetallePedido(id, body) {
 async function listarDetallesPedido() {
     let detallesPedido = await DetallePedido.find()
         .populate('pedidoNumPedido', 'numeroPedido') // Reemplazar con los campos relevantes de Pedido
-        .populate('productoIdProducto', 'nombreProducto'); // Reemplazar con los campos relevantes de Producto
+        .populate('idProducto', 'nombreProducto'); // Reemplazar con los campos relevantes de Producto
     return detallesPedido;
 }
 
@@ -43,7 +43,7 @@ async function buscarDetallePedidoPorId(id) {
     try {
         const detallePedido = await DetallePedido.findById(id)
             .populate('pedidoNumPedido', 'numeroPedido') // Reemplazar con los campos relevantes de Pedido
-            .populate('productoIdProducto', 'nombreProducto'); // Reemplazar con los campos relevantes de Producto
+            .populate('idProducto', 'nombreProducto'); // Reemplazar con los campos relevantes de Producto
         if (!detallePedido) {
             throw new Error(`Detalle de Pedido con ID ${id} no encontrado`);
         }

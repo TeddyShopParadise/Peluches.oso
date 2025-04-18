@@ -28,6 +28,7 @@ import Swal from 'sweetalert2';
 import { Edit, Delete, Info } from '@mui/icons-material';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
+import useApiRequest from '../../hooks/useApiRequest';
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
 
@@ -80,99 +81,191 @@ const HistorialPrecios = () => {
   }, []);
 
 
-  // Crear nuevo historial de precio
-  const crearHistorialPrecio = async (e) => {
-    e.preventDefault();
-    try {
-	//const token = getAuthToken();
-      const response = await fetch(`${apiUrl}/historialPrecio`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          //'Authorization': `Bearer ${token}`, 
-        },
-        body: JSON.stringify(nuevoHistorial),
-      });
-  
-      if (response.ok) {
-        fetchHistorialPrecios(); // Actualiza la lista después de crear
-        resetForm();
-        setNuevoHistorial({ precio: '', fechaInicio: '', fechaFin: '', estadoPrecio: true });
-      } else {
-        console.error('Error al crear el historial de precio');
-      }
-    } catch (error) {
-      console.error('Error al enviar los datos:', error);
+const { makeRequest } = useApiRequest();
+// Crear nuevo historial de precio
+const crearHistorialPrecio = async (e) => {
+  e.preventDefault();
+
+  const { precio, fechaInicio, fechaFin } = nuevoHistorial;
+
+  if (!precio || !fechaInicio || !fechaFin) {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Campos incompletos',
+      text: 'Por favor, completa todos los campos requeridos.',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#3085d6',
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/empty-field.gif")
+        center top
+        no-repeat
+      `
+    });
+    return;
+  }
+
+  await makeRequest({
+    url: `${apiUrl}/historialPrecio`,
+    method: 'POST',
+    data: nuevoHistorial,
+    headers: {
+      'Content-Type': 'application/json',
+      // 'Authorization': `Bearer ${token}`,
+    },
+    confirm: {
+      title: 'Crear nuevo historial',
+      text: '¿Estás seguro de que deseas crear este historial de precio?',
+      icon: 'question',
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    },
+    loading: {
+      title: 'Procesando...',
+      html: 'Estamos creando el historial de precio',
+      allowOutsideClick: false
+    },
+    success: {
+      icon: 'success',
+      title: '¡Historial creado!',
+      text: 'El historial de precio se ha creado correctamente.',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      icon: 'error',
+      title: 'Error al crear historial',
+      text: (error) => error.message || 'Ocurrió un error al conectar con el servidor.',
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: () => {
+      fetchHistorialPrecios();
+      resetForm();
+      setNuevoHistorial({ precio: '', fechaInicio: '', fechaFin: '', estadoPrecio: true });
     }
+  });
+};
+
+// Actualizar historial de precio
+const actualizarHistorialPrecio = async (e) => {
+  e.preventDefault();
+
+  const { precio, fechaInicio, fechaFin } = nuevoHistorial;
+
+  if (!editingId || !precio || !fechaInicio || !fechaFin) {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Campos incompletos',
+      text: 'Por favor, completa todos los campos requeridos.',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#3085d6',
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/empty-field.gif")
+        center top
+        no-repeat
+      `,
+      background: '#f8f9fa'
+    });
+    return;
+  }
+
+  const data = {
+    precio: parseFloat(nuevoHistorial.precio),
+    fechaInicio: nuevoHistorial.fechaInicio,
+    fechaFin: nuevoHistorial.fechaFin,
+    estadoPrecio: nuevoHistorial.estadoPrecio,
   };
-  
-  //Actualizar un historial de precio
-  const actualizarHistorialPrecio = async (e) => {
-    e.preventDefault();
-    try {
-      //const token = getAuthToken();
-      const data = {
-        precio: parseFloat(nuevoHistorial.precio),// Convertir a número
-        fechaInicio: nuevoHistorial.fechaInicio,
-        fechaFin: nuevoHistorial.fechaFin,
-        estadoPrecio: nuevoHistorial.estadoPrecio
-      };
-  
-      const response = await fetch(`${apiUrl}/historialPrecio/${editingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-         // 'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-  
-      if (response.ok) {
-        fetchHistorialPrecios();
-        resetForm();
-        setNuevoHistorial({ precio: '', fechaInicio: '', fechaFin: '', estadoPrecio: true });
-        setEditingId(null);
-      } else {
-        const errorText = await response.text();
-        console.error('Error al actualizar el historial de precio:', errorText);
-      }
-    } catch (error) {
-      console.error('Error al enviar los datos:', error);
+
+  await makeRequest({
+    url: `${apiUrl}/historialPrecio/${editingId}`,
+    method: 'PUT',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json',
+      // 'Authorization': `Bearer ${token}`,
+    },
+    confirm: {
+      title: 'Actualizar historial',
+      text: '¿Estás seguro de que deseas actualizar este historial de precio?',
+      icon: 'question',
+      confirmButtonText: 'Sí, actualizar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    },
+    loading: {
+      title: 'Procesando...',
+      html: 'Estamos actualizando el historial de precio',
+      allowOutsideClick: false
+    },
+    success: {
+      icon: 'success',
+      title: '¡Historial actualizado!',
+      text: 'El historial de precio se ha actualizado correctamente.',
+      timer: 2000,
+      timerProgressBar: true,
+      showConfirmButton: false
+    },
+    error: {
+      icon: 'error',
+      title: 'Error en la actualización',
+      html: (error) => `<div style="text-align:left;">
+             <p>${error.message}</p>
+             <small>Si el problema persiste, contacte al administrador</small>
+           </div>`,
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: () => {
+      fetchHistorialPrecios();
+      resetForm();
+      setNuevoHistorial({ precio: '', fechaInicio: '', fechaFin: '', estadoPrecio: true });
+      setEditingId(null);
     }
-  };
-  
-  //Eliminar el historial de Precio
-  const eliminarHistorialPrecio = async (id) => {
-    const confirmDelete = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'No podrás revertir esta acción',
+  });
+};
+
+// Eliminar historial de precio
+const eliminarHistorialPrecio = async (id) => {
+  await makeRequest({
+    url: `${apiUrl}/historialPrecio/${id}`,
+    method: 'DELETE',
+    // headers: { 'Authorization': `Bearer ${token}` },
+    confirm: {
+      title: 'Eliminar historial',
+      text: '¿Estás seguro de que deseas eliminar este historial? Esta acción no se puede deshacer.',
       icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
-    });
-
-    if (confirmDelete.isConfirmed) {
-      try {
-       // const token = getAuthToken();
-        const response = await fetch(`${apiUrl}/historialPrecio/${id}`, {
-          method: 'DELETE',
-         // headers: { 'Authorization': `Bearer ${token}` },
-        });
-
-        if (response.ok) {
-          Swal.fire('¡Eliminado!', 'El historial ha sido eliminado.', 'success');
-          fetchHistorialPrecios();
-        } else {
-          Swal.fire('Error', 'No se pudo eliminar el historial.', 'error');
-        }
-      } catch (error) {
-        Swal.fire('Error', 'Hubo un problema al eliminar el historial.', 'error');
-      }
-    }
-  };
+      reverseButtons: true,
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/warning.gif")
+        center top
+        no-repeat
+      `
+    },
+    loading: {
+      title: 'Eliminando...',
+      html: 'Estamos eliminando el historial de precio',
+      allowOutsideClick: false
+    },
+    success: {
+      icon: 'success',
+      title: '¡Historial eliminado!',
+      text: 'El historial ha sido eliminado correctamente.',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      icon: 'error',
+      title: 'Error al eliminar historial',
+      text: (error) => error.message || 'Hubo un problema al eliminar el historial.',
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: fetchHistorialPrecios
+  });
+};
 
   // Maneja el cambio en el formulario
   const handleChange = (e) => {

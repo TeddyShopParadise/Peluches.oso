@@ -126,11 +126,22 @@ const eliminarProducto = async (req, res) => {
     }
 };
 
+const getProductosByCatalogo = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const productos = await Producto.find({ catalogos: id }).populate('categorias');
+      res.json(productos);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
 // Exportar los controladores
 module.exports = {
     listarProductos,
     crearProducto,
     actualizarProducto,
     obtenerProductoPorId,
-    eliminarProducto
+    eliminarProducto,
+    getProductosByCatalogo
 };

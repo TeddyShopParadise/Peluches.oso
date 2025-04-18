@@ -6,7 +6,7 @@ const {
     actualizarDevolucion,
     obtenerDevolucionPorId,
     eliminarDevolucion
-} = require('../Controllers/devoluciones_controller'); // Importa los controladores
+} = require('../Controllers/devoluciones_controller'); 
 
 /**
  * @swagger
@@ -28,17 +28,10 @@ const {
  *                   _id:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a79"
- *                   numDevolucion:
- *                     type: number
- *                     example: 1
- *                   motivoDevolucion:
+ *                   detalleDevolucion:
  *                     type: string
  *                     example: "Producto defectuoso"
- *                   fechaDevolucion:
- *                     type: string
- *                     format: date
- *                     example: "2024-10-22"
- *                   productoId:
+ *                   InventarioId:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
  *       500:
@@ -63,17 +56,10 @@ router.get('/', listarDevoluciones);
  *           schema:
  *             type: object
  *             properties:
- *               numDevolucion:
- *                 type: number
- *                 example: 1
- *               motivoDevolucion:
+ *               detalleDevolucion:
  *                 type: string
  *                 example: "Producto defectuoso"
- *               fechaDevolucion:
- *                 type: string
- *                 format: date
- *                 example: "2024-10-22"
- *               productoId:
+ *               InventarioId:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
@@ -110,17 +96,10 @@ router.post('/', crearDevolucion);
  *           schema:
  *             type: object
  *             properties:
- *               numDevolucion:
- *                 type: number
- *                 example: 1
- *               motivoDevolucion:
+ *               detalleDevolucion:
  *                 type: string
  *                 example: "Producto defectuoso"
- *               fechaDevolucion:
- *                 type: string
- *                 format: date
- *                 example: "2024-10-22"
- *               productoId:
+ *               InventarioId:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
@@ -158,22 +137,12 @@ router.put('/:id', actualizarDevolucion);
  *           schema:
  *             type: object
  *             properties:
- *               numDevolucion:
- *                 type: number
- *                 example: 1
- *               motivoDevolucion:
- *                 type: string
- *                 example: "Producto defectuoso"
- *               fechaDevolucion:
- *                 type: string
- *                 format: date
- *                 example: "2024-10-22"
- *               productoId:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *               detalleDevolucion:
  *                 type: string
- *                 example: "Descripción detallada de la razón de devolución"
+ *                 example: "Producto defectuoso"
+ *               InventarioId:
+ *                 type: string
+ *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
  *       200:
  *         description: Devolución actualizada exitosamente

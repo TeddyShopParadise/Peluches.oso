@@ -36,8 +36,8 @@ const DetallePedido = () => {
     numDetalle: '',
     precioDetallePedido: '',
     cantidadDetallePedido: '',
-    pedidoNumPedido: '',
-    productoIdProducto: '',
+    idPedido: '',
+    idProducto: '',
   });
   const [pedidos, setPedidos] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -69,7 +69,7 @@ const DetallePedido = () => {
   // Función para obtener los pedidos
   const fetchPedidos = async () => {
     try {
-      const response = await fetch(`${apiUrl}/pedidos`, {
+      const response = await fetch(`${apiUrl}/pedido`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -88,12 +88,7 @@ const DetallePedido = () => {
   // Función para obtener los productos
   const fetchProductos = async () => {
     try {
-      const response = await fetch(`${apiUrl}/productos`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
+      const response = await fetch(`${apiUrl}/producto`);
       if (!response.ok) {
         throw new Error('Error al obtener los productos');
       }
@@ -101,9 +96,9 @@ const DetallePedido = () => {
       setProductos(data);
     } catch (error) {
       console.error(error);
+      alert(error.message);
     }
   };
-
   // Efecto para cargar detalles, pedidos y productos al montar el componente
   useEffect(() => {
     fetchDetalles();
@@ -160,8 +155,8 @@ const DetallePedido = () => {
         numDetalle: '',
         precioDetallePedido: '',
         cantidadDetallePedido: '',
-        pedidoNumPedido: '',
-        productoIdProducto: '',
+        idPedido: '',
+        idProducto: '',
       });
       setEditingId(null);
     } catch (error) {
