@@ -4,8 +4,7 @@ const Factura = require('../models/factura_model');
 // Función asíncrona para crear un nuevo método de pago
 async function crearMetodoPago(body) {
     const metodoPago = new MetodoPago({
-        nombreMetodoPago: body.nombreMetodoPago,
-        factura: body.factura // Se espera un ObjectId de Factura
+        nombreMetodoPago: body.nombreMetodoPago
     });
 
     return await metodoPago.save();
@@ -15,8 +14,7 @@ async function crearMetodoPago(body) {
 async function actualizarMetodoPago(id, body) {
     const metodoPago = await MetodoPago.findByIdAndUpdate(id, {
         $set: {
-            nombreMetodoPago: body.nombreMetodoPago,
-            factura: body.factura // Se espera un ObjectId de Factura
+            nombreMetodoPago: body.nombreMetodoPago
         }
     }, { new: true });
 
@@ -26,7 +24,6 @@ async function actualizarMetodoPago(id, body) {
 // Función asíncrona para listar todos los métodos de pago
 async function listarMetodosPago() {
     const metodosPago = await MetodoPago.find()
-        .populate('factura'); // Puedes optar por mostrar información de la factura asociada
     return metodosPago;
 }
 
@@ -34,8 +31,6 @@ async function listarMetodosPago() {
 async function buscarMetodoPagoPorId(id) {
     try {
         const metodoPago = await MetodoPago.findById(id)
-            .populate('factura'); // Puedes optar por mostrar información de la factura asociada
-
         if (!metodoPago) {
             throw new Error(`Método de pago con ID ${id} no encontrado`);
         }
