@@ -1,5 +1,4 @@
 //Controlador para compañia
-//Importación para que funcione correctamente
 const logic = require('../Logic/compañia_logic'); 
 const { compañiaSchemaValidation } = require('../Validations/compañia_validation'); 
 

@@ -1,6 +1,8 @@
 const Inventario = require('../models/inventario_model');
 
 // Función asíncrona para crear un inventario
+const Movimiento = require('../models/movimiento_model');
+
 async function crearInventario(body) {
     // Validar que los precios sean positivos
     if (body.precioVenta <= 0 || body.precioCompra <= 0) {
@@ -18,6 +20,7 @@ async function crearInventario(body) {
     }
 
     try {
+        // Crear inventario
         const inventario = new Inventario({
             stockMinimo: body.stockMinimo,
             precioVenta: body.precioVenta,
@@ -26,14 +29,30 @@ async function crearInventario(body) {
             stockMaximo: body.stockMaximo,
             idProducto: body.idProducto
         });
-    
-        return await inventario.save();
+
+        const inventarioGuardado = await inventario.save();
+
+        // Crear movimiento inicial con cantidad igual al stock inicial
+        const movimientoInicial = new Movimiento({
+            fecha: new Date(),
+            cantidadIngreso: body.stock,
+            cantidadVendida: 0,
+            inventario: inventarioGuardado._id
+        });
+
+        const movimientoGuardado = await movimientoInicial.save();
+
+        // Asociar el movimiento al inventario
+        inventarioGuardado.movimientos.push(movimientoGuardado._id);
+        await inventarioGuardado.save();
+
+        return inventarioGuardado;
+
     } catch (error) {
-        console.error('Error guardando inventario en MongoDB:', error); // <- log útil
+        console.error('Error creando inventario y movimiento inicial:', error);
         throw error;
     }
 }
-
 
 // Función asíncrona para actualizar un inventario
 async function actualizarInventario(id, body) {

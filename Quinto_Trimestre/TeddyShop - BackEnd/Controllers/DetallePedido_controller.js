@@ -1,5 +1,4 @@
 //Controlador para DetallePedido
-//Importación para que funcione correctamente
 const logic = require('../Logic/DetallePedido_logic');
 const { detallePedidoSchemaValidation } = require('../Validations/detallePedido_validation'); 
 
@@ -27,7 +26,6 @@ const crearDetallePedido = async (req, res) => {
         const nuevoDetallePedido = await logic.crearDetallePedido(value);
         res.status(201).json(nuevoDetallePedido);
     } catch (err) {
-        console.error('Error al crear detalle de pedido:', err); // <-- Esto te va a decir qué pasó
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

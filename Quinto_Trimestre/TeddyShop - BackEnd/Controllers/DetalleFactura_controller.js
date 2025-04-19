@@ -1,5 +1,4 @@
 //Controlador para DetalleFactura
-//Importación para que funcione correctamente
 const logic = require('../Logic/DetalleFactura_logic');
 const { detalleFacturaSchemaValidation } = require('../Validations/detalleFactura_validation');
 
@@ -16,21 +15,24 @@ const listarDetallesFactura = async (req, res) => {
 // Controlador para crear un nuevo detalle de factura
 const crearDetalleFactura = async (req, res) => {
     const body = req.body;
-
     const { error, value } = detalleFacturaSchemaValidation.validate(body);
 
     if (error) {
+        console.error('Error de validación:', error.details);
         return res.status(400).json({ error: error.details[0].message });
     }
 
     try {
+        console.log('Creando detalle con:', value);
         const nuevoDetalleFactura = await logic.crearDetalleFactura(value);
+        console.log('Detalle creado:', nuevoDetalleFactura);
         res.status(201).json(nuevoDetalleFactura);
     } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor' });
+        res.status(500).json({ 
+            error: 'Error interno del servidor',
+        });
     }
 };
-
 // Controlador para actualizar un detalle de factura
 const actualizarDetalleFactura = async (req, res) => {
     const { id } = req.params;

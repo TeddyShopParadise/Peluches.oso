@@ -45,7 +45,7 @@ async function listarFacturas() {
         return facturas;
     } catch (err) {
         console.error("Error al listar facturas:", err.message);
-        throw new Error("Error al obtener facturas");  // Esto se capturará en el controlador
+        throw new Error("Error al obtener facturas");  
     }
 }
 
