@@ -1,5 +1,4 @@
 //Controlador para Factura
-//Importación para que funcione correctamente
 const logic = require('../Logic/factura_logic'); 
 const { facturaSchemaValidation } = require('../Validations/factura_validation'); 
 
@@ -27,7 +26,6 @@ const crearFactura = async (req, res) => {
         const nuevaFactura = await logic.crearFactura(value);
         res.status(201).json(nuevaFactura);
     } catch (err) {
-        console.error("Error al crear factura:", err); // <--- Agregado
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

@@ -1,5 +1,4 @@
 //Controlador para Roles
-//Importación para que funcione correctamente
 const logic = require('../Logic/roles_logic'); 
 const { rolesSchemaValidation } = require('../Validations/roles_validation'); 
 

@@ -1,5 +1,4 @@
 //Controlador para categoria
-//Importación para que funcione correctamente
 const logic = require('../Logic/categoria_logic'); 
 const { categoriaSchemaValidation } = require('../Validations/categoria_validation'); 
 

@@ -1,5 +1,4 @@
 //Controlador para catalogo
-//Importación para que funcione correctamente
 const logic = require('../Logic/catalogo_logic');
 const { catalogoSchemaValidation } = require('../Validations/catalogo_validation');
 const cloudinary = require('cloudinary').v2;
@@ -90,7 +89,7 @@ const listarCatalogosActivos = async (req, res) => {
     try {
         const catalogosActivos = await logic.listarCatalogosActivos();
         if (catalogosActivos.length === 0) {
-            return res.status(204).send(); // 204 No Content
+            return res.status(204).send(); 
         }
         res.json(catalogosActivos);
     } catch (err) {
@@ -116,7 +115,6 @@ const obtenerCatalogoPorId = async (req, res) => {
 const guardarColeccionCatalogos = async (req, res) => {
     const catalogos = req.body;
 
-    // Validación de cada catálogo en la colección
     for (let catalogo of catalogos) {
         const { error } = catalogoSchemaValidation.validate(catalogo);
         if (error) {
@@ -127,7 +125,6 @@ const guardarColeccionCatalogos = async (req, res) => {
     }
 
     try {
-        // Guardar la colección de catálogos
         const resultados = await logic.guardarCatalogos(catalogos);
         res.status(201).json({ message: 'Catálogos guardados exitosamente', catalogos: resultados });
     } catch (err) {

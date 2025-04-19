@@ -10,11 +10,47 @@ async function crearMovimiento(body) {
         inventario: body.inventario // Se espera un ObjectId de Inventario
     });
 
-    return await movimiento.save();
+    const movimientoGuardado = await movimiento.save();
+
+    // Actualizar stock en el inventario
+    const inventario = await Inventario.findById(body.inventario);
+    if (!inventario) {
+        throw new Error('Inventario no encontrado para el movimiento');
+    }
+
+    inventario.stock += body.cantidadIngreso;
+    inventario.stock -= body.cantidadVendida;
+
+    // Guardar el movimiento en el array de movimientos del inventario
+    inventario.movimientos.push(movimientoGuardado._id);
+
+    await inventario.save();
+
+    return movimientoGuardado;
 }
 
 // Función asíncrona para actualizar un movimiento
 async function actualizarMovimiento(id, body) {
+    const movimientoAnterior = await Movimiento.findById(id);
+    if (!movimientoAnterior) {
+        throw new Error(`Movimiento con ID ${id} no encontrado`);
+    }
+
+    const inventario = await Inventario.findById(movimientoAnterior.inventario);
+    if (!inventario) {
+        throw new Error('Inventario no encontrado para el movimiento');
+    }
+
+    // Revertir el efecto anterior del movimiento
+    inventario.stock -= movimientoAnterior.cantidadIngreso;
+    inventario.stock += movimientoAnterior.cantidadVendida;
+
+    // Aplicar el nuevo efecto del movimiento actualizado
+    inventario.stock += body.cantidadIngreso;
+    inventario.stock -= body.cantidadVendida;
+
+    await inventario.save();
+
     const movimiento = await Movimiento.findByIdAndUpdate(id, {
         $set: {
             fecha: body.fecha,
@@ -57,6 +93,19 @@ async function eliminarMovimiento(id) {
         if (!movimiento) {
             throw new Error(`Movimiento con ID ${id} no encontrado`);
         }
+
+        // Ajustar el stock del inventario
+        const inventario = await Inventario.findById(movimiento.inventario);
+        if (inventario) {
+            inventario.stock -= movimiento.cantidadIngreso;
+            inventario.stock += movimiento.cantidadVendida;
+
+            // Eliminar referencia al movimiento
+            inventario.movimientos = inventario.movimientos.filter(movId => movId.toString() !== id);
+
+            await inventario.save();
+        }
+
         return movimiento;
     } catch (err) {
         console.error(`Error al eliminar el movimiento: ${err.message}`);

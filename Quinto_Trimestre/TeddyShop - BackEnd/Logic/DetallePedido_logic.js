@@ -1,19 +1,65 @@
 const DetallePedido = require('../models/detallePedido_model');
 const Pedido = require('../models/pedido_model');
 const Producto = require('../models/producto_model');
+const Inventario = require('../models/inventario_model');
+const Movimiento = require('../models/movimiento_model');
 
-// Función asíncrona para crear un nuevo detalle de pedido
 async function crearDetallePedido(body) {
-    let detallePedido = new DetallePedido({
-        numDetalle: body.numDetalle,
-        precioDetallePedido: body.precioDetallePedido,
-        cantidadDetallePedido: body.cantidadDetallePedido,
-        pedidoNumPedido: body.pedidoNumPedido,
-        idProducto: body.idProducto
-    });
+    const session = await DetallePedido.startSession();
+    session.startTransaction();
 
-    return await detallePedido.save();
+    try {
+        // Crear el detalle del pedido
+        const detallePedido = new DetallePedido({
+            numDetalle: body.numDetalle,
+            precioDetallePedido: body.precioDetallePedido,
+            cantidadDetallePedido: body.cantidadDetallePedido,
+            pedidoNumPedido: body.pedidoNumPedido,
+            idProducto: body.idProducto
+        });
+
+        const detalleGuardado = await detallePedido.save({ session });
+
+        // Buscar inventario relacionado al producto
+        const inventario = await Inventario.findOne({ idProducto: body.idProducto }).session(session);
+
+        if (!inventario) {
+            throw new Error('No se encontró inventario asociado al producto');
+        }
+
+        // Validar stock suficiente
+        if (inventario.stock < body.cantidadDetallePedido) {
+            throw new Error('Stock insuficiente para completar el pedido');
+        }
+
+        // Crear movimiento por venta
+        const movimiento = new Movimiento({
+            fecha: new Date(),
+            cantidadIngreso: 0,
+            cantidadVendida: body.cantidadDetallePedido,
+            inventario: inventario._id
+        });
+
+        const movimientoGuardado = await movimiento.save({ session });
+
+        // Descontar stock y agregar movimiento al inventario
+        inventario.stock -= body.cantidadDetallePedido;
+        inventario.movimientos.push(movimientoGuardado._id);
+        await inventario.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return detalleGuardado;
+
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        console.error('Error al crear detalle y actualizar inventario/movimiento:', error);
+        throw error;
+    }
 }
+
 
 // Función asíncrona para actualizar un detalle de pedido
 async function actualizarDetallePedido(id, body) {

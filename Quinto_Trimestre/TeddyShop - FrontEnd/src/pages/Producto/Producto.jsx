@@ -276,8 +276,9 @@ const ProductoComponent = () => {
         icon: 'error',
         confirmButtonColor: '#d33'
       },
-      onSuccess: fetchProductos
-    });
+      onSuccess: () => {fetchProductos
+      setProductos(prev => prev.filter(p => p._id !== id));
+  }});
   };
   
   

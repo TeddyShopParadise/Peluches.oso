@@ -1,5 +1,4 @@
 //Controlador para movimiento
-//Importación para que funcione correctamente
 const logic = require('../Logic/movimiento_logic'); 
 const { movimientoSchemaValidation } = require('../Validations/movimiento_validation'); 
 

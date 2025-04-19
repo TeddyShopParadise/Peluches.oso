@@ -1,5 +1,4 @@
 //Controlador para Pedido
-//Importación para que funcione correctamente
 const logic = require('../Logic/pedido_logic'); 
 const { pedidoSchemaValidation } = require('../Validations/pedido_validation'); 
 
@@ -15,21 +14,18 @@ const listarPedidos = async (req, res) => {
 
 // Controlador para crear un nuevo pedido
 const crearPedido = async (req, res) => {
-    const body = req.body;
-
-    const { error, value } = pedidoSchemaValidation.validate(body);
-
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
-    }
-
     try {
-        const nuevoPedido = await logic.crearPedido(value);
-        res.status(201).json(nuevoPedido);
-    } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor' });
+      const pedidoCreado = await logic.crearPedido(req.body);
+      
+      if (req.body.detalles) {
+        await logic.procesarDetallesPedido(pedidoCreado._id, req.body.detalles);
+      }
+      
+      res.status(201).json(pedidoCreado);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-};
+  };
 
 // Controlador para actualizar un pedido
 const actualizarPedido = async (req, res) => {

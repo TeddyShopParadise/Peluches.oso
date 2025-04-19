@@ -54,7 +54,7 @@ async function desactivarCatalogo(id) {
 // Función asíncrona para listar catálogos activos
 async function listarCatalogosActivos() {
     let catalogos = await Catalogo.find({ disponibilidadCatalogo: true })
-    .populate('compania', 'nombreEmpresa'); // Solo trae el nombre de la compañía
+    .populate('compania', 'nombreEmpresa'); 
     return catalogos;
 }
 
@@ -62,7 +62,7 @@ async function listarCatalogosActivos() {
 async function buscarCatalogoPorId(id) {
     try {
         const catalogo = await Catalogo.findById(id)
-            .populate('compania', 'nombreEmpresa') // Solo trae el nombre
+            .populate('compania', 'nombreEmpresa') 
         if (!catalogo) {
             throw new Error(`Catálogo con ID ${id} no encontrado`);
         }
