@@ -1,5 +1,4 @@
 //Controlador para Devoluciones
-//Importación para que funcione correctamente
 const logic = require('../Logic/devoluciones_logic'); 
 const { devolucionesSchemaValidation } = require('../Validations/devoluciones_validation'); 
 

@@ -1,5 +1,4 @@
 //Controlador para Inventario
-//Importación para que funcione correctamente
 const logic = require('../Logic/inventario_logic'); 
 const { inventariosSchemaValidation } = require('../Validations/inventario_validation'); 
 
@@ -27,7 +26,6 @@ const crearInventario = async (req, res) => {
         const nuevoInventario = await logic.crearInventario(value);
         res.status(201).json(nuevoInventario);
     } catch (err) {
-        console.error('Error al crear inventario:', err); // <-- ¡AGREGA ESTO!
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
@@ -36,8 +34,6 @@ const crearInventario = async (req, res) => {
 const actualizarInventario = async (req, res) => {
     const { id } = req.params;
     const body = req.body;
-
-    // Validar el cuerpo de la solicitud usando Joi
     const { error, value } = inventariosSchemaValidation.validate(body);
 
     if (error) {

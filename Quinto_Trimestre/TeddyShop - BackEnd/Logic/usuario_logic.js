@@ -9,8 +9,8 @@ async function crearUsuario(body) {
         contraseña: body.contraseña, 
         username: body.username,
         estado: body.estado,
-        empleados: body.empleados, // Corregido a "empleados"
-        roles: body.roles // Corregido para asegurar que es un array
+        empleados: body.empleados, 
+        roles: body.roles 
     });
 
     return await usuario.save();
@@ -24,12 +24,12 @@ async function actualizarUsuario(id, body) {
             contraseña: body.contraseña, 
             username: body.username,
             estado: body.estado,
-            empleados: body.empleados, // Corregido a "empleados"
-            roles: body.roles // Asegurar que se actualicen correctamente
+            empleados: body.empleados, 
+            roles: body.roles 
         }
     }, { new: true })
     .populate('roles', 'nombre')
-    .populate('empleados', 'nombreEmpleado'); // Corregido a "empleados"
+    .populate('empleados', 'nombreEmpleado'); 
 
     return usuario;
 }
@@ -38,14 +38,14 @@ async function actualizarUsuario(id, body) {
 async function listarUsuarios() {
     return await Usuario.find()
         .populate('roles', 'nombre')
-        .populate('empleados', 'nombreEmpleado'); // Corregido a "empleados"
+        .populate('empleados', 'nombreEmpleado'); 
 }
 
 async function buscarUsuarioPorId(id) {
     try {
         const usuario = await Usuario.findById(id)
             .populate('roles', 'nombre')
-            .populate('empleados', 'nombreEmpleado'); // Corregido a "empleados"
+            .populate('empleados', 'nombreEmpleado'); 
         if (!usuario) {
             throw new Error(`Usuario con ID ${id} no encontrado`);
         }

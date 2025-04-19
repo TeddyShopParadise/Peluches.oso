@@ -15,7 +15,7 @@ async function runAllSeeds() {
   try {
     console.log("Iniciando proceso de semillas...");
 
-   await seedCompañia;
+   //await seedCompañia;
    await empleadosSeed;
    await catalogoSeed;
    await clienteSeed;
@@ -23,8 +23,8 @@ async function runAllSeeds() {
    await detalleFacturaSeed;
    await detallePedidoSeed;
    await facturaSeed;
-   await historialPrecioSeed;
-   await rolesSeed;
+   //await historialPrecioSeed;
+   //await rolesSeed;
    await usuarioSeed;
     
     console.log("Semillas completadas correctamente.");

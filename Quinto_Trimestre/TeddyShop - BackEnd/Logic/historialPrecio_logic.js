@@ -32,7 +32,7 @@ async function actualizarHistorialPrecio(id, body) {
 // Función asíncrona para listar todos los historiales de precios
 async function listarHistorialPrecios() {
     const historialesPrecio = await HistorialPrecio.find()
-        .populate('producto'); // Puedes optar por mostrar información del producto asociado
+        .populate('producto');
     return historialesPrecio;
 }
 
@@ -40,7 +40,7 @@ async function listarHistorialPrecios() {
 async function buscarHistorialPrecioPorId(id) {
     try {
         const historialPrecio = await HistorialPrecio.findById(id)
-            .populate('producto'); // Puedes optar por mostrar información del producto asociado
+            .populate('producto'); 
 
         if (!historialPrecio) {
             throw new Error(`Historial de precio con ID ${id} no encontrado`);

@@ -1,5 +1,4 @@
 //Controlador para Empleado
-//Importación para que funcione correctamente
 const logic = require('../Logic/empleado_logic'); 
 const { empleadoSchemaValidation } = require('../Validations/empleado_validation'); 
 
@@ -16,22 +15,15 @@ const listarEmpleados = async (req, res) => {
 const crearEmpleado = async (req, res) => {
     const body = req.body;
 
-    // 🟡 Log para verificar qué está llegando desde Android
-    console.log('📦 Body recibido desde Android:', body);
-
-    // Validación con Joi
     const { error, value } = empleadoSchemaValidation.validate(body, { abortEarly: false });
     if (error) {
-        console.log('❌ Error de validación:', error.details); // 🟡 Log de errores de validación
         return res.status(400).json({ message: "Validación fallida", details: error.details });
     }
 
     try {
         const nuevoEmpleado = await logic.crearEmpleado(value);
-        console.log('✅ Empleado creado exitosamente:', nuevoEmpleado); // 🟢 Confirmación
         res.status(201).json(nuevoEmpleado);
     } catch (err) {
-        console.error('🔥 Error en lógica de creación de empleado:', err); // 🔴 Log de error del servidor
         res.status(500).json({ error: 'Error interno del servidor', details: err.message });
     }
 };

@@ -26,7 +26,7 @@ async function actualizarDevolucion(id, body) {
 // Función asíncrona para listar todas las devoluciones
 async function listarDevoluciones() {
     let devoluciones = await Devoluciones.find()
-        .populate('inventarios', 'nombreInventario'); // Reemplazar con los campos relevantes de Inventario
+        .populate('inventarios', 'nombreInventario'); 
     return devoluciones;
 }
 
@@ -34,7 +34,7 @@ async function listarDevoluciones() {
 async function buscarDevolucionPorId(id) {
     try {
         const devolucion = await Devoluciones.findById(id)
-            .populate('inventarios', 'nombreInventario'); // Reemplazar con los campos relevantes de Inventario
+            .populate('inventarios', 'nombreInventario'); 
         if (!devolucion) {
             throw new Error(`Devolución con ID ${id} no encontrada`);
         }
