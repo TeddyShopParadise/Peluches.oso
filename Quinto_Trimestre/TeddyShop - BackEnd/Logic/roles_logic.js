@@ -6,7 +6,7 @@ async function crearRol(body) {
     const rol = new Roles({
         estado: body.estado,
         nombre: body.nombre,
-        usuarios: body.usuarios || [] // Inicializa como array vacío si no hay usuarios
+        usuarios: body.usuarios || [] 
     });
 
     return await rol.save();
@@ -28,7 +28,6 @@ async function actualizarRol(id, body) {
 // Función asíncrona para listar todos los roles
 async function listarRoles() {
     const roles = await Roles.find()
-        //opulate('usuarios', 'username email');
     return roles;
 }
 

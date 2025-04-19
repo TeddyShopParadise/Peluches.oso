@@ -1,5 +1,4 @@
 //Controlador para cliente
-//Importación para que funcione correctamente
 const logic = require('../Logic/cliente_logic');  
 const { clienteSchemaValidation } = require('../Validations/cliente_validation'); 
 

@@ -6,7 +6,7 @@ const detalleFacturaSchema = new mongoose.Schema({
     type: Number, // INTEGER en SQL
   },
   precioDetalleFactura: {
-    type: String, // FLOAT o DECIMAL en SQL
+    type: Number, // FLOAT o DECIMAL en SQL
     required: true
   },
   cantidadDetalleFactura: {

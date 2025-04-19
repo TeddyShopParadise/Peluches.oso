@@ -1,5 +1,4 @@
 //Controlador para metodoPago
-//Importación para que funcione correctamente
 const logic = require('../Logic/metodoPago_logic'); 
 const { metodoPagoSchemaValidation } = require('../Validations/metodoPago_validation'); 
 

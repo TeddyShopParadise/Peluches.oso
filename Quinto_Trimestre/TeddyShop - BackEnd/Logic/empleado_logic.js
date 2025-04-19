@@ -7,7 +7,7 @@ async function crearEmpleado(body) {
         dniEmpleado: body.dniEmpleado,
         telefonoEmpleado: body.telefonoEmpleado,
         nombreEmpleado: body.nombreEmpleado,
-        compania: body.compania, // Asegurarse de que sea un ObjectId válido
+        compania: body.compania, 
     });
 
     return await empleado.save();
@@ -20,7 +20,7 @@ async function actualizarEmpleado(id, body) {
             dniEmpleado: body.dniEmpleado,
             telefonoEmpleado: body.telefonoEmpleado,
             nombreEmpleado: body.nombreEmpleado,
-            compania: body.compania, // Asegúrate de que sea un ObjectId válido
+            compania: body.compania, 
             usuario: body.usuario,
         }
     }, { new: true });
@@ -31,7 +31,7 @@ async function actualizarEmpleado(id, body) {
 // Función asíncrona para listar todos los empleados
 async function listarEmpleados() {
     const empleados = await Empleado.find()
-        .populate('compania', 'nombreEmpresa') // Muestra el nombre de la compañía
+        .populate('compania', 'nombreEmpresa') 
     return empleados;
 }
 

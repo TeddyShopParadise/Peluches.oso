@@ -1,9 +1,7 @@
 //Controlador para HistorialPrecio
-//Importación para que funcione correctamente
 const logic = require('../Logic/historialPrecio_logic'); 
 const { historialPrecioSchemaValidation } = require('../Validations/historialPrecio_validation'); 
 
-// Controlador para listar todos los historiales de precio
 const listarHistorialPrecios = async (req, res) => {
     try {
         const historialesPrecio = await logic.listarHistorialPrecios();

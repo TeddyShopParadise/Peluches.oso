@@ -2,6 +2,9 @@ const DetallePedido = require('../models/detallePedido_model');
 const Factura = require('../models/factura_model'); 
 const Cliente = require('../models/cliente_model'); 
 const Pedido = require('../models/pedido_model')
+const Inventario = require('../models/inventario_model');
+const Movimiento = require('../models/movimiento_model');
+
 
 
 // Función asíncrona para crear un nuevo pedido

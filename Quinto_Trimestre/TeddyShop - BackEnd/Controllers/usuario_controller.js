@@ -1,8 +1,7 @@
 //Controlador para Usuario
-//Importación para que funcione correctamente
 const logic = require('../Logic/usuario_logic'); 
 const { usuarioSchemaValidation } = require('../Validations/usuario_validation'); 
-const bcrypt = require('bcrypt'); // Para encriptar contraseñas
+const bcrypt = require('bcrypt'); 
 
 // Controlador para listar todos los usuarios
 const listarUsuarios = async (req, res) => {
