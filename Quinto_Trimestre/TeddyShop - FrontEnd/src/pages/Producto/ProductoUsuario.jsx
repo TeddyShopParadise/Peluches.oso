@@ -100,27 +100,6 @@ const ProductoUsuario = () => {
     }
   };
 
-
-  
-  //Obtener los metodos de pago
-  const fetchMetodosPago = async () => {
-    try {
-      const response = await fetch(METODOSPAGO_API_URL);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setMetodosPago(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error fetching Metodos de pago:', error);
-      setSnackbarMessage('Error al obtener los Metodos de pago');
-      setOpenSnackbar(true);
-    }
-  };
-
-
-
-  
   //Obtener los metodos de pago
   const fetchMetodosPago = async () => {
     try {
@@ -239,20 +218,25 @@ const ProductoUsuario = () => {
 
   const handleSubmitPedido = async () => {
 
-    const ultimoPrecio = (() => {
-      if (!productoSeleccionado || !productoSeleccionado.historialPrecios || productoSeleccionado.historialPrecios.length === 0) {
-        return "No disponible";
+    const { precioFormateado, precioNumerico } = (() => {
+      if (!productoSeleccionado?.historialPrecios?.length) {
+        return { precioFormateado: "No disponible", precioNumerico: 0 };
       }
-      const historialCompleto = productoSeleccionado.historialPrecios.map(precioId =>
-        historialPrecios.find(p => p._id === precioId)
-      );
-    
-      const ultimoRegistro = historialCompleto.filter(Boolean).at(-1); 
-    
-      return ultimoRegistro ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio) : "No disponible";
+  
+      const historialCompleto = productoSeleccionado.historialPrecios
+        .map(precioId => historialPrecios.find(p => p._id === precioId))
+        .filter(Boolean);
+  
+      const ultimoRegistro = historialCompleto.at(-1);
+      
+      return {
+        precioFormateado: ultimoRegistro 
+          ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio)
+          : "No disponible",
+        precioNumerico: ultimoRegistro?.precio || 0
+      };
     })();
-
-
+  
     //Mostrar el nombre del metodo de pago enves del ID
     const metodoPagoNombre = metodosPago.find(
       (metodo) => metodo._id === pedido.metodoPago
@@ -268,7 +252,7 @@ const ProductoUsuario = () => {
     📏 **Tamaño:** ${productoSeleccionado?.tamañoProducto || ''}  
     🛠 **Material:** ${productoSeleccionado?.materialProducto || ''}
     💵 **Metodo de pago seleccionado:** ${metodoPagoNombre}
-    💰 **Total:** ${ultimoPrecio}  
+    💰 **Total:** ${precioFormateado}  
     
     🔹 **Datos del Pedido**  
     👤 **Nombre del Comprador:** ${pedido.nombreComprador}  
@@ -328,10 +312,10 @@ const ProductoUsuario = () => {
 
       const detallePedido = {
         numDetalle: siguienteNumDetalle,
-        precioDetallePedido: ultimoPrecio,
+        precioDetallePedido: precioNumerico, // Convertir a string
         cantidadDetallePedido: 1,
         pedidoNumPedido: responseData._id,
-        productoIdProducto: productoSeleccionado._id
+        idProducto: productoSeleccionado._id
       };
 
     
@@ -351,70 +335,86 @@ const ProductoUsuario = () => {
     
       console.log('DetallePedido guardado:', detalleData);
 
-
-      //Crear la factura automaticamente
       const factura = {
         fechaCreacionFactura: new Date().toISOString(),
         horaCreacionFactura: new Date().toLocaleTimeString('es-CO', { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit',
-            hour12: false 
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false 
         }),
         pedido: responseData._id,
-        detallesFactura: [detalleData._id],
+        detallesFactura: [], // Inicialmente vacío
         metodoPago: pedido.metodoPago,
       };
-    
+  
       console.log("Enviando Factura:", factura);
-        
+      
       const facturaResponse = await fetch(`${apiUrl}/factura`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(factura)
       });
-    
+  
       const facturaData = await facturaResponse.json();
-        
+      
       if (!facturaResponse.ok) {
         throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
       }
-    
+  
       console.log('Factura guardada:', facturaData);
   
-
-
-      //Crear el detalle de la factura
+      // 2. Crear DETALLE_FACTURA con referencia a la factura
       const detalleFactura = {
-        precioDetalleFactura: ultimoPrecio,
+        precioDetalleFactura: precioNumerico.toString(),
         cantidadDetalleFactura: 1,
-        productoIdProducto: productoSeleccionado._id,
-        facturaIdFactura: facturaData._id,
-      }
-
+        idProducto: productoSeleccionado._id, // Nombre correcto del campo
+        facturaIdFactura: facturaData._id // ID de la factura recién creada
+      };
+  
       console.log("Enviando Detalle Factura:", detalleFactura);
-        
+      
       const detalleFacturaResponse = await fetch(`${apiUrl}/detallesFactura`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(detalleFactura)
       });
-    
+  
       const detalleFacturaData = await detalleFacturaResponse.json();
-        
+      
       if (!detalleFacturaResponse.ok) {
         throw new Error(`Error en Detalle Factura: ${JSON.stringify(detalleFacturaData)}`);
       }
-    
+  
       console.log('Detalle Factura guardada:', detalleFacturaData);
   
-      setSnackbarMessage('Pedido, detalle Pedido, detalle factura y factura guardados exitosamente');
+      // 3. Actualizar la FACTURA con el detalle
+      const updateFactura = {
+        fechaCreacionFactura: facturaData.fechaCreacionFactura, // Conservar valor original
+        horaCreacionFactura: facturaData.horaCreacionFactura,
+        pedido: facturaData.pedido,
+        metodoPago: facturaData.metodoPago,
+        detallesFactura: [detalleFacturaData._id] // Agregar el nuevo detalle
+      };
+      
+      const updateResponse = await fetch(`${apiUrl}/factura/${facturaData._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateFactura)
+      });
+  
+      if (!updateResponse.ok) {
+        throw new Error(`Error actualizando factura: ${await updateResponse.text()}`);
+      }
+  
+      console.log('Factura actualizada con detalle');
   
     
     } catch (error) {
       console.error('Error completo:', error);
       setSnackbarMessage(error.message || 'Error al guardar el pedido');
     }
+  
     
     setOpenSnackbar(true);
     handleCloseCarritoDialog();
