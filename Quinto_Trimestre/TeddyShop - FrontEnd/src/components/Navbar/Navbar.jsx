@@ -32,7 +32,7 @@ export default function Navbar() {
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken'    );
     if (token) {
       const decodedToken = JSON.parse(atob(token.split('.')[1]));
       setUserRole(decodedToken.roles && decodedToken.roles[0]);
@@ -175,6 +175,8 @@ export default function Navbar() {
                   <MenuItem component={LinkBehavior} to="/productos" onClick={() => setAnchorElProductos(null)}>Productos</MenuItem>
                   <MenuItem component={LinkBehavior} to="/categoria" onClick={() => setAnchorElProductos(null)}>Categorías</MenuItem>
                   <MenuItem component={LinkBehavior} to="/HistorialPrecio" onClick={() => setAnchorElProductos(null)}>Historial de Precios</MenuItem>
+                  <MenuItem component={LinkBehavior} to="/movimiento" onClick={() => setAnchorElProductos(null)}>Movimientos</MenuItem>
+
                 </Menu>
 
                 <Button
@@ -194,6 +196,7 @@ export default function Navbar() {
                   <MenuItem component={LinkBehavior} to="/Factura" onClick={() => setAnchorElPedidos(null)}>Facturas</MenuItem>
                   <MenuItem component={LinkBehavior} to="/detalleFactura" onClick={() => setAnchorElPedidos(null)}>detalle de Factura</MenuItem>
                   <MenuItem component={LinkBehavior} to="/metodoPago" onClick={() => setAnchorElPedidos(null)}>Método de Pago</MenuItem>
+                  <MenuItem component={LinkBehavior} to="/devoluciones" onClick={() => setAnchorElPedidos(null)}>Devoluciones</MenuItem>
 
                 </Menu>
               </>
