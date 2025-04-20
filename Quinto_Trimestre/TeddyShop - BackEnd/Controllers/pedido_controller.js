@@ -1,4 +1,5 @@
 //Controlador para Pedido
+//Importación para que funcione correctamente
 const logic = require('../Logic/pedido_logic'); 
 const { pedidoSchemaValidation } = require('../Validations/pedido_validation'); 
 
@@ -14,18 +15,21 @@ const listarPedidos = async (req, res) => {
 
 // Controlador para crear un nuevo pedido
 const crearPedido = async (req, res) => {
-    try {
-      const pedidoCreado = await logic.crearPedido(req.body);
-      
-      if (req.body.detalles) {
-        await logic.procesarDetallesPedido(pedidoCreado._id, req.body.detalles);
-      }
-      
-      res.status(201).json(pedidoCreado);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    const body = req.body;
+
+    const { error, value } = pedidoSchemaValidation.validate(body);
+
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
     }
-  };
+
+    try {
+        const nuevoPedido = await logic.crearPedido(value);
+        res.status(201).json(nuevoPedido);
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
 
 // Controlador para actualizar un pedido
 const actualizarPedido = async (req, res) => {
@@ -76,11 +80,38 @@ const eliminarPedido = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+
+//Controlador para actualizar el estado del pedido
+const actualizarEstadoPedido = async (req, res) => {
+    const { id } = req.params;
+    const { estado } = req.body;
+
+    const estadosValidos = ['pendiente', 'en_proceso', 'realizado'];
+
+    if (!estadosValidos.includes(estado)) {
+        return res.status(400).json({ error: 'Estado inválido. Debe ser: pendiente, en proceso o realizado' });
+    }
+
+    try {
+        const pedidoActualizado = await logic.actualizarEstado(id, estado);
+        if (!pedidoActualizado) {
+            return res.status(404).json({ error: 'Pedido no encontrado' });
+        }
+        res.json(pedidoActualizado);
+    } catch (err) {
+        res.status(500).json({ error: 'Error al actualizar el estado del pedido' });
+    }
+};
+
+
+
 // Exportar los controladores
 module.exports = {
     listarPedidos,
     crearPedido,
     actualizarPedido,
     obtenerPedidoPorId,
-    eliminarPedido
+    eliminarPedido,
+    actualizarEstadoPedido
 };

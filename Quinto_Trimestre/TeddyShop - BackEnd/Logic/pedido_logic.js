@@ -2,9 +2,6 @@ const DetallePedido = require('../models/detallePedido_model');
 const Factura = require('../models/factura_model'); 
 const Cliente = require('../models/cliente_model'); 
 const Pedido = require('../models/pedido_model')
-const Inventario = require('../models/inventario_model');
-const Movimiento = require('../models/movimiento_model');
-
 
 
 // Función asíncrona para crear un nuevo pedido
@@ -92,10 +89,27 @@ async function eliminarPedido(id) {
     }
 }
 
+
+//Funcion para actualizar el estado de un pedido
+async function actualizarEstado(id, nuevoEstado) {
+    const pedido = await Pedido.findByIdAndUpdate(
+        id,
+        { estado: nuevoEstado },
+        { new: true }
+    );
+
+    if (!pedido) {
+        throw new Error(`Pedido con ID ${id} no encontrado`);
+    }
+
+    return pedido;
+}
+
 module.exports = {
     crearPedido,
     actualizarPedido,
     listarPedidos,
     buscarPedidoPorId,
-    eliminarPedido
+    eliminarPedido,
+    actualizarEstado
 };

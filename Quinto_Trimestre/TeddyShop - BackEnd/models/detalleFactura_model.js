@@ -32,8 +32,6 @@ const detalleFacturaSchema = new mongoose.Schema({
   timestamps: false
 });
 
-// Definir el índice único compuesto para numDetalle y idProducto
-detalleFacturaSchema.index({ numDetalle: 1, idProductoo: 1 }, { unique: true });
 
 //exportar el modelo
 module.exports = mongoose.model('DetalleFactura', detalleFacturaSchema);
