@@ -401,7 +401,7 @@ const DetalleFactura = () => {
             {detalleDialog?.inventarioIdInventario?._id}
             <br />
             <strong>ID Producto:</strong>{" "}
-            {detalleDialog?.productoIdProducto?._id}
+            {detalleDialog?.idProducto?._id}
             <br />
             <strong>ID Factura:</strong> {detalleDialog?.facturaIdFactura?._id}
           </DialogContentText>

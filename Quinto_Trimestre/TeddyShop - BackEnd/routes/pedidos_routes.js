@@ -269,4 +269,46 @@ router.put('/:id', pedidoController.actualizarPedido);
 
 router.delete('/:id', pedidoController.eliminarPedido);
 
+
+
+/**
+ * @swagger
+ * /pedido/estado/{id}:
+ *   patch:
+ *     summary: Actualiza el estado de un pedido
+ *     tags:
+ *       - Pedidos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del pedido
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               estado:
+ *                 type: string
+ *                 enum: [pendiente, en_proceso, realizado]
+ *                 example: "en_proceso"
+ *     responses:
+ *       200:
+ *         description: Estado del pedido actualizado
+ *       400:
+ *         description: Estado inválido o error en los datos
+ *       404:
+ *         description: Pedido no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.patch('/estado/:id', pedidoController.actualizarEstadoPedido);
+
+
+
+
 module.exports = router;

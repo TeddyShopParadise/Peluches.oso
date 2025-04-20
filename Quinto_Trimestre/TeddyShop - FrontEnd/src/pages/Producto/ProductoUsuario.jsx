@@ -58,7 +58,6 @@ const ProductoUsuario = () => {
     localidad: '',
     direccion: '',
     barrio: '',
-    cliente: '',
   });
 
   // Obtener productos de la API
@@ -100,6 +99,7 @@ const ProductoUsuario = () => {
     }
   };
 
+  
   //Obtener los metodos de pago
   const fetchMetodosPago = async () => {
     try {
@@ -184,7 +184,7 @@ const ProductoUsuario = () => {
       localidad: '',
       direccion: '',
       barrio: '',
-      cliente: '',
+      metodoPago: '',
     });
   };
 
@@ -215,7 +215,6 @@ const ProductoUsuario = () => {
   };
 
   
-
   const handleSubmitPedido = async () => {
 
     const { precioFormateado, precioNumerico } = (() => {
@@ -244,26 +243,26 @@ const ProductoUsuario = () => {
 
     const mensaje = `¡Hola! Me gustaría realizar el siguiente pedido:  
 
-    📌 **Imagen del Producto:**  
+    📌 *Imagen del Producto:*  
     ${productoSeleccionado?.imagen || 'No disponible'}  
     
-    🆔 **ID del Producto:** ${productoSeleccionado?._id || 'No disponible'}  
-    📦 **Producto:** ${productoSeleccionado?.estiloProducto || ''}  
-    📏 **Tamaño:** ${productoSeleccionado?.tamañoProducto || ''}  
-    🛠 **Material:** ${productoSeleccionado?.materialProducto || ''}
-    💵 **Metodo de pago seleccionado:** ${metodoPagoNombre}
-    💰 **Total:** ${precioFormateado}  
+    🆔 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}  
+    📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}  
+    📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}  
+    🛠 *Material:* ${productoSeleccionado?.materialProducto || ''}
+    💵 *Metodo de pago seleccionado:* ${metodoPagoNombre}
+    💰 *Total:* ${precioFormateado}  
     
-    🔹 **Datos del Pedido**  
-    👤 **Nombre del Comprador:** ${pedido.nombreComprador}  
-    👤 **Apellido del Comprador:** ${pedido.apellidoComprador}  
-    📞 **Número del Comprador:** ${pedido.numeroComprador}  
-    👤 **Nombre del Agendador:** ${pedido.nombreAgendador}  
-    👤 **Apellido del Agendador:** ${pedido.apellidoAgendador}  
-    📞 **Número del Agendador:** ${pedido.numeroAgendador}  
-    📍 **Localidad:** ${pedido.localidad}  
-    🏠 **Dirección:** ${pedido.direccion}  
-    🏘 **Barrio:** ${pedido.barrio}`;
+    🔹 *Datos del Pedido*  
+    👤 *Nombre del Comprador:* ${pedido.nombreComprador}  
+    👤 *Apellido del Comprador:* ${pedido.apellidoComprador}  
+    📞 *Número del Comprador:* ${pedido.numeroComprador}  
+    👤 *Nombre del Agendador:* ${pedido.nombreAgendador}  
+    👤 *Apellido del Agendador:* ${pedido.apellidoAgendador}  
+    📞 *Número del Agendador:* ${pedido.numeroAgendador}  
+    📍 *Localidad:* ${pedido.localidad}  
+    🏠 *Dirección:* ${pedido.direccion}  
+    🏘 *Barrio:* ${pedido.barrio}`;
 
     const mensajeCodificado = encodeURIComponent(mensaje.trim());
 
@@ -308,10 +307,8 @@ const ProductoUsuario = () => {
     
 
       // Crear el detalle del pedido
-      const siguienteNumDetalle = await obtenerNumDetalle(responseData._id);
-
       const detallePedido = {
-        numDetalle: siguienteNumDetalle,
+        numDetalle: await obtenerNumDetalle(responseData._id),
         precioDetallePedido: precioNumerico, // Convertir a string
         cantidadDetallePedido: 1,
         pedidoNumPedido: responseData._id,
@@ -335,6 +332,35 @@ const ProductoUsuario = () => {
     
       console.log('DetallePedido guardado:', detalleData);
 
+
+      //Actualizar el pedido
+      const updatePedido = {
+        tamañoOso: responseData.tamañoOso,
+        nombreComprador: responseData.nombreComprador,
+        apellidoComprador: responseData.apellidoComprador,
+        numeroComprador: responseData.numeroComprador,
+        nombreAgendador: responseData.nombreAgendador,
+        apellidoAgendador: responseData.apellidoAgendador,
+        numeroAgendador: responseData.numeroAgendador,
+        localidad: responseData.localidad,
+        direccion: responseData.direccion,
+        barrio: responseData.barrio,
+        detallesPedido: [detalleData._id]
+      };
+      
+      const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatePedido)
+      });
+  
+      if (!updateResponsePedido.ok) {
+        throw new Error(`Error actualizando pedido: ${await updateResponsePedido.text()}`);
+      }
+  
+      console.log('Pedido actualizado con detalle');
+
+
       const factura = {
         fechaCreacionFactura: new Date().toISOString(),
         horaCreacionFactura: new Date().toLocaleTimeString('es-CO', { 
@@ -344,7 +370,7 @@ const ProductoUsuario = () => {
           hour12: false 
         }),
         pedido: responseData._id,
-        detallesFactura: [], // Inicialmente vacío
+        detallesFactura: [],
         metodoPago: pedido.metodoPago,
       };
   
@@ -368,8 +394,8 @@ const ProductoUsuario = () => {
       const detalleFactura = {
         precioDetalleFactura: precioNumerico.toString(),
         cantidadDetalleFactura: 1,
-        idProducto: productoSeleccionado._id, // Nombre correcto del campo
-        facturaIdFactura: facturaData._id // ID de la factura recién creada
+        idProducto: productoSeleccionado._id,
+        facturaIdFactura: facturaData._id 
       };
   
       console.log("Enviando Detalle Factura:", detalleFactura);
@@ -420,8 +446,6 @@ const ProductoUsuario = () => {
     handleCloseCarritoDialog();
     
   };
-
-
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
