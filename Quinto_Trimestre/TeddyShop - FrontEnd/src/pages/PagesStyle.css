@@ -133,3 +133,28 @@ tr:nth-child(even) {
     background-color: #FFB6C1;
     color: white;
 }
+
+
+/* Imprimir Factura */
+@media print {
+    body * {
+      visibility: hidden;
+    }
+    
+    .factura-printable, .factura-printable * {
+      visibility: visible;
+    }
+    
+    .factura-printable {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100% !important;
+      box-shadow: none;
+      padding: 20px;
+    }
+    
+    .no-print {
+      display: none !important;
+    }
+  }

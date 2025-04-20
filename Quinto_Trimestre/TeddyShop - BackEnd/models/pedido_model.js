@@ -43,7 +43,6 @@ const pedidoSchema = new mongoose.Schema({
   cliente: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Cliente', // Referencia a la colección Cliente
-    required: true
   },
  
   detallesPedido: [{
@@ -54,10 +53,19 @@ const pedidoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Factura' // Referencia a la colección Factura
   }],
+
+  estado: {
+    type: String,
+    enum: ['pendiente', 'en_proceso', 'realizado'],
+    default: 'en_proceso'
+  },
+  
 }, {
   collection: 'Pedido',
   timestamps: false
 });
+
+
 
 //exportar el modelo
 module.exports = mongoose.model('Pedido', pedidoSchema);

@@ -1,6 +1,9 @@
 //Controlador para Factura
 const logic = require('../Logic/factura_logic'); 
 const { facturaSchemaValidation } = require('../Validations/factura_validation'); 
+const Pedido = require('../models/pedido_model'); 
+const Factura = require('../models/factura_model');
+const DetalleFactura = require('../models/detalleFactura_model');
 
 // Controlador para listar todas las facturas
 const listarFacturas = async (req, res) => {
@@ -26,6 +29,7 @@ const crearFactura = async (req, res) => {
         const nuevaFactura = await logic.crearFactura(value);
         res.status(201).json(nuevaFactura);
     } catch (err) {
+        console.error("Error al crear factura:", err); // <--- Agregado
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
@@ -80,11 +84,63 @@ const eliminarFactura = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+
+
+const generarFacturaDesdePedido = async (req, res) => {
+    try {
+      const { pedidoId } = req.params;
+  
+      // 1. Obtener pedido con detalles
+      const pedido = await Pedido.findById(pedidoId)
+        .populate({
+          path: "detallesPedido",
+          populate: { path: "idProducto" }
+        });
+  
+      if (!pedido.detallesPedido?.length) {
+        throw new Error("El pedido no tiene productos asociados");
+      }
+  
+      // 2. Crear la factura
+      const factura = new Factura({
+        pedido: pedidoId,
+        metodoPago: pedido.metodoPago,
+      });
+      await factura.save();
+  
+      // 3. Crear detalles de factura vinculados
+      const detallesFactura = await Promise.all(
+        pedido.detallesPedido.map(async (detallePedido) => {
+          const detalle = new DetalleFactura({
+            precioDetalleFactura: detallePedido.precioDetallePedido,
+            cantidadDetalleFactura: detallePedido.cantidadDetallePedido,
+            idProducto: detallePedido.idProducto._id,
+            facturaIdFactura: factura._id, // 👈 Asignar el ID de la factura
+          });
+          await detalle.save();
+          return detalle._id;
+        })
+      );
+  
+      // 4. Actualizar la factura con los detalles
+      factura.detallesFactura = detallesFactura;
+      await factura.save();
+  
+      res.json(factura);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+
+
 // Exportar los controladores
 module.exports = {
     listarFacturas,
     crearFactura,
     actualizarFactura,
     obtenerFacturaPorId,
-    eliminarFactura
+    eliminarFactura,
+    generarFacturaDesdePedido 
 };

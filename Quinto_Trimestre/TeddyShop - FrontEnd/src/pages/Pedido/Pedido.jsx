@@ -20,10 +20,14 @@ import {
   DialogActions,
   IconButton,
   TablePagination,
+  FormControl,
+  MenuItem,
+  Select,
 } from '@mui/material';
-import { Edit, Delete, ArrowUpward, ArrowDownward, Info } from '@mui/icons-material';
+import { Edit, Delete, ArrowUpward, ArrowDownward, Info, Receipt as ReceiptIcon } from '@mui/icons-material';
 import '../PagesStyle.css'
 import { getApiUrl } from '../../utils/apiConfig'
+import FacturaPDF from '../Factura/FacturaPDF';
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
 
@@ -58,11 +62,28 @@ const Pedido = () => {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('nombreComprador');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [facturaDialogOpen, setFacturaDialogOpen] = useState(false);
+  const [facturaGenerada, setFacturaGenerada] = useState(null);
+  const [compania, setCompania] = useState([]);
 
   
   useEffect(() => {
     fetchPedidos();
+    fetchCompania(); 
   }, []);
+
+
+  const fetchCompania = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/compania`);
+      const data = await response.json();
+      setCompania(data[0] || {});
+    } catch (error) {
+      console.error('Error obteniendo datos de compañía:', error);
+    }
+  };
+
+
 
   const fetchPedidos = async () => {
     try {
@@ -206,6 +227,34 @@ const Pedido = () => {
     setOpenDetailDialog(true);
   };
 
+  
+  const handleEstadoChange = async (pedidoId, nuevoEstado) => {
+    try {
+      const response = await fetch(`${apiUrl}/pedido/estado/${pedidoId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al actualizar el estado');
+      }
+  
+      const actualizado = await response.json();
+      setPedidos(prev =>
+        prev.map(p => (p._id === pedidoId ? actualizado : p))
+      );
+      setSnackbarMessage('Estado actualizado con éxito');
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error('Error al cambiar el estado:', error);
+      setSnackbarMessage('Error al actualizar el estado: ' + error.message);
+      setOpenSnackbar(true);
+    }
+  };
+  
+
   if (loading) {
     return <div>Cargando...</div>;
   }
@@ -222,6 +271,36 @@ const Pedido = () => {
     if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
     return 0;
   });
+
+  
+  const handleGenerarFactura = async (pedidoId) => {
+    try {
+      const pedidoSeleccionado = pedidos.find(p => p._id === pedidoId);
+      setSelectedPedido(pedidoSeleccionado);
+  
+      const response = await fetch(`${apiUrl}/factura/generar/${pedidoId}`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al generar factura");
+      }
+  
+      const facturaData = await response.json();
+      const facturaCompleta = await fetch(`${apiUrl}/factura/${facturaData._id}?populate=detallesFactura`);
+      const facturaPoblada = await facturaCompleta.json();
+      
+      setFacturaGenerada(facturaPoblada);
+      setFacturaDialogOpen(true); 
+      
+    } catch (error) {
+      console.error("Error:", error);
+      setSnackbarMessage(error.message);
+      setOpenSnackbar(true);
+    }
+  };
+  
 
   return (
     <Box className="BoxInicial">
@@ -316,7 +395,6 @@ const Pedido = () => {
               fullWidth
               margin="normal"
             />
-            {/* Agregar más campos según sea necesario */}
             {pedidoEdicion ? (
               <Button variant="contained" onClick={actualizarPedido}>
                 Actualizar
@@ -363,9 +441,9 @@ const Pedido = () => {
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Box display="flex" alignItems="center" onClick={() => handleSort('direccion')}>
-                      Direccón
-                      {sortBy === 'direccion' && (sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />)}
+                    <Box display="flex" alignItems="center" onClick={() => handleSort('estado')}>
+                      Estado
+                      {sortBy === 'estado' && (sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />)}
                     </Box>
                   </TableCell>
                   <TableCell align="right">Acciones</TableCell>
@@ -377,7 +455,18 @@ const Pedido = () => {
                     <TableCell>{pedido.nombreComprador}</TableCell>
                     <TableCell>{pedido.apellidoComprador}</TableCell>
                     <TableCell>{pedido.tamañoOso}</TableCell>
-                    <TableCell>{pedido.direccion}</TableCell>
+                    <TableCell>
+                     <FormControl fullWidth size="small">
+                     <Select
+                        value={pedido.estado || 'en_proceso'}
+                        onChange={(e) => handleEstadoChange(pedido._id, e.target.value)}
+                      >
+                        <MenuItem value="pendiente">Cancelado</MenuItem>
+                        <MenuItem value="en_proceso">En proceso</MenuItem>
+                        <MenuItem value="realizado">Realizado</MenuItem>
+                      </Select>
+                     </FormControl>
+                    </TableCell>
                     <TableCell align="right">
                       <IconButton onClick={() => handleEditClick(pedido)}>
                         <Edit />
@@ -391,6 +480,24 @@ const Pedido = () => {
                       <IconButton onClick={() => handleDetailClick(pedido)}>
                         <Info />
                       </IconButton>
+                      <Button 
+                        variant="contained" 
+                        color="success"
+                        disabled={pedido.estado !== 'realizado'}
+                        onClick={() => handleGenerarFactura(pedido._id)}
+                        startIcon={<ReceiptIcon />}
+                        sx={{
+                          ml: 1,
+                          textTransform: 'none',
+                          borderRadius: '8px',
+                          '&:disabled': { 
+                            backgroundColor: '#e0e0e0',
+                            color: '#9e9e9e'
+                          }
+                        }}
+                      >
+                        Generar Factura
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -450,7 +557,6 @@ const Pedido = () => {
                   <strong>Localidad:</strong> {selectedPedido.localidad} <br />
                   <strong>Dirección:</strong> {selectedPedido.direccion} <br />
                   <strong>Barrio:</strong> {selectedPedido.barrio } <br />
-                  <strong>Facturas:</strong> {selectedPedido.facturas?._id || selectedPedido.facturas } <br />
                 </DialogContentText>
               )}
             </DialogContent>
@@ -458,6 +564,15 @@ const Pedido = () => {
               <Button onClick={() => setOpenDetailDialog(false)}>Cerrar</Button>
             </DialogActions>
           </Dialog>
+          {facturaGenerada && selectedPedido && (
+            <FacturaPDF 
+              factura={facturaGenerada}
+              pedido={selectedPedido} 
+              compania={compania}
+              open={facturaDialogOpen}
+              onClose={() => setFacturaDialogOpen(false)}
+            />
+          )}
         </Container>
       </Box>
     </Box>
