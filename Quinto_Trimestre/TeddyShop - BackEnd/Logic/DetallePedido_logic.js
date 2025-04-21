@@ -9,12 +9,21 @@ async function crearDetallePedido(body) {
     session.startTransaction();
 
     try {
+        // Buscar el producto para validar el tamaño
+        const producto = await Producto.findById(body.idProducto);
+        if (!producto) {
+            throw new Error('Producto no encontrado');
+        }
+
+        if (!producto.tamañoProducto) {
+            throw new Error('El producto no tiene tamaño definido');
+        }
+
         // Crear el detalle del pedido
         const detallePedido = new DetallePedido({
-            numDetalle: body.numDetalle,
             precioDetallePedido: body.precioDetallePedido,
             cantidadDetallePedido: body.cantidadDetallePedido,
-            pedidoNumPedido: body.pedidoNumPedido,
+            idPedido: body.idPedido,
             idProducto: body.idProducto
         });
 
@@ -47,12 +56,14 @@ async function crearDetallePedido(body) {
         inventario.movimientos.push(movimientoGuardado._id);
         await inventario.save({ session });
 
+        // Confirmar transacción
         await session.commitTransaction();
         session.endSession();
 
         return detalleGuardado;
 
     } catch (error) {
+        // Si ocurre un error, revertimos la transacción
         await session.abortTransaction();
         session.endSession();
         console.error('Error al crear detalle y actualizar inventario/movimiento:', error);
@@ -61,14 +72,14 @@ async function crearDetallePedido(body) {
 }
 
 
+
 // Función asíncrona para actualizar un detalle de pedido
 async function actualizarDetallePedido(id, body) {
     let detallePedido = await DetallePedido.findByIdAndUpdate(id, {
         $set: {
-            numDetalle: body.numDetalle,
             precioDetallePedido: body.precioDetallePedido,
             cantidadDetallePedido: body.cantidadDetallePedido,
-            pedidoNumPedido: body.pedidoNumPedido,
+            idPedido: body.idPedido,
             idProducto: body.idProducto
         }
     }, { new: true });
@@ -78,18 +89,21 @@ async function actualizarDetallePedido(id, body) {
 
 // Función asíncrona para listar todos los detalles de pedido
 async function listarDetallesPedido() {
+    console.log('Listando todos los detalles de pedido...');
     let detallesPedido = await DetallePedido.find()
-        .populate('pedidoNumPedido', 'numeroPedido') // Reemplazar con los campos relevantes de Pedido
-        .populate('idProducto', 'nombreProducto'); // Reemplazar con los campos relevantes de Producto
+        .populate('idPedido', 'nombreComprador') // Reemplazar con los campos relevantes de Pedido
+        .populate('idProducto', 'tamañoProducto'); // Reemplazar con los campos relevantes de Producto
+    console.log('Detalles de pedido encontrados:', detallesPedido);
     return detallesPedido;
 }
+
 
 // Función asíncrona para buscar un detalle de pedido por su ID
 async function buscarDetallePedidoPorId(id) {
     try {
         const detallePedido = await DetallePedido.findById(id)
-            .populate('pedidoNumPedido', 'numeroPedido') // Reemplazar con los campos relevantes de Pedido
-            .populate('idProducto', 'nombreProducto'); // Reemplazar con los campos relevantes de Producto
+            .populate('idPedido', 'nombreComprador') // Reemplazar con los campos relevantes de Pedido
+            .populate('idProducto', 'tamañoProducto'); // Reemplazar con los campos relevantes de Producto
         if (!detallePedido) {
             throw new Error(`Detalle de Pedido con ID ${id} no encontrado`);
         }

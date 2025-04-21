@@ -28,22 +28,19 @@ const {
  *                   _id:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a79"
- *                   numDetalle:
- *                     type: number
- *                     example: 1
  *                   precioDetalleFactura:
  *                     type: number
  *                     example: 19.99
  *                   cantidadDetalleFactura:
  *                     type: number
  *                     example: 2
- *                   inventarioIdInventario:
+ *                   idInventario:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
  *                   idProducto:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7b"
- *                   facturaIdFactura:
+ *                   idFactura:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7c"
  *       500:
@@ -67,22 +64,19 @@ router.get('/', listarDetallesFactura);
  *           schema:
  *             type: object
  *             properties:
- *               numDetalle:
- *                 type: number
- *                 example: 1
  *               precioDetalleFactura:
  *                 type: number
  *                 example: 19.99
  *               cantidadDetalleFactura:
  *                 type: number
  *                 example: 2
- *               inventarioIdInventario:
+ *               idInventario:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *               idProducto:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7b"
- *               facturaIdFactura:
+ *               idFactura:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7c"
  *     responses:
@@ -118,22 +112,19 @@ router.post('/', crearDetalleFactura);
  *           schema:
  *             type: object
  *             properties:
- *               numDetalle:
- *                 type: number
- *                 example: 1
  *               precioDetalleFactura:
  *                 type: number
  *                 example: 19.99
  *               cantidadDetalleFactura:
  *                 type: number
  *                 example: 2
- *               inventarioIdInventario:
+ *               idInventario:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *               idProducto:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7b"
- *               facturaIdFactura:
+ *               idFactura:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7c"
  *     responses:

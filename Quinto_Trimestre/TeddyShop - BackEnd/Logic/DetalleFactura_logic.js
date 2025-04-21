@@ -6,12 +6,11 @@ const Factura = require('../models/factura_model');
 // Función asíncrona para crear un nuevo detalle de factura
 async function crearDetalleFactura(body) {
     let detalleFactura = new DetalleFactura({
-        numDetalle: body.numDetalle,
         precioDetalleFactura: body.precioDetalleFactura,
         cantidadDetalleFactura: body.cantidadDetalleFactura,
-        inventarioIdInventario: body.inventarioIdInventario,
+        idInventario: body.idInventario,
         idProducto: body.idProducto,
-        facturaIdFactura: body.facturaIdFactura
+        idFactura: body.idFactura
     });
 
     return await detalleFactura.save();
@@ -21,12 +20,11 @@ async function crearDetalleFactura(body) {
 async function actualizarDetalleFactura(id, body) {
     let detalleFactura = await DetalleFactura.findByIdAndUpdate(id, {
         $set: {
-            numDetalle: body.numDetalle,
             precioDetalleFactura: body.precioDetalleFactura,
             cantidadDetalleFactura: body.cantidadDetalleFactura,
-            inventarioIdInventario: body.inventarioIdInventario,
+            idInventario: body.idInventario,
             idProducto: body.idProducto,
-            facturaIdFactura: body.facturaIdFactura
+            idFactura: body.idFactura
         }
     }, { new: true });
 
@@ -36,9 +34,9 @@ async function actualizarDetalleFactura(id, body) {
 // Función asíncrona para listar todos los detalles de factura
 async function listarDetallesFactura() {
     let detallesFactura = await DetalleFactura.find()
-        .populate('inventarioIdInventario', 'nombreInventario') // Reemplazar con los campos relevantes de Inventario
+        .populate('idInventario', 'nombreInventario') // Reemplazar con los campos relevantes de Inventario
         .populate('idProducto', 'nombreProducto') // Reemplazar con los campos relevantes de Producto
-        .populate('facturaIdFactura', 'numeroFactura'); // Reemplazar con los campos relevantes de Factura
+        .populate('idFactura', 'numeroFactura'); // Reemplazar con los campos relevantes de Factura
     return detallesFactura;
 }
 
@@ -46,9 +44,9 @@ async function listarDetallesFactura() {
 async function buscarDetalleFacturaPorId(id) {
     try {
         const detalleFactura = await DetalleFactura.findById(id)
-            .populate('inventarioIdInventario', 'nombreInventario') // Reemplazar con los campos relevantes de Inventario
+            .populate('idInventario', 'stock') // Reemplazar con los campos relevantes de Inventario
             .populate('idProducto', 'nombreProducto') // Reemplazar con los campos relevantes de Producto
-            .populate('facturaIdFactura', 'numeroFactura'); // Reemplazar con los campos relevantes de Factura
+            .populate('idFactura', 'numeroFactura'); // Reemplazar con los campos relevantes de Factura
         if (!detalleFactura) {
             throw new Error(`Detalle de Factura con ID ${id} no encontrado`);
         }

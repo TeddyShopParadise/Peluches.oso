@@ -2,43 +2,33 @@ const mongoose = require('mongoose');
 
 // Define el esquema para la colección Pedido
 const pedidoSchema = new mongoose.Schema({
-  tamañoOso: {
-    type: String, // NVARCHAR en SQL
-    required: true
-  },
   nombreComprador: {
     type: String, // NVARCHAR en SQL
-    required: true
-  },
-  apellidoComprador: {
-    type: String, // NVARCHAR en SQL
+    required: false
   },
   numeroComprador: {
     type: String, // NVARCHAR en SQL
-    required: true
+    required: false
   },
   nombreAgendador: {
     type: String, // NVARCHAR en SQL
-    required: true
-  },
- apellidoAgendador: {
-    type: String, // NVARCHAR en SQL
+    required: false
   },
   numeroAgendador: {
     type: String, // NVARCHAR en SQL
-    required: true
+    required: false
   },
   localidad: {
     type: String, // NVARCHAR en SQL
-    required: true
+    required: false
   },
   direccion: {
     type: String, // NVARCHAR en SQL
-    required: true
+    required: false
   },
   barrio: {
     type: String, // NVARCHAR en SQL
-    required: true
+    required: false
   },
   cliente: {
     type: mongoose.Schema.Types.ObjectId,

@@ -28,16 +28,13 @@ const {
  *                   _id:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a79"
- *                   numDetalle:
- *                     type: number
- *                     example: 1
  *                   precioDetallePedido:
  *                     type: number
  *                     example: 19.99
  *                   cantidadDetallePedido:
  *                     type: number
  *                     example: 3
- *                   pedidoNumPedido:
+ *                   idPedido:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a79"
  *                   idProducto:
@@ -64,16 +61,13 @@ router.get('/', listarDetallesPedido);
  *           schema:
  *             type: object
  *             properties:
- *               numDetalle:
- *                 type: number
- *                 example: 1
  *               precioDetallePedido:
  *                 type: number
  *                 example: 19.99
  *               cantidadDetallePedido:
  *                 type: number
  *                 example: 3
- *               pedidoNumPedido:
+ *               idPedido:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a79"
  *               idProducto:
@@ -112,16 +106,13 @@ router.post('/', crearDetallePedido);
  *           schema:
  *             type: object
  *             properties:
- *               numDetalle:
- *                 type: number
- *                 example: 1
  *               precioDetallePedido:
  *                 type: number
  *                 example: 19.99
  *               cantidadDetallePedido:
  *                 type: number
  *                 example: 3
- *               pedidoNumPedido:
+ *               idPedido:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a79"
  *               idProducto:
