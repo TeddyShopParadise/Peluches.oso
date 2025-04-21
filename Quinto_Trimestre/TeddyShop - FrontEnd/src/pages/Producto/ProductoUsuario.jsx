@@ -492,9 +492,6 @@ console.log('Pedido actualizado con detalle y factura');
                     <Typography variant="body1" color="text.secondary">
                       <strong>Tamaño:</strong> {producto.tamañoProducto}
                     </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                      <strong>Disponibilidad:</strong> {producto.disponibilidadProducto}
-                    </Typography>
                     <Box mt={2} display="flex" justifyContent="space-between">
                       <Button variant="outlined" color="primary" onClick={() => handleDetalleClick(producto)}>
                         Ver Detalles
@@ -539,7 +536,11 @@ console.log('Pedido actualizado con detalle y factura');
                  
                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1, width: "90%", alignItems: "flex-start" }}>
            <Typography variant="body2" sx={{ textAlign: "left" }} gutterBottom><strong>Descripción:</strong> {productoSeleccionado.estiloProducto}</Typography>
+           <Typography variant="body1"><strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}</Typography>
+           <Typography variant="body1"><strong>Disponibilidad:</strong> {productoSeleccionado.disponibilidadProducto}</Typography>
+
                 </Box>
+              
                 </>
               )}
               <Button onClick={handleCloseDetalleDialog} variant="contained" color="secondary" sx={{ mt: 2, borderRadius: "20px", px: 3, py: 1, boxShadow: "0 5px 15px rgba(0, 0, 0, 0.3)" }}>
@@ -550,11 +551,14 @@ console.log('Pedido actualizado con detalle y factura');
 
           <Dialog open={openCarritoDialog} onClose={handleCloseCarritoDialog} maxWidth="sm" fullWidth={false}>
             <DialogTitle>Detalles del pedido</DialogTitle>
+            
             <DialogContent>
               {productoSeleccionado && (
+
+                
                 <>
-                  <Typography variant="body1"><strong>Producto:</strong> {productoSeleccionado.estiloProducto}</Typography>
-                  <Typography variant="body1"><strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}</Typography>
+
+                  
                   <Typography variant="body1" color="text.secondary">
                       <strong>Precio:</strong>
                       {productoSeleccionado.historialPrecios && productoSeleccionado.historialPrecios.length > 0 ? (
