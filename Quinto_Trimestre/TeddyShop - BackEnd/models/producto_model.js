@@ -6,13 +6,10 @@ const productoSchema = new mongoose.Schema({
     type: String, // NVARCHAR en SQL
     required: true
   },
-  materialProducto: {
-    type: String, // NVARCHAR en SQL
-    required: true
-  },
   disponibilidadProducto: {
-    type: String, // NVARCHAR en SQL
-    required: true
+    type: Number, // ✅ Correcto
+    required: true,
+    min: 0 // Valida que no sea negativo
   },
   tamañoProducto: {
     type: String, // NVARCHAR en SQL

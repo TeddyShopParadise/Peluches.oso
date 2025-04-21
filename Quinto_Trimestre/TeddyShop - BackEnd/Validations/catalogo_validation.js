@@ -28,12 +28,6 @@ const catalogoSchemaValidation = Joi.object({
         .messages({
             'boolean.base': 'La disponibilidad del catálogo debe ser un valor booleano'
         }),
-    estiloCatalogo: Joi.string()
-        .required()
-        .messages({
-            'string.base': 'El estilo del catálogo debe ser un texto',
-            'any.required': 'El estilo del catálogo es un campo requerido'
-        }),
         imagen: Joi.string()
         .uri()
         .optional()
