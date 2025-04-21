@@ -8,17 +8,15 @@ const productoSchemaValidation = Joi.object({
             'string.base': 'El estilo del producto debe ser un texto',
             'any.required': 'El estilo del producto es un campo requerido'
         }),
-    materialProducto: Joi.string()
+        disponibilidadProducto: Joi.number()
+        .integer()
+        .min(0)
         .required()
         .messages({
-            'string.base': 'El material del producto debe ser un texto',
-            'any.required': 'El material del producto es un campo requerido'
-        }),
-    disponibilidadProducto: Joi.string()
-        .required()
-        .messages({
-            'string.base': 'La disponibilidad del producto debe ser un texto',
-            'any.required': 'La disponibilidad del producto es un campo requerido'
+            'number.base': 'La disponibilidad debe ser un número entero',
+            'number.integer': 'La disponibilidad debe ser un número entero',
+            'number.min': 'La disponibilidad no puede ser menor a 0',
+            'any.required': 'La disponibilidad es un campo requerido'
         }),
     tamañoProducto: Joi.string()
         .required()

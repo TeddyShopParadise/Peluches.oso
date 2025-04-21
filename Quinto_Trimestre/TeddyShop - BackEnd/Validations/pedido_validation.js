@@ -2,60 +2,44 @@
 const Joi = require('@hapi/joi');
 
 const pedidoSchemaValidation = Joi.object({
-    tamañoOso: Joi.string()
-        .required()
-        .messages({
-            'string.base': 'El tamaño del oso debe ser un texto',
-            'any.required': 'El tamaño del oso es un campo requerido'
-        }),
     nombreComprador: Joi.string()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El nombre del comprador debe ser un texto',
             'any.required': 'El nombre del comprador es un campo requerido'
         }),
-        apellidoComprador: Joi.string()
-        .optional()
-        .messages({
-            'string.base': 'El apellido del comprador debe ser un texto'
-        }),
     numeroComprador: Joi.string()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El número del comprador debe ser un texto',
             'any.required': 'El número del comprador es un campo requerido'
         }),
     nombreAgendador: Joi.string()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El nombre del agendador debe ser un texto',
             'any.required': 'El nombre del agendador es un campo requerido'
         }),
-        apellidoAgendador: Joi.string()
-        .optional()
-        .messages({
-            'string.base': 'El apellido del agendador debe ser un texto'
-        }),
     numeroAgendador: Joi.string()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El número del agendador debe ser un texto',
             'any.required': 'El número del agendador es un campo requerido'
         }),
     localidad: Joi.string()
-        .required()
+        .optional()
         .messages({
             'string.base': 'La localidad debe ser un texto',
             'any.required': 'La localidad es un campo requerido'
         }),
     direccion: Joi.string()
-        .required()
+        .optional()
         .messages({
             'string.base': 'La dirección debe ser un texto',
             'any.required': 'La dirección es un campo requerido'
         }),
     barrio: Joi.string()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El barrio debe ser un texto',
             'any.required': 'El barrio es un campo requerido'
@@ -63,7 +47,7 @@ const pedidoSchemaValidation = Joi.object({
     cliente: Joi.string()
         .length(24)
         .hex()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El ID del cliente debe ser un ID válido',
             'string.length': 'El ID del cliente debe tener 24 caracteres',

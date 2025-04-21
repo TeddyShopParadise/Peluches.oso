@@ -208,64 +208,7 @@ const Facturas = () => {
         }}
       >
         <Container>
-          <h1>{editing ? 'Actualizar Factura' : 'Crear Factura'}</h1>
           <form onSubmit={handleSubmit} noValidate autoComplete="off">
-            <TextField
-              type="date"
-              name="fechaCreacionFactura"
-              value={factura.fechaCreacionFactura}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-            <TextField
-              type="time"
-              name="horaCreacionFactura"
-              value={factura.horaCreacionFactura}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-            <TextField
-              type="text"
-              name="pedido"
-              value={factura.pedido}
-              onChange={handleChange}
-              placeholder="ID del pedido"
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-            <TextField
-              type="text"
-              name="detallesFactura"
-              value={factura.detallesFactura.join(', ')}
-              onChange={(e) => handleChange({ target: { name: 'detallesFactura', value: e.target.value.split(', ') } })}
-              placeholder="Detalles de la factura (separados por comas)"
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-            <TextField
-              type="text"
-              name="metodoPago"
-              value={factura.metodoPago}
-              onChange={handleChange}
-              placeholder="ID del método de pago"
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-            <Button type="submit" variant="contained" sx={{ marginTop: 2 }}>
-              {editing ? 'Actualizar' : 'Crear'}
-            </Button>
           </form>
 
           <Box mt={4}>
@@ -320,9 +263,9 @@ const Facturas = () => {
           <DialogContent>
             {selectedFactura && (
               <DialogContentText>
-                <strong>Pedido:</strong> {selectedFactura.pedido?._id || selectedFactura.pedido}
+                <strong>Pedido:</strong> {selectedFactura.pedido?._id || selectedFactura.pedido?._id}
                 <br />
-                <strong>Detalles:</strong> {selectedFactura.detallesFactura?._id || selectedFactura.detallesFactura}
+                <strong>Detalles:</strong> {selectedFactura.detallesFactura?._id || selectedFactura.detallesFactura?._id}
                 <br />
                 <strong>Método de Pago:</strong> {selectedFactura.metodoPago?.nombreMetodoPago || "No especificado"}
                 <br />

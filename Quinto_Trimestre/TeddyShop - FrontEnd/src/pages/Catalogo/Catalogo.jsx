@@ -40,7 +40,6 @@ const CatalogoComponent = () => {
   const [nombreCatalogo, setNombreCatalogo] = useState('');
   const [descripcionCatalogo, setDescripcionCatalogo] = useState('');
   const [disponibilidadCatalogo, setDisponibilidadCatalogo] = useState(true);
-  const [estiloCatalogo, setEstiloCatalogo] = useState('');
   const [imagenCatalogo, setImagenCatalogo] = useState(null);
   const [companiaSeleccionada, setCompaniaSeleccionada] = useState('');
   const [editingId, setEditingId] = useState(null);
@@ -78,7 +77,7 @@ const CatalogoComponent = () => {
   const { makeRequest } = useApiRequest();
 
   const crearCatalogo = async () => {
-    if (!nombreCatalogo || !estiloCatalogo || !companiaSeleccionada) {
+    if (!nombreCatalogo || !companiaSeleccionada) {
       await Swal.fire({
         icon: 'error',
         title: 'Campos incompletos',
@@ -99,7 +98,6 @@ const CatalogoComponent = () => {
       nombreCatalogo,
       descripcionCatalogo,
       disponibilidadCatalogo,
-      estiloCatalogo,
       compania: companiaSeleccionada,
       imagen: imagenCatalogo
     };
@@ -146,7 +144,7 @@ const CatalogoComponent = () => {
   };
   
   const actualizarCatalogo = async () => {
-    if (!editingId || !nombreCatalogo || !estiloCatalogo || !companiaSeleccionada) {
+    if (!editingId || !nombreCatalogo || !companiaSeleccionada) {
       await Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
@@ -160,7 +158,6 @@ const CatalogoComponent = () => {
       nombreCatalogo,
       descripcionCatalogo: descripcionCatalogo || undefined,
       disponibilidadCatalogo,
-      estiloCatalogo,
       compania: companiaSeleccionada,
       imagen: imagenCatalogo || undefined
     };
@@ -263,7 +260,6 @@ const CatalogoComponent = () => {
     setNombreCatalogo(catalogo.nombreCatalogo);
     setDescripcionCatalogo(catalogo.descripcionCatalogo || '');
     setDisponibilidadCatalogo(catalogo.disponibilidadCatalogo);
-    setEstiloCatalogo(catalogo.estiloCatalogo);
     setCompaniaSeleccionada(catalogo.compania._id || catalogo.compania);
     setImagenCatalogo(catalogo.imagen || null);
   };
@@ -272,7 +268,6 @@ const CatalogoComponent = () => {
     setNombreCatalogo('');
     setDescripcionCatalogo('');
     setDisponibilidadCatalogo(true);
-    setEstiloCatalogo('');
     setCompaniaSeleccionada('');
     setImagenCatalogo(null);
     setEditingId(null);
@@ -349,22 +344,6 @@ const CatalogoComponent = () => {
                 '& .MuiInputBase-input': { fontSize: '1.2rem' },
               }}
             />
-            <TextField
-              type="text"
-              placeholder="Estilo del catálogo"
-              value={estiloCatalogo}
-              onChange={(e) => setEstiloCatalogo(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              label="Estilo del catálogo"
-              sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
-              }}
-            />
-
             <FormControl fullWidth margin="normal" required>
               <InputLabel>Compañía</InputLabel>
               <Select
@@ -412,8 +391,8 @@ const CatalogoComponent = () => {
               variant="contained"
               sx={{ 
                 fontSize: '1.2rem', 
-                flex: 1, // Ocupa el espacio disponible
-                minWidth: 0 // Permite que el flex funcione mejor
+                flex: 1, 
+                minWidth: 0 
               }}
             >
               {editingId ? 'Actualizar' : 'Crear'}
@@ -424,8 +403,8 @@ const CatalogoComponent = () => {
               onClick={resetForm}
               sx={{ 
                 fontSize: '1.2rem', 
-                flex: 1, // Ocupa el espacio disponible
-                minWidth: 0 // Permite que el flex funcione mejor
+                flex: 1, 
+                minWidth: 0 
               }}
             >
               Cancelar
@@ -440,7 +419,6 @@ const CatalogoComponent = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Nombre</TableCell>
-                    <TableCell>Estilo</TableCell>
                     <TableCell>Compañía</TableCell>
                     <TableCell>Acciones</TableCell>
                   </TableRow>
@@ -449,7 +427,6 @@ const CatalogoComponent = () => {
         {catalogos.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage).map((catalogo) => (
           <TableRow key={catalogo._id}>
             <TableCell>{catalogo.nombreCatalogo}</TableCell>
-            <TableCell>{catalogo.estiloCatalogo}</TableCell>
             <TableCell>
                   {catalogo.compania?.nombreEmpresa || 'Sin compañía'}
             </TableCell>
@@ -494,9 +471,6 @@ const CatalogoComponent = () => {
           <DialogContent>
             <DialogContentText>
               <strong>Nombre:</strong> {selectedCatalogo.nombreCatalogo}
-            </DialogContentText>
-            <DialogContentText>
-              <strong>Estilo:</strong> {selectedCatalogo.estiloCatalogo}
             </DialogContentText>
             <DialogContentText>
               <strong>Compañía:</strong> {selectedCatalogo.compania?.nombreEmpresa || 'Sin compañía'}

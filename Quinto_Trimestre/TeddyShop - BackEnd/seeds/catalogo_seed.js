@@ -4,7 +4,6 @@ const catalogoSeed = {
   nombreCatalogo: 'Catálogo de Peluches',
   descripcionCatalogo: 'Un catálogo exclusivo de peluches de todos los tamaños.',
   disponibilidadCatalogo: true,
-  estiloCatalogo: 'Infantil',
   imagen : ' ', 
   compania: '60d5f4847c31a91b8c8b4567', 
   productos: [], 

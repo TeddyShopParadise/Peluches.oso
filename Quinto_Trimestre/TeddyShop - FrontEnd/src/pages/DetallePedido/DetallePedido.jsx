@@ -33,7 +33,6 @@ console.log("Url almacenada: ",apiUrl);
 const DetallePedido = () => {
   const [detalles, setDetalles] = useState([]);
   const [detalle, setDetalle] = useState({
-    numDetalle: '',
     precioDetallePedido: '',
     cantidadDetallePedido: '',
     idPedido: '',
@@ -152,7 +151,6 @@ const DetallePedido = () => {
       // Log para confirmar que los campos han sido limpiados
       console.log('Campos limpiados después de la actualización');
       setDetalle({
-        numDetalle: '',
         precioDetallePedido: '',
         cantidadDetallePedido: '',
         idPedido: '',
@@ -224,72 +222,11 @@ const DetallePedido = () => {
         <Container>
           <h1>Detalles de Pedido</h1>
           <form onSubmit={handleSubmit} noValidate autoComplete="off">
-            {/* Formulario de creación/actualización */}
-            <TextField
-              type="number"
-              name="numDetalle"
-              label="Número de Detalle"
-              value={detalle.numDetalle}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-            <TextField
-              type="number"
-              name="precioDetallePedido"
-              label="Precio"
-              value={detalle.precioDetallePedido}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-            <TextField
-              type="number"
-              name="cantidadDetallePedido"
-              label="Cantidad"
-              value={detalle.cantidadDetallePedido}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-            />
-              <TextField
-                type="text"
-                name="pedidoNumPedido"
-                label="Pedido (ID)"
-                value={detalle.pedidoNumPedido}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                required
-                variant="outlined"
-              />
-
-              <TextField
-                type="text"
-                name="productoIdProducto"
-                label="Producto (ID)"
-                value={detalle.productoIdProducto}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                required
-                variant="outlined"
-              />
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              {editingId ? 'Actualizar' : 'Crear'} Detalle
-            </Button>
           </form>
           <TableContainer component={Paper} sx={{ mt: 3 }}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Num Detalle</TableCell>
                   <TableCell>Precio</TableCell>
                   <TableCell>Cantidad</TableCell>
                   <TableCell>Producto</TableCell>
@@ -300,11 +237,10 @@ const DetallePedido = () => {
               <TableBody>
                 {detalles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((detalle) => (
                   <TableRow key={detalle._id}>
-                    <TableCell>{detalle.numDetalle}</TableCell>
                     <TableCell>{detalle.precioDetallePedido}</TableCell>
                     <TableCell>{detalle.cantidadDetallePedido}</TableCell>
-                    <TableCell>{detalle.productoIdProducto?._id || detalle.productoIdProducto}</TableCell>
-                    <TableCell>{detalle.pedidoNumPedido?._id || detalle.pedidoNumPedido}</TableCell>
+                    <TableCell>{detalle.idProducto?._id || detalle.idProducto}</TableCell>
+                    <TableCell>{detalle.idPedido?._id || detalle.idPedido}</TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleEdit(detalle)}>
                         <Edit />
@@ -337,19 +273,16 @@ const DetallePedido = () => {
         <DialogTitle>Detalles del Pedido</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            <strong>Num Detalle:</strong> {detalleSeleccionado?.numDetalle}
-          </DialogContentText>
-          <DialogContentText>
             <strong>Precio:</strong> {detalleSeleccionado?.precioDetallePedido}
           </DialogContentText>
           <DialogContentText>
             <strong>Cantidad:</strong> {detalleSeleccionado?.cantidadDetallePedido}
           </DialogContentText>
           <DialogContentText>
-            <strong>Pedido:</strong> {detalleSeleccionado?.pedidoNumPedido?._id || detalle.pedidoNumPedido}
+            <strong>Pedido:</strong> {detalleSeleccionado?.idPedido?._id || detalle.idPedido}
           </DialogContentText>
           <DialogContentText>
-            <strong>Producto:</strong> {detalleSeleccionado?.productoIdProducto?._id || detalle.productoIdProducto}
+            <strong>Producto:</strong> {detalleSeleccionado?.idProducto?._id || detalle.idProducto}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

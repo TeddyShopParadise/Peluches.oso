@@ -3,12 +3,9 @@
  const Pedido = require('../models/pedido_model'); 
 
 const pedidoSeed = {
-  tamañoOso: 'Grande', // Tamaño del oso
   nombreComprador: 'Juan Pérez', // Nombre del comprador
-  apellidoComprador: 'Pérez', // Apellido del comprador
   numeroComprador: '3001234567', // Número de contacto del comprador
   nombreAgendador: 'Ana Gómez', // Nombre del agendador
-  apellidoAgendador: 'Gómez', // Apellido del agendador
   numeroAgendador: '3109876543', // Número de contacto del agendador
   localidad: 'Bogotá', // Localidad
   direccion: 'Calle 123 #45-67', // Dirección

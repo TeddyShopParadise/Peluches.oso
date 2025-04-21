@@ -28,9 +28,6 @@ const upload = multer({ storage: storage });
  *               disponibilidadCatalogo:
  *                 type: boolean
  *                 example: true
- *               estiloCatalogo:
- *                 type: string
- *                 example: "Modern"
  *               imagen:
  *                 type: string
  *                 example: "https://example.com/catalogo.png"
@@ -83,9 +80,6 @@ router.post('/',upload.single('image'), catalogoController.crearCatalogo);
  *               disponibilidadCatalogo:
  *                 type: boolean
  *                 example: true
- *               estiloCatalogo:
- *                 type: string
- *                 example: "Modern"
  *               imagen:
  *                 type: string
  *                 example: "https://example.com/catalogo.png"
@@ -160,9 +154,6 @@ router.patch('/:id/desactivar', catalogoController.desactivarCatalogo);
  *                   disponibilidadCatalogo:
  *                     type: boolean
  *                     example: true
- *                   estiloCatalogo:
- *                     type: string
- *                     example: "Modern"
  *                   imagen:
  *                     type: string
  *                     example: "https://example.com/catalogo.png"
@@ -228,9 +219,6 @@ router.get('/:id', catalogoController.obtenerCatalogoPorId);
  *                 disponibilidadCatalogo:
  *                   type: boolean
  *                   example: true
- *                 estiloCatalogo:
- *                   type: string
- *                   example: "Classic"
  *                 imagen:
  *                   type: string
  *                   example: "https://example.com/catalogo.png"

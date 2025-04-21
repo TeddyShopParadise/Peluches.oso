@@ -30,11 +30,8 @@ const upload = multer({ storage: storage });
  *                   estiloProducto:
  *                     type: string
  *                     example: "Estilo 1"
- *                   materialProducto:
- *                     type: string
- *                     example: "Algodón"
  *                   disponibilidadProducto:
- *                     type: string
+ *                     type: Number
  *                     example: "Disponible"
  *                   tamañoProducto:
  *                     type: string
@@ -80,11 +77,8 @@ router.get('/', productoController.listarProductos);
  *               estiloProducto:
  *                 type: string
  *                 example: "Estilo 1"
- *               materialProducto:
- *                 type: string
- *                 example: "Algodón"
  *               disponibilidadProducto:
- *                 type: string
+ *                 type: Number
  *                 example: "Disponible"
  *               tamañoProducto:
  *                 type: string
@@ -167,11 +161,8 @@ router.get('/:id', productoController.obtenerProductoPorId);
  *               estiloProducto:
  *                 type: string
  *                 example: "Estilo 1"
- *               materialProducto:
- *                 type: string
- *                 example: "Algodón"
  *               disponibilidadProducto:
- *                 type: string
+ *                 type: Number
  *                 example: "Disponible"
  *               tamañoProducto:
  *                 type: string

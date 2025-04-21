@@ -4,8 +4,7 @@ const Producto = require('../models/producto_model');
 
 const productoSeed = {
   estiloProducto: 'Clásico', // Estilo del producto 
-  materialProducto: 'Algodón', // Material del producto
-  disponibilidadProducto: 'En stock', // Disponibilidad del producto
+  disponibilidadProducto: 5, // Disponibilidad del producto
   tamañoProducto: 'Grande', // Tamaño del producto
   imagen: ' ',
   historialPrecios: [], // Aquí puedes agregar IDs de historial de precios si los tienes
@@ -14,7 +13,7 @@ const productoSeed = {
 };
 
 // Verificar si el producto ya existe
-Producto.findOne({ estiloProducto: productoSeed.estiloProducto, materialProducto: productoSeed.materialProducto })
+Producto.findOne({ estiloProducto: productoSeed.estiloProducto })
   .then(existingProducto => {
     if (existingProducto) {
       throw new Error(`El producto "${productoSeed.estiloProducto}" ya existe.`);

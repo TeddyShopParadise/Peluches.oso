@@ -31,7 +31,7 @@ const {
  *                   detalleDevolucion:
  *                     type: string
  *                     example: "Producto defectuoso"
- *                   InventarioId:
+ *                   idInventario:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
  *       500:
@@ -59,7 +59,7 @@ router.get('/', listarDevoluciones);
  *               detalleDevolucion:
  *                 type: string
  *                 example: "Producto defectuoso"
- *               InventarioId:
+ *               idInventario:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
@@ -99,7 +99,7 @@ router.post('/', crearDevolucion);
  *               detalleDevolucion:
  *                 type: string
  *                 example: "Producto defectuoso"
- *               InventarioId:
+ *               idInventario:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
@@ -140,7 +140,7 @@ router.put('/:id', actualizarDevolucion);
  *               detalleDevolucion:
  *                 type: string
  *                 example: "Producto defectuoso"
- *               InventarioId:
+ *               idInventario:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:

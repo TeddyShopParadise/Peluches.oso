@@ -22,9 +22,6 @@ const pedidoController = require('../Controllers/pedido_controller');
  *                   _id:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a79"
- *                   tamañoOso:
- *                     type: string
- *                     example: "Grande"
  *                   nombreComprador:
  *                     type: string
  *                     example: "Juan Pérez"
@@ -49,12 +46,6 @@ const pedidoController = require('../Controllers/pedido_controller');
  *                   cliente:
  *                     type: string
  *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
- *                   apellidoAgendador:
- *                     type: string
- *                     example: "López"
- *                   apellidoComprador:
- *                     type: string
- *                     example: "Pérez"
  *                   detallesPedido:
  *                     type: array
  *                     items:
@@ -86,9 +77,6 @@ router.get('/', pedidoController.listarPedidos);
  *           schema:
  *             type: object
  *             properties:
- *               tamañoOso:
- *                 type: string
- *                 example: "Grande"
  *               nombreComprador:
  *                 type: string
  *                 example: "Juan Pérez"
@@ -113,12 +101,6 @@ router.get('/', pedidoController.listarPedidos);
  *               cliente:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
- *               apellidoAgendador:
- *                 type: string
- *                 example: "López"
- *               apellidoComprador:
- *                 type: string
- *                 example: "Pérez"
  *               detallesPedido:
  *                 type: array
  *                 items:
@@ -189,9 +171,6 @@ router.get('/:id', pedidoController.obtenerPedidoPorId);
  *           schema:
  *             type: object
  *             properties:
- *               tamañoOso:
- *                 type: string
- *                 example: "Grande"
  *               nombreComprador:
  *                 type: string
  *                 example: "Juan Pérez"
@@ -216,12 +195,6 @@ router.get('/:id', pedidoController.obtenerPedidoPorId);
  *               cliente:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
- *               apellidoAgendador:
- *                 type: string
- *                 example: "López"
- *               apellidoComprador:
- *                 type: string
- *                 example: "Pérez"
  *               detallesPedido:
  *                 type: array
  *                 items:
