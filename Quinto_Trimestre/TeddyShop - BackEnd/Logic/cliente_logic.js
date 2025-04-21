@@ -2,21 +2,26 @@ const Cliente = require('../models/cliente_model');
 const Pedido = require('../models/pedido_model');
 const Factura = require('../models/factura_model');
 
-// Función asíncrona para crear un cliente
-async function crearCliente(body) {
-    // Verificar si ya existe un cliente con el mismo DNI
-    const clienteExistente = await Cliente.findOne({ dniCliente: body.dniCliente });
+function separarNombreYApellido(nombreCompleto) {
+    const [nombre, ...resto] = nombreCompleto.trim().split(' ');
+    const apellido = resto.join(' ') || '';
+    return { nombre, apellido };
+}
 
+// Crear cliente
+async function crearCliente(body) {
+    const clienteExistente = await Cliente.findOne({ telefonoCliente: body.telefonoCliente });
     if (clienteExistente) {
-        throw new Error('Ya existe un cliente con este DNI');
+        throw new Error('Ya existe un cliente con este numero de telefono');
     }
 
+    const { nombre, apellido } = separarNombreYApellido(body.nombreCliente);
+
     let cliente = new Cliente({
-        dniCliente: body.dniCliente,
-        nombreCliente: body.nombreCliente,
+        nombreCliente: body.nombreCliente,  
+        nombre,                            
+        apellido,                        
         telefonoCliente: body.telefonoCliente,
-        fechaNacimientoCliente: body.fechaNacimientoCliente,
-        apellidoCliente: body.apellidoCliente,
         pedidos: body.pedidos,
         facturas: body.facturas
     });
@@ -24,15 +29,16 @@ async function crearCliente(body) {
     return await cliente.save();
 }
 
-// Función asíncrona para actualizar un cliente
+// Actualizar cliente
 async function actualizarCliente(id, body) {
+    const { nombre, apellido } = separarNombreYApellido(body.nombreCliente);
+
     let cliente = await Cliente.findByIdAndUpdate(id, {
         $set: {
-            dniCliente: body.dniCliente,
-            nombreCliente: body.nombreCliente,
+            nombreCliente: body.nombreCliente,  
+            nombre,                             
+            apellido,                          
             telefonoCliente: body.telefonoCliente,
-            fechaNacimientoCliente: body.fechaNacimientoCliente,
-            apellidoCliente: body.apellidoCliente,
             pedidos: body.pedidos,
             facturas: body.facturas
         }
@@ -41,20 +47,21 @@ async function actualizarCliente(id, body) {
     return cliente;
 }
 
-// Función asíncrona para listar todos los clientes
+
+// Listar todos los clientes
 async function listarClientes() {
     let clientes = await Cliente.find()
-        .populate('pedidos', 'detallePedido') // Reemplazar 'detallePedido' con el campo relevante de Pedido
-        .populate('facturas', 'numeroFactura'); // Reemplazar 'numeroFactura' con el campo relevante de Factura
+        .populate('pedidos', 'detallePedido')
+        .populate('facturas');
     return clientes;
 }
 
-// Función asíncrona para buscar un cliente por su ID
+// Buscar cliente por ID
 async function buscarClientePorId(id) {
     try {
         const cliente = await Cliente.findById(id)
-            .populate('pedidos', 'detallePedido') // Reemplazar 'detallePedido' con el campo relevante de Pedido
-            .populate('facturas', 'numeroFactura'); // Reemplazar 'numeroFactura' con el campo relevante de Factura
+            .populate('pedidos', 'detallePedido')
+            .populate('facturas');
         if (!cliente) {
             throw new Error(`Cliente con ID ${id} no encontrado`);
         }
@@ -65,7 +72,7 @@ async function buscarClientePorId(id) {
     }
 }
 
-// Función asíncrona para eliminar un cliente por su ID
+// Eliminar cliente
 async function eliminarCliente(id) {
     try {
         const cliente = await Cliente.findByIdAndDelete(id);
@@ -79,10 +86,12 @@ async function eliminarCliente(id) {
     }
 }
 
+// Exportar funciones
 module.exports = {
     crearCliente,
     actualizarCliente,
     listarClientes,
     buscarClientePorId,
-    eliminarCliente
+    eliminarCliente,
+    separarNombreYApellido
 };

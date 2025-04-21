@@ -2,9 +2,6 @@ const mongoose = require('mongoose');
 
 // Define el esquema para la colección Detalle_Factura
 const detalleFacturaSchema = new mongoose.Schema({
-  numDetalle: {
-    type: Number, // INTEGER en SQL
-  },
   precioDetalleFactura: {
     type: Number, // FLOAT o DECIMAL en SQL
     required: true
@@ -13,7 +10,7 @@ const detalleFacturaSchema = new mongoose.Schema({
     type: Number, // INTEGER en SQL
     required: true
   },
-  inventarioIdInventario: {
+  idInventario: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Inventario por ObjectId
     ref: 'Inventario',
   },
@@ -22,7 +19,7 @@ const detalleFacturaSchema = new mongoose.Schema({
     ref: 'Producto',
     required: true
   },
-  facturaIdFactura: {
+  idFactura: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Factura por ObjectId
     ref: 'Factura',
     required: true

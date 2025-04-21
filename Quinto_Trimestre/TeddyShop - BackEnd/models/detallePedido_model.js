@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 
 // Define el esquema para la colección Detalle_Pedido
 const detallePedidoSchema = new mongoose.Schema({
-  numDetalle: {
-    type: Number, // INTEGER en SQL
-    required: true
-  },
   precioDetallePedido: {
     type: Number, // FLOAT o DECIMAL en SQL
     required: true
@@ -14,7 +10,7 @@ const detallePedidoSchema = new mongoose.Schema({
     type: Number, // INTEGER en SQL
     required: true
   },
-  pedidoNumPedido: {
+  idPedido: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Pedido por ObjectId
     ref: 'Pedido',
     required: false
@@ -29,8 +25,6 @@ const detallePedidoSchema = new mongoose.Schema({
   timestamps: false
 });
 
-// Definir el índice único compuesto para numDetalle y idProducto
-detallePedidoSchema.index({ numDetalle: 1, idProducto: 1 }, { unique: true });
 
 // exportar el modelo
 module.exports = mongoose.model('DetallePedido', detallePedidoSchema);

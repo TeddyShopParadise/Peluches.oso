@@ -2,14 +2,6 @@
 const Joi = require('@hapi/joi');
 
 const detallePedidoSchemaValidation = Joi.object({
-    numDetalle: Joi.number()
-        .integer()
-        .required()
-        .messages({
-            'number.base': 'El número de detalle debe ser un número',
-            'number.integer': 'El número de detalle debe ser un entero',
-            'any.required': 'El número de detalle es un campo requerido'
-        }),
     precioDetallePedido: Joi.number()
         //.precision(3) // Permite hasta tres decimales para representar un precio
         .required()
@@ -26,7 +18,7 @@ const detallePedidoSchemaValidation = Joi.object({
             'number.integer': 'La cantidad del detalle de pedido debe ser un entero',
             'any.required': 'La cantidad del detalle de pedido es un campo requerido'
         }),
-    pedidoNumPedido: Joi.string()
+        idPedido: Joi.string()
         .length(24)
         .hex()
         .optional()

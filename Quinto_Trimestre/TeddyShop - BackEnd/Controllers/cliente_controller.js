@@ -15,23 +15,36 @@ const listarClientes = async (req, res) => {
 // Controlador para crear un cliente
 const crearCliente = async (req, res) => {
     const body = req.body;
+    console.log('Cuerpo de la solicitud:', body);  // Log para verificar el cuerpo de la solicitud
 
+    // Validación del cliente con Joi
     const { error, value } = clienteSchemaValidation.validate(body);
-
     if (error) {
+        console.log('Error en la validación:', error.details[0].message);  // Log para verificar el error de validación
         return res.status(400).json({ error: error.details[0].message });
     }
 
     try {
+        console.log('Datos validados:', value);  // Log para verificar los datos validados
+
+        const { nombre, apellido } = logic.separarNombreYApellido(value.nombreCliente);
+        console.log('Nombre descompuesto:', nombre);  // Verifica el nombre
+        console.log('Apellido descompuesto:', apellido);  // Verifica el apellido
+
         const nuevoCliente = await logic.crearCliente(value);
+        console.log('Nuevo cliente creado:', nuevoCliente);  // Log para verificar el cliente creado
+
         res.status(201).json(nuevoCliente);
     } catch (err) {
-        if (err.message === 'Ya existe un cliente con este DNI') {
+        console.log('Error al crear el cliente:', err.message);  // Log para capturar el error al crear el cliente
+        if (err.message === 'Ya existe un cliente con este numero de telefono') {
             return res.status(409).json({ error: err.message });
         }
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+
 
 // Controlador para actualizar un cliente
 const actualizarCliente = async (req, res) => {
