@@ -37,12 +37,11 @@ console.log("Url almacenada: ",apiUrl);
 const DetalleFactura = () => {
   const [detalles, setDetalles] = useState([]);
   const [detalle, setDetalle] = useState({
-    numDetalle: "",
     precioDetalleFactura: "",
     cantidadDetalleFactura: "",
-    inventarioIdInventario: "",
-    productoIdProducto: "",
-    facturaIdFactura: "",
+    idInventario: "",
+    idProducto: "",
+    idFactura: "",
   });
   const [editingId, setEditingId] = useState(null);
   const [detalleDialog, setDetalleDialog] = useState(null); // Para mostrar los detalles
@@ -136,9 +135,9 @@ const DetalleFactura = () => {
     // Verifica el contenido de detalleConDatos antes de enviarlo
     const detalleConDatos = {
       ...detalle,
-      productoIdProducto: productoSeleccionado,
-      inventarioIdInventario: inventarioSeleccionado,
-      facturaIdFactura: facturaSeleccionada,
+      idProducto: productoSeleccionado,
+      idInventario: inventarioSeleccionado,
+      idFactura: facturaSeleccionada,
     };
 
     console.log(detalleConDatos); // Verifica que todos los campos estén correctos
@@ -163,12 +162,11 @@ const DetalleFactura = () => {
 
       fetchDetalles();
       setDetalle({
-        numDetalle: "",
         precioDetalleFactura: "",
         cantidadDetalleFactura: "",
-        inventarioIdInventario: "",
-        productoIdProducto: "",
-        facturaIdFactura: "",
+        idInventario: "",
+        idProducto: "",
+        idFactura: "",
       });
       setProductoSeleccionado("");
       setInventarioSeleccionado("");
@@ -205,7 +203,6 @@ const DetalleFactura = () => {
     }
   };
 
-  // Manejar la paginación de la tabla
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -215,7 +212,6 @@ const DetalleFactura = () => {
     setPage(0);
   };
 
-  // Función para abrir el diálogo con los detalles del pedido
   const handleOpenDetalleDialog = (detalle) => {
     setDetalleDialog(detalle);
   };
@@ -237,105 +233,7 @@ const DetalleFactura = () => {
         <Container>
           <h1>Detalles de Factura</h1>
           <form onSubmit={handleSubmit} noValidate autoComplete="off">
-            <TextField
-              type="number"
-              name="numDetalle"
-              label="Número de Detalle"
-              value={detalle.numDetalle}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": { fontSize: "1.2rem" },
-                "& .MuiInputBase-input": { fontSize: "1.2rem" },
-              }}
-            />
-            <TextField
-              type="number"
-              name="precioDetalleFactura"
-              label="Precio"
-              value={detalle.precioDetalleFactura}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": { fontSize: "1.2rem" },
-                "& .MuiInputBase-input": { fontSize: "1.2rem" },
-              }}
-            />
-            <TextField
-              type="number"
-              name="cantidadDetalleFactura"
-              label="Cantidad"
-              value={detalle.cantidadDetalleFactura}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": { fontSize: "1.2rem" },
-                "& .MuiInputBase-input": { fontSize: "1.2rem" },
-              }}
-            />
-            <TextField
-              label="ID Producto"
-              name="productoIdProducto"
-              value={productoSeleccionado}
-              onChange={(e) => setProductoSeleccionado(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": { fontSize: "1.2rem" },
-                "& .MuiInputBase-input": { fontSize: "1.2rem" },
-              }}
-              helperText="Ingresa la ID del producto"
-              type="text"
-            />
-
-            <TextField
-              label="ID Inventario"
-              name="inventarioIdInventario"
-              value={inventarioSeleccionado}
-              onChange={(e) => setInventarioSeleccionado(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": { fontSize: "1.2rem" },
-                "& .MuiInputBase-input": { fontSize: "1.2rem" },
-              }}
-            />
-
-            <TextField
-              label="ID Factura"
-              name="facturaIdFactura"
-              value={facturaSeleccionada}
-              onChange={(e) => setFacturaSeleccionada(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": { fontSize: "1.2rem" },
-                "& .MuiInputBase-input": { fontSize: "1.2rem" },
-              }}
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ marginTop: 2, fontSize: "1.2rem" }}
-            >
-              {editingId ? "Actualizar" : "Crear"}
-            </Button>
+         
           </form>
 
           <Box mt={4}>
@@ -388,7 +286,6 @@ const DetalleFactura = () => {
         </Container>
       </Box>
 
-      {/* Diálogo de detalles */}
       <Dialog open={detalleDialog !== null} onClose={handleCloseDetalleDialog}>
         <DialogTitle>Detalles del Pedido</DialogTitle>
         <DialogContent>
@@ -397,13 +294,11 @@ const DetalleFactura = () => {
             <br />
             <strong>Cantidad:</strong> {detalleDialog?.cantidadDetalleFactura}
             <br />
-            <strong>ID Inventario:</strong>{" "}
-            {detalleDialog?.inventarioIdInventario?._id}
+            <strong>ID Inventario:</strong>{" "}{detalleDialog?.idInventario?._id}
             <br />
-            <strong>ID Producto:</strong>{" "}
-            {detalleDialog?.idProducto?._id}
+            <strong>ID Producto:</strong>{" "}  {detalleDialog?.idProducto?._id}
             <br />
-            <strong>ID Factura:</strong> {detalleDialog?.facturaIdFactura?._id}
+            <strong>ID Factura:</strong> {detalleDialog?.idFactura?._id}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -137,7 +137,7 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
         <View style={styles.clienteSection}>
           <Text style={{ fontSize: 12, marginBottom: 5, color: '#7434B0' }}>CLIENTE</Text>
           <Text style={{ fontSize: 10 }}>
-            {pedido.nombreComprador} {pedido.apellidoComprador}{'\n'}
+            {pedido.nombreComprador} 
             Tel: {pedido.numeroComprador}{'\n'}
             Dirección: {pedido.direccion}
           </Text>
@@ -155,7 +155,7 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
           {factura.detallesFactura?.map((item, index) => (
             <View key={index} style={styles.tablaRow}>
               <Text style={styles.columnaProducto}>
-                {item.idProducto?.estiloProducto || "Producto no especificado"}
+                {item.idProducto?._id || "Producto no especificado"}
               </Text>
               <Text style={styles.columnaPrecio}>
                 ${item.precioDetalleFactura?.toLocaleString('es-CO')}
