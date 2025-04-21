@@ -353,13 +353,13 @@ const Pedido = () => {
                   <TableRow key={pedido._id}>
                     <TableCell>{pedido.nombreComprador}</TableCell>
                     <TableCell>
-        {pedido.detallesPedido.map(detalle => (
-  <div key={detalle._id}>
-     {detalle.idProducto?.tamañoProducto}
-  </div>
-))
-}
-      </TableCell>
+                            {pedido.detallesPedido.map(detalle => (
+                      <div key={detalle._id}>
+                         {detalle.idProducto?.tamañoProducto}
+                      </div>
+                    ))
+                    }
+                   </TableCell>
                     <TableCell>
                      <FormControl fullWidth size="small">
                      <Select

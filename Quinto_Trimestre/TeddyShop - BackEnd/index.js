@@ -4,7 +4,6 @@ const { swaggerUi, swaggerSpec } = require('./swagger/swagger');
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
-const runAllSeeds = require('./seeds/seedDatabase');
 const cors = require('cors');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
@@ -52,7 +51,6 @@ mongoose.connect('mongodb+srv://sa:PM02s8wkGc77jfO3@cluster0.hhmn9.mongodb.net/?
   .then(() => {
     console.log('Conexión exitosa a MongoDB');
 
-      runAllSeeds();
   })
   .catch(err => console.error('Error de conexión a MongoDB:', err));
 

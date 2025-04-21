@@ -26,6 +26,7 @@ import { getApiUrl } from '../../utils/apiConfig';
 
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
+const METODOSPAGO_API_URL = apiUrl + "/metodoPago";
 
 export default function CatalogoUsuario() {
   const [catalogos, setCatalogos] = useState([]);
@@ -43,8 +44,10 @@ export default function CatalogoUsuario() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [historialPrecios, setHistorialPrecios] = useState([]);
   const [openCarritoDialog, setOpenCarritoDialog] = useState(false);
+  const [metodosPago, setMetodosPago] = useState([]);
+  
   const [pedido, setPedido] = useState({
-    tamañoOso: '',
+    metodoPago: '',
     nombreComprador: '',
     numeroComprador: '',
     nombreAgendador: '',
@@ -69,6 +72,7 @@ export default function CatalogoUsuario() {
   useEffect(() => {
     if (productosCatalogo.length > 0) {
       filterProductos(categoriaFiltro);
+      fetchMetodosPago();
     }
   }, [categoriaFiltro, productosCatalogo]);
 
@@ -83,6 +87,24 @@ export default function CatalogoUsuario() {
       setOpenSnackbar(true);
     }
   };
+
+
+    //Obtener los metodos de pago
+    const fetchMetodosPago = async () => {
+      try {
+        const response = await fetch(METODOSPAGO_API_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMetodosPago(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error fetching Metodos de pago:', error);
+        setSnackbarMessage('Error al obtener los Metodos de pago');
+        setOpenSnackbar(true);
+      }
+    };
+
 
   const fetchHistorialPrecios = async () => {
     try {
@@ -104,6 +126,7 @@ export default function CatalogoUsuario() {
   const handleCloseCarritoDialog = () => {
     setOpenCarritoDialog(false);
     setPedido({
+      metodoPago: '',
       tamañoOso: '',
       nombreComprador: '',
       numeroComprador: '',
@@ -121,45 +144,59 @@ export default function CatalogoUsuario() {
   };
 
   const handleSubmitPedido = async () => {
-    const ultimoPrecio = (() => {
-      if (!productoSeleccionado?.historialPrecios?.length) return "No disponible";
-      
+    const { precioFormateado, precioNumerico } = (() => {
+      if (!productoSeleccionado?.historialPrecios?.length) {
+        return { precioFormateado: "No disponible", precioNumerico: 0 };
+      }
+  
       const historialCompleto = productoSeleccionado.historialPrecios
         .map(precioId => historialPrecios.find(p => p._id === precioId))
         .filter(Boolean);
-      
+  
       const ultimoRegistro = historialCompleto.at(-1);
-      return ultimoRegistro ? 
-        new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio) 
-        : "No disponible";
+      
+      return {
+        precioFormateado: ultimoRegistro 
+          ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio)
+          : "No disponible",
+        precioNumerico: ultimoRegistro?.precio || 0
+      };
     })();
   
+    // Obtener el nombre del método de pago
+    const metodoPagoNombre = metodosPago.find(
+      (metodo) => metodo._id === pedido.metodoPago
+    )?.nombreMetodoPago || 'No seleccionado';
+  
+    // Crear mensaje de WhatsApp
     const mensaje = `¡Hola! Me gustaría realizar el siguiente pedido:  
-
-    📌 **Imagen del Producto:**  
+  
+    📌 *Imagen del Producto:*  
     ${productoSeleccionado?.imagen || 'No disponible'}  
     
-    🆔 **ID del Producto:** ${productoSeleccionado?._id || 'No disponible'}  
-    📦 **Producto:** ${productoSeleccionado?.estiloProducto || ''}  
-    📏 **Tamaño:** ${productoSeleccionado?.tamañoProducto || ''}  
-    💰 **Total:** ${ultimoPrecio}  
+    🆔 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}  
+    📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}  
+    📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}  
+    💵 *Metodo de pago seleccionado:* ${metodoPagoNombre}
+    💰 *Total:* ${precioFormateado}  
     
-    🔹 **Datos del Pedido**  
-    👤 **Nombre del Comprador:** ${pedido.nombreComprador}  
-    📞 **Número del Comprador:** ${pedido.numeroComprador}  
-    👤 **Nombre del Agendador:** ${pedido.nombreAgendador}  
-    📞 **Número del Agendador:** ${pedido.numeroAgendador}  
-    📍 **Localidad:** ${pedido.localidad}  
-    🏠 **Dirección:** ${pedido.direccion}  
-    🏘 **Barrio:** ${pedido.barrio}`;
+    🔹 *Datos del Pedido*  
+    👤 *Nombre del Comprador:* ${pedido.nombreComprador}  
+    📞 *Número del Comprador:* ${pedido.numeroComprador}  
+    👤 *Nombre del Agendador:* ${pedido.nombreAgendador}  
+    📞 *Número del Agendador:* ${pedido.numeroAgendador}  
+    📍 *Localidad:* ${pedido.localidad}  
+    🏠 *Dirección:* ${pedido.direccion}  
+    🏘 *Barrio:* ${pedido.barrio}`;
   
     const mensajeCodificado = encodeURIComponent(mensaje.trim());
     const numeroWhatsApp = "573217292955";
     const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
+    window.open(urlWhatsApp, "_blank");
   
     try {
+      // Paso 1: Crear el pedido
       const pedidoCompleto = {
-        tamañoOso: productoSeleccionado?.tamañoProducto || "Sin tamaño",
         nombreComprador: pedido.nombreComprador || "Sin nombre",
         numeroComprador: pedido.numeroComprador || "0000000000",
         nombreAgendador: pedido.nombreAgendador || "Sin nombre",
@@ -167,25 +204,169 @@ export default function CatalogoUsuario() {
         localidad: pedido.localidad || "Sin localidad",
         direccion: pedido.direccion || "Sin dirección",
         barrio: pedido.barrio || "Sin barrio",
-        cliente: "123456789123456789123456",
+        cliente: "671976d2269e33c817066681",
+        facturas: [],
+        detallesPedido: [] // Inicializar como array vacío
       };
   
-      await fetch(`${apiUrl}/pedido`, {
+      console.log("Enviando pedido:", JSON.stringify(pedidoCompleto, null, 2));
+  
+      const response = await fetch(`${apiUrl}/pedido`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pedidoCompleto)
       });
   
-      setSnackbarMessage('Pedido enviado y guardado exitosamente');
-      window.open(urlWhatsApp, "_blank");
+      const responseData = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${JSON.stringify(responseData)}`);
+      }
+  
+      console.log('Pedido guardado:', responseData);
+  
+      // Paso 2: Crear el detalle del pedido
+      const detallePedido = {
+        precioDetallePedido: precioNumerico,
+        cantidadDetallePedido: 1,
+        idPedido: responseData._id,
+        idProducto: productoSeleccionado._id
+      };
+  
+      console.log("Enviando detallePedido:", detallePedido);
+  
+      const detalleResponse = await fetch(`${apiUrl}/detallesPedido`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(detallePedido)
+      });
+  
+      const detalleData = await detalleResponse.json();
+  
+      if (!detalleResponse.ok) {
+        throw new Error(`Error en detallePedido: ${JSON.stringify(detalleData)}`);
+      }
+  
+      console.log('DetallePedido guardado:', detalleData);
+  
+      // Paso 3: Crear la factura
+      const factura = {
+        fechaCreacionFactura: new Date().toISOString(),
+        horaCreacionFactura: new Date().toLocaleTimeString('es-CO', { 
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false 
+        }),
+        pedido: responseData._id,
+        detallesFactura: [],
+        metodoPago: pedido.metodoPago,
+      };
+  
+      console.log("Enviando Factura:", factura);
+      
+      const facturaResponse = await fetch(`${apiUrl}/factura`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(factura)
+      });
+  
+      const facturaData = await facturaResponse.json();
+      
+      if (!facturaResponse.ok) {
+        throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
+      }
+  
+      console.log('Factura guardada:', facturaData);
+  
+      // Paso 4: Crear el detalle de la factura
+      const detalleFactura = {
+        precioDetalleFactura: precioNumerico.toString(),
+        cantidadDetalleFactura: 1,
+        idProducto: productoSeleccionado._id,
+        idFactura: facturaData._id 
+      };
+  
+      console.log("Enviando Detalle Factura:", detalleFactura);
+      
+      const detalleFacturaResponse = await fetch(`${apiUrl}/detallesFactura`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(detalleFactura)
+      });
+  
+      const detalleFacturaData = await detalleFacturaResponse.json();
+      
+      if (!detalleFacturaResponse.ok) {
+        throw new Error(`Error en Detalle Factura: ${JSON.stringify(detalleFacturaData)}`);
+      }
+  
+      console.log('Detalle Factura guardada:', detalleFacturaData);
+  
+      // Paso 5: Actualizar la factura con el detalle
+      const updateFactura = {
+        fechaCreacionFactura: facturaData.fechaCreacionFactura,
+        horaCreacionFactura: facturaData.horaCreacionFactura,
+        pedido: facturaData.pedido,
+        metodoPago: facturaData.metodoPago,
+        detallesFactura: [detalleFacturaData._id]
+      };
+      
+      const updateResponse = await fetch(`${apiUrl}/factura/${facturaData._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateFactura)
+      });
+  
+      if (!updateResponse.ok) {
+        throw new Error(`Error actualizando factura: ${await updateResponse.text()}`);
+      }
+  
+      console.log('Factura actualizada con detalle');
+  
+      // Paso 6: Actualizar el pedido con el detalle y la factura
+const updatePedido = {
+nombreComprador: responseData.nombreComprador,
+numeroComprador: responseData.numeroComprador,
+nombreAgendador: responseData.nombreAgendador,
+numeroAgendador: responseData.numeroAgendador,
+localidad: responseData.localidad,
+direccion: responseData.direccion,
+barrio: responseData.barrio,
+detallesPedido: [detalleData._id],
+facturas: [facturaData._id],
+cliente: responseData.cliente
+};
+
+console.log('Intentando actualizar el pedido con:', updatePedido);
+
+const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
+method: 'PUT',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(updatePedido)
+});
+
+const updateResponseText = await updateResponsePedido.text();
+
+if (!updateResponsePedido.ok) {
+console.error('Error al actualizar pedido - status:', updateResponsePedido.status);
+console.error('Respuesta del servidor:', updateResponseText);
+throw new Error(`Error actualizando pedido: ${updateResponseText}`);
+}
+
+console.log('Pedido actualizado con detalle y factura');
+
+      setSnackbarMessage('Pedido realizado con éxito');
     } catch (error) {
-      console.error('Error al guardar el pedido:', error);
-      setSnackbarMessage('Error al procesar el pedido');
+      console.error('Error completo:', error);
+      setSnackbarMessage(error.message || 'Error al guardar el pedido');
+      setOpenSnackbar(true);
     }
   
     setOpenSnackbar(true);
     handleCloseCarritoDialog();
   };
+
   
 
 
@@ -250,9 +431,14 @@ export default function CatalogoUsuario() {
     setProductoSeleccionado(null);
   };
 
+
+  
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+
+
 
   const indexOfLastProduct = currentPage * productosPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productosPerPage;
@@ -433,7 +619,9 @@ export default function CatalogoUsuario() {
                             </div>
                           ) : null;
                         })}
+                         <strong>Tamaño:</strong> {producto.tamañoProducto}
                       </Typography>
+                      
                           <Box mt={2} display="flex" justifyContent="space-between">
                             <Button 
                               variant="outlined" 
@@ -515,7 +703,7 @@ export default function CatalogoUsuario() {
                         alignItems: "flex-start" 
                       }}>
                         <Typography variant="body2" sx={{ textAlign: "left" }} gutterBottom>
-                          <strong>Producto:</strong> {productoSeleccionado.estiloProducto}
+                          <strong>Descripción del Producto:</strong> {productoSeleccionado.estiloProducto}
                         </Typography>
                         <Typography variant="body2" sx={{ textAlign: "left" }}>
                           <strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}
@@ -564,6 +752,22 @@ export default function CatalogoUsuario() {
 
                           <Box sx={{ mt: 2 }}>
                             <Typography variant="subtitle1" gutterBottom>Información del Comprador</Typography>
+                             <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                                <InputLabel id="metodo-pago-label">Método de Pago</InputLabel>
+                                <Select
+                                  labelId="metodo-pago-label"
+                                  name="metodoPago"
+                                  value={pedido.metodoPago}
+                                  label="Método de Pago"
+                                  onChange={handleInputChange}
+                                >
+                                  {metodosPago.map((metodo) => (
+                                    <MenuItem key={metodo._id} value={metodo._id}>
+                                      {metodo.nombreMetodoPago}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </FormControl>
                             <TextField
                               label="Nombre del Comprador"
                               fullWidth
