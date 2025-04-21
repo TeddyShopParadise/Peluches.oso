@@ -102,8 +102,7 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
     (sum, item) => sum + item.precioDetalleFactura * item.cantidadDetalleFactura,
     0
   );
-  const iva = subtotal * 0.19;
-  const total = subtotal + iva;
+  const total = subtotal
 
   return (
     <Document>
@@ -174,9 +173,6 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
         <View style={styles.totalSection}>
           <Text style={{ fontSize: 10, textAlign: 'right' }}>
             Subtotal: ${subtotal?.toLocaleString('es-CO')}
-          </Text>
-          <Text style={{ fontSize: 10, textAlign: 'right' }}>
-            IVA (19%): ${iva?.toLocaleString('es-CO')}
           </Text>
           <Text style={{ fontSize: 12, textAlign: 'right', fontWeight: 'bold', marginTop: 5 }}>
             TOTAL: ${total?.toLocaleString('es-CO')}
