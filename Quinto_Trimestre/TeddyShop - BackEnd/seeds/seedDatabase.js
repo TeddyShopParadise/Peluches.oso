@@ -17,12 +17,12 @@ async function runAllSeeds() {
 
    //await seedCompañia;
    await empleadosSeed;
-   await catalogoSeed;
-   await clienteSeed;
-   await categoriaSeed;
-   await detalleFacturaSeed;
-   await detallePedidoSeed;
-   await facturaSeed;
+   //await catalogoSeed;
+   //await clienteSeed;
+   //await categoriaSeed;
+   //await detalleFacturaSeed;
+   //await detallePedidoSeed;
+   //await facturaSeed;
    //await historialPrecioSeed;
    //await rolesSeed;
    await usuarioSeed;
