@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 // Define el esquema para la colección Factura
 const facturaSchema = new mongoose.Schema({
   fechaCreacionFactura: {
-    type: String, 
-    required: true
+    type: String,
+    default: () => new Date().toISOString().split('T')[0] // Fecha actual por defecto
   },
   horaCreacionFactura: {
-    type: String, // TIME en SQL se puede almacenar como cadena
-    required: true
+    type: String,
+    default: () => new Date().toLocaleTimeString('ES-es') // Hora actual por defecto
   },
   pedido: {
     type: mongoose.Schema.Types.ObjectId,

@@ -36,7 +36,6 @@ const ProductoComponent = () => {
   const [catalogos, setCatalogos] = useState([]);
   const [historialPrecios, setHistorialPrecios] = useState([]); 
   const [estiloProducto, setEstiloProducto] = useState('');
-  const [materialProducto, setMaterialProducto] = useState('');
   const [disponibilidadProducto, setDisponibilidadProducto] = useState('');
   const [tamañoProducto, setTamañoProducto] = useState('');
   const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState([]);
@@ -159,7 +158,7 @@ const ProductoComponent = () => {
   const { makeRequest } = useApiRequest();
 
   const crearProducto = async () => {
-    if (!estiloProducto || !materialProducto || !disponibilidadProducto || !tamañoProducto || 
+    if (!estiloProducto || !disponibilidadProducto || !tamañoProducto || 
         categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
       await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
       return;
@@ -167,7 +166,6 @@ const ProductoComponent = () => {
   
     const productoData = {
       estiloProducto,
-      materialProducto,
       disponibilidadProducto,
       tamañoProducto,
       categorias: categoriasSeleccionadas,
@@ -198,7 +196,7 @@ const ProductoComponent = () => {
   };
   
   const actualizarProducto = async () => {
-    if (!editingId || !estiloProducto || !materialProducto || !disponibilidadProducto || 
+    if (!editingId || !estiloProducto || !disponibilidadProducto || 
         categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
       await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
       return;
@@ -206,7 +204,6 @@ const ProductoComponent = () => {
   
     const productoData = {
       estiloProducto,
-      materialProducto,
       disponibilidadProducto,
       tamañoProducto,
       imagen: imagenProducto,
@@ -287,8 +284,7 @@ const ProductoComponent = () => {
   const editarProducto = (producto) => {
     setEditingId(producto._id);
     setEstiloProducto(producto.estiloProducto || '');
-    setMaterialProducto(producto.materialProducto || '');
-    setDisponibilidadProducto(producto.disponibilidadProducto || '');
+    setDisponibilidadProducto(producto.disponibilidadProducto || 0);
     setTamañoProducto(producto.tamañoProducto || '');
     setImagenProducto(producto.imagen || '');
     const categorias = Array.isArray(producto.categorias) ? producto.categorias : [];
@@ -357,8 +353,7 @@ const handleNoActualizarInventario = () => {
 
   const resetForm = () => {
     setEstiloProducto('');
-    setMaterialProducto('');
-    setDisponibilidadProducto('');
+    setDisponibilidadProducto(0);
     setTamañoProducto('');
     setImagenProducto('');
     setCategoriasSeleccionadas([]);
@@ -399,13 +394,6 @@ const handleNoActualizarInventario = () => {
           value={estiloProducto}
           onChange={(e) => setEstiloProducto(e.target.value)}
           label="Descripción Producto"
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          value={materialProducto}
-          onChange={(e) => setMaterialProducto(e.target.value)}
-          label="Material"
           fullWidth
           margin="normal"
         />
@@ -550,7 +538,6 @@ const handleNoActualizarInventario = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Tamaño</TableCell>
-                <TableCell>Material</TableCell>
                 <TableCell>Disponibilidad</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
@@ -561,7 +548,6 @@ const handleNoActualizarInventario = () => {
                 .map((producto) => (
                     <TableRow key={producto._id}>
                       <TableCell>{producto.tamañoProducto}</TableCell>
-                      <TableCell>{producto.materialProducto}</TableCell>
                       <TableCell>{producto.disponibilidadProducto}</TableCell>
                       <TableCell>
                         <IconButton

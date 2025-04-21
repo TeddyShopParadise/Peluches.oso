@@ -15,10 +15,6 @@ const catalogoSchema = new mongoose.Schema({
     required: true,
     default: true
   },
-  estiloCatalogo: {
-    type: String, // Atributo "EstiloCatalogo"
-    required: true
-  },
   imagen: {
     type: String, 
     required: false

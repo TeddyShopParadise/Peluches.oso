@@ -105,7 +105,7 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
                   fontWeight: 600,
                   fontSize: { xs: '1rem', md: '1.1rem' }
                 }}>
-                  {pedido?.nombreComprador} {pedido?.apellidoComprador}
+                  {pedido?.nombreComprador} 
                 </Typography>
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -178,7 +178,7 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
                 <TableRow key={index}>
                   <TableCell sx={{ minWidth: 200 }}>
                     <Typography sx={{ fontWeight: 500 }}>
-                      {item.idProducto?.estiloProducto || "Producto no especificado"}
+                      {item.idProducto?._id || "Producto no especificado"}
                     </Typography>
                   </TableCell>
                   <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>

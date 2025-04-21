@@ -46,10 +46,8 @@ export default function CatalogoUsuario() {
   const [pedido, setPedido] = useState({
     tamañoOso: '',
     nombreComprador: '',
-    apellidoComprador: '',
     numeroComprador: '',
     nombreAgendador: '',
-    apellidoAgendador: '',
     numeroAgendador: '',
     localidad: '',
     direccion: '',
@@ -57,7 +55,6 @@ export default function CatalogoUsuario() {
     cliente: '',
   });
 
-  // Nuevo efecto para obtener historial de precios
   useEffect(() => {
     fetchHistorialPrecios();
   }, []);
@@ -99,7 +96,6 @@ export default function CatalogoUsuario() {
     }
   };
 
-  // Nuevo handler para el diálogo de compra
   const handleCarritoClick = (producto) => {
     setProductoSeleccionado(producto);
     setOpenCarritoDialog(true);
@@ -110,10 +106,8 @@ export default function CatalogoUsuario() {
     setPedido({
       tamañoOso: '',
       nombreComprador: '',
-      apellidoComprador: '',
       numeroComprador: '',
       nombreAgendador: '',
-      apellidoAgendador: '',
       numeroAgendador: '',
       localidad: '',
       direccion: '',
@@ -148,15 +142,12 @@ export default function CatalogoUsuario() {
     🆔 **ID del Producto:** ${productoSeleccionado?._id || 'No disponible'}  
     📦 **Producto:** ${productoSeleccionado?.estiloProducto || ''}  
     📏 **Tamaño:** ${productoSeleccionado?.tamañoProducto || ''}  
-    🛠 **Material:** ${productoSeleccionado?.materialProducto || ''}  
     💰 **Total:** ${ultimoPrecio}  
     
     🔹 **Datos del Pedido**  
     👤 **Nombre del Comprador:** ${pedido.nombreComprador}  
-    👤 **Apellido del Comprador:** ${pedido.apellidoComprador}  
     📞 **Número del Comprador:** ${pedido.numeroComprador}  
     👤 **Nombre del Agendador:** ${pedido.nombreAgendador}  
-    👤 **Apellido del Agendador:** ${pedido.apellidoAgendador}  
     📞 **Número del Agendador:** ${pedido.numeroAgendador}  
     📍 **Localidad:** ${pedido.localidad}  
     🏠 **Dirección:** ${pedido.direccion}  
@@ -170,10 +161,8 @@ export default function CatalogoUsuario() {
       const pedidoCompleto = {
         tamañoOso: productoSeleccionado?.tamañoProducto || "Sin tamaño",
         nombreComprador: pedido.nombreComprador || "Sin nombre",
-        apellidoComprador: pedido.apellidoComprador || "Sin apellido",
         numeroComprador: pedido.numeroComprador || "0000000000",
         nombreAgendador: pedido.nombreAgendador || "Sin nombre",
-        apellidoAgendador: pedido.apellidoAgendador || "Sin apellido",
         numeroAgendador: pedido.numeroAgendador || "0000000000",
         localidad: pedido.localidad || "Sin localidad",
         direccion: pedido.direccion || "Sin dirección",
@@ -310,9 +299,6 @@ export default function CatalogoUsuario() {
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       <strong>Descripción:</strong> {catalogo.descripcionCatalogo}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      <strong>Estilo:</strong> {catalogo.estiloCatalogo}
                     </Typography>
                     <Box mt={2} display="flex" justifyContent="center">
                       <Button 
@@ -535,9 +521,6 @@ export default function CatalogoUsuario() {
                           <strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}
                         </Typography>
                         <Typography variant="body2" sx={{ textAlign: "left" }}>
-                          <strong>Material:</strong> {productoSeleccionado.materialProducto}
-                        </Typography>
-                        <Typography variant="body2" sx={{ textAlign: "left" }}>
                           <strong>Disponibilidad:</strong> {productoSeleccionado.disponibilidadProducto}
                         </Typography>
                       </Box>
@@ -561,154 +544,137 @@ export default function CatalogoUsuario() {
               </Dialog>
 
                <Dialog open={openCarritoDialog} onClose={handleCloseCarritoDialog} maxWidth="sm" fullWidth>
-  <DialogTitle>Detalles del pedido</DialogTitle>
-  <DialogContent>
-    {productoSeleccionado && (
-      <>
-        <Typography variant="body1" gutterBottom><strong>Producto:</strong> {productoSeleccionado.estiloProducto}</Typography>
-        <Typography variant="body1" gutterBottom><strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}</Typography>
-        <Typography variant="body1" gutterBottom><strong>Material:</strong> {productoSeleccionado.materialProducto}</Typography>
-        <Typography variant="body1" gutterBottom>
-          <strong>Precio:</strong> 
-          {productoSeleccionado.historialPrecios?.map((precioId, index) => {
-            const precio = historialPrecios.find(p => p._id === precioId);
-            return precio ? (
-              <span key={index}>
-                {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio.precio)}
-              </span>
-            ) : null;
-          })}
-        </Typography>
+                    <DialogTitle>Detalles del pedido</DialogTitle>
+                    <DialogContent>
+                      {productoSeleccionado && (
+                        <>
+                          <Typography variant="body1" gutterBottom><strong>Producto:</strong> {productoSeleccionado.estiloProducto}</Typography>
+                          <Typography variant="body1" gutterBottom><strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}</Typography>
+                          <Typography variant="body1" gutterBottom>
+                            <strong>Precio:</strong> 
+                            {productoSeleccionado.historialPrecios?.map((precioId, index) => {
+                              const precio = historialPrecios.find(p => p._id === precioId);
+                              return precio ? (
+                                <span key={index}>
+                                  {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio.precio)}
+                                </span>
+                              ) : null;
+                            })}
+                          </Typography>
 
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="subtitle1" gutterBottom>Información del Comprador</Typography>
-          <TextField
-            label="Nombre del Comprador"
-            fullWidth
-            name="nombreComprador"
-            value={pedido.nombreComprador}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="Apellido del Comprador"
-            fullWidth
-            name="apellidoComprador"
-            value={pedido.apellidoComprador}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="Número de Contacto"
-            fullWidth
-            name="numeroComprador"
-            value={pedido.numeroComprador}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-        </Box>
+                          <Box sx={{ mt: 2 }}>
+                            <Typography variant="subtitle1" gutterBottom>Información del Comprador</Typography>
+                            <TextField
+                              label="Nombre del Comprador"
+                              fullWidth
+                              name="nombreComprador"
+                              value={pedido.nombreComprador}
+                              onChange={handleInputChange}
+                              sx={{ marginBottom: 2 }}
+                            />
+                            <TextField
+                              label="Número de Contacto"
+                              fullWidth
+                              name="numeroComprador"
+                              value={pedido.numeroComprador}
+                              onChange={handleInputChange}
+                              sx={{ marginBottom: 2 }}
+                            />
+                          </Box>
 
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="subtitle1" gutterBottom>Información del Agendador</Typography>
-          <TextField
-            label="Nombre del Agendador"
-            fullWidth
-            name="nombreAgendador"
-            value={pedido.nombreAgendador}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="Apellido del Agendador"
-            fullWidth
-            name="apellidoAgendador"
-            value={pedido.apellidoAgendador}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="Número del Agendador"
-            fullWidth
-            name="numeroAgendador"
-            value={pedido.numeroAgendador}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-        </Box>
+                          <Box sx={{ mt: 2 }}>
+                            <Typography variant="subtitle1" gutterBottom>Información del Agendador</Typography>
+                            <TextField
+                              label="Nombre del Agendador"
+                              fullWidth
+                              name="nombreAgendador"
+                              value={pedido.nombreAgendador}
+                              onChange={handleInputChange}
+                              sx={{ marginBottom: 2 }}
+                            />
+                            <TextField
+                              label="Número del Agendador"
+                              fullWidth
+                              name="numeroAgendador"
+                              value={pedido.numeroAgendador}
+                              onChange={handleInputChange}
+                              sx={{ marginBottom: 2 }}
+                            />
+                          </Box>
 
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="subtitle1" gutterBottom>Datos de Entrega</Typography>
-          <TextField
-            label="Localidad"
-            fullWidth
-            name="localidad"
-            value={pedido.localidad}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="Dirección"
-            fullWidth
-            name="direccion"
-            value={pedido.direccion}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="Barrio"
-            fullWidth
-            name="barrio"
-            value={pedido.barrio}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-        </Box>
-      </>
-    )}
-  </DialogContent>
-  <DialogActions sx={{ p: 3 }}>
-    <Button 
-      onClick={handleCloseCarritoDialog} 
-      variant="outlined" 
-      sx={{ mr: 2 }}
-    >
-      Cancelar
-    </Button>
-    <Button 
-      onClick={handleSubmitPedido} 
-      variant="contained" 
-      color="secondary"
-      size="large"
-    >
-      Enviar Pedido
-    </Button>
-  </DialogActions>
-</Dialog>
+                          <Box sx={{ mt: 2 }}>
+                            <Typography variant="subtitle1" gutterBottom>Datos de Entrega</Typography>
+                            <TextField
+                              label="Localidad"
+                              fullWidth
+                              name="localidad"
+                              value={pedido.localidad}
+                              onChange={handleInputChange}
+                              sx={{ marginBottom: 2 }}
+                            />
+                            <TextField
+                              label="Dirección"
+                              fullWidth
+                              name="direccion"
+                              value={pedido.direccion}
+                              onChange={handleInputChange}
+                              sx={{ marginBottom: 2 }}
+                            />
+                            <TextField
+                              label="Barrio"
+                              fullWidth
+                              name="barrio"
+                              value={pedido.barrio}
+                              onChange={handleInputChange}
+                              sx={{ marginBottom: 2 }}
+                            />
+                          </Box>
+                        </>
+                      )}
+                    </DialogContent>
+                    <DialogActions sx={{ p: 3 }}>
+                      <Button 
+                        onClick={handleCloseCarritoDialog} 
+                        variant="outlined" 
+                        sx={{ mr: 2 }}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button 
+                        onClick={handleSubmitPedido} 
+                        variant="contained" 
+                        color="secondary"
+                        size="large"
+                      >
+                        Enviar Pedido
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
 
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
-        <Alert severity={snackbarMessage.includes('Error') ? 'error' : 'success'} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+                  <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+                    <Alert severity={snackbarMessage.includes('Error') ? 'error' : 'success'} sx={{ width: '100%' }}>
+                      {snackbarMessage}
+                    </Alert>
+                  </Snackbar>
   
   
 
-              <Snackbar 
-                open={openSnackbar} 
-                autoHideDuration={6000} 
-                onClose={() => setOpenSnackbar(false)}
-              >
-                <Alert 
-                  onClose={() => setOpenSnackbar(false)} 
-                  severity="error" 
-                  sx={{ width: '100%' }}
-                >
-                  {snackbarMessage}
-                </Alert>
-              </Snackbar>
-            </>
-          )}
-        </Container>
+                    <Snackbar 
+                      open={openSnackbar} 
+                      autoHideDuration={6000} 
+                      onClose={() => setOpenSnackbar(false)}
+                    >
+                      <Alert 
+                        onClose={() => setOpenSnackbar(false)} 
+                        severity="error" 
+                        sx={{ width: '100%' }}
+                      >
+                        {snackbarMessage}
+                      </Alert>
+                    </Snackbar>
+                  </>
+                )}
+              </Container>
       </Box>
     </Box>
   );

@@ -34,7 +34,6 @@ console.log("Url almacenada: ",apiUrl);
 const Pedido = () => {
   const [pedidos, setPedidos] = useState([]);
   const [nuevoPedido, setNuevoPedido] = useState({
-    tamañoOso: '',
     nombreComprador: '',
     numeroComprador: '',
     nombreAgendador: '',
@@ -43,11 +42,8 @@ const Pedido = () => {
     direccion: '',
     barrio: '',
     cliente: '',
-    apellidoAgendador: '',
-    apellidoComprador: '',
     detallesPedido: [],
-    facturas: [],
-    vendedores: []
+    facturas: []
   });
   const [pedidoEdicion, setPedidoEdicion] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -116,7 +112,6 @@ const Pedido = () => {
       setSnackbarMessage('Pedido creado con éxito');
       setOpenSnackbar(true);
       setNuevoPedido({
-        tamañoOso: '',
         nombreComprador: '',
         numeroComprador: '',
         nombreAgendador: '',
@@ -125,11 +120,8 @@ const Pedido = () => {
         direccion: '',
         barrio: '',
         cliente: '',
-        apellidoAgendador: '',
-        apellidoComprador: '',
         detallesPedido: [],
         facturas: [],
-        vendedores: []
       });
       
     } catch (error) {
@@ -273,6 +265,7 @@ const Pedido = () => {
   });
 
   
+  
   const handleGenerarFactura = async (pedidoId) => {
     try {
       const pedidoSeleccionado = pedidos.find(p => p._id === pedidoId);
@@ -302,6 +295,7 @@ const Pedido = () => {
   };
   
 
+
   return (
     <Box className="BoxInicial">
       <Box className="Box"
@@ -315,95 +309,6 @@ const Pedido = () => {
         <Container>
           <h1>Gestión de Pedidos</h1>
           <Box mb={4}>
-            <TextField
-              label="Tamaño del Oso"
-              name="tamañoOso"
-              value={nuevoPedido.tamañoOso}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Nombre del Comprador"
-              name="nombreComprador"
-              value={nuevoPedido.nombreComprador}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Apellido del Comprador"
-              name="apellidoComprador"
-              value={nuevoPedido.apellidoComprador}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Numero del Comprador"
-              name="numeroComprador"
-              value={nuevoPedido.numeroComprador}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Nombre del Agendador"
-              name="nombreAgendador"
-              value={nuevoPedido.nombreAgendador}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Apellido del Agendador"
-              name="apellidoAgendador"
-              value={nuevoPedido.apellidoAgendador}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Numero del Agendador"
-              name="numeroAgendador"
-              value={nuevoPedido.numeroAgendador}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Localidad"
-              name="localidad"
-              value={nuevoPedido.localidad}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Dirección"
-              name="direccion"
-              value={nuevoPedido.direccion}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Barrio"
-              name="barrio"
-              value={nuevoPedido.barrio}
-              onChange={(e) => handleChange(e)}
-              fullWidth
-              margin="normal"
-            />
-            {pedidoEdicion ? (
-              <Button variant="contained" onClick={actualizarPedido}>
-                Actualizar
-              </Button>
-            ) : (
-              <Button variant="contained" onClick={crearPedido}>
-                Crear
-              </Button>
-            )}
           </Box>
 
           <Box display="flex" justifyContent="space-between" alignItems="center" mt={4}>
@@ -429,12 +334,6 @@ const Pedido = () => {
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Box display="flex" alignItems="center" onClick={() => handleSort('apellidoComprador')}>
-                      Apellido del Comprador
-                      {sortBy === 'apellidoComprador' && (sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />)}
-                    </Box>
-                  </TableCell>
-                  <TableCell>
                     <Box display="flex" alignItems="center" onClick={() => handleSort('tamañoOso')}>
                       Tamaño del Oso
                       {sortBy === 'tamañoOso' && (sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />)}
@@ -453,8 +352,14 @@ const Pedido = () => {
                 {sortedPedidos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((pedido) => (
                   <TableRow key={pedido._id}>
                     <TableCell>{pedido.nombreComprador}</TableCell>
-                    <TableCell>{pedido.apellidoComprador}</TableCell>
-                    <TableCell>{pedido.tamañoOso}</TableCell>
+                    <TableCell>
+        {pedido.detallesPedido.map(detalle => (
+  <div key={detalle._id}>
+     {detalle.idProducto?.tamañoProducto}
+  </div>
+))
+}
+      </TableCell>
                     <TableCell>
                      <FormControl fullWidth size="small">
                      <Select
@@ -549,10 +454,8 @@ const Pedido = () => {
               {selectedPedido && (
                 <DialogContentText>
                   <strong>Nombre del Comprador:</strong> {selectedPedido.nombreComprador} <br />
-                  <strong>Apellido del Comprador:</strong> {selectedPedido.apellidoComprador} <br />
                   <strong>Numero del Comprador:</strong> {selectedPedido.numeroComprador}<br /> <br />
                   <strong>Nombre del Agendador:</strong> {selectedPedido.nombreAgendador} <br />
-                  <strong>Apellido del Agendador:</strong> {selectedPedido.apellidoAgendador} <br />
                   <strong>Numero del Agendador:</strong> {selectedPedido.numeroAgendador} <br /> <br />
                   <strong>Localidad:</strong> {selectedPedido.localidad} <br />
                   <strong>Dirección:</strong> {selectedPedido.direccion} <br />

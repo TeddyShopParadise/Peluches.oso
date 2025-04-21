@@ -84,9 +84,6 @@ const eliminarFactura = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
-
-
-
 const generarFacturaDesdePedido = async (req, res) => {
     try {
       const { pedidoId } = req.params;
@@ -116,7 +113,7 @@ const generarFacturaDesdePedido = async (req, res) => {
             precioDetalleFactura: detallePedido.precioDetallePedido,
             cantidadDetalleFactura: detallePedido.cantidadDetallePedido,
             idProducto: detallePedido.idProducto._id,
-            facturaIdFactura: factura._id, // 👈 Asignar el ID de la factura
+            idFactura: factura._id, // 👈 Asignar el ID de la factura
           });
           await detalle.save();
           return detalle._id;
