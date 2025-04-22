@@ -58,7 +58,6 @@ const ProductoUsuario = () => {
     barrio: '',
   });
 
-  // Obtener productos de la API
   const fetchProductos = async () => {
     try {
       const response = await fetch(PRODUCTOS_API_URL);
@@ -74,7 +73,6 @@ const ProductoUsuario = () => {
     }
   };
 
-  // Obtener historial de precios
   const fetchHistorialPrecios = async () => {
     try {
       const response = await fetch(`${apiUrl}/historialPrecio`, {
@@ -98,7 +96,6 @@ const ProductoUsuario = () => {
   };
 
   
-  //Obtener los metodos de pago
   const fetchMetodosPago = async () => {
     try {
       const response = await fetch(METODOSPAGO_API_URL);
@@ -163,7 +160,6 @@ const ProductoUsuario = () => {
   const indexOfFirstProduct = indexOfLastProduct - productosPerPage;
   const currentProductos = filteredProductos.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Manejar clic en el carrito
   const handleCarritoClick = (producto) => {
     setProductoSeleccionado(producto);
     setOpenCarritoDialog(true);
@@ -380,18 +376,18 @@ const ProductoUsuario = () => {
         console.log('Factura actualizada con detalle');
     
         // Paso 6: Actualizar el pedido con el detalle y la factura
-const updatePedido = {
-  nombreComprador: responseData.nombreComprador,
-  numeroComprador: responseData.numeroComprador,
-  nombreAgendador: responseData.nombreAgendador,
-  numeroAgendador: responseData.numeroAgendador,
-  localidad: responseData.localidad,
-  direccion: responseData.direccion,
-  barrio: responseData.barrio,
-  detallesPedido: [detalleData._id],
-  facturas: [facturaData._id],
-  cliente: responseData.cliente
-};
+        const updatePedido = {
+          nombreComprador: responseData.nombreComprador,
+          numeroComprador: responseData.numeroComprador,
+          nombreAgendador: responseData.nombreAgendador,
+          numeroAgendador: responseData.numeroAgendador,
+          localidad: responseData.localidad,
+          direccion: responseData.direccion,
+          barrio: responseData.barrio,
+          detallesPedido: [detalleData._id],
+          facturas: [facturaData._id],
+          cliente: responseData.cliente
+        };
 
 console.log('Intentando actualizar el pedido con:', updatePedido);
 
@@ -408,6 +404,7 @@ if (!updateResponsePedido.ok) {
   console.error('Respuesta del servidor:', updateResponseText);
   throw new Error(`Error actualizando pedido: ${updateResponseText}`);
 }
+
 
 console.log('Pedido actualizado con detalle y factura');
 

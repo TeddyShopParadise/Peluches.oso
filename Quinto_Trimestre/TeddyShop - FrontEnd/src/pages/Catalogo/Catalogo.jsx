@@ -11,20 +11,28 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   Box,
   TablePagination,
+  Typography,
+  Tooltip,
+  Chip,
+  FormControlLabel,
   Switch,
+  Snackbar, 
+  Alert,
   FormControl,
   InputLabel,
   Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   MenuItem,
+  Checkbox
 } from '@mui/material';
-import { Edit, Delete, Info } from '@mui/icons-material';
+import sortBy from 'lodash/sortBy';
+import { Edit, Delete, ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig';
@@ -294,213 +302,438 @@ const CatalogoComponent = () => {
     fetchCatalogos();
     fetchCompanias();
   }, []);
-
   return (
     <Box className="BoxInicial">
       <Box className="Box"
         sx={{
           width: '90%',
-          maxWidth: '100%',
-          padding: { xs: '20px', md: '50px' },
+          maxWidth: '900px',
+          padding: { xs: '20px', md: '30px' },
           borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
         }}
       >
         <Container>
-          <h1>Gestión de Catálogos</h1>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              editingId ? actualizarCatalogo() : crearCatalogo();
+          {/* Encabezado */}
+          <Box
+            sx={{
+              textAlign: 'center',
+              marginBottom: '30px',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-10px',
+                left: '25%',
+                width: '50%',
+                height: '4px',
+                background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                borderRadius: '10px',
+              },
             }}
-            noValidate
-            autoComplete="off"
           >
-            <TextField
-              type="text"
-              placeholder="Nombre del catálogo"
-              value={nombreCatalogo}
-              onChange={(e) => setNombreCatalogo(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              label="Nombre del catálogo"
+            <Typography
+              variant="h4"
               sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
-              }}
-            />
-            <TextField
-              type="text"
-              placeholder="Descripción del catálogo"
-              value={descripcionCatalogo}
-              onChange={(e) => setDescripcionCatalogo(e.target.value)}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              label="Descripción del catálogo"
-              sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
-              }}
-            />
-            <FormControl fullWidth margin="normal" required>
-              <InputLabel>Compañía</InputLabel>
-              <Select
-                value={companiaSeleccionada}
-                onChange={(e) => setCompaniaSeleccionada(e.target.value)}
-                label="Compañía"
-              >
-                {companias.map((comp) => (
-                  <MenuItem key={comp._id} value={comp._id}>
-                    {comp.nombreEmpresa}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              type="file"
-              inputProps={{ accept: 'image/*' }}
-              onChange={handleImageChange}
-              fullWidth
-              margin="normal"
-              label="Imagen del Catálogo"
-              InputLabelProps={{ shrink: true }}
-            />
-
-            {imagenCatalogo && (
-              <img 
-                src={imagenCatalogo} 
-                alt="Imagen del Catálogo" 
-                width="180" 
-                height="auto"  
-                style={{  
-                  objectFit: "cover", 
-                  borderRadius: "12px", 
-                  border: "2px solid rgba(255, 255, 255, 0.8)", 
-                  background: "rgba(255, 255, 255, 0.1)", 
-                  boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.25)",
-                  marginTop: "10px"
-                }}  
-              />
-            )}
-
-          <Box display="flex" justifyContent="space-between" mt={2} gap={2}>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ 
-                fontSize: '1.2rem', 
-                flex: 1, 
-                minWidth: 0 
+                fontWeight: 'bold',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
               }}
             >
-              {editingId ? 'Actualizar' : 'Crear'}
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={resetForm}
-              sx={{ 
-                fontSize: '1.2rem', 
-                flex: 1, 
-                minWidth: 0 
-              }}
-            >
-              Cancelar
-            </Button>
+              Gestión de Catálogos
+            </Typography>
           </Box>
-          </form>
+  
+          {/* Formulario */}
+          <Paper
+            elevation={3}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              backgroundColor: '#fff5f7',
+              marginBottom: '30px',
+              border: '1px solid #f8c8dc',
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                marginBottom: '15px',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              }}
+            >
+              {editingId ? '✏️ Editar Catálogo' : '✨ Nuevo Catálogo'}
+            </Typography>
+  
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                editingId ? actualizarCatalogo() : crearCatalogo();
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                type="text"
+                placeholder="Nombre del catálogo"
+                value={nombreCatalogo}
+                onChange={(e) => setNombreCatalogo(e.target.value)}
+                fullWidth
+                margin="normal"
+                required
+                variant="outlined"
+                label="Nombre del catálogo"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+  
+              <TextField
+                type="text"
+                placeholder="Descripción del catálogo"
+                value={descripcionCatalogo}
+                onChange={(e) => setDescripcionCatalogo(e.target.value)}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                label="Descripción del catálogo"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+  
+              <FormControl 
+                fullWidth 
+                margin="normal" 
+                required
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              >
+                <InputLabel>Compañía</InputLabel>
+                <Select
+                  value={companiaSeleccionada}
+                  onChange={(e) => setCompaniaSeleccionada(e.target.value)}
+                  label="Compañía"
+                >
+                  {companias.map((comp) => (
+                    <MenuItem key={comp._id} value={comp._id}>
+                      {comp.nombreEmpresa}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+  
+              <TextField
+                type="file"
+                inputProps={{ accept: 'image/*' }}
+                onChange={handleImageChange}
+                fullWidth
+                margin="normal"
+                label="Imagen del Catálogo"
+                InputLabelProps={{ shrink: true }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+  
+              {imagenCatalogo && (
+                <Box mt={2} display="flex" justifyContent="center">
+                  <img 
+                    src={imagenCatalogo} 
+                    alt="Vista previa de imagen" 
+                    style={{  
+                      width: '180px',
+                      height: 'auto',
+                      objectFit: "cover", 
+                      borderRadius: "12px", 
+                      border: "2px solid #f8c8dc", 
+                      boxShadow: "0 4px 12px rgba(248, 200, 220, 0.4)",
+                    }}  
+                  />
+                </Box>
+              )}
+  
+              <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  startIcon={editingId ? <Edit /> : <Add />}
+                  sx={{
+                    borderRadius: '12px',
+                    backgroundColor: '#f48fb1',
+                    '&:hover': {
+                      backgroundColor: '#ec7096',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                  }}
+                >
+                  {editingId ? 'Actualizar' : 'Crear'}
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={resetForm}
+                  startIcon={<Clear />}
+                  sx={{
+                    borderRadius: '12px',
+                    borderColor: '#f48fb1',
+                    color: '#f48fb1',
+                    '&:hover': {
+                      borderColor: '#ec7096',
+                      backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Cancelar
+                </Button>
+              </Box>
+            </form>
+          </Paper>
+  
+          {/* Lista de Catálogos */}
+          <Paper
+            elevation={2}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              marginBottom: '20px',
+              backgroundColor: '#fff0f5',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '5px',
+                background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+              },
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                marginBottom: '15px',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <ListAlt fontSize="small" /> Lista de Catálogos
+            </Typography>
+  
+            <TableContainer
+              component={Paper}
+              elevation={3}
+              sx={{
+                borderRadius: '15px',
+                overflow: 'hidden',
+                border: '1px solid #f8c8dc',
+                overflowX: 'auto',
 
-          <Box mt={4}>
-            <h2>Lista de Catálogos</h2>
-            <TableContainer component={Paper}>
+              }}
+            >
               <Table>
                 <TableHead>
-                  <TableRow>
-                    <TableCell>Nombre</TableCell>
-                    <TableCell>Compañía</TableCell>
-                    <TableCell>Acciones</TableCell>
+                  <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Nombre</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Compañía</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-        {catalogos.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage).map((catalogo) => (
-          <TableRow key={catalogo._id}>
-            <TableCell>{catalogo.nombreCatalogo}</TableCell>
-            <TableCell>
-                  {catalogo.compania?.nombreEmpresa || 'Sin compañía'}
-            </TableCell>
-                <TableCell>
-                  <IconButton
-                  color='primary'
-                  onClick={() => editarCatalogo(catalogo)}>
-                    <Edit />
-                  </IconButton>
-                  <IconButton 
-                  sx={{ color: "#d33" }}
-                  onClick={() => eliminarCatalogo(catalogo._id)}>
-                    <Delete />
-                  </IconButton>
-                  <IconButton
-                  color="info"
-                  onClick={() => openDetailsDialog(catalogo)}>
-                    <Info />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
+                  {catalogos.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage).map((catalogo) => (
+                    <TableRow
+                      key={catalogo._id}
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: '#fff0f5',
+                        },
+                      }}
+                    >
+                      <TableCell>{catalogo.nombreCatalogo}</TableCell>
+                      <TableCell>{catalogo.compania?.nombreEmpresa || 'Sin compañía'}</TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={() => editarCatalogo(catalogo)}
+                          sx={{
+                            color: '#4caf50',
+                            '&:hover': {
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            },
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => eliminarCatalogo(catalogo._id)}
+                          sx={{
+                            color: '#e57373',
+                            '&:hover': {
+                              backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                            },
+                          }}
+                        >
+                          <Delete />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => openDetailsDialog(catalogo)}
+                          sx={{
+                            color: '#6c63ff',
+                            '&:hover': {
+                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                            },
+                          }}
+                        >
+                          <Info />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={catalogos.length}
-                rowsPerPage={rowsPerPage}
-                page={currentPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
             </TableContainer>
-          </Box>
+  
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={catalogos.length}
+              rowsPerPage={rowsPerPage}
+              page={currentPage}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{
+                color: '#b04e6f',
+                '& .MuiTablePagination-selectIcon': {
+                  color: '#f48fb1',
+                },
+              }}
+            />
+          </Paper>
         </Container>
       </Box>
-
+  
+      {/* Diálogo de detalles */}
       {selectedCatalogo && (
-        <Dialog open={true} onClose={closeDetailsDialog}>
-          <DialogTitle>Detalles del Catálogo</DialogTitle>
+        <Dialog
+          open={true}
+          onClose={closeDetailsDialog}
+          PaperProps={{
+            sx: {
+              borderRadius: '20px',
+              backgroundColor: '#fff5f7',
+              border: '1px solid #f8c8dc',
+              maxWidth: '500px',
+            }
+          }}
+        >
+          <DialogTitle
+            sx={{
+              backgroundColor: '#ffeef3',
+              color: '#b04e6f',
+              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              borderBottom: '1px solid #f8c8dc',
+            }}
+          >
+            Detalles del Catálogo
+          </DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              <strong>Nombre:</strong> {selectedCatalogo.nombreCatalogo}
-            </DialogContentText>
-            <DialogContentText>
-              <strong>Compañía:</strong> {selectedCatalogo.compania?.nombreEmpresa || 'Sin compañía'}
-            </DialogContentText>
-            <DialogContentText>
-              <strong>Descripción:</strong> {selectedCatalogo.descripcionCatalogo || 'Sin descripción'}
-            </DialogContentText>
-            
-            {selectedCatalogo.imagen && (
-              <Box mt={2}>
-                <img 
-                  src={selectedCatalogo.imagen} 
-                  alt="Imagen del Catálogo" 
-                  width="190" 
-                  height="300"  
-                  style={{ 
-                    objectFit: "cover",
-                    display: "block",  
-                    borderRadius: "12px", 
-                    border: "2px solid rgba(137, 12, 227, 0.8)", 
-                    background: "rgba(255, 255, 255, 0.1)", 
-                    boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.25)", 
-                    margin: "0 auto"
-                  }}  
-                />
-              </Box>
-            )}
+            <Box sx={{ p: 2 }}>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong style={{color: '#b04e6f'}}>Nombre:</strong> {selectedCatalogo.nombreCatalogo}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong style={{color: '#b04e6f'}}>Compañía:</strong> {selectedCatalogo.compania?.nombreEmpresa || 'Sin compañía'}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                <strong style={{color: '#b04e6f'}}>Descripción:</strong> {selectedCatalogo.descripcionCatalogo || 'Sin descripción'}
+              </Typography>
+              
+              {selectedCatalogo.imagen && (
+                <Box mt={2} display="flex" justifyContent="center">
+                  <img 
+                    src={selectedCatalogo.imagen} 
+                    alt="Imagen del catálogo" 
+                    style={{  
+                      width: '100%',
+                      maxHeight: '300px',
+                      objectFit: "contain", 
+                      borderRadius: "12px", 
+                      border: "2px solid #f8c8dc", 
+                      boxShadow: "0 4px 12px rgba(248, 200, 220, 0.4)",
+                    }}  
+                  />
+                </Box>
+              )}
+            </Box>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={closeDetailsDialog} color="primary">
+          <DialogActions
+            sx={{
+              backgroundColor: '#ffeef3',
+              borderTop: '1px solid #f8c8dc',
+            }}
+          >
+            <Button
+              onClick={closeDetailsDialog}
+              sx={{
+                color: '#f48fb1',
+                fontWeight: 'bold',
+                '&:hover': {
+                  backgroundColor: 'rgba(244, 143, 177, 0.1)',
+                },
+              }}
+            >
               Cerrar
             </Button>
           </DialogActions>

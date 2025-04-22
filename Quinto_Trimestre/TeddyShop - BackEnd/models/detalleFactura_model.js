@@ -28,6 +28,8 @@ const detalleFacturaSchema = new mongoose.Schema({
   collection: 'Detalle_Factura',
   timestamps: false
 });
+detalleFacturaSchema.index({ idProducto: 1, idFactura: 1 });
+
 
 
 //exportar el modelo
