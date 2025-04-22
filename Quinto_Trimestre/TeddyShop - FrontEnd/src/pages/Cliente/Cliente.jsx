@@ -11,21 +11,35 @@
     TableRow,
     Paper,
     IconButton,
-    Dialog,
-    DialogTitle,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    Snackbar,
-    Alert,
     Box,
     TablePagination,
+    Typography,
+    Tooltip,
+    Chip,
+    FormControlLabel,
+    Switch,
+    Snackbar, 
+    Alert,
+    FormControl,
+    InputLabel,
+    Select,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    MenuItem,
+    Fab 
   } from '@mui/material';
-  import { Edit, Delete, Info } from '@mui/icons-material';
+  import { Edit, Delete, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
   import '../PagesStyle.css';
   import { getApiUrl } from '../../utils/apiConfig'
   const apiUrl = getApiUrl();
   console.log("Url almacenada: ",apiUrl);
+  import Swal from 'sweetalert2';
+  import useApiRequest from '../../hooks/useApiRequest';
+
+
 
   export default function Cliente() {
     const [clientes, setClientes] = useState([]);
@@ -33,14 +47,17 @@
       nombreCliente: '',
       telefonoCliente: '',
     });
-    const [pedidos, setPedidos] = useState([]); // Estado para manejar los pedidos
-    const [facturas, setFacturas] = useState([]); // Estado para manejar las facturas
+    const [pedidos, setPedidos] = useState([]); 
+    const [facturas, setFacturas] = useState([]); 
     const [selectedClientId, setSelectedClientId] = useState(null);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [selectedCliente, setSelectedCliente] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const { makeRequest } = useApiRequest();
+
 
     // Función para listar clientes
     const listarClientes = async () => {
@@ -54,17 +71,14 @@
       }
     };
 
-    // Llama a listarClientes al montar el componente
     useEffect(() => {
       listarClientes();
     }, []);
 
-    // Función para manejar cambios en el formulario
     const handleChange = (e) => {
       const { name, value } = e.target;
       setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
-    // Función para crear o actualizar un cliente
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,7 +90,7 @@
 
       const dataToSend = {
         ...formData,
-        telefonoCliente: formData.telefonoCliente.trim(), // opcionalmente limpiar espacios
+        telefonoCliente: formData.telefonoCliente.trim(), 
         pedidos,
         facturas
       };
@@ -89,7 +103,6 @@
         body: JSON.stringify({ ...dataToSend, pedidos, facturas }),
       });
 
-      // Procesamiento de la respuesta
       if (response.ok) {
         await listarClientes();
         setFormData({
@@ -115,55 +128,76 @@
 
   // ...
 
-    // Función para seleccionar un cliente para actualizar
     const handleEdit = (cliente) => {
       setSelectedClientId(cliente._id);
       setFormData({
         nombreCliente: cliente.nombreCliente,
         telefonoCliente: cliente.telefonoCliente,
       });
-      setPedidos(cliente.pedidos || []); // Cargar los pedidos asociados
-      setFacturas(cliente.facturas || []); // Cargar las facturas asociadas
+      setPedidos(cliente.pedidos || []);
+      setFacturas(cliente.facturas || []); 
     };
 
-    // Función para eliminar un cliente
     const eliminarCliente = async (id) => {
-      if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-        try {
-          const response = await fetch(`${apiUrl}/clientes/${id}`, {
-            method: 'DELETE',
-          });
-
-          if (response.ok) {
-            await listarClientes(); // Refresca la lista después de eliminar un cliente
-            setSuccessMessage('Cliente eliminado exitosamente!');
-            setError(''); // Limpia el mensaje de error
-          } else {
-            const errorResponse = await response.json();
-            setError(errorResponse.message || 'Error al eliminar el cliente.');
-            setSuccessMessage(''); // Limpia el mensaje de éxito
-          }
-        } catch (error) {
-          console.error(error);
-          setError('Error en la solicitud');
-        }
-      }
+      await makeRequest({
+        url: `${apiUrl}/clientes/${id}`,
+        method: 'DELETE',
+        confirm: {
+          title: 'Eliminar cliente',
+          text: '¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.',
+          icon: 'warning',
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true,
+          backdrop: `
+            rgba(0,0,0,0.7)
+            url("/images/warning.gif")
+            center top
+            no-repeat
+          `
+        },
+        loading: {
+          title: 'Eliminando...',
+          html: 'Estamos eliminando el cliente',
+          allowOutsideClick: false
+        },
+        success: {
+          icon: 'success',
+          title: '¡Cliente eliminado!',
+          text: 'El cliente ha sido eliminado correctamente.',
+          timer: 2000,
+          timerProgressBar: true
+        },
+        error: {
+          icon: 'error',
+          title: 'Error al eliminar cliente',
+          text: (error) => error.message || 'Ocurrió un error al eliminar el cliente',
+          footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+        },
+        onSuccess: listarClientes
+      });
     };
+    
 
-    // Función para manejar la paginación
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
     };
 
-    // Función para manejar el cambio de filas por página
     const handleChangeRowsPerPage = (event) => {
       setRowsPerPage(parseInt(event.target.value, 10));
       setPage(0);
     };
 
-    // Función para mostrar los detalles del cliente
     const handleShowDetails = (cliente) => {
       setSelectedCliente(cliente);
+    };
+  
+    const filteredClientes = clientes.filter((cliente) =>
+      cliente.telefonoCliente.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleSearchChange = (e) => {
+      setSearchTerm(e.target.value);
     };
 
     return (
@@ -171,49 +205,237 @@
         <Box className="Box"
           sx={{
             width: '90%',
-            maxWidth: '100%',
-            padding: { xs: '20px', md: '50px' },
+            maxWidth: '900px',
+            padding: '30px',
             borderRadius: '30px',
+            margin: '0 auto',
+            backgroundColor: '#fffafc',
+            boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+            border: '2px solid #f8c8dc',
           }}
         >
           <Container>
-            {successMessage && <Alert severity="success" sx={{ mt: 2 }}>{successMessage}</Alert>}
-            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+            <Box
+              sx={{
+                textAlign: 'center',
+                marginBottom: '30px',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-10px',
+                  left: '25%',
+                  width: '50%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                  borderRadius: '10px',
+                },
+              }}
+            >
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 'bold',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                }}
+              >
+                Lista de Clientes
+              </Typography>
+            </Box>
+    
+            {successMessage && (
+              <Alert 
+                severity="success" 
+                sx={{ 
+                  mt: 2, 
+                  mb: 3,
+                  borderRadius: '10px',
+                  backgroundColor: '#e8f5e9',
+                  color: '#2e7d32',
+                  border: '1px solid #a5d6a7',
+                  '& .MuiAlert-icon': {
+                    color: '#2e7d32'
+                  }
+                }}
+              >
+                {successMessage}
+              </Alert>
+            )}
+            
+            {error && (
+              <Alert 
+                severity="error" 
+                sx={{ 
+                  mt: 2, 
+                  mb: 3,
+                  borderRadius: '10px',
+                  backgroundColor: '#ffebee',
+                  color: '#c62828',
+                  border: '1px solid #ef9a9a',
+                  '& .MuiAlert-icon': {
+                    color: '#c62828'
+                  }
+                }}
+              >
+                {error}
+              </Alert>
+            )}
+    
+            <Paper
+              elevation={2}
+              sx={{
+                padding: '20px',
+                borderRadius: '20px',
+                marginBottom: '20px',
+                backgroundColor: '#fff0f5',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '100%',
+                  height: '5px',
+                  background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+                },
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  marginBottom: '15px',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <Search fontSize="small" /> Buscar Clientes por número de telefono
+              </Typography>
+    
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  marginBottom: 2,
+                  padding: '8px 16px',
+                  borderRadius: '15px',
+                  border: '1px solid #f8c8dc',
+                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.05)',
+                  backgroundColor: 'white',
+                  maxWidth: '500px',
+                  width: '100%',
+                  margin: '0 auto',
+                }}
+              >
+                <TextField
+                  label="Buscar cliente por número"
+                  variant="outlined"
+                  size="small"
+                  value={searchTerm}
+                   onChange={handleSearchChange}
+                  sx={{
+                    width: '100%',
+                    marginRight: 2,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '12px',
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#666',
+                      '&.Mui-focused': {
+                        color: '#f48fb1',
+                      },
+                    },
+                  }}
+                />
+                <IconButton
+                  sx={{
+                    p: 1,
+                    borderRadius: '50%',
+                    backgroundColor: '#f48fb1',
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: '#ec7096',
+                    },
+                    boxShadow: '0 2px 5px rgba(244, 143, 177, 0.3)',
+                  }}
+                >
+                  <Search />
+                </IconButton>
+              </Box>
+            </Paper>
+    
+            <TableContainer
+              component={Paper}
+              elevation={3}
+              sx={{
+                marginTop: 3,
+                borderRadius: '15px',
+                overflow: 'hidden',
+                border: '1px solid #f8c8dc',
+                overflowX: 'auto',
 
-            {/* Tabla de Clientes */}
-            <h1>Lista de Clientes</h1>
-            <TableContainer component={Paper}>
+              }}
+            >
               <Table sx={{ minWidth: 650 }} aria-label="clientes table">
                 <TableHead>
-                  <TableRow>
-                    <TableCell>Nombre</TableCell>
-                    <TableCell>Teléfono</TableCell>
-                    <TableCell>Acciones</TableCell>
+                  <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Nombre</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Teléfono</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {clientes
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((cliente) => (
-                      <TableRow key={cliente._id}>
-                        <TableCell>{cliente.nombreCliente}</TableCell>
-                        <TableCell>{cliente.telefonoCliente}</TableCell>
-                        <TableCell>
-                          <IconButton onClick={() => handleEdit(cliente)}>
-                            <Edit />
-                          </IconButton>
-                          <IconButton onClick={() => eliminarCliente(cliente._id)}>
-                            <Delete />
-                          </IconButton>
-                          <IconButton onClick={() => handleShowDetails(cliente)}>
-                            <Info />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
+                {filteredClientes
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((cliente) => (
+                  <TableRow key={cliente._id}
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: '#fff0f5',
+                        },
+                      }}
+                    >
+                      <TableCell>{cliente.nombreCliente}</TableCell>
+                      <TableCell>{cliente.telefonoCliente}</TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={() => handleEdit(cliente)}
+                          sx={{
+                            color: '#6c63ff',
+                            '&:hover': {
+                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                            },
+                          }}
+                        >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => eliminarCliente(cliente._id)}
+                        sx={{
+                          color: '#ff4081',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 64, 129, 0.1)',
+                          },
+                        }}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+
               </Table>
             </TableContainer>
+    
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
@@ -222,39 +444,93 @@
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{
+                color: '#b04e6f',
+                '& .MuiTablePagination-selectIcon': {
+                  color: '#f48fb1',
+                },
+              }}
             />
-
-            {/* Diálogo de Detalles */}
+    
             {selectedCliente && (
-              <Dialog open={Boolean(selectedCliente)} onClose={() => setSelectedCliente(null)}>
-                <DialogTitle>Detalles del Cliente</DialogTitle>
+              <Dialog 
+                open={Boolean(selectedCliente)} 
+                onClose={() => setSelectedCliente(null)}
+                PaperProps={{
+                  sx: {
+                    borderRadius: '15px',
+                    border: '1px solid #f8c8dc',
+                    boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+                    padding: '10px',
+                  }
+                }}
+              >
+                <DialogTitle 
+                  sx={{ 
+                    color: '#b04e6f', 
+                    fontWeight: 'bold',
+                    fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                  }}
+                >
+                  Detalles del Cliente
+                </DialogTitle>
                 <DialogContent>
-                  <DialogContentText>
-                    <strong>Nombre:</strong> {selectedCliente.nombreCliente}
-                  </DialogContentText>
-                  <DialogContentText>
-                    <strong>Teléfono:</strong> {selectedCliente.telefonoCliente}
-                  </DialogContentText>
-                  <DialogContentText>
-                    <strong>Pedidos:</strong> {selectedCliente.pedidos.map(p => p._id).join(", ")}
-                  </DialogContentText>
-                  <DialogContentText>
-                  <strong>Facturas:</strong>
-                  {selectedCliente?.facturas?.length > 0 ? (
-                    selectedCliente.facturas.map((factura) => (
-                      <div key={factura._id}>
-                        ID: {facturas._id}<br />
-                        <hr />
-                      </div>
-                    ))
-                  ) : (
-                    <div>Sin facturas</div>
-                  )}
-                </DialogContentText>
-
+                  <Box sx={{ color: '#666' }}>
+                    <Typography sx={{ mb: 1 }}>
+                      <strong style={{color: '#b04e6f'}}>Nombre:</strong> {selectedCliente.nombreCliente}
+                    </Typography>
+                    <Typography sx={{ mb: 1 }}>
+                      <strong style={{color: '#b04e6f'}}>Teléfono:</strong> {selectedCliente.telefonoCliente}
+                    </Typography>
+                    <Typography sx={{ mb: 1 }}>
+                      <strong style={{color: '#b04e6f'}}>Pedidos:</strong> {selectedCliente.pedidos.map(p => p._id).join(", ")}
+                    </Typography>
+                    <Typography sx={{ mb: 1 }}>
+                      <strong style={{color: '#b04e6f'}}>Facturas:</strong>
+                    </Typography>
+                    {selectedCliente?.facturas?.length > 0 ? (
+                      selectedCliente.facturas.map((factura) => (
+                        <Box 
+                          key={factura._id}
+                          sx={{
+                            p: 1,
+                            mb: 1,
+                            borderRadius: '8px',
+                            border: '1px solid #f8c8dc',
+                            backgroundColor: '#fff5f7',
+                          }}  
+                        >
+                          ID: {factura._id}
+                        </Box>
+                      ))
+                    ) : (
+                      <Box 
+                        sx={{
+                          p: 1,
+                          borderRadius: '8px',
+                          backgroundColor: '#fff5f7',
+                          color: '#666',
+                          fontStyle: 'italic'
+                        }}
+                      >
+                        Sin facturas
+                      </Box>
+                    )}
+                  </Box>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={() => setSelectedCliente(null)} color="primary">
+                  <Button 
+                    onClick={() => setSelectedCliente(null)}
+                    sx={{
+                      borderRadius: '12px',
+                      color: '#f48fb1',
+                      '&:hover': {
+                        backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                      },
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                    }}
+                  >
                     Cerrar
                   </Button>
                 </DialogActions>
