@@ -1,31 +1,45 @@
 import React, { useEffect, useState } from 'react';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import ShoppingBag from '@mui/icons-material/ShoppingBag';
+
 import {
   Container,
   TextField,
   Button,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Snackbar,
-  Alert,
+  Paper,
+  IconButton,
   Box,
+  TablePagination,
+  Typography,
+  Tooltip,
+  Chip,
+  FormControlLabel,
+  Switch,
+  Snackbar, 
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
-  IconButton,
-  TablePagination,
-  FormControl,
   MenuItem,
-  Select,
+  Checkbox,
+  Divider
 } from '@mui/material';
-import { Edit, Delete, ArrowUpward, ArrowDownward, Info, Receipt as ReceiptIcon } from '@mui/icons-material';
-import '../PagesStyle.css'
+
+import sortBy from 'lodash/sortBy';
+import { Edit ,Delete, CheckCircle , HourglassBottom,ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
+import '../PagesStyle.css';
+import Swal from 'sweetalert2';
 import { getApiUrl } from '../../utils/apiConfig'
 import FacturaPDF from '../Factura/FacturaPDF';
 const apiUrl = getApiUrl();
@@ -294,179 +308,756 @@ const Pedido = () => {
     }
   };
   
-
-
   return (
     <Box className="BoxInicial">
-      <Box className="Box"
+      <Box
+        className="Box"
         sx={{
           width: '90%',
-          maxWidth: '100%',
-          padding: '50px',
+          maxWidth: '900px',
+          padding: '30px',
           borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
         }}
       >
         <Container>
-          <h1>Gestión de Pedidos</h1>
-          <Box mb={4}>
+          <Box
+            sx={{
+              textAlign: 'center',
+              marginBottom: '30px',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-10px',
+                left: '25%',
+                width: '50%',
+                height: '4px',
+                background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                borderRadius: '10px',
+              },
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 'bold',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              }}
+            >
+              Gestión de Pedidos
+            </Typography>
           </Box>
-
-          <Box display="flex" justifyContent="space-between" alignItems="center" mt={4}>
-            <h2>Lista de Pedidos</h2>
-            <TextField
-              label="Buscar por nombre"
-              variant="outlined"
-              size="small"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              style={{ width: 250 }}
-            />
+          
+          {/* Dashboard Section */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 3,
+              justifyContent: 'center',
+              mb: 4,
+            }}
+          >
+            {/* Pedidos Totales */}
+            <Paper
+              elevation={2}
+              sx={{
+                borderRadius: '18px',
+                padding: '20px',
+                width: '220px',
+                backgroundColor: '#fff0f5',
+                border: '1px solid #f8c8dc',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                },
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '100%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: '#b04e6f',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Pedidos Totales
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      color: '#b04e6f',
+                      fontWeight: 'bold',
+                      mt: 1,
+                    }}
+                  >
+                    {sortedPedidos.length}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    backgroundColor: 'rgba(244, 143, 177, 0.15)',
+                    borderRadius: '12px',
+                    width: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <ShoppingBag sx={{ color: '#f48fb1', fontSize: '28px' }} />
+                </Box>
+              </Box>
+            </Paper>
+  
+            {/* Pedidos Realizados */}
+            <Paper
+              elevation={2}
+              sx={{
+                borderRadius: '18px',
+                padding: '20px',
+                width: '220px',
+                backgroundColor: '#f0f8ff',
+                border: '1px solid #bbdefb',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                },
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '100%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #bbdefb 0%, #90caf9 50%, #bbdefb 100%)',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: '#1976d2',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Realizados
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      color: '#1976d2',
+                      fontWeight: 'bold',
+                      mt: 1,
+                    }}
+                  >
+                    {sortedPedidos.filter(p => p.estado === 'realizado').length}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                    borderRadius: '12px',
+                    width: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <CheckCircle sx={{ color: '#1976d2', fontSize: '28px' }} />
+                </Box>
+              </Box>
+            </Paper>
+  
+            {/* Pedidos En Proceso */}
+            <Paper
+              elevation={2}
+              sx={{
+                borderRadius: '18px',
+                padding: '20px',
+                width: '220px',
+                backgroundColor: '#fffde7',
+                border: '1px solid #fff59d',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                },
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '100%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #fff59d 0%, #ffee58 50%, #fff59d 100%)',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: '#f57f17',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    En Proceso
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      color: '#f57f17',
+                      fontWeight: 'bold',
+                      mt: 1,
+                    }}
+                  >
+                    {sortedPedidos.filter(p => p.estado === 'en_proceso').length}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    backgroundColor: 'rgba(245, 127, 23, 0.1)',
+                    borderRadius: '12px',
+                    width: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <HourglassBottom sx={{ color: '#f57f17', fontSize: '28px' }} />
+                </Box>
+              </Box>
+            </Paper>
+  
+            {/* Pedidos Cancelados */}
+            <Paper
+              elevation={2}
+              sx={{
+                borderRadius: '18px',
+                padding: '20px',
+                width: '220px',
+                backgroundColor: '#ffebee',
+                border: '1px solid #ffcdd2',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                },
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '100%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #ffcdd2 0%, #ef9a9a 50%, #ffcdd2 100%)',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: '#c62828',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Cancelados
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      color: '#c62828',
+                      fontWeight: 'bold',
+                      mt: 1,
+                    }}
+                  >
+                    {sortedPedidos.filter(p => p.estado === 'pendiente').length}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    backgroundColor: 'rgba(198, 40, 40, 0.1)',
+                    borderRadius: '12px',
+                    width: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Cancel sx={{ color: '#c62828', fontSize: '28px' }} />
+                </Box>
+              </Box>
+            </Paper>
           </Box>
-
-          <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" onClick={() => handleSort('nombreComprador')}>
-                      Nombre del Comprador
-                      {sortBy === 'nombreComprador' && (sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />)}
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" onClick={() => handleSort('tamañoOso')}>
-                      Tamaño del Oso
-                      {sortBy === 'tamañoOso' && (sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />)}
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" onClick={() => handleSort('estado')}>
-                      Estado
-                      {sortBy === 'estado' && (sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />)}
-                    </Box>
-                  </TableCell>
-                  <TableCell align="right">Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {sortedPedidos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((pedido) => (
-                  <TableRow key={pedido._id}>
-                    <TableCell>{pedido.nombreComprador}</TableCell>
+  
+          {/* Mini Chart for Visual Data */}
+          <Paper
+            elevation={2}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              marginBottom: '30px',
+              backgroundColor: '#fff0f5',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '5px',
+                background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+              },
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                mb: 2,
+              }}
+            >
+              Resumen de Pedidos
+            </Typography>
+            <Box sx={{ height: '200px', position: 'relative' }}>
+              {/* Simple visual chart bars */}
+              <Box sx={{ display: 'flex', height: '150px', alignItems: 'flex-end', justifyContent: 'space-around' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
+                  <Box 
+                    sx={{ 
+                      width: '60px', 
+                      height: `${(sortedPedidos.filter(p => p.estado === 'realizado').length / sortedPedidos.length) * 100}%`,
+                      backgroundColor: '#90caf9',
+                      borderRadius: '6px 6px 0 0',
+                      minHeight: '20px',
+                      transition: 'height 0.5s ease'
+                    }} 
+                  />
+                  <Typography sx={{ mt: 1, fontSize: '12px', color: '#1976d2', fontWeight: 'bold' }}>Realizados</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
+                  <Box 
+                    sx={{ 
+                      width: '60px', 
+                      height: `${(sortedPedidos.filter(p => p.estado === 'en_proceso').length / sortedPedidos.length) * 100}%`,
+                      backgroundColor: '#ffee58',
+                      borderRadius: '6px 6px 0 0',
+                      minHeight: '20px',
+                      transition: 'height 0.5s ease'
+                    }} 
+                  />
+                  <Typography sx={{ mt: 1, fontSize: '12px', color: '#f57f17', fontWeight: 'bold' }}>En Proceso</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
+                  <Box 
+                    sx={{ 
+                      width: '60px', 
+                      height: `${(sortedPedidos.filter(p => p.estado === 'pendiente').length / sortedPedidos.length) * 100}%`,
+                      backgroundColor: '#ef9a9a',
+                      borderRadius: '6px 6px 0 0',
+                      minHeight: '20px',
+                      transition: 'height 0.5s ease'
+                    }} 
+                  />
+                  <Typography sx={{ mt: 1, fontSize: '12px', color: '#c62828', fontWeight: 'bold' }}>Cancelados</Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Paper>
+    
+          <Paper
+            elevation={2}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              marginBottom: '20px',
+              backgroundColor: '#fff0f5',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '5px',
+                background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+              },
+            }}
+          >
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                }}
+              >
+                Lista de Pedidos
+              </Typography>
+              <TextField
+                label="Buscar por nombre"
+                variant="outlined"
+                size="small"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                sx={{
+                  width: 250,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#666',
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+            </Box>
+    
+            <TableContainer
+              component={Paper}
+              elevation={3}
+              sx={{
+                marginTop: 2,
+                borderRadius: '15px',
+                overflow: 'hidden',
+                border: '1px solid #f8c8dc',
+                overflowX: 'auto',
+              }}
+            >
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#ffeef3' }}>
                     <TableCell>
-                            {pedido.detallesPedido.map(detalle => (
-                      <div key={detalle._id}>
-                         {detalle.idProducto?.tamañoProducto}
-                      </div>
-                    ))
-                    }
-                   </TableCell>
-                    <TableCell>
-                     <FormControl fullWidth size="small">
-                     <Select
-                        value={pedido.estado || 'en_proceso'}
-                        onChange={(e) => handleEstadoChange(pedido._id, e.target.value)}
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={1}
+                        onClick={() => handleSort('nombreComprador')}
+                        sx={{ cursor: 'pointer' }}
                       >
-                        <MenuItem value="pendiente">Cancelado</MenuItem>
-                        <MenuItem value="en_proceso">En proceso</MenuItem>
-                        <MenuItem value="realizado">Realizado</MenuItem>
-                      </Select>
-                     </FormControl>
+                        Nombre del Comprador
+                        {sortBy === 'nombreComprador' &&
+                          (sortOrder === 'asc' ? (
+                            <ArrowUpward fontSize="small" />
+                          ) : (
+                            <ArrowDownward fontSize="small" />
+                          ))}
+                      </Box>
                     </TableCell>
-                    <TableCell align="right">
-                      <IconButton onClick={() => handleEditClick(pedido)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton onClick={() => {
-                        setCurrentId(pedido._id);
-                        setOpenDeleteDialog(true);
-                      }}>
-                        <Delete />
-                      </IconButton>
-                      <IconButton onClick={() => handleDetailClick(pedido)}>
-                        <Info />
-                      </IconButton>
-                      <Button 
-                        variant="contained" 
-                        color="success"
-                        disabled={pedido.estado !== 'realizado'}
-                        onClick={() => handleGenerarFactura(pedido._id)}
-                        startIcon={<ReceiptIcon />}
+                    <TableCell>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={1}
+                        onClick={() => handleSort('tamañoOso')}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        Tamaño del Oso
+                        {sortBy === 'tamañoOso' &&
+                          (sortOrder === 'asc' ? (
+                            <ArrowUpward fontSize="small" />
+                          ) : (
+                            <ArrowDownward fontSize="small" />
+                          ))}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={1}
+                        onClick={() => handleSort('estado')}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        Estado
+                        {sortBy === 'estado' &&
+                          (sortOrder === 'asc' ? (
+                            <ArrowUpward fontSize="small" />
+                          ) : (
+                            <ArrowDownward fontSize="small" />
+                          ))}
+                      </Box>
+                    </TableCell>
+                    <TableCell align="center">Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {sortedPedidos
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((pedido) => (
+                      <TableRow
+                        key={pedido._id}
                         sx={{
-                          ml: 1,
-                          textTransform: 'none',
-                          borderRadius: '8px',
-                          '&:disabled': { 
-                            backgroundColor: '#e0e0e0',
-                            color: '#9e9e9e'
-                          }
+                          '&:hover': {
+                            backgroundColor: '#fff0f5',
+                          },
                         }}
                       >
-                        Generar Factura
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={sortedPedidos.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-
-          <Snackbar
-            open={openSnackbar}
-            autoHideDuration={6000}
-            onClose={() => setOpenSnackbar(false)}
-          >
-            <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+                        <TableCell>{pedido.nombreComprador}</TableCell>
+                        <TableCell>
+                          {pedido.detallesPedido.map(detalle => (
+                            <div key={detalle._id}>
+                              {detalle.idProducto?.tamañoProducto}
+                            </div>
+                          ))}
+                        </TableCell>
+                        <TableCell>
+                          <FormControl fullWidth size="small" sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: '12px',
+                              '&.Mui-focused fieldset': {
+                                borderColor: '#f48fb1',
+                              },
+                            }
+                          }}>
+                            <Select
+                              value={pedido.estado || 'en_proceso'}
+                              onChange={(e) => handleEstadoChange(pedido._id, e.target.value)}
+                            >
+                              <MenuItem value="pendiente">Cancelado</MenuItem>
+                              <MenuItem value="en_proceso">En proceso</MenuItem>
+                              <MenuItem value="realizado">Realizado</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </TableCell>
+                        <TableCell align="center">
+                          <IconButton
+                            onClick={() => handleEditClick(pedido)}
+                            sx={{
+                              color: '#6c63ff',
+                              '&:hover': {
+                                backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                              },
+                            }}
+                          >
+                            <Edit />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => {
+                              setCurrentId(pedido._id);
+                              setOpenDeleteDialog(true);
+                            }}
+                            sx={{
+                              color: '#e57373',
+                              '&:hover': {
+                                backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                              },
+                            }}
+                          >
+                            <Delete />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleDetailClick(pedido)}
+                            sx={{
+                              color: '#42a5f5',
+                              '&:hover': {
+                                backgroundColor: 'rgba(66, 165, 245, 0.1)',
+                              },
+                            }}
+                          >
+                            <Info />
+                          </IconButton>
+                          <Button 
+                            variant="contained"
+                            disabled={pedido.estado !== 'realizado'}
+                            onClick={() => handleGenerarFactura(pedido._id)}
+                            startIcon={<ReceiptLongIcon />}
+                            sx={{
+                              ml: 1,
+                              textTransform: 'none',
+                              borderRadius: '12px',
+                              backgroundColor: '#f48fb1',
+                              '&:hover': {
+                                backgroundColor: '#ec7096',
+                              },
+                              fontWeight: 'bold',
+                              boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                              '&:disabled': { 
+                                backgroundColor: '#e0e0e0',
+                                color: '#9e9e9e'
+                              }
+                            }}
+                          >
+                            Generar Factura
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+    
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={sortedPedidos.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+    
+          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+            <Alert onClose={() => setOpenSnackbar(false)} severity="success">
               {snackbarMessage}
             </Alert>
           </Snackbar>
-
-          <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
-            <DialogTitle>Eliminar Pedido</DialogTitle>
+    
+          <Dialog 
+            open={openDeleteDialog} 
+            onClose={() => setOpenDeleteDialog(false)}
+            PaperProps={{
+              sx: {
+                borderRadius: '15px',
+                border: '1px solid #f8c8dc',
+                boxShadow: '0 4px 20px rgba(244, 143, 177, 0.15)',
+              }
+            }}
+          >
+            <DialogTitle sx={{ 
+              color: '#b04e6f',
+              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+            }}>
+              Eliminar Pedido
+            </DialogTitle>
             <DialogContent>
               <DialogContentText>
                 ¿Estás seguro de que deseas eliminar este pedido?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setOpenDeleteDialog(false)} color="primary">
+              <Button 
+                onClick={() => setOpenDeleteDialog(false)} 
+                sx={{
+                  borderRadius: '12px',
+                  borderColor: '#f48fb1',
+                  color: '#f48fb1',
+                  '&:hover': {
+                    borderColor: '#ec7096',
+                    backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                }}
+              >
                 Cancelar
               </Button>
-              <Button onClick={eliminarPedido} color="primary">
+              <Button 
+                onClick={eliminarPedido} 
+                variant="contained"
+                sx={{
+                  borderRadius: '12px',
+                  backgroundColor: '#f48fb1',
+                  '&:hover': {
+                    backgroundColor: '#ec7096',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                }}
+              >
                 Eliminar
               </Button>
             </DialogActions>
           </Dialog>
-
-          {/* Diálogo de detalles */}
-          <Dialog open={openDetailDialog} onClose={() => setOpenDetailDialog(false)}>
-            <DialogTitle>Detalles de Pedidos</DialogTitle>
+    
+          <Dialog 
+            open={openDetailDialog} 
+            onClose={() => setOpenDetailDialog(false)}
+            PaperProps={{
+              sx: {
+                borderRadius: '15px',
+                border: '1px solid #f8c8dc',
+                boxShadow: '0 4px 20px rgba(244, 143, 177, 0.15)',
+                padding: '10px',
+              }
+            }}
+          >
+            <DialogTitle sx={{ 
+              color: '#b04e6f',
+              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+            }}>
+              Detalles de Pedidos
+            </DialogTitle>
             <DialogContent>
               {selectedPedido && (
-                <DialogContentText>
-                  <strong>Nombre del Comprador:</strong> {selectedPedido.nombreComprador} <br />
-                  <strong>Numero del Comprador:</strong> {selectedPedido.numeroComprador}<br /> <br />
-                  <strong>Nombre del Agendador:</strong> {selectedPedido.nombreAgendador} <br />
-                  <strong>Numero del Agendador:</strong> {selectedPedido.numeroAgendador} <br /> <br />
-                  <strong>Localidad:</strong> {selectedPedido.localidad} <br />
-                  <strong>Dirección:</strong> {selectedPedido.direccion} <br />
-                  <strong>Barrio:</strong> {selectedPedido.barrio } <br />
-                </DialogContentText>
+                <Paper elevation={0} sx={{ 
+                  padding: '15px', 
+                  backgroundColor: '#fff5f7',  
+                  borderRadius: '12px',
+                  border: '1px solid #f8c8dc',
+                }}>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Nombre del Comprador:</strong> {selectedPedido.nombreComprador}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Numero del Comprador:</strong> {selectedPedido.numeroComprador}</Typography>
+                  <Divider sx={{ my: 2, backgroundColor: '#f8c8dc' }} />
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Nombre del Agendador:</strong> {selectedPedido.nombreAgendador}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Numero del Agendador:</strong> {selectedPedido.numeroAgendador}</Typography>
+                  <Divider sx={{ my: 2, backgroundColor: '#f8c8dc' }} />
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Localidad:</strong> {selectedPedido.localidad}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Dirección:</strong> {selectedPedido.direccion}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Barrio:</strong> {selectedPedido.barrio}</Typography>
+                </Paper>
               )}
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setOpenDetailDialog(false)}>Cerrar</Button>
+              <Button 
+                onClick={() => setOpenDetailDialog(false)}
+                sx={{
+                  borderRadius: '12px',
+                  backgroundColor: '#f48fb1',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#ec7096',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                }}
+              >
+                Cerrar
+              </Button>
             </DialogActions>
           </Dialog>
+          
           {facturaGenerada && selectedPedido && (
             <FacturaPDF 
               factura={facturaGenerada}
@@ -481,5 +1072,5 @@ const Pedido = () => {
     </Box>
   );
 };
-
-export default Pedido;
+  
+  export default Pedido;

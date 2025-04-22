@@ -11,18 +11,28 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Snackbar,
-  Alert,
   Box,
   TablePagination,
+  Typography,
+  Tooltip,
+  Chip,
+  FormControlLabel,
   Switch,
+  Snackbar, 
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  MenuItem,
+  Checkbox
 } from '@mui/material';
-import {  Delete, ArrowUpward, ArrowDownward, Info } from '@mui/icons-material';
+import sortBy from 'lodash/sortBy';
+import { Edit, Delete, ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
@@ -102,103 +112,393 @@ const Movimientos = () => {
     );
   });
 
+  const totalIngreso = filteredMovimientos.reduce(
+    (acc, mov) => acc + (mov.cantidadIngreso || 0),
+    0
+  );
+  
+  const totalVendido = filteredMovimientos.reduce(
+    (acc, mov) => acc + (mov.cantidadVendida || 0),
+    0
+  );
+
   return (
     <Box className="BoxInicial">
-      <Box className="Box"
+      <Box
+        className="Box"
         sx={{
           width: '90%',
-          maxWidth: '100%',
-          padding: { xs: '20px', md: '50px' },
+          maxWidth: '900px',
+          padding: { xs: '20px', md: '30px' },
           borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
         }}
       >
-        <Container>
-          <h1>Movimientos</h1>
-          
-          <Box mt={4}>
-            <h2>Lista de Movimientos</h2>
-
-            {/* Filtros */}
-            <Box sx={{ display: 'flex', justifyContent: 'right', marginBottom: 2 }}>
-              <TextField
-                name="fecha"
-                value={filters.fecha}
-                onChange={handleFilterChange}
-                label="Buscar por fecha"
-                variant="outlined"
-                size="small"
-                sx={{ width: '30%' }}
-              />
-            </Box>
-
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Fecha</TableCell>
-                    <TableCell>Cantidad Ingreso</TableCell>
-                    <TableCell>Cantidad Vendida</TableCell>
-                    <TableCell>Inventario</TableCell>
-                    <TableCell>Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredMovimientos
-                    .slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage)
-                    .map((movimiento) => (
-                      <TableRow key={movimiento._id}>
-                        <TableCell>{new Date(movimiento.fecha).toLocaleString()}</TableCell>
-                        <TableCell>{movimiento.cantidadIngreso}</TableCell>
-                        <TableCell>{movimiento.cantidadVendida}</TableCell>
-                        <TableCell>{movimiento.inventario?._id || 'N/A'}</TableCell>
-                        <TableCell>
-                          <IconButton onClick={() => handleDelete(movimiento._id)}>
-                            <Delete />
-                          </IconButton>
-                          <IconButton onClick={() => handleOpenDetailsDialog(movimiento)}>
-                            <Info />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={filteredMovimientos.length}
-              rowsPerPage={rowsPerPage}
-              page={currentPage}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+        <Box
+          sx={{
+            textAlign: 'center',
+            marginBottom: '30px',
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: '-10px',
+              left: '25%',
+              width: '50%',
+              height: '4px',
+              background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+              borderRadius: '10px',
+            },
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 'bold',
+              color: '#b04e6f',
+              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+            }}
+          >
+            Movimientos de Inventario
+          </Typography>
+        </Box>
+  
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: 2, 
+            justifyContent: 'center', 
+            marginBottom: 4 
+          }}
+        >
+          <Paper
+            elevation={3}
+            sx={{
+              flex: '1 1 200px',
+              backgroundColor: '#fce4ec',
+              border: '1px solid #f8c8dc',
+              borderRadius: '20px',
+              padding: 2,
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="subtitle1" color="#b04e6f" fontWeight="bold">
+              Total Ingresos
+            </Typography>
+            <Typography variant="h5" color="#2e7d32" fontWeight="bold">
+              {totalIngreso}
+            </Typography>
+          </Paper>
+  
+          <Paper
+            elevation={3}
+            sx={{
+              flex: '1 1 200px',
+              backgroundColor: '#fce4ec',
+              border: '1px solid #f8c8dc',
+              borderRadius: '20px',
+              padding: 2,
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="subtitle1" color="#b04e6f" fontWeight="bold">
+              Total Vendido
+            </Typography>
+            <Typography variant="h5" color="#c62828" fontWeight="bold">
+              {totalVendido}
+            </Typography>
+          </Paper>
+  
+          <Paper
+            elevation={3}
+            sx={{
+              flex: '1 1 200px',
+              backgroundColor: '#fce4ec',
+              border: '1px solid #f8c8dc',
+              borderRadius: '20px',
+              padding: 2,
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="subtitle1" color="#b04e6f" fontWeight="bold">
+              Movimientos Totales
+            </Typography>
+            <Typography variant="h5" color="#6a1b9a" fontWeight="bold">
+              {filteredMovimientos.length}
+            </Typography>
+          </Paper>
+        </Box>
+  
+         <Paper
+          elevation={2}
+          sx={{
+            padding: '20px',
+            borderRadius: '20px',
+            marginBottom: '20px',
+            backgroundColor: '#fff0f5',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              width: '100%',
+              height: '5px',
+              background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+            },
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              marginBottom: '15px',
+              color: '#b04e6f',
+              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <ListAlt fontSize="small" /> Lista de Movimientos
+          </Typography>
+  
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              justifyContent: 'flex-end', 
+              marginBottom: 2,
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '12px',
+                '&.Mui-focused fieldset': {
+                  borderColor: '#f48fb1',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                '&.Mui-focused': {
+                  color: '#f48fb1',
+                },
+              },
+            }}
+          >
+            <TextField
+              name="fecha"
+              value={filters.fecha}
+              onChange={handleFilterChange}
+              label="Buscar por fecha"
+              variant="outlined"
+              size="small"
+              sx={{ 
+                width: { xs: '100%', sm: '300px' },
+                backgroundColor: 'white',
+              }}
+              InputLabelProps={{ shrink: true }}
             />
           </Box>
-        </Container>
+  
+          <TableContainer
+            component={Paper}
+            elevation={3}
+            sx={{
+              borderRadius: '15px',
+              overflow: 'hidden',
+              border: '1px solid #f8c8dc',
+            }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Fecha</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Ingreso</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Vendido</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Inventario</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredMovimientos
+                  .slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage)
+                  .map((movimiento) => (
+                    <TableRow 
+                      key={movimiento._id}
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: '#fff0f5',
+                        },
+                      }}
+                    >
+                      <TableCell>
+                        {new Date(movimiento.fecha).toLocaleString('es-CO', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </TableCell>
+                      <TableCell>
+                        <Chip 
+                          label={movimiento.cantidadIngreso} 
+                          sx={{
+                            backgroundColor: '#e8f5e9',
+                            color: '#2e7d32',
+                            fontWeight: 'bold'
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Chip 
+                          label={movimiento.cantidadVendida} 
+                          sx={{
+                            backgroundColor: '#ffebee',
+                            color: '#c62828',
+                            fontWeight: 'bold'
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {movimiento.inventario?._id || 'N/A'}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={() => handleDelete(movimiento._id)}
+                          sx={{
+                            color: '#e57373',
+                            '&:hover': {
+                              backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                            },
+                          }}
+                        >
+                          <Delete />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleOpenDetailsDialog(movimiento)}
+                          sx={{
+                            color: '#6c63ff',
+                            '&:hover': {
+                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                            },
+                          }}
+                        >
+                          <Info />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+  
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={filteredMovimientos.length}
+            rowsPerPage={rowsPerPage}
+            page={currentPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            sx={{
+              color: '#b04e6f',
+              '& .MuiTablePagination-selectIcon': {
+                color: '#f48fb1',
+              },
+            }}
+          />
+        </Paper>
+  
+        <Dialog
+          open={openDetailsDialog}
+          onClose={handleCloseDetailsDialog}
+          PaperProps={{
+            sx: {
+              borderRadius: '20px',
+              backgroundColor: '#fff5f7',
+              border: '1px solid #f8c8dc',
+              maxWidth: '500px',
+            }
+          }}
+        >
+          <DialogTitle
+            sx={{
+              backgroundColor: '#ffeef3',
+              color: '#b04e6f',
+              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              borderBottom: '1px solid #f8c8dc',
+            }}
+          >
+            Detalles del Movimiento
+          </DialogTitle>
+          <DialogContent>
+            {selectedMovimiento && (
+              <Box sx={{ p: 2 }}>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  <strong style={{ color: '#b04e6f' }}>Fecha:</strong>{' '}
+                  {new Date(selectedMovimiento.fecha).toLocaleString('es-CO', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  <strong style={{ color: '#b04e6f' }}>Cantidad Ingreso:</strong>
+                  <Chip
+                    label={selectedMovimiento.cantidadIngreso}
+                    sx={{
+                      ml: 1,
+                      backgroundColor: '#e8f5e9',
+                      color: '#2e7d32',
+                      fontWeight: 'bold'
+                    }}
+                  />
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  <strong style={{ color: '#b04e6f' }}>Cantidad Vendida:</strong>
+                  <Chip
+                    label={selectedMovimiento.cantidadVendida}
+                    sx={{
+                      ml: 1,
+                      backgroundColor: '#ffebee',
+                      color: '#c62828',
+                      fontWeight: 'bold'
+                    }}
+                  />
+                </Typography>
+                <Typography variant="body1">
+                  <strong style={{ color: '#b04e6f' }}>Inventario:</strong>{' '}
+                  {selectedMovimiento.inventario?._id || 'N/A'}
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions
+            sx={{
+              backgroundColor: '#ffeef3',
+              borderTop: '1px solid #f8c8dc',
+            }}
+          >
+            <Button
+              onClick={handleCloseDetailsDialog}
+              sx={{
+                color: '#f48fb1',
+                fontWeight: 'bold',
+                '&:hover': {
+                  backgroundColor: 'rgba(244, 143, 177, 0.1)',
+                },
+              }}
+            >
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
-
-      {/* Dialog de Detalles */}
-      <Dialog open={openDetailsDialog} onClose={handleCloseDetailsDialog}>
-        <DialogTitle>Detalles del Movimiento</DialogTitle>
-        <DialogContent>
-          {selectedMovimiento && (
-            <DialogContentText>
-              <strong>Fecha:</strong> {new Date(selectedMovimiento.fecha).toLocaleString()} <br />
-              <strong>Cantidad Ingreso:</strong> {selectedMovimiento.cantidadIngreso} <br />
-              <strong>Cantidad Vendida:</strong> {selectedMovimiento.cantidadVendida} <br />
-              <strong>Inventario:</strong> {selectedMovimiento.inventario?._id || 'N/A'} <br />
-            </DialogContentText>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDetailsDialog} color="primary">
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
-};
+};  
 
 export default Movimientos;

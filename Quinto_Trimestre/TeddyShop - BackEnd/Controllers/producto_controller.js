@@ -126,6 +126,8 @@ const getProductosByCatalogo = async (req, res) => {
     }
   };
 
+
+
 // Exportar los controladores
 module.exports = {
     listarProductos,

@@ -11,18 +11,29 @@
     TableRow,
     Paper,
     IconButton,
-    Dialog,
-    DialogTitle,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    Snackbar,
     Box,
     TablePagination,
+    Typography,
+    Tooltip,
+    Chip,
+    FormControlLabel,
+    Switch,
+    Snackbar, 
+    Alert,
+    FormControl,
+    InputLabel,
+    Select,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    MenuItem
   } from '@mui/material';
-  import Swal from 'sweetalert2';
-  import { Edit, Delete, ArrowUpward, ArrowDownward, Info } from '@mui/icons-material';
+  import sortBy from 'lodash/sortBy';
+  import { Edit, Delete, ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
   import '../PagesStyle.css';
+  import Swal from 'sweetalert2';
   import { getApiUrl } from '../../utils/apiConfig'
   import useApiRequest from '../../hooks/useApiRequest';
   const apiUrl = getApiUrl();
@@ -250,7 +261,6 @@
       });
     };
 
-    // Cargar datos para editar
     const editarCompania = (compania) => {
       setEditingId(compania._id);
       setNIT(compania.NIT);
@@ -286,148 +296,360 @@
         <Box className="Box"
           sx={{
             width: '90%',
-            maxWidth: '100%',
-            padding: { xs: '20px', md: '50px' },
+            maxWidth: '900px',
+            padding: { xs: '20px', md: '30px' },
             borderRadius: '30px',
+            margin: '0 auto',
+            backgroundColor: '#fffafc',
+            boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+            border: '2px solid #f8c8dc',
           }}
         >
           <Container>
-            <h1>Gestión de Compañías</h1>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                editingId ? actualizarCompania() : crearCompania();
+            <Box
+              sx={{
+                textAlign: 'center',
+                marginBottom: '30px',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-10px',
+                  left: '25%',
+                  width: '50%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                  borderRadius: '10px',
+                },
               }}
-              noValidate
-              autoComplete="off"
             >
-              <TextField
-                type="number"
-                label="NIT"
-                value={NIT}
-                onChange={(e) => setNIT(e.target.value)}
-                fullWidth
-                margin="normal"
-                required
-                variant="outlined"
+              <Typography
+                variant="h4"
                 sx={{
-                  '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                  '& .MuiInputBase-input': { fontSize: '1.2rem' },
-                  '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                    '-webkit-appearance': 'none',
-                    margin: 0
-                  },
-                  '& input[type=number]': {
-                    '-moz-appearance': 'textfield'
-                  }
+                  fontWeight: 'bold',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
                 }}
-              />
-              <TextField
-                type="text"
-                label="Teléfono de la Empresa"
-                value={telefonoEmpresa}
-                onChange={(e) => setTelefonoEmpresa(e.target.value)}
-                fullWidth
-                margin="normal"
-                required
-                variant="outlined"
+              >
+                Gestión de Compañías
+              </Typography>
+            </Box>
+    
+            <Paper
+              elevation={3}
+              sx={{
+                padding: '20px',
+                borderRadius: '20px',
+                backgroundColor: '#fff5f7',
+                marginBottom: '30px',
+                border: '1px solid #f8c8dc',
+              }}
+            >
+              <Typography
+                variant="h6"
                 sx={{
-                  '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                  '& .MuiInputBase-input': { fontSize: '1.2rem' },
+                  marginBottom: '15px',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
                 }}
-              />
-              <TextField
-                type="text"
-                label="Nombre de la Empresa"
-                value={nombreEmpresa}
-                onChange={(e) => setNombreEmpresa(e.target.value)}
-                fullWidth
-                margin="normal"
-                required
-                variant="outlined"
+              >
+                {editingId ? '✏️ Editar Compañía' : '✨ Nueva Compañía'}
+              </Typography>
+    
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  editingId ? actualizarCompania() : crearCompania();
+                }}
+                noValidate
+                autoComplete="off"
+              >
+                <TextField
+                  type="number"
+                  label="NIT"
+                  value={NIT}
+                  onChange={(e) => setNIT(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '12px',
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem',
+                      '&.Mui-focused': {
+                        color: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputBase-input': { fontSize: '1rem' },
+                    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                      '-webkit-appearance': 'none',
+                      margin: 0
+                    },
+                    '& input[type=number]': {
+                      '-moz-appearance': 'textfield'
+                    }
+                  }}
+                />
+    
+                <TextField
+                  type="text"
+                  label="Teléfono de la Empresa"
+                  value={telefonoEmpresa}
+                  onChange={(e) => setTelefonoEmpresa(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '12px',
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem',
+                      '&.Mui-focused': {
+                        color: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputBase-input': { fontSize: '1rem' },
+                  }}
+                />
+    
+                <TextField
+                  type="text"
+                  label="Nombre de la Empresa"
+                  value={nombreEmpresa}
+                  onChange={(e) => setNombreEmpresa(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '12px',
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem',
+                      '&.Mui-focused': {
+                        color: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputBase-input': { fontSize: '1rem' },
+                  }}
+                />
+    
+                <TextField
+                  type="text"
+                  label="Dirección de la Empresa"
+                  value={direccionEmpresa}
+                  onChange={(e) => setDireccionEmpresa(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '12px',
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: '1rem',
+                      '&.Mui-focused': {
+                        color: '#f48fb1',
+                      },
+                    },
+                    '& .MuiInputBase-input': { fontSize: '1rem' },
+                  }}
+                />
+    
+                <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
+                  {editingId ? (
+                    <Button
+                      variant="contained"
+                      onClick={actualizarCompania}
+                      startIcon={<Edit />}
+                      sx={{
+                        borderRadius: '12px',
+                        backgroundColor: '#f48fb1',
+                        '&:hover': {
+                          backgroundColor: '#ec7096',
+                        },
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                      }}
+                    >
+                      Actualizar
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      onClick={crearCompania}
+                      startIcon={<Add />}
+                      sx={{
+                        borderRadius: '12px',
+                        backgroundColor: '#f48fb1',
+                        '&:hover': {
+                          backgroundColor: '#ec7096',
+                        },
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                      }}
+                    >
+                      Crear
+                    </Button>
+                  )}
+                  <Button
+                    variant="outlined"
+                    onClick={resetForm}
+                    startIcon={<Clear />}
+                    sx={{
+                      borderRadius: '12px',
+                      borderColor: '#f48fb1',
+                      color: '#f48fb1',
+                      '&:hover': {
+                        borderColor: '#ec7096',
+                        backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                      },
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                </Box>
+              </form>
+            </Paper>
+    
+            <Paper
+              elevation={2}
+              sx={{
+                padding: '20px',
+                borderRadius: '20px',
+                marginBottom: '20px',
+                backgroundColor: '#fff0f5',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '100%',
+                  height: '5px',
+                  background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+                },
+              }}
+            >
+              <Typography
+                variant="h6"
                 sx={{
-                  '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                  '& .MuiInputBase-input': { fontSize: '1.2rem' },
+                  marginBottom: '15px',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                 }}
-              />
-              <TextField
-                type="text"
-                label="Dirección de la Empresa"
-                value={direccionEmpresa}
-                onChange={(e) => setDireccionEmpresa(e.target.value)}
-                fullWidth
-                margin="normal"
-                required
-                variant="outlined"
+              >
+                <ListAlt fontSize="small" /> Lista de Compañías
+              </Typography>
+    
+              <TableContainer
+                component={Paper}
+                elevation={3}
                 sx={{
-                  '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                  '& .MuiInputBase-input': { fontSize: '1.2rem' },
-                }}
-              />   
-              <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2  }}>
-                          {!editingId ? (
-                        <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={crearCompania}
-                      >
-                       Crear Compañia
-                       </Button>
-                    ) : (
-                     <Button
-                       variant="contained"
-                       color="secondary"
-                       onClick={actualizarCompania}
-                     >
-                       Actualizar Compañia
-                     </Button>
-                   )}
-                       <Button variant="outlined" color="secondary" onClick={resetForm}>
-                         Cancelar
-                       </Button>
-                     </Box>
-            </form>
+                  borderRadius: '15px',
+                  overflow: 'hidden',
+                  border: '1px solid #f8c8dc',
+                  overflowX: 'auto',
 
-            <Box mt={4}>
-              <h2>Lista de Compañías</h2>
-              <TableContainer component={Paper}>
+                }}
+              >
                 <Table>
                   <TableHead>
-                    <TableRow>
-                    <TableCell>NIT</TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                      <TableCell sx={{ fontWeight: 'bold' }}>NIT</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          gap={1}
+                          onClick={() => sortCompanias('nombreEmpresa')}
+                          sx={{ cursor: 'pointer' }}
+                        >
                           Nombre
-                          <IconButton onClick={() => sortCompanias('nombreEmpresa')}>
-                            {sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />}
-                          </IconButton>
+                          {sortBy === 'nombreEmpresa' &&
+                            (sortOrder === 'asc' ? (
+                              <ArrowUpward fontSize="small" />
+                            ) : (
+                              <ArrowDownward fontSize="small" />
+                            ))}
                         </Box>
                       </TableCell>
-                      
-                      <TableCell>Dirección</TableCell>
-                      <TableCell>Acciones</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Dirección</TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {companias.map((comp) => (
-                      <TableRow key={comp._id}>
-                         <TableCell>{comp.NIT}</TableCell>
+                      <TableRow
+                        key={comp._id}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: '#fff0f5',
+                          },
+                        }}
+                      >
+                        <TableCell>{comp.NIT}</TableCell>
                         <TableCell>{comp.nombreEmpresa}</TableCell>
                         <TableCell>{comp.direccionEmpresa}</TableCell>
-                        <TableCell>
+                        <TableCell align="center">
                           <IconButton
-                          color="info"
-                          onClick={() => verDetalles(comp)}>
+                            onClick={() => verDetalles(comp)}
+                            sx={{
+                              color: '#6c63ff',
+                              '&:hover': {
+                                backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                              },
+                            }}
+                          >
                             <Info />
                           </IconButton>
                           <IconButton
-                          color="primary" 
-                          onClick={() => editarCompania(comp)}>
+                            onClick={() => editarCompania(comp)}
+                            sx={{
+                              color: '#4caf50',
+                              '&:hover': {
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                              },
+                            }}
+                          >
                             <Edit />
                           </IconButton>
-                          <IconButton 
-                              sx={{ color: "#d33" }}
-                          onClick={() => eliminarCompania(comp._id)}>
+                          <IconButton
+                            onClick={() => eliminarCompania(comp._id)}
+                            sx={{
+                              color: '#e57373',
+                              '&:hover': {
+                                backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                              },
+                            }}
+                          >
                             <Delete />
                           </IconButton>
                         </TableCell>
@@ -436,25 +658,62 @@
                   </TableBody>
                 </Table>
               </TableContainer>
-            </Box>
+            </Paper>
     
             {selectedCompania && (
-              <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-                <DialogTitle>Detalles de la Compañía</DialogTitle>
+              <Dialog
+                open={dialogOpen}
+                onClose={handleCloseDialog}
+                PaperProps={{
+                  sx: {
+                    borderRadius: '20px',
+                    backgroundColor: '#fff5f7',
+                    border: '1px solid #f8c8dc',
+                  }
+                }}
+              >
+                <DialogTitle
+                  sx={{
+                    backgroundColor: '#ffeef3',
+                    color: '#b04e6f',
+                    fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                    borderBottom: '1px solid #f8c8dc',
+                  }}
+                >
+                  Detalles de la Compañía
+                </DialogTitle>
                 <DialogContent>
-                  <DialogContentText>
-                  <strong>NIT:</strong> {selectedCompania.NIT}
-                  <br />  
-                  <strong>Nombre:</strong> {selectedCompania.nombreEmpresa}
-                   <br />
-                  <strong>Dirección:</strong> {selectedCompania.direccionEmpresa}
-                    <br />
-                  <strong>Teléfono:</strong> {selectedCompania.telefonoEmpresa}
-                    <br /> 
-                  </DialogContentText>
+                  <Box sx={{ p: 2 }}>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>NIT:</strong> {selectedCompania.NIT}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>Nombre:</strong> {selectedCompania.nombreEmpresa}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>Dirección:</strong> {selectedCompania.direccionEmpresa}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Teléfono:</strong> {selectedCompania.telefonoEmpresa}
+                    </Typography>
+                  </Box>
                 </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCloseDialog} color="primary">
+                <DialogActions
+                  sx={{
+                    backgroundColor: '#ffeef3',
+                    borderTop: '1px solid #f8c8dc',
+                  }}
+                >
+                  <Button
+                    onClick={handleCloseDialog}
+                    sx={{
+                      color: '#f48fb1',
+                      fontWeight: 'bold',
+                      '&:hover': {
+                        backgroundColor: 'rgba(244, 143, 177, 0.1)',
+                      },
+                    }}
+                  >
                     Cerrar
                   </Button>
                 </DialogActions>
