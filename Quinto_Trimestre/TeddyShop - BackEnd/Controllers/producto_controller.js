@@ -15,7 +15,9 @@ cloudinary.config({
 // Controlador para listar todos los productos
 const listarProductos = async (req, res) => {
     try {
-        const productos = await Producto.find().populate('categorias');
+        const productos = await Producto.find()
+        .populate('categorias')
+        .populate()
         if (!productos) {
           return res.status(404).json({ message: 'No se encontraron productos' });
         }
@@ -126,6 +128,45 @@ const getProductosByCatalogo = async (req, res) => {
     }
   };
 
+  // Controlador para incrementar clics
+const incrementarClics = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const producto = await logic.incrementarClickCount(id);
+      res.json({
+        message: 'Contador actualizado',
+        clickCount: producto.clickCount
+      });
+    } catch (err) {
+      res.status(500).json({
+        error: 'Error al actualizar clics',
+        detalle: err.message
+      });
+    }
+  };
+  
+  // Controlador para obtener productos populares
+  const obtenerMasPopulares = async (req, res) => {
+    try {
+      const productos = await Producto.find()
+        .sort({ clickCount: -1 })
+        .limit(8)
+        .lean();
+  
+      if (!productos) {
+        return res.status(404).json({ error: 'No se encontraron productos' });
+      }
+  
+      res.status(200).json(productos);
+    } catch (error) {
+      console.error('Error en obtenerMasPopulares:', error);
+      res.status(500).json({ 
+        error: 'Error interno del servidor',
+        detalle: process.env.NODE_ENV === 'development' ? error.message : ''
+      });
+    }
+  };
+
 // Exportar los controladores
 module.exports = {
     listarProductos,
@@ -133,5 +174,7 @@ module.exports = {
     actualizarProducto,
     obtenerProductoPorId,
     eliminarProducto,
-    getProductosByCatalogo
+    getProductosByCatalogo,
+    incrementarClics,
+    obtenerMasPopulares
 };

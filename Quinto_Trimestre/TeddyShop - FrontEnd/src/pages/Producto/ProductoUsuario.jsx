@@ -46,6 +46,7 @@ const ProductoUsuario = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [categoriaFiltro, setCategoriaFiltro] = useState('todos');
   const productosPerPage = 12;
+  const [refreshPopular, setRefreshPopular] = useState(false);
 
   const [pedido, setPedido] = useState({
     metodoPago: '',
@@ -195,6 +196,24 @@ const ProductoUsuario = () => {
 
   const handleInputChange = (e) => {
     setPedido({ ...pedido, [e.target.name]: e.target.value });
+  };
+
+  //Contador de clicks para la sección de los mas populares
+  const incrementClickCount = async (productId) => {
+    try {
+      const response = await fetch(`${PRODUCTOS_API_URL}/${productId}/clics`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) throw new Error('Error en el servidor');
+      
+      setRefreshPopular(prev => !prev);
+      
+    } catch (error) {
+      console.error('Error al registrar clic:', error);
+      setSnackbarMessage('Error al actualizar popularidad');
+      setOpenSnackbar(true);
+    }
   };
 
 
@@ -380,36 +399,38 @@ const ProductoUsuario = () => {
         console.log('Factura actualizada con detalle');
     
         // Paso 6: Actualizar el pedido con el detalle y la factura
-const updatePedido = {
-  nombreComprador: responseData.nombreComprador,
-  numeroComprador: responseData.numeroComprador,
-  nombreAgendador: responseData.nombreAgendador,
-  numeroAgendador: responseData.numeroAgendador,
-  localidad: responseData.localidad,
-  direccion: responseData.direccion,
-  barrio: responseData.barrio,
-  detallesPedido: [detalleData._id],
-  facturas: [facturaData._id],
-  cliente: responseData.cliente
-};
+        const updatePedido = {
+          nombreComprador: responseData.nombreComprador,
+          numeroComprador: responseData.numeroComprador,
+          nombreAgendador: responseData.nombreAgendador,
+          numeroAgendador: responseData.numeroAgendador,
+          localidad: responseData.localidad,
+          direccion: responseData.direccion,
+          barrio: responseData.barrio,
+          detallesPedido: [detalleData._id],
+          facturas: [facturaData._id],
+          cliente: responseData.cliente
+        };
 
-console.log('Intentando actualizar el pedido con:', updatePedido);
+        console.log('Intentando actualizar el pedido con:', updatePedido);
 
-const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
-  method: 'PUT',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(updatePedido)
-});
+        const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatePedido)
+        });
 
-const updateResponseText = await updateResponsePedido.text();
+        const updateResponseText = await updateResponsePedido.text();
 
-if (!updateResponsePedido.ok) {
-  console.error('Error al actualizar pedido - status:', updateResponsePedido.status);
-  console.error('Respuesta del servidor:', updateResponseText);
-  throw new Error(`Error actualizando pedido: ${updateResponseText}`);
-}
+        if (!updateResponsePedido.ok) {
+          console.error('Error al actualizar pedido - status:', updateResponsePedido.status);
+          console.error('Respuesta del servidor:', updateResponseText);
+          throw new Error(`Error actualizando pedido: ${updateResponseText}`);
+        }
 
-console.log('Pedido actualizado con detalle y factura');
+        console.log('Pedido actualizado con detalle y factura');
+
+        await incrementClickCount(productoSeleccionado._id);
 
         setSnackbarMessage('Pedido realizado con éxito');
       } catch (error) {
@@ -417,7 +438,7 @@ console.log('Pedido actualizado con detalle y factura');
         setSnackbarMessage(error.message || 'Error al guardar el pedido');
         setOpenSnackbar(true);
       }
-    
+
       setOpenSnackbar(true);
       handleCloseCarritoDialog();
     };

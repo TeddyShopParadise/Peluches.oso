@@ -5,10 +5,18 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import logoTeddyShop from "../../assets/img/LogoTeddyShop.jpg";
 import FaqSection from "../../assets/ts/FaqSection";
 import "./Home.css";
+import { getApiUrl } from '../../utils/apiConfig';
+
+const apiUrl = getApiUrl();
 
 const Home = () => {
   // Estado para el carrusel
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [popularProducts, setPopularProducts] = useState([]);
+  const [loadingPopular, setLoadingPopular] = useState(true);
+  const [errorPopular, setErrorPopular] = useState(null);
+  const [refreshPopular, setRefreshPopular] = useState(false);
+
   const carouselImages = [
     {
       id: "Sukuna",
@@ -47,41 +55,28 @@ const Home = () => {
   }, []);
 
 
-  //PRODUCTOS MAS VENDIDOS
-  const bestSellers = [
-    {
-      id: 1,
-      name: "Osito Clásico",
-      image: "https://images.unsplash.com/photo-1556012018-50c5c0da73bf?w=800",
-      price: 79900,
-      originalPrice: 99900,
-      discount: "20% OFF",
-    },
-    {
-      id: 2,
-      name: "Panda Gigante",
-      image: "https://images.unsplash.com/photo-1556012018-50c5c0da73bf?w=800",
-      price: 149900,
-      originalPrice: 189900,
-      discount: "25% OFF",
-    },
-    {
-      id: 3,
-      name: "Conejo Rosa",
-      image: "https://images.unsplash.com/photo-1556012018-50c5c0da73bf?w=800",
-      price: 69900,
-      originalPrice: 89900,
-      discount: "15% OFF",
-    },
-    {
-      id: 4,
-      name: "León Dormilón",
-      image: "https://images.unsplash.com/photo-1556012018-50c5c0da73bf?w=800",
-      price: 99900,
-      originalPrice: 129900,
-      discount: "30% OFF",
-    },
-  ];
+  // Obtener productos populares
+  useEffect(() => {
+    const fetchPopularProducts = async () => {
+      try {
+        setLoadingPopular(true);
+        const response = await fetch(`${apiUrl}/producto/mas-populares`);
+        
+        if (!response.ok) throw new Error('Error en la respuesta');
+        
+        const data = await response.json();
+        setPopularProducts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        setErrorPopular(error.message);
+        setPopularProducts([]);
+      } finally {
+        setLoadingPopular(false);
+      }
+    };
+    
+    fetchPopularProducts();
+  }, [refreshPopular]);
+
 
   return (
     <Container disableGutters sx={{ maxWidth: "100vw", padding: 0, margin: 0 }}>
@@ -326,16 +321,16 @@ const Home = () => {
       </Box>
 
 
-      {/* Sección de los más vendidos */}
-      <Box className="BoxInicial">
-      <Box className="Box"
+      {/* Sección de los más populares */}
+       <Box className="BoxInicial">
+        <Box className="Box"
           sx={{
             width: "90%",
             maxWidth: "1200px",
             padding: { xs: "20px", md: "50px" },
             borderRadius: "30px",
           }}
-      >
+        >
           <Typography
             variant="h2"
             sx={{
@@ -345,20 +340,20 @@ const Home = () => {
               textAlign: "center",
             }}
           >
-            LOS MÁS VENDIDOS
+            LOS MÁS POPULARES
           </Typography>
           
           <Grid container spacing={4}>
-            {bestSellers.map((product) => (
-              <Grid item xs={12} sm={6} md={3} key={product.id}>
+            {Array.isArray(popularProducts) && popularProducts.slice(0, 4).map((product) => (
+              <Grid item xs={12} sm={6} md={3} key={product._id}>
                 <div className="product-card">
                   <div style={{ position: "relative" }}>
                     <img
-                      src={product.image}
-                      alt={product.name}
+                      src={product.imagen}
+                      alt={product.estiloProducto}
                       className="product-image"
+                      style={{ height: "250px", objectFit: "cover" }}
                     />
-                    <span className="product-badge">{product.discount}</span>
                   </div>
                   <Box sx={{ p: 2 }}>
                     <Typography
@@ -369,21 +364,19 @@ const Home = () => {
                         color: "#2f2f2f",
                       }}
                     >
-                      {product.name}
+                      {product.estiloProducto}
                     </Typography>
-                    <div className="price-tag">
-                      <span className="original-price">
-                        ${product.originalPrice.toLocaleString()}
-                      </span>
-                      ${product.price.toLocaleString()}
-                    </div>
+                    <Typography variant="body2" color="textSecondary">
+                      Tamaño: {product.tamañoProducto}
+                    </Typography>
+
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => handleAddToCart(product)}
-                      sx={{ mt: 2 }}
+                      href={`/productos-usuario`}
+                      sx={{ mt: 2, width: '100%' }}
                     >
-                      Agregar al carrito
+                      Ver Todos los productos
                     </Button>
                   </Box>
                 </div>

@@ -30,11 +30,18 @@ const productoSchema = new mongoose.Schema({
   categorias: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Categoria' // Referencia a la colección Categoria
-  }]
+  }],
+  clickCount: {
+    type: Number,
+    default: 0,
+    min: 0
+  }
 }, {
   collection: 'Producto',
   timestamps: false
 });
+
+productoSchema.index({ clickCount: -1 });
 
 // exportar el modelo
 module.exports = mongoose.model('Producto', productoSchema);
