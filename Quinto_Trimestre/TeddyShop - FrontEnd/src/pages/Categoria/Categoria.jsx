@@ -11,24 +11,30 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Snackbar,
-  Alert,
   Box,
   TablePagination,
+  Typography,
+  Tooltip,
+  Chip,
+  FormControlLabel,
   Switch,
+  Snackbar, 
+  Alert,
   FormControl,
   InputLabel,
   Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   MenuItem,
+  Checkbox
 } from '@mui/material';
-import Swal from 'sweetalert2';
-import { Edit, Delete, Info } from '@mui/icons-material';
+import sortBy from 'lodash/sortBy';
+import { Edit, Delete, ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
 import '../PagesStyle.css';
+import Swal from 'sweetalert2';
 import { getApiUrl } from '../../utils/apiConfig'
 import useApiRequest from '../../hooks/useApiRequest';
 
@@ -188,14 +194,6 @@ const CategoriaComponent = () => {
     setCurrentPage(0);
   };
 
-  const openDetailsDialog = (categoria) => {
-    setSelectedCategoria(categoria);
-  };
-
-  const closeDetailsDialog = () => {
-    setSelectedCategoria(null);
-  };
-
   useEffect(() => {
     fetchCategorias();
     fetchProductos();
@@ -206,99 +204,271 @@ const CategoriaComponent = () => {
       <Box className="Box"
         sx={{
           width: '90%',
-          maxWidth: '100%',
-          padding: { xs: '20px', md: '50px' },
+          maxWidth: '900px',
+          padding: { xs: '20px', md: '30px' },
           borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
         }}
       >
         <Container>
-          <h1>Gestión de Categorías</h1>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              editingId ? actualizarCategoria() : crearCategoria();
+          <Box
+            sx={{
+              textAlign: 'center',
+              marginBottom: '30px',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-10px',
+                left: '25%',
+                width: '50%',
+                height: '4px',
+                background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                borderRadius: '10px',
+              },
             }}
-            noValidate
-            autoComplete="off"
           >
-            <TextField
-              type="text"
-              placeholder="Nombre de la categoría"
-              value={nombreCategoria}
-              onChange={(e) => setNombreCategoria(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              label="Nombre de la categoría"
+            <Typography
+              variant="h4"
               sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
+                fontWeight: 'bold',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                
               }}
-            />
-            <TextField
-              type="text"
-              placeholder="Descripción de la categoría"
-              value={descripcionCategoria}
-              onChange={(e) => setDescripcionCategoria(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              label="Descripción de la categoría"
+            >
+              Gestión de Categorías
+            </Typography>
+          </Box>
+  
+          <Paper
+            elevation={3}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              backgroundColor: '#fff5f7',
+              marginBottom: '30px',
+              border: '1px solid #f8c8dc',
+            }}
+          >
+            <Typography
+              variant="h6"
               sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
+                marginBottom: '15px',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
               }}
-            />
+            >
+              {editingId ? '✏️ Editar Categoría' : '✨ Nueva Categoría'}
+            </Typography>
+  
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                editingId ? actualizarCategoria() : crearCategoria();
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                type="text"
+                placeholder="Nombre de la categoría"
+                value={nombreCategoria}
+                onChange={(e) => setNombreCategoria(e.target.value)}
+                fullWidth
+                margin="normal"
+                required
+                variant="outlined"
+                label="Nombre de la categoría"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+              
+              <TextField
+                type="text"
+                placeholder="Descripción de la categoría"
+                value={descripcionCategoria}
+                onChange={(e) => setDescripcionCategoria(e.target.value)}
+                fullWidth
+                margin="normal"
+                required
+                variant="outlined"
+                label="Descripción de la categoría"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+  
+              <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
+                {!editingId ? (
+                  <Button
+                    variant="contained"
+                    onClick={crearCategoria}
+                    startIcon={<Add />}
+                    sx={{
+                      borderRadius: '12px',
+                      backgroundColor: '#f48fb1',
+                      '&:hover': {
+                        backgroundColor: '#ec7096',
+                      },
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                      boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                    }}
+                  >
+                    Crear Categoría
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    onClick={actualizarCategoria}
+                    startIcon={<Edit />}
+                    sx={{
+                      borderRadius: '12px',
+                      backgroundColor: '#f48fb1',
+                      '&:hover': {
+                        backgroundColor: '#ec7096',
+                      },
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                      boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                    }}
+                  >
+                    Actualizar Categoría
+                  </Button>
+                )}
+                <Button
+                  variant="outlined"
+                  onClick={resetForm}
+                  startIcon={<Clear />}
+                  sx={{
+                    borderRadius: '12px',
+                    borderColor: '#f48fb1',
+                    color: '#f48fb1',
+                    '&:hover': {
+                      borderColor: '#ec7096',
+                      backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Cancelar
+                </Button>
+              </Box>
+            </form>
+          </Paper>
+  
+          <Paper
+            elevation={2}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              marginBottom: '20px',
+              backgroundColor: '#fff0f5',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '5px',
+                background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+              },
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                marginBottom: '15px',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <ListAlt fontSize="small" /> Lista de Categorías
+            </Typography>
+  
+            <TableContainer
+              component={Paper}
+              elevation={3}
+              sx={{
+                borderRadius: '15px',
+                overflow: 'hidden',
+                border: '1px solid #f8c8dc',
+                overflowX: 'auto',
 
-           <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2  }}>
-             {!editingId ? (
-           <Button
-           variant="contained"
-           color="primary"
-           onClick={crearCategoria}
-         >
-          Crear Usuario
-          </Button>
-       ) : (
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={actualizarCategoria}
-        >
-          Actualizar Usuario
-        </Button>
-      )}
-          <Button variant="outlined" color="secondary" onClick={resetForm}>
-            Cancelar
-          </Button>
-
-        </Box>       
-         </form>
-
-          <Box mt={4}>
-            <h2>Lista de Categorías</h2>
-            <TableContainer component={Paper}>
+              }}
+            >
               <Table>
                 <TableHead>
-                  <TableRow>
-                    <TableCell>Nombre</TableCell>
-                    <TableCell>Descripción</TableCell>
-                    <TableCell>Acciones</TableCell>
+                  <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Nombre</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Descripción</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {categorias.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage).map((categoria) => (
-                    <TableRow key={categoria._id}>
+                    <TableRow
+                      key={categoria._id}
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: '#fff0f5',
+                        },
+                      }}
+                    >
                       <TableCell>{categoria.nombreCategoria}</TableCell>
                       <TableCell>{categoria.descripcionCategoria}</TableCell>
-                      <TableCell>
-                        <IconButton 
-                        color='primary'onClick={() => editarCategoria(categoria)}>
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={() => editarCategoria(categoria)}
+                          sx={{
+                            color: '#4caf50',
+                            '&:hover': {
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            },
+                          }}
+                        >
                           <Edit />
                         </IconButton>
-                        <IconButton   sx={{ color: "#d33" }}onClick={() => eliminarCategoria(categoria._id)}>
+                        <IconButton
+                          onClick={() => eliminarCategoria(categoria._id)}
+                          sx={{
+                            color: '#e57373',
+                            '&:hover': {
+                              backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                            },
+                          }}
+                        >
                           <Delete />
                         </IconButton>
                       </TableCell>
@@ -306,22 +476,28 @@ const CategoriaComponent = () => {
                   ))}
                 </TableBody>
               </Table>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={categorias.length}
-                rowsPerPage={rowsPerPage}
-                page={currentPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
             </TableContainer>
-          </Box>
+  
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={categorias.length}
+              rowsPerPage={rowsPerPage}
+              page={currentPage}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{
+                color: '#b04e6f',
+                '& .MuiTablePagination-selectIcon': {
+                  color: '#f48fb1',
+                },
+              }}
+            />
+          </Paper>
         </Container>
       </Box>
     </Box>
   );
 };
-
 
 export default CategoriaComponent;

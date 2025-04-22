@@ -11,15 +11,19 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Snackbar,
-  Alert,
   Box,
-  Switch,
+  TablePagination,
+  Typography,
+  Tooltip,
+  Chip,
   FormControlLabel,
-  TablePagination
-} from "@mui/material";
+  Switch,
+  Snackbar, 
+  Alert 
+} from '@mui/material';
+import { Edit, Delete, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search, SentimentDissatisfied   } from '@mui/icons-material';
+import '../PagesStyle.css';
 import Swal from 'sweetalert2';
-import { Edit, Delete, ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
@@ -255,102 +259,320 @@ const EliminarRol = async (id) => {
       })
     );
   };
-
   return (
     <Box className="BoxInicial">
-      <Box className="Box"
-        sx={{ 
-          width: "90%", 
-          maxWidth: "100%", 
-          padding: { xs: "20px", md: "50px" }, 
-          borderRadius: "30px", 
-        }}>
+      <Box
+        className="Box"
+        sx={{
+          width: '90%',
+          maxWidth: '900px',
+          padding: '30px',
+          borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
+        }}
+      >
         <Container>
-          <h1>Gestión de Roles</h1>
-          <form noValidate autoComplete="off">
-            <TextField label="Nombre del Rol" name="nombre" value={role.nombre} onChange={handleInputChange} fullWidth margin="normal" required />
-            <FormControlLabel
-            control={<Switch checked={role.estado} onChange={handleEstadoChange} />}
-            label={role.estado ? "Activo" : "Inactivo"}
-            />
-            <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2  }}>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            sx={{ borderRadius: "8px", padding: "8px 18px" }}
-            onClick={handleSaveRole}
+          <Box
+            sx={{
+              textAlign: 'center',
+              marginBottom: '30px',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-10px',
+                left: '25%',
+                width: '50%',
+                height: '4px',
+                background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                borderRadius: '10px',
+              },
+            }}
           >
-            {isEditing ? "Actualizar Rol" : "Crear Rol"}
-          </Button>
-           <Button variant="outlined" color="secondary" onClick={resetRoleForm}>
-             Cancelar
-           </Button>
-        </Box>
-
-          </form>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mt={4}>
-            <h2>Roles</h2>
-            <TextField label="Buscar por nombre" variant="outlined" size="small" value={searchTerm} onChange={handleSearchChange} style={{ width: 250 }} />
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 'bold',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              }}
+            >
+              Gestión de Roles
+            </Typography>
           </Box>
-          <TableContainer component={Paper} style={{ marginTop: 20, maxHeight: 500, overflowY: "auto" }}>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" onClick={() => handleSort("nombre")}>
-                      Nombre
-                      {sortBy === "nombre" && (sortOrder === "asc" ? <ArrowUpward /> : <ArrowDownward />)}
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" onClick={() => handleSort("estado")}>
-                      Estado
-                      {sortBy === "estado" && (sortOrder === "asc" ? <ArrowUpward /> : <ArrowDownward />)}
-                    </Box>
-                  </TableCell>
-                  <TableCell>Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredRoles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((r) => (
-                  <TableRow key={r._id}>
-                    <TableCell>{r.nombre}</TableCell>
-                    <TableCell>{r.estado ? "Activo" : "Inactivo"}</TableCell>
-                    
-                    <TableCell>
-                    <IconButton 
-                      onClick={() => handleEditClick(r)} 
-                      color="primary" 
-                    >
-                      <Edit />
-                    </IconButton>
-                    <IconButton 
-                      onClick={() => EliminarRol(r._id)} 
-                      sx={{ color: "red", "&:hover": { color: "darkred" } }}
-                    >
-                      <Delete />
-                    </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+  
+          <Paper
+            elevation={3}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              backgroundColor: '#fff5f7',
+              marginBottom: '30px',
+              border: '1px solid #f8c8dc',
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                marginBottom: '15px',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              }}
+            >
+              {isEditing ? '✏️ Editar Rol' : '✨ Nuevo Rol'}
+            </Typography>
+  
+            <TextField
+              label="Nombre del Rol"
+              name="nombre"
+              value={role.nombre}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              required
+              variant="outlined"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#f48fb1',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  '&.Mui-focused': {
+                    color: '#f48fb1',
+                  },
+                },
+              }}
+            />
+  
+            <FormControlLabel
+              control={<Switch checked={role.estado} onChange={handleEstadoChange} />}
+              label={role.estado ? 'Activo' : 'Inactivo'}
+              sx={{
+                color: '#b04e6f',
+                fontWeight: 'bold',
+                marginTop: '10px',
+              }}
+            />
+  
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+              <Button
+                variant="contained"
+                onClick={handleSaveRole}
+                sx={{
+                  borderRadius: '12px',
+                  backgroundColor: '#f48fb1',
+                  '&:hover': {
+                    backgroundColor: '#ec7096',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                }}
+              >
+                {isEditing ? 'Actualizar Rol' : 'Crear Rol'}
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={resetRoleForm}
+                sx={{
+                  borderRadius: '12px',
+                  borderColor: '#f48fb1',
+                  color: '#f48fb1',
+                  '&:hover': {
+                    borderColor: '#ec7096',
+                    backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                }}
+              >
+                Cancelar
+              </Button>
+            </Box>
+          </Paper>
+  
+          <Paper
+            elevation={2}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              marginBottom: '20px',
+              backgroundColor: '#fff0f5',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '5px',
+                background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+              },
+            }}
+          >
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                }}
+              >
+                Lista de Roles
+              </Typography>
+              <TextField
+                label="Buscar por nombre"
+                variant="outlined"
+                size="small"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                sx={{
+                  width: 250,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#666',
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+            </Box>
+  
+            <TableContainer
+              component={Paper}
+              elevation={3}
+              sx={{
+                marginTop: 2,
+                borderRadius: '15px',
+                overflow: 'hidden',
+                border: '1px solid #f8c8dc',
+                overflowX: 'auto',
 
-          <TablePagination
-            rowsPerPageOptions={[10]}
-            component="div"
-            count={filteredRoles.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+              }}
+            >
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                    <TableCell>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={1}
+                        onClick={() => handleSort('nombre')}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        Nombre
+                        {sortBy === 'nombre' &&
+                          (sortOrder === 'asc' ? (
+                            <ArrowUpward fontSize="small" />
+                          ) : (
+                            <ArrowDownward fontSize="small" />
+                          ))}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={1}
+                        onClick={() => handleSort('estado')}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        Estado
+                        {sortBy === 'estado' &&
+                          (sortOrder === 'asc' ? (
+                            <ArrowUpward fontSize="small" />
+                          ) : (
+                            <ArrowDownward fontSize="small" />
+                          ))}
+                      </Box>
+                    </TableCell>
+                    <TableCell align="center">Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredRoles
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((r) => (
+                      <TableRow
+                        key={r._id}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: '#fff0f5',
+                          },
+                        }}
+                      >
+                        <TableCell>{r.nombre}</TableCell>
+                         <TableCell>
+                        <Chip 
+                          label={r.estado ? 'Activo' : 'Inactivo'} 
+                          sx={{
+                            backgroundColor: r.estado ? '#e8f5e9' : '#ffebee',
+                            color: r.estado ? '#2e7d32' : '#c62828',
+                            fontWeight: 'bold'
+                          }}
+                        />
+                      </TableCell>
+                        <TableCell align="center">
+                          <IconButton
+                            onClick={() => handleEditClick(r)}
+                            sx={{
+                              color: '#6c63ff',
+                              '&:hover': {
+                                backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                              },
+                            }}
+                          >
+                            <Edit />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => EliminarRol(r._id)}
+                            sx={{
+                              color: '#e57373',
+                              '&:hover': {
+                                backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                              },
+                            }}
+                          >
+                            <Delete />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+  
+            <TablePagination
+              rowsPerPageOptions={[10]}
+              component="div"
+              count={filteredRoles.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+  
+          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+            <Alert onClose={handleCloseSnackbar} severity="success">
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
         </Container>
       </Box>
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="success">{snackbarMessage}</Alert>
-      </Snackbar>
     </Box>
   );
 };

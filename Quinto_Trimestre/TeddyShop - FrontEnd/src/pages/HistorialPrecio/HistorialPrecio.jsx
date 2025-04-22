@@ -11,22 +11,30 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Snackbar,
-  Alert,
   Box,
   TablePagination,
-  Switch,
+  Typography,
+  Tooltip,
+  Chip,
   FormControlLabel,
-  Checkbox,
+  Switch,
+  Snackbar, 
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  MenuItem,
+  Checkbox
 } from '@mui/material';
-import Swal from 'sweetalert2';
-import { Edit, Delete, Info } from '@mui/icons-material';
+import sortBy from 'lodash/sortBy';
+import { Edit, Delete, ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
 import '../PagesStyle.css';
+import Swal from 'sweetalert2';
 import { getApiUrl } from '../../utils/apiConfig'
 import useApiRequest from '../../hooks/useApiRequest';
 const apiUrl = getApiUrl();
@@ -267,13 +275,11 @@ const eliminarHistorialPrecio = async (id) => {
   });
 };
 
-  // Maneja el cambio en el formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNuevoHistorial((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Iniciar edición
   const iniciarEdicion = (historial) => {
     setNuevoHistorial(historial);
     setEditingId(historial._id);
@@ -285,7 +291,6 @@ const eliminarHistorialPrecio = async (id) => {
     setEditingId(null);
   };
 
-  // Paginación de la tabla
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -295,7 +300,6 @@ const eliminarHistorialPrecio = async (id) => {
     setPage(0);
   };
 
-  // Abrir el diálogo de detalles
   const handleOpenDetails = (historial) => {
     setSelectedHistorial(historial);
     setOpenDetailsDialog(true);
@@ -311,129 +315,326 @@ const eliminarHistorialPrecio = async (id) => {
       <Box className="Box"
         sx={{
           width: '90%',
-          maxWidth: '100%',
-          padding: { xs: '20px', md: '50px' },
+          maxWidth: '900px',
+          padding: { xs: '20px', md: '30px' },
           borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
         }}
       >
         <Container>
-          <h1>Historial de Precios</h1>
-  
-          <form onSubmit={editingId ? actualizarHistorialPrecio : crearHistorialPrecio} noValidate autoComplete="off">
-            <TextField
-              type="number"
-              name="precio"
-              label="Precio"
-              value={nuevoHistorial.precio}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
+          <Box
+            sx={{
+              textAlign: 'center',
+              marginBottom: '30px',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-10px',
+                left: '25%',
+                width: '50%',
+                height: '4px',
+                background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                borderRadius: '10px',
+              },
+            }}
+          >
+            <Typography
+              variant="h4"
               sx={{
-                '& .MuiInputLabel-root': { fontSize: '1.2rem' },
-                '& .MuiInputBase-input': { fontSize: '1.2rem' },
+                fontWeight: 'bold',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
               }}
-            />
-            <TextField
-              type="date"
-              name="fechaInicio"
-              label="Fecha de Inicio"
-              value={nuevoHistorial.fechaInicio}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              InputLabelProps={{ shrink: true }}
-              variant="outlined"
-            />
-            <TextField
-              type="date"
-              name="fechaFin"
-              label="Fecha de Fin"
-              value={nuevoHistorial.fechaFin}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-              InputLabelProps={{ shrink: true }}
-              variant="outlined"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="estadoPrecio"
-                  checked={nuevoHistorial.estadoPrecio}
-                  onChange={(e) => setNuevoHistorial({ ...nuevoHistorial, estadoPrecio: e.target.checked })}
-                />
-              }
-              label="Estado Precio"
-              sx={{
-                '& .MuiTypography-root': { fontSize: '1.2rem' },
-              }}
-            />
-            
-                     <Box display="flex" justifyContent="space-between" mt={2}>
-                       <Button
-                         type="submit"
-                         variant="contained"
-                         sx={{ fontSize: '1.2rem', width: '48%' }}
-                       >
-                         {editingId ? 'Actualizar' : 'Crear'}
-                       </Button>
-                       <Button
-                         type="button"
-                         variant="outlined"
-                         onClick={resetForm}
-                         sx={{
-                           fontSize: '1.2rem',
-                           width: '48%',
-                           backgroundColor: 'transparent',
-                         }}
-                       >
-                         Cancelar
-                       </Button>
-                     </Box>
-                   </form>
-                       
-                   
+            >
+              Historial de Precios
+            </Typography>
+          </Box>
   
-          <Box mt={4}>
-            <h2>Lista de Historial de Precios</h2>
-            <TableContainer component={Paper}>
+          <Paper
+            elevation={3}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              backgroundColor: '#fff5f7',
+              marginBottom: '30px',
+              border: '1px solid #f8c8dc',
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                marginBottom: '15px',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              }}
+            >
+              {editingId ? '✏️ Editar Historial' : '✨ Nuevo Historial'}
+            </Typography>
+  
+            <form onSubmit={editingId ? actualizarHistorialPrecio : crearHistorialPrecio} noValidate autoComplete="off">
+              <TextField
+                type="number"
+                name="precio"
+                label="Precio"
+                value={nuevoHistorial.precio}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+  
+              <TextField
+                type="date"
+                name="fechaInicio"
+                label="Fecha de Inicio"
+                value={nuevoHistorial.fechaInicio}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+  
+              <TextField
+                type="date"
+                name="fechaFin"
+                label="Fecha de Fin"
+                value={nuevoHistorial.fechaFin}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+  
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="estadoPrecio"
+                    checked={nuevoHistorial.estadoPrecio}
+                    onChange={(e) => setNuevoHistorial({ ...nuevoHistorial, estadoPrecio: e.target.checked })}
+                    sx={{
+                      color: '#f48fb1',
+                      '&.Mui-checked': {
+                        color: '#f48fb1',
+                      },
+                    }}
+                  />
+                }
+                label="Estado Precio"
+                sx={{
+                  '& .MuiTypography-root': { 
+                    fontSize: '1rem',
+                    color: '#b04e6f',
+                  },
+                }}
+              />
+              
+              <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  startIcon={editingId ? <Edit /> : <Add />}
+                  sx={{
+                    borderRadius: '12px',
+                    backgroundColor: '#f48fb1',
+                    '&:hover': {
+                      backgroundColor: '#ec7096',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                  }}
+                >
+                  {editingId ? 'Actualizar' : 'Crear'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  onClick={resetForm}
+                  startIcon={<Clear />}
+                  sx={{
+                    borderRadius: '12px',
+                    borderColor: '#f48fb1',
+                    color: '#f48fb1',
+                    '&:hover': {
+                      borderColor: '#ec7096',
+                      backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Cancelar
+                </Button>
+              </Box>
+            </form>
+          </Paper>
+  
+          <Paper
+            elevation={2}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              marginBottom: '20px',
+              backgroundColor: '#fff0f5',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '5px',
+                background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+              },
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                marginBottom: '15px',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <ListAlt fontSize="small" /> Lista de Historial de Precios
+            </Typography>
+  
+            <TableContainer
+              component={Paper}
+              elevation={3}
+              sx={{
+                borderRadius: '15px',
+                overflow: 'hidden',
+                border: '1px solid #f8c8dc',
+                overflowX: 'auto',
+              }}
+            >
               <Table>
                 <TableHead>
-                  <TableRow>
-                    <TableCell>Precio</TableCell>
-                    <TableCell>Fecha Inicio</TableCell>
-                    <TableCell>Fecha Fin</TableCell>
-                    <TableCell>Estado</TableCell>
-                    <TableCell >Acciones</TableCell>
+                  <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Precio</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Fecha Inicio</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Fecha Fin</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Estado</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {historialPrecios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((historial) => (
-                    <TableRow key={historial._id}>
-                      <TableCell>{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(historial.precio)}</TableCell>
-                      <TableCell>{new Date(historial.fechaInicio).toLocaleDateString()}</TableCell>
-                      <TableCell>{new Date(historial.fechaFin).toLocaleDateString()}</TableCell>
-                      <TableCell>{historial.estadoPrecio ? 'Activo' : 'Inactivo'}</TableCell>
-                     
+                    <TableRow
+                      key={historial._id}
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: '#fff0f5',
+                        },
+                      }}
+                    >
                       <TableCell>
-                        
+                        {new Intl.NumberFormat('es-CO', { 
+                          style: 'currency', 
+                          currency: 'COP' 
+                        }).format(historial.precio)}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(historial.fechaInicio).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(historial.fechaFin).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Chip 
+                          label={historial.estadoPrecio ? 'Activo' : 'Inactivo'} 
+                          sx={{
+                            backgroundColor: historial.estadoPrecio ? '#e8f5e9' : '#ffebee',
+                            color: historial.estadoPrecio ? '#2e7d32' : '#c62828',
+                            fontWeight: 'bold'
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align="center">
                         <IconButton
-                        color="primary"
-                        onClick={() => iniciarEdicion(historial)}>
+                          onClick={() => iniciarEdicion(historial)}
+                          sx={{
+                            color: '#4caf50',
+                            '&:hover': {
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            },
+                          }}
+                        >
                           <Edit />
                         </IconButton>
-                        <IconButton 
-                      sx={{ color: "#d33" }}
-                        onClick={() => eliminarHistorialPrecio(historial._id)}>
+                        <IconButton
+                          onClick={() => eliminarHistorialPrecio(historial._id)}
+                          sx={{
+                            color: '#e57373',
+                            '&:hover': {
+                              backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                            },
+                          }}
+                        >
                           <Delete />
                         </IconButton>
                         <IconButton
-                         color="info"
-                        onClick={() => handleOpenDetails(historial)}>
+                          onClick={() => handleOpenDetails(historial)}
+                          sx={{
+                            color: '#6c63ff',
+                            '&:hover': {
+                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                            },
+                          }}
+                        >
                           <Info />
                         </IconButton>
                       </TableCell>
@@ -442,6 +643,7 @@ const eliminarHistorialPrecio = async (id) => {
                 </TableBody>
               </Table>
             </TableContainer>
+  
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
@@ -450,34 +652,88 @@ const eliminarHistorialPrecio = async (id) => {
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{
+                color: '#b04e6f',
+                '& .MuiTablePagination-selectIcon': {
+                  color: '#f48fb1',
+                },
+              }}
             />
-          </Box>
+          </Paper>
+  
+          {selectedHistorial && (
+            <Dialog
+              open={openDetailsDialog}
+              onClose={handleCloseDetails}
+              PaperProps={{
+                sx: {
+                  borderRadius: '20px',
+                  backgroundColor: '#fff5f7',
+                  border: '1px solid #f8c8dc',
+                }
+              }}
+            >
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#ffeef3',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                  borderBottom: '1px solid #f8c8dc',
+                }}
+              >
+                Detalles del Historial
+              </DialogTitle>
+              <DialogContent>
+                <Box sx={{ p: 2 }}>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    <strong style={{color: '#b04e6f'}}>Precio:</strong> {new Intl.NumberFormat('es-CO', { 
+                      style: 'currency', 
+                      currency: 'COP' 
+                    }).format(selectedHistorial.precio)}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    <strong style={{color: '#b04e6f'}}>Fecha Inicio:</strong> {new Date(selectedHistorial.fechaInicio).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    <strong style={{color: '#b04e6f'}}>Fecha Fin:</strong> {new Date(selectedHistorial.fechaFin).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong style={{color: '#b04e6f'}}>Estado:</strong> 
+                    <Chip 
+                      label={selectedHistorial.estadoPrecio ? 'Activo' : 'Inactivo'} 
+                      sx={{
+                        ml: 1,
+                        backgroundColor: selectedHistorial.estadoPrecio ? '#e8f5e9' : '#ffebee',
+                        color: selectedHistorial.estadoPrecio ? '#2e7d32' : '#c62828',
+                        fontWeight: 'bold'
+                      }}
+                    />
+                  </Typography>
+                </Box>
+              </DialogContent>
+              <DialogActions
+                sx={{
+                  backgroundColor: '#ffeef3',
+                  borderTop: '1px solid #f8c8dc',
+                }}
+              >
+                <Button
+                  onClick={handleCloseDetails}
+                  sx={{
+                    color: '#f48fb1',
+                    fontWeight: 'bold',
+                    '&:hover': {
+                      backgroundColor: 'rgba(244, 143, 177, 0.1)',
+                    },
+                  }}
+                >
+                  Cerrar
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
         </Container>
       </Box>
-
-      {/* Diálogo de detalles */}
-      {selectedHistorial && (
-        <Dialog open={openDetailsDialog} onClose={handleCloseDetails}>
-          <DialogTitle>Detalles del Historial de Precio</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-            
-              <br />
-              <strong>Fecha Inicio:</strong> {new Date(selectedHistorial.fechaInicio).toLocaleDateString()}
-              <br />
-              <strong>Fecha Fin:</strong> {new Date(selectedHistorial.fechaFin).toLocaleDateString()}
-              <br />
-              <strong>Estado:</strong> {selectedHistorial.estadoPrecio ? 'Activo' : 'Inactivo'}
-              <br />
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDetails} color="primary">
-              Cerrar
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
     </Box>
   );
 };
