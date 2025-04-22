@@ -251,4 +251,5 @@ router.delete('/:id', productoController.eliminarProducto);
  */
 router.get('/catalogo/:id', productoController.getProductosByCatalogo);
 
+
 module.exports = router;
