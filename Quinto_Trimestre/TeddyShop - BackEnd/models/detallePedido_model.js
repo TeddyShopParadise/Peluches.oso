@@ -25,6 +25,7 @@ const detallePedidoSchema = new mongoose.Schema({
   timestamps: false
 });
 
+detallePedidoSchema.index({ idPedido: 1, idProducto: 1 });
 
 // exportar el modelo
 module.exports = mongoose.model('DetallePedido', detallePedidoSchema);

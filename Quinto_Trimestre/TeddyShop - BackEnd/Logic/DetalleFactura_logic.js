@@ -34,7 +34,7 @@ async function actualizarDetalleFactura(id, body) {
 // Función asíncrona para listar todos los detalles de factura
 async function listarDetallesFactura() {
     let detallesFactura = await DetalleFactura.find()
-        .populate('idInventario', 'nombreInventario') // Reemplazar con los campos relevantes de Inventario
+        .populate('idInventario', 'stock') // Reemplazar con los campos relevantes de Inventario
         .populate('idProducto', 'nombreProducto') // Reemplazar con los campos relevantes de Producto
         .populate('idFactura', 'numeroFactura'); // Reemplazar con los campos relevantes de Factura
     return detallesFactura;

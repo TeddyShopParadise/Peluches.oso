@@ -1,15 +1,13 @@
 const Factura = require('../models/factura_model');
-const DetalleFactura = require('../models/detalleFactura_model'); 
-const Cliente = require('../models/cliente_model'); 
-const Pedido = require('../models/pedido_model'); 
-const MetodoPago = require('../models/metodoPago_model'); 
-const { agregarFacturaAPedido } = require('./pedido_logic'); // 👈 importar aquí
+const DetalleFactura = require('../models/detalleFactura_model');
+const Cliente = require('../models/cliente_model');
+const Pedido = require('../models/pedido_model');
+const MetodoPago = require('../models/metodoPago_model');
+const { agregarFacturaAPedido } = require('./pedido_logic');
 
 // Crear factura
 async function crearFactura(body) {
-    // Verificar si ya existe al menos una factura asociada al pedido
     const facturaExistente = await Factura.findOne({ pedido: body.pedido });
-
     if (facturaExistente) {
         throw new Error('Este pedido ya tiene una factura generada.');
     }
@@ -24,7 +22,6 @@ async function crearFactura(body) {
     });
 
     const facturaGuardada = await factura.save();
-
     await agregarFacturaAPedido(facturaGuardada.pedido, facturaGuardada._id);
 
     return facturaGuardada;
@@ -33,12 +30,8 @@ async function crearFactura(body) {
 // Actualizar factura
 async function actualizarFactura(id, body) {
     const facturaOriginal = await Factura.findById(id);
+    if (!facturaOriginal) throw new Error(`Factura con ID ${id} no encontrada`);
 
-    if (!facturaOriginal) {
-        throw new Error(`Factura con ID ${id} no encontrada`);
-    }
-
-    // Validar si está intentando cambiar el pedido a otro que ya tiene factura
     if (facturaOriginal.pedido.toString() !== body.pedido) {
         const facturaExistente = await Factura.findOne({ pedido: body.pedido });
         if (facturaExistente) {
@@ -60,46 +53,56 @@ async function actualizarFactura(id, body) {
     return factura;
 }
 
-// Listar facturas
+// Listar facturas con populate + lean() para obtener objetos puros de JS
 async function listarFacturas() {
     try {
-        const facturas = await Factura.find()
-            .populate('pedido', 'numPedido')
-            .populate('cliente', 'nombreCliente')
-            .populate('detallesFactura')
-            .populate('metodoPago', 'nombreMetodoPago');
-        return facturas;
+      const facturas = await Factura.find()
+        .populate('pedido', 'numPedido')
+        .populate('cliente', 'nombreCliente')
+        .populate({
+          path: 'detallesFactura',
+          populate: [
+            { path: 'idProducto', select: 'estiloProducto disponibilidadProducto' },
+            { path: 'idInventario', select: 'stock precioVenta precioCompra' }
+          ]
+        })
+        .populate('metodoPago', 'nombreMetodoPago')
+        .lean();  // <-- aquí convertimos a objetos JS planos
+  
+      // Imprime TODO el objeto con identación
+      console.log('Facturas con detalles completos:\n', JSON.stringify(facturas, null, 2));
+      return facturas;
     } catch (err) {
-        console.error("Error al listar facturas:", err.message);
-        throw new Error("Error al obtener facturas");  
+      console.error("Error al listar facturas:", err.message);
+      throw new Error("Error al obtener facturas");
     }
-}
+  }
+  
 
-// Buscar factura por ID
+// Buscar factura por ID con populate profundo
 async function buscarFacturaPorId(id) {
     try {
-        const factura = await Factura.findById(id)
-            .populate('pedido', 'numPedido')
-            .populate('cliente', 'nombreCliente')
-            .populate({
-                path: 'detallesFactura',
-                populate: {
-                    path: 'idProducto',
-                    select: 'nombreProducto precioProducto'
-                }
-            })
-            .populate('metodoPago', 'nombreMetodoPago');
-        
-        if (!factura) {
-            throw new Error(`Factura con ID ${id} no encontrada`);
-        }
-        return factura;
+      const factura = await Factura.findById(id)
+        .populate('pedido', 'numPedido')
+        .populate('cliente', 'nombreCliente')
+        .populate({
+          path: 'detallesFactura',
+          populate: [
+            { path: 'idProducto', select: 'estiloProducto disponibilidadProducto' },
+            { path: 'idInventario', select: 'stock precioVenta precioCompra' }
+          ]
+        })
+        .populate('metodoPago', 'nombreMetodoPago')
+        .lean();
+  
+      console.log('Factura completa:\n', JSON.stringify(factura, null, 2));
+      return factura;
     } catch (err) {
-        console.error(`Error al buscar la factura por ID: ${err.message}`);
-        throw err;
+      console.error(`Error al buscar la factura por ID: ${err.message}`);
+      throw err;
     }
-}
-
+  }
+  
 // Eliminar factura
 async function eliminarFactura(id) {
     try {
