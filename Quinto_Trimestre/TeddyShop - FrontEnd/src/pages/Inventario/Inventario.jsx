@@ -43,9 +43,21 @@ const Inventario = () => {
     fetchInventarios();
   }, []);
 
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+  const token = getAuthToken();
+
   const fetchInventarios = async () => {
     try {
-      const response = await fetch(`${apiUrl}/inventario`);
+      const response = await fetch(`${apiUrl}/inventario`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!response.ok) throw new Error('Error al obtener los inventarios');
       const data = await response.json();
       setInventarios(data);
@@ -118,6 +130,7 @@ const actualizarInventario = async () => {
     data: datosActualizados,
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
     },
     success: {
       title: 'Éxito',
@@ -140,6 +153,9 @@ const eliminarInventario = async (id) => {
   await makeRequest({
     url: `${apiUrl}/inventario/${id}`,
     method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`, 
+    },
     confirm: {
       title: '¿Estás seguro?',
       text: 'Esta acción no se puede deshacer',

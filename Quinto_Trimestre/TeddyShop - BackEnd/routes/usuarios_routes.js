@@ -8,6 +8,9 @@ const {
     eliminarUsuario
 } = require('../Controllers/usuario_controller'); // Asegúrate de importar los controladores
 
+const authorizeAccess = require('../middlewares/authorizeAccess');
+router.use(authorizeAccess('Administrador', 'Empleado'));
+
 /**
  * @swagger
  * /usuario:

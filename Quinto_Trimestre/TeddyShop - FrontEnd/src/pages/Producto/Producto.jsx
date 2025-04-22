@@ -59,11 +59,11 @@ const ProductoComponent = () => {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [inventarioExistente, setInventarioExistente] = useState(null);
 
-  /*const getAuthToken = () => {
+  const getAuthToken = () => {
     const token = localStorage.getItem('authToken');
     return token;
   };
-  */
+  const token = getAuthToken();
 
   useEffect(() => {
     fetchProductos();
@@ -112,12 +112,11 @@ const ProductoComponent = () => {
 
   const fetchHistorialPrecios = async () => {
     try {
-        //const token = getAuthToken();
         const response = await fetch(`${apiUrl}/historialPrecio`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-               // "Authorization": `Bearer ${token}` 
+                "Authorization": `Bearer ${token}` 
             }
         });
         if (!response.ok) {
@@ -179,6 +178,9 @@ const ProductoComponent = () => {
     await makeRequest({
       url: `${apiUrl}/producto`,
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+      },
       data: productoData,
       success: {
         title: 'Éxito',
@@ -218,6 +220,9 @@ const ProductoComponent = () => {
     await makeRequest({
       url: `${apiUrl}/producto/${editingId}`,
       method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+      },  
       data: productoData,
       success: {
         title: 'Éxito',
@@ -255,6 +260,9 @@ const ProductoComponent = () => {
     await makeRequest({
       url: `${apiUrl}/producto/${id}`,
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+      },  
       confirm: {
         title: '¿Estás seguro?',
         text: 'Esta acción no se puede deshacer',
@@ -299,32 +307,36 @@ const ProductoComponent = () => {
 const crearInventario = async () => {
   try {
     const productId = inventarioExistente ? editingId : newProductId;
-    
+
     if (!productId) {
       throw new Error('No se encontró el ID del producto');
     }
 
-    let response;
-    if (inventarioExistente) {
-      response = await fetch(`${apiUrl}/inventario/${inventarioExistente._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...inventarioData, idProducto: productId })
-      });
-    } else {
-      response = await fetch(`${apiUrl}/inventario`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...inventarioData, idProducto: productId })
-      });
-    }
+    const url = inventarioExistente
+      ? `${apiUrl}/inventario/${inventarioExistente._id}`
+      : `${apiUrl}/inventario`;
+
+    const method = inventarioExistente ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...inventarioData, idProducto: productId })
+    });
 
     if (!response.ok) throw new Error(await response.text());
 
-    Swal.fire('Éxito', inventarioExistente 
-      ? 'Inventario actualizado correctamente' 
-      : 'Inventario creado correctamente', 'success');
-      
+    Swal.fire(
+      'Éxito',
+      inventarioExistente 
+        ? 'Inventario actualizado correctamente' 
+        : 'Inventario creado correctamente',
+      'success'
+    );
+
     setOpenInventarioDialog(false);
     resetForm();
     fetchProductos();
@@ -333,6 +345,9 @@ const crearInventario = async () => {
     Swal.fire('Error', error.message, 'error');
   }
 };
+
+
+
 const handleActualizarInventario = async () => {
   setOpenConfirmDialog(false);
   setOpenInventarioDialog(true);

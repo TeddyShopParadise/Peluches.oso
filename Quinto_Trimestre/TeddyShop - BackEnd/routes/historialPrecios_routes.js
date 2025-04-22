@@ -8,10 +8,7 @@ const {
     eliminarHistorialPrecio
 } = require('../Controllers/historialPrecio_controller'); // Importa los controladores
 
-//const authorizeAccess = require('../middlewares/authorizeAccess');
-
-// Pasar los roles permitidos como un solo array
-//router.use(authorizeAccess('Administrador', 'Empleado'));
+const authorizeAccess = require('../middlewares/authorizeAccess');
 
 /**
  * @swagger
@@ -53,6 +50,8 @@ const {
  */
 
 router.get('/', listarHistorialPrecios);
+
+router.use(authorizeAccess('Administrador', 'Empleado'));
 
 /**
  * @swagger

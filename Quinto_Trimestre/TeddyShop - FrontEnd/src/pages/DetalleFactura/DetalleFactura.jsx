@@ -34,6 +34,12 @@ import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
 
+const getAuthToken = () => {
+  const token = localStorage.getItem('authToken');
+  return token;
+};
+const token = getAuthToken();
+
 const DetalleFactura = () => {
   const [detalles, setDetalles] = useState([]);
   const [detalle, setDetalle] = useState({
@@ -70,7 +76,13 @@ const DetalleFactura = () => {
 
   const fetchInventarios = async () => {
     try {
-      const response = await fetch(`${apiUrl}/inventarios`);
+      const response = await fetch(`${apiUrl}/inventarios`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Agrega el token aquí
+        },
+      });
       if (!response.ok) {
         throw new Error("Error al obtener los inventarios");
       }
@@ -83,7 +95,13 @@ const DetalleFactura = () => {
 
   const fetchFacturas = async () => {
     try {
-      const response = await fetch(`${apiUrl}/facturas`);
+      const response = await fetch(`${apiUrl}/facturas`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Agrega el token aquí
+        },
+      });
       if (!response.ok) {
         throw new Error("Error al obtener las facturas");
       }
@@ -103,6 +121,7 @@ const DetalleFactura = () => {
           method: "GET",
           headers: {
             Accept: "application/json",
+            'Authorization': `Bearer ${token}`,
           },
         }
       );
@@ -153,6 +172,7 @@ const DetalleFactura = () => {
         method,
         headers: {
           "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(detalleConDatos),
       });
@@ -192,6 +212,9 @@ const DetalleFactura = () => {
         `${apiUrl}/detallesFactura/${id}`,
         {
           method: "DELETE",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
         }
       );
 

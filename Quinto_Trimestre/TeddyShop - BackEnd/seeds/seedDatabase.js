@@ -16,16 +16,16 @@ async function runAllSeeds() {
     console.log("Iniciando proceso de semillas...");
 
    //await seedCompañia;
-   await empleadosSeed;
-   await catalogoSeed;
-   await clienteSeed;
-   await categoriaSeed;
-   await detalleFacturaSeed;
-   await detallePedidoSeed;
-   await facturaSeed;
+  // await empleadosSeed;
+   // await catalogoSeed;
+  //  await clienteSeed;
+  //  await categoriaSeed;
+  //  await detalleFacturaSeed;
+  //  await detallePedidoSeed;
+    //await facturaSeed;
    //await historialPrecioSeed;
    //await rolesSeed;
-   await usuarioSeed;
+  //  await usuarioSeed;
     
     console.log("Semillas completadas correctamente.");
   } catch (error) {

@@ -6,7 +6,11 @@ const {
     actualizarMovimiento,
     obtenerMovimientoPorId,
     eliminarMovimiento
-} = require('../Controllers/movimiento_controller'); // Importa los controladores
+} = require('../Controllers/movimiento_controller');
+
+const authorizeAccess = require('../middlewares/authorizeAccess');
+router.use(authorizeAccess('Administrador'));
+
 /**
  * @swagger
  * /movimiento:

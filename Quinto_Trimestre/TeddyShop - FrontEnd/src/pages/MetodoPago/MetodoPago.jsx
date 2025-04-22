@@ -34,10 +34,21 @@ const MetodoPago = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const { makeRequest } = useApiRequest();
   
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+  const token = getAuthToken();
 
   const fetchMetodosPago = async () => {
     try {
-      const response = await fetch(`${apiUrl}/metodoPago`);
+      const response = await fetch(`${apiUrl}/metodoPago`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Agrega el token aquí
+        },
+      });
       const data = await response.json();
       setMetodosPago(data);
     } catch (error) {
@@ -72,6 +83,9 @@ const MetodoPago = () => {
     await makeRequest({
       url: `${apiUrl}/metodoPago`,
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+      },  
       data: nuevoMetodo,
       confirm: {
         title: 'Crear nuevo método de pago',
@@ -111,6 +125,9 @@ const MetodoPago = () => {
     await makeRequest({
       url: `${apiUrl}/metodoPago/${editarMetodo._id}`,
       method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+      },  
       data: metodoActualizar,
       confirm: {
         title: 'Actualizar método de pago',
@@ -148,6 +165,9 @@ const MetodoPago = () => {
     await makeRequest({
       url: `${apiUrl}/metodoPago/${id}`,
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+      },  
       confirm: {
         title: 'Eliminar método de pago',
         text: '¿Estás seguro de que deseas eliminar este método de pago? Esta acción no se puede deshacer',

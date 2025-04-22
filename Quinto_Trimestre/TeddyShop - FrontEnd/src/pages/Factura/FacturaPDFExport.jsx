@@ -1,7 +1,7 @@
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import logo from '../../assets/img/LogoTeddyshop.jpg';
+import logo from '../../assets/img/LogoTeddyShop.jpg';
 
 const styles = StyleSheet.create({
   page: {

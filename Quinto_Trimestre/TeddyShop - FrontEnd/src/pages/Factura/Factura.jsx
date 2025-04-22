@@ -59,9 +59,21 @@ const Facturas = () => {
     cargarMetodosPago();
   }, []);
 
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+  const token = getAuthToken();
+
   const listarFacturas = async () => {
     try {
-      const response = await fetch(`${apiUrl}/factura`);
+      const response = await fetch(`${apiUrl}/factura`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Agrega el token aquí
+        },
+      });
       const data = await response.json();
       setFacturas(data);
     } catch (error) {
@@ -75,6 +87,7 @@ const Facturas = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(factura),
       });
@@ -103,6 +116,7 @@ const Facturas = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(factura),
       });
@@ -129,7 +143,13 @@ const Facturas = () => {
 
   const obtenerFacturaPorId = async (id) => {
     try {
-      const response = await fetch(`${apiUrl}/factura/${id}`);
+      const response = await fetch(`${apiUrl}/factura/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Agrega el token aquí
+        },
+      });
       const data = await response.json();
       setFactura(data);
       setEditing(true);
@@ -143,6 +163,9 @@ const Facturas = () => {
     try {
       const response = await fetch(`${apiUrl}/factura/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {

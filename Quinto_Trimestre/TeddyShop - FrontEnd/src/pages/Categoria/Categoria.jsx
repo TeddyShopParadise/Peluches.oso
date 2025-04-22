@@ -35,6 +35,12 @@ import useApiRequest from '../../hooks/useApiRequest';
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
 
+const getAuthToken = () => {
+  const token = localStorage.getItem('authToken');
+  return token;
+};
+const token = getAuthToken();
+
 
 const CategoriaComponent = () => {
   const [categorias, setCategorias] = useState([]);
@@ -92,6 +98,9 @@ const CategoriaComponent = () => {
     await makeRequest({
       url: `${apiUrl}/categorias`,
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,  // Aquí agregas el token
+      },
       data: { nombreCategoria, descripcionCategoria },
       confirm: {
         title: 'Crear categoría',
@@ -120,6 +129,9 @@ const CategoriaComponent = () => {
     await makeRequest({
       url: `${apiUrl}/categorias/${editingId}`,
       method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,  // Aquí agregas el token
+      },
       data: { nombreCategoria, descripcionCategoria },
       confirm: {
         title: 'Actualizar categoría',
@@ -148,6 +160,9 @@ const CategoriaComponent = () => {
     await makeRequest({
       url: `${apiUrl}/categorias/${id}`,
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,  // Aquí agregas el token
+      },
       confirm: {
         title: '¿Eliminar categoría?',
         text: 'Esta acción no se puede deshacer.',

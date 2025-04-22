@@ -32,11 +32,11 @@ import useApiRequest from '../../hooks/useApiRequest';
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
 
-  /*const getAuthToken = () => {
+  const getAuthToken = () => {
     const token = localStorage.getItem('authToken');
     return token;
-  };*/
-  
+  };
+  const token = getAuthToken();
 
 const HistorialPrecios = () => {
   const [historialPrecios, setHistorialPrecios] = useState([]);
@@ -56,12 +56,11 @@ const HistorialPrecios = () => {
   // Obtener historial de precios
   const fetchHistorialPrecios = async () => {
     try {
-      //const token = getAuthToken();
       const response = await fetch(`${apiUrl}/historialPrecio`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json",
-          //'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
   
@@ -111,7 +110,7 @@ const crearHistorialPrecio = async (e) => {
     data: nuevoHistorial,
     headers: {
       'Content-Type': 'application/json',
-      // 'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
     },
     confirm: {
       title: 'Crear nuevo historial',
@@ -184,7 +183,7 @@ const actualizarHistorialPrecio = async (e) => {
     data: data,
     headers: {
       'Content-Type': 'application/json',
-      // 'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
     },
     confirm: {
       title: 'Actualizar historial',
@@ -230,7 +229,7 @@ const eliminarHistorialPrecio = async (id) => {
   await makeRequest({
     url: `${apiUrl}/historialPrecio/${id}`,
     method: 'DELETE',
-    // headers: { 'Authorization': `Bearer ${token}` },
+    headers: { 'Authorization': `Bearer ${token}` },
     confirm: {
       title: 'Eliminar historial',
       text: '¿Estás seguro de que deseas eliminar este historial? Esta acción no se puede deshacer.',

@@ -24,6 +24,11 @@ import { getApiUrl } from '../../utils/apiConfig';
 import Swal from 'sweetalert2';
 import useApiRequest from '../../hooks/useApiRequest';
 
+const getAuthToken = () => {
+  const token = localStorage.getItem('authToken');
+  return token;
+};
+const token = getAuthToken();
 
 const apiUrl = getApiUrl();
 
@@ -48,7 +53,13 @@ const Empleado = () => {
 
   const fetchEmpleados = async () => {
     try {
-      const response = await fetch(`${apiUrl}/empleado`);
+      const response = await fetch(`${apiUrl}/empleado`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Agrega el token aquí
+        },
+      });
       if (!response.ok) {
         throw new Error('Error al obtener los empleados');
       }
@@ -118,6 +129,7 @@ const Empleado = () => {
       data: formData,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       confirm: {
         title: 'Crear nuevo empleado',
@@ -179,6 +191,7 @@ const Empleado = () => {
       data: formData,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       confirm: {
         title: 'Actualizar empleado',
@@ -222,6 +235,9 @@ const Empleado = () => {
     await makeRequest({
       url: `${apiUrl}/empleado/${id}`,
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
       confirm: {
         title: 'Eliminar empleado',
         text: '¿Estás seguro de que deseas eliminar este empleado? Esta acción no se puede deshacer.',

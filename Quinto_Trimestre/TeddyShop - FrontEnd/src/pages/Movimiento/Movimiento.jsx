@@ -44,9 +44,21 @@ const Movimientos = () => {
     fetchMovimientos();
   }, []);
 
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+  const token = getAuthToken();
+
   const fetchMovimientos = async () => {
     try {
-      const response = await fetch(`${apiUrl}/movimiento`);
+      const response = await fetch(`${apiUrl}/movimiento`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       const data = await response.json();
       setMovimientos(data);
     } catch (error) {
@@ -62,7 +74,10 @@ const Movimientos = () => {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(`${apiUrl}/movimiento/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
       if (response.ok) {
         fetchMovimientos();

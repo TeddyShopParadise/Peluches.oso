@@ -48,6 +48,13 @@ const CatalogoComponent = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedCatalogo, setSelectedCatalogo] = useState(null);
 
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+  const token = getAuthToken();
+
+
   const fetchCatalogos = async () => {
     try {
       const response = await fetch(`${apiUrl}/catalogos/activos`);
@@ -64,7 +71,13 @@ const CatalogoComponent = () => {
 
   const fetchCompanias = async () => {
     try {
-      const response = await fetch(`${apiUrl}/Compania`);
+      const response = await fetch(`${apiUrl}/Compania`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Agrega el token aquí
+        },
+      });
       if (!response.ok) {
         throw new Error('Error al obtener las compañías');
       }
@@ -108,6 +121,9 @@ const CatalogoComponent = () => {
       url: `${apiUrl}/catalogos`,
       method: 'POST',
       data: catalogoData,
+      headers: {
+        'Authorization': `Bearer ${token}`,  // Aquí agregas el token
+      },
       confirm: {
         title: 'Crear nuevo catálogo',
         text: '¿Estás seguro de que deseas crear este catálogo?',
@@ -173,6 +189,9 @@ const CatalogoComponent = () => {
       url: `${apiUrl}/catalogos/${editingId}`,
       method: 'PUT',
       data: requestBody,
+      headers: {
+        'Authorization': `Bearer ${token}`,  // Aquí agregas el token
+      },
       confirm: {
         title: '¿Confirmar cambios?',
         text: '¿Estás seguro de que deseas actualizar este catálogo?',
@@ -209,6 +228,9 @@ const CatalogoComponent = () => {
     await makeRequest({
       url: `${apiUrl}/catalogos/${id}/desactivar`,
       method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,  // Aquí agregas el token
+      },
       confirm: {
         title: '¿Estás seguro?',
         text: '¿Estás seguro de que deseas eliminar este catálogo?',

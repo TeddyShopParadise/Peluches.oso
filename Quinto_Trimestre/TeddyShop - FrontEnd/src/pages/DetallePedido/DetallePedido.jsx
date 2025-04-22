@@ -47,6 +47,12 @@ const DetallePedido = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [detalleSeleccionado, setDetalleSeleccionado] = useState(null);
 
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+  const token = getAuthToken();
+
   // Función para obtener los detalles de pedido
   const fetchDetalles = async () => {
     try {
@@ -54,6 +60,7 @@ const DetallePedido = () => {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
       });
       if (!response.ok) {
@@ -73,6 +80,7 @@ const DetallePedido = () => {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
       });
       if (!response.ok) {
@@ -135,6 +143,7 @@ const DetallePedido = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(detalle),
       });
@@ -177,6 +186,9 @@ const DetallePedido = () => {
     try {
       const response = await fetch(`${apiUrl}/detallesPedido/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {

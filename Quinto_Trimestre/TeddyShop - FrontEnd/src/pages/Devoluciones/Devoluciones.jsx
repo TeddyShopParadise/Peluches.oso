@@ -42,9 +42,21 @@ const Devoluciones = () => {
     const [sortBy, setSortBy] = useState('detalleDevolucion');
     const [sortOrder, setSortOrder] = useState('asc');
 
+    const getAuthToken = () => {
+        const token = localStorage.getItem('authToken');
+        return token;
+      };
+      const token = getAuthToken();
+
     const fetchDevoluciones = async () => {
         try {
-            const response = await fetch(`${apiUrl}/devoluciones`);
+            const response = await fetch(`${apiUrl}/devoluciones`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, // Agrega el token aquí
+                },
+            });
             if (!response.ok) throw new Error('Error fetching data');
             const data = await response.json();
             setDevoluciones(data);
@@ -73,7 +85,9 @@ const Devoluciones = () => {
     
             const response = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 
+                           'Authorization': `Bearer ${token}`, },
+
                 body: JSON.stringify(devolucionData),
             });
     
@@ -98,7 +112,13 @@ const Devoluciones = () => {
 
     const handleDelete = async () => {
         try {
-            await fetch(`${apiUrl}/devoluciones/${currentId}`, { method: 'DELETE' });
+            await fetch(`${apiUrl}/devoluciones/${currentId}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
             setSnackbarMessage('Devolución eliminada');
             setOpenSnackbar(true);
             fetchDevoluciones();

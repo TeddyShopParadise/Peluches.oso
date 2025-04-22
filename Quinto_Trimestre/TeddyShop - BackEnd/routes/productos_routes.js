@@ -5,7 +5,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
 
-
+const authorizeAccess = require('../middlewares/authorizeAccess');
 
 /**
  * @swagger
@@ -62,6 +62,8 @@ const upload = multer({ storage: storage });
  */
 
 router.get('/', productoController.listarProductos);
+
+router.use(authorizeAccess('Administrador', 'Empleado'));
 
 /**
  * @swagger

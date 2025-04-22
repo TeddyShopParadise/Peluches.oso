@@ -52,7 +52,7 @@ mongoose.connect('mongodb+srv://sa:PM02s8wkGc77jfO3@cluster0.hhmn9.mongodb.net/?
   .then(() => {
     console.log('Conexión exitosa a MongoDB');
 
-      runAllSeeds();
+       // runAllSeeds();
   })
   .catch(err => console.error('Error de conexión a MongoDB:', err));
 

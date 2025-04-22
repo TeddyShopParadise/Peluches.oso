@@ -8,6 +8,9 @@ const {
     eliminarMetodoPago
 } = require('../Controllers/metodoPago_controller'); // Importa los controladores
 
+const authorizeAccess = require('../middlewares/authorizeAccess');
+
+
 /**
  * @swagger
  * /metodoPago:
@@ -37,6 +40,8 @@ const {
 
 
 router.get('/', listarMetodosPago);
+
+router.use(authorizeAccess('Administrador', 'Empleado'));
 
 /**
  * @swagger

@@ -8,6 +8,9 @@ const {
     eliminarDevolucion
 } = require('../Controllers/devoluciones_controller'); 
 
+const authorizeAccess = require('../middlewares/authorizeAccess');
+router.use(authorizeAccess('Administrador', 'Empleado'));
+
 /**
  * @swagger
  * /devoluciones:

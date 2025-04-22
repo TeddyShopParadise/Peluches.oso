@@ -27,6 +27,12 @@ import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
 
+const getAuthToken = () => {
+  const token = localStorage.getItem('authToken');
+  return token;
+};
+const token = getAuthToken();
+
 export default function Cliente() {
   const [clientes, setClientes] = useState([]);
   const [formData, setFormData] = useState({
@@ -48,7 +54,13 @@ export default function Cliente() {
   // Función para listar clientes
   const listarClientes = async () => {
     try {
-      const response = await fetch(`${apiUrl}/clientes`);
+      const response = await fetch(`${apiUrl}/clientes`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Agrega el token aquí
+        },
+      });
       if (!response.ok) throw new Error('Error al obtener los clientes');
       const data = await response.json();
       setClientes(data);
@@ -112,6 +124,7 @@ const handleSubmit = async (e) => {
       method,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ ...dataToSend, pedidos, facturas }),
     });
@@ -165,6 +178,9 @@ const handleSubmit = async (e) => {
       try {
         const response = await fetch(`${apiUrl}/clientes/${id}`, {
           method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
         });
 
         if (response.ok) {

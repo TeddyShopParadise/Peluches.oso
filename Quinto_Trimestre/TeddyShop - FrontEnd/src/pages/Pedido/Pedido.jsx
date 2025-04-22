@@ -72,25 +72,41 @@ const Pedido = () => {
     fetchCompania(); 
   }, []);
 
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+  const token = getAuthToken();
+
 
   const fetchCompania = async () => {
     try {
-      const response = await fetch(`${apiUrl}/compania`);
+      const response = await fetch(`${apiUrl}/compania`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       const data = await response.json();
       setCompania(data[0] || {});
     } catch (error) {
       console.error('Error obteniendo datos de compañía:', error);
     }
   };
-
-
-
+  
   const fetchPedidos = async () => {
     try {
-      const response = await fetch(`${apiUrl}/pedido`);
+      const response = await fetch(`${apiUrl}/pedido`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, 
+        },
+      });
       if (!response.ok) throw new Error('Error al obtener los pedidos');
       const data = await response.json();
-      setPedidos(data); 
+      setPedidos(data);
     } catch (error) {
       console.error('Error fetching pedidos:', error);
       setPedidos([]);
@@ -98,12 +114,14 @@ const Pedido = () => {
       setLoading(false);
     }
   };
+  
 
   const crearPedido = async () => {
     try {
       const response = await fetch(`${apiUrl}/pedido`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 
+                  'Authorization': `Bearer ${token}`, },
         body: JSON.stringify(nuevoPedido),
       });
 
@@ -148,7 +166,8 @@ const Pedido = () => {
   try {
     const response = await fetch(`${apiUrl}/pedido/${_id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 
+                'Authorization': `Bearer ${token}`, },
       body: JSON.stringify(pedidoActualizar),
     });
 
@@ -180,6 +199,9 @@ const Pedido = () => {
     try {
       await fetch(`${apiUrl}/pedido/${currentId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
       setPedidos((prevPedidos) => prevPedidos.filter((pedido) => pedido._id !== currentId));
       setSnackbarMessage('Pedido eliminado con éxito');

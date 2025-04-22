@@ -9,6 +9,9 @@ const {
     generarFacturaDesdePedido
 } = require('../Controllers/factura_controller'); // Importa los controladores
 
+const authorizeAccess = require('../middlewares/authorizeAccess');
+router.use(authorizeAccess('Administrador', 'Empleado'));
+
 /**
  * @swagger
  * /factura:

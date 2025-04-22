@@ -8,6 +8,9 @@ const {
     eliminarDetallePedido
 } = require('../Controllers/DetallePedido_controller'); // Asegúrate de importar los controladores
 
+const authorizeAccess = require('../middlewares/authorizeAccess');
+router.use(authorizeAccess('Administrador', 'Empleado'));
+
 /**
  * @swagger
  * /detallesPedido:

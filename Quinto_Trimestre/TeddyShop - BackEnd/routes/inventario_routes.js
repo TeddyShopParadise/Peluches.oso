@@ -8,6 +8,9 @@ const {
     eliminarInventario
 } = require('../Controllers/inventario_controller'); // Importa los controladores
 
+const authorizeAccess = require('../middlewares/authorizeAccess');
+router.use(authorizeAccess('Administrador', 'Empleado'));
+
 /**
  * @swagger
  * /inventario:

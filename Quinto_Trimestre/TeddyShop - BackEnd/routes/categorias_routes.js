@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const categoriaController = require('../Controllers/categoria_controller');
+const authorizeAccess = require('../middlewares/authorizeAccess');
 
 /**
  * @swagger
@@ -41,6 +42,8 @@ const categoriaController = require('../Controllers/categoria_controller');
  */
 
 router.get('/', categoriaController.listarCategorias);
+
+router.use(authorizeAccess('Administrador', 'Empleado'));
 
 /**
  * @swagger

@@ -13,7 +13,7 @@ export const getApiUrl = () => {
   // Si estamos en Codespace, usamos la URL proporcionada por GitHub
   if (isInCodespace()) {
     // Usa la variable de entorno definida en el archivo .env (para Codespace)
-    return 'https://refactored-space-funicular-6994j95j4j9v34wr-3000.app.github.dev/api';
+    return 'https://laughing-space-zebra-wrrgwr5w5vx5h94wr-3000.app.github.dev/api';
   }
   
   // Si no estamos en Codespace, usamos la URL local
