@@ -8,6 +8,21 @@ const {
     eliminarDevolucion
 } = require('../Controllers/devoluciones_controller'); 
 
+//const authorizeAccess = require('../middlewares/authorizeAccess');
+//router.use(authorizeAccess('Administrador', 'Empleado'));
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ * security:
+ *   - bearerAuth: []
+ */
+
 /**
  * @swagger
  * /devoluciones:

@@ -26,7 +26,20 @@ const swaggerDefinition = {
                 ? process.env.CODESPACE_URL // Si estamos en Codespace
                 : 'http://localhost:3000/api', // Si estamos en local
         }
-    ]
+    ],
+    components: {
+        securitySchemes: {
+            bearerAuth: {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+                description: 'Introduce el token JWT en el formato: Bearer <token>'
+            }
+        }
+    },
+    security: [{
+        bearerAuth: []
+    }]
 };
 
 const options = {

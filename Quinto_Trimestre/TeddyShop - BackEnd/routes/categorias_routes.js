@@ -1,6 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const categoriaController = require('../Controllers/categoria_controller');
+const authorizeAccess = require('../middlewares/authorizeAccess');
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ * security:
+ *   - bearerAuth: []
+ */
 
 /**
  * @swagger
@@ -41,6 +54,8 @@ const categoriaController = require('../Controllers/categoria_controller');
  */
 
 router.get('/', categoriaController.listarCategorias);
+
+//router.use(authorizeAccess('Administrador', 'Empleado'));
 
 /**
  * @swagger
