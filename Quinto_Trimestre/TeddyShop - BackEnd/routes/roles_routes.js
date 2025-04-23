@@ -10,8 +10,21 @@ const {
 
 //const authorizeAccess = require('../middlewares/authorizeAccess');
 
-// Pasar los roles permitidos como un solo array
+//Pasar los roles permitidos como un solo array
 //router.use(authorizeAccess('Administrador'));
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ * security:
+ *   - bearerAuth: []
+ */
+
 /**
  * @swagger
  * /roles:

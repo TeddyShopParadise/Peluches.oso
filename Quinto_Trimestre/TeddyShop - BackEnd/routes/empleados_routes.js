@@ -8,6 +8,21 @@ const {
     eliminarEmpleado
 } = require('../Controllers/empleado_controller'); // Importa los controladores
 
+//const authorizeAccess = require('../middlewares/authorizeAccess');
+//router.use(authorizeAccess('Administrador', 'Empleado'));
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ * security:
+ *   - bearerAuth: []
+ */
+
 /**
  * @swagger
  * /empleado:
