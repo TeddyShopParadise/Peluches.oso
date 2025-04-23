@@ -283,98 +283,82 @@ const ProductoUsuario = () => {
           idPedido: responseData._id,
           idProducto: productoSeleccionado._id
         };
-    
-        console.log("Enviando detallePedido:", detallePedido);
-    
+        
         const detalleResponse = await fetch(`${apiUrl}/detallesPedido`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(detallePedido)
         });
-    
         const detalleData = await detalleResponse.json();
-    
         if (!detalleResponse.ok) {
           throw new Error(`Error en detallePedido: ${JSON.stringify(detalleData)}`);
         }
-    
-        console.log('DetallePedido guardado:', detalleData);
-    
-        // Paso 3: Crear la factura
-        const factura = {
-          fechaCreacionFactura: new Date().toISOString(),
-          horaCreacionFactura: new Date().toLocaleTimeString('es-CO', { 
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false 
-          }),
-          pedido: responseData._id,
-          detallesFactura: [],
-          metodoPago: pedido.metodoPago,
-        };
-    
-        console.log("Enviando Factura:", factura);
         
-        const facturaResponse = await fetch(`${apiUrl}/factura`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(factura)
-        });
-    
-        const facturaData = await facturaResponse.json();
-        
-        if (!facturaResponse.ok) {
-          throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
+        // Paso 3: Buscar inventario relacionado (antes de crear detalle de factura)
+        let inventarioRelacionado = null;
+        try {
+          const inventarioResponse = await fetch(`${apiUrl}/inventario/por-producto/${productoSeleccionado._id}`);
+          if (inventarioResponse.ok) {
+            inventarioRelacionado = await inventarioResponse.json();
+          } else {
+            console.warn('No se encontró inventario para el producto.');
+          }
+        } catch (error) {
+          console.error('Error buscando inventario relacionado:', error);
         }
-    
-        console.log('Factura guardada:', facturaData);
-    
-        // Paso 4: Crear el detalle de la factura
+        
+        // Paso 4: Crear el detalle de factura
         const detalleFactura = {
           precioDetalleFactura: precioNumerico.toString(),
           cantidadDetalleFactura: 1,
           idProducto: productoSeleccionado._id,
-          idFactura: facturaData._id 
+          ...(inventarioRelacionado && inventarioRelacionado._id && { idInventario: inventarioRelacionado._id })
         };
-    
-        console.log("Enviando Detalle Factura:", detalleFactura);
         
         const detalleFacturaResponse = await fetch(`${apiUrl}/detallesFactura`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(detalleFactura)
         });
-    
         const detalleFacturaData = await detalleFacturaResponse.json();
-        
         if (!detalleFacturaResponse.ok) {
           throw new Error(`Error en Detalle Factura: ${JSON.stringify(detalleFacturaData)}`);
         }
-    
-        console.log('Detalle Factura guardada:', detalleFacturaData);
-    
-        // Paso 5: Actualizar la factura con el detalle
-        const updateFactura = {
-          fechaCreacionFactura: facturaData.fechaCreacionFactura,
-          horaCreacionFactura: facturaData.horaCreacionFactura,
-          pedido: facturaData.pedido,
-          metodoPago: facturaData.metodoPago,
-          detallesFactura: [detalleFacturaData._id]
-        };
         
-        const updateResponse = await fetch(`${apiUrl}/factura/${facturaData._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updateFactura)
-        });
+        // Paso 5: Crear la factura con el detalle directamente
+        let facturaData;
+try {
+  const facturaExistenteResponse = await fetch(`${apiUrl}/factura/pedido/${responseData._id}`);
+  if (facturaExistenteResponse.ok) {
+    // Si ya existe una factura, usamos esa
+    facturaData = await facturaExistenteResponse.json();
+    console.log('Factura existente encontrada:', facturaData);
+  } else {
+    // Si no existe, creamos una nueva
+    const factura = {
+      fechaCreacionFactura: new Date().toISOString(),
+      horaCreacionFactura: new Date().toLocaleTimeString('es-MX'),
+
+      pedido: responseData._id,
+      metodoPago: pedido.metodoPago,
+      detallesFactura: [detalleFacturaData._id]
+    };
     
-        if (!updateResponse.ok) {
-          throw new Error(`Error actualizando factura: ${await updateResponse.text()}`);
-        }
-    
-        console.log('Factura actualizada con detalle');
-    
+    const facturaResponse = await fetch(`${apiUrl}/factura`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(factura)
+    });
+    facturaData = await facturaResponse.json();
+    if (!facturaResponse.ok) {
+      throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
+    }
+  }
+} catch (error) {
+  console.error('Error con la factura:', error);
+  throw error;
+}
+        
         // Paso 6: Actualizar el pedido con el detalle y la factura
         const updatePedido = {
           nombreComprador: responseData.nombreComprador,
@@ -388,26 +372,18 @@ const ProductoUsuario = () => {
           facturas: [facturaData._id],
           cliente: responseData.cliente
         };
-
-console.log('Intentando actualizar el pedido con:', updatePedido);
-
-const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
-  method: 'PUT',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(updatePedido)
-});
-
-const updateResponseText = await updateResponsePedido.text();
-
-if (!updateResponsePedido.ok) {
-  console.error('Error al actualizar pedido - status:', updateResponsePedido.status);
-  console.error('Respuesta del servidor:', updateResponseText);
-  throw new Error(`Error actualizando pedido: ${updateResponseText}`);
-}
-
-
-console.log('Pedido actualizado con detalle y factura');
-
+        
+        const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatePedido)
+        });
+        const updateResponseText = await updateResponsePedido.text();
+        if (!updateResponsePedido.ok) {
+          throw new Error(`Error actualizando pedido: ${updateResponseText}`);
+        }
+        
+        console.log('Pedido actualizado con detalle y factura');
         setSnackbarMessage('Pedido realizado con éxito');
       } catch (error) {
         console.error('Error completo:', error);
