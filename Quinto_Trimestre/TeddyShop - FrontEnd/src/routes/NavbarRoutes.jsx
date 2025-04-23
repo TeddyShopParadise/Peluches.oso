@@ -6,8 +6,6 @@ import Catalogo from "../pages/Catalogo/Catalogo";
 import Categoria from "../pages/Categoria/Categoria";
 import Cliente from "../pages/Cliente/Cliente";
 import Compania from "../pages/Compañia/Compañia";
-import DetalleFactura from "../pages/DetalleFactura/DetalleFactura";
-import DetallePedido from "../pages/DetallePedido/DetallePedido";
 import Devoluciones from "../pages/Devoluciones/Devoluciones";
 import Empleado from "../pages/Empleado/Empleado";
 import Factura from "../pages/Factura/Factura";
@@ -33,8 +31,6 @@ const NavbarRoutes = () => {
       <Route path="/categoria" element={<Categoria />} />
       <Route path="/cliente" element={<Cliente />} />
       <Route path="/compania" element={<Compania />} />
-      <Route path="/DetalleFactura" element={<DetalleFactura />} />
-      <Route path="/DetallePedido" element={<DetallePedido />} />
       <Route path="/devoluciones" element={<Devoluciones />} />
       <Route path="/empleado" element={<Empleado />} />
       <Route path="/factura" element={<Factura />} />

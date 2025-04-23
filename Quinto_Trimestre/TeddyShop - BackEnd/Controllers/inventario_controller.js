@@ -78,11 +78,31 @@ const eliminarInventario = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+// Controlador para obtener un inventario por el idProducto
+const obtenerInventarioPorProducto = async (req, res) => {
+    const { idProducto } = req.params; 
+    
+    try {
+        const inventario = await logic.obtenerInventarioPorProducto(idProducto);
+        
+        if (!inventario) {
+            return res.status(404).json({ error: 'Inventario no encontrado para el producto' });
+        }
+        
+        res.json(inventario);
+    } catch (err) {
+        console.error('Error al obtener inventario por producto:', err);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
 // Exportar los controladores
 module.exports = {
     listarInventarios,
     crearInventario,
     actualizarInventario,
     obtenerInventarioPorId,
-    eliminarInventario
+    eliminarInventario,
+    obtenerInventarioPorProducto
 };

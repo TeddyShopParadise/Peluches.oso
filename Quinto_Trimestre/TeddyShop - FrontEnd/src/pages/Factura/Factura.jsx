@@ -477,6 +477,8 @@ const eliminarFactura = async (id) => {
                   <TableHead sx={{ backgroundColor: '#ffeef3' }}>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 'bold' }}>Producto</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Inventario</TableCell>
+
                       <TableCell sx={{ fontWeight: 'bold' }}>Cantidad</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Precio</TableCell>
                     </TableRow>
@@ -489,6 +491,13 @@ const eliminarFactura = async (id) => {
                             (typeof detalle.idProducto === 'object' ? 
                               (detalle.idProducto._id || detalle.idProducto._id) : 
                               detalle.idProducto) : 
+                            "N/A"}
+                        </TableCell>
+                        <TableCell>
+                          {detalle.idInventario ? 
+                            (typeof detalle.idInventario === 'object' ? 
+                              (detalle.idInventario._id || detalle.idInventario._id) : 
+                              detalle.idInventario) : 
                             "N/A"}
                         </TableCell>
                         <TableCell>{detalle.cantidadDetalleFactura}</TableCell>

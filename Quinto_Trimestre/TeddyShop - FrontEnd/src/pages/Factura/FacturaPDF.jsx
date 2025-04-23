@@ -167,37 +167,44 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
             }}>
               <TableRow>
                 <TableCell>Producto</TableCell>
-                <TableCell align="right">Precio Unitario</TableCell>
+                <TableCell align="right">Tamaño</TableCell>
                 <TableCell align="right">Cantidad</TableCell>
+                <TableCell align="right">Precio Unitario</TableCell>
                 <TableCell align="right">Total</TableCell>
               </TableRow>
             </TableHead>
             
             <TableBody>
-              {factura.detallesFactura?.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell sx={{ minWidth: 200 }}>
-                    <Typography sx={{ fontWeight: 500 }}>
-                      {item.idProducto?._id || "Producto no especificado"}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                    ${item.precioDetalleFactura?.toLocaleString("es-CO")}
-                  </TableCell>
-                  <TableCell align="right">{item.cantidadDetalleFactura}</TableCell>
-                  <TableCell align="right" sx={{ 
-                    fontWeight: 'bold',
-                    whiteSpace: 'nowrap'
-                  }}>
-                    ${(item.precioDetalleFactura * item.cantidadDetalleFactura)?.toLocaleString("es-CO")}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+  {factura.detallesFactura?.map((item, index) => (
+    <TableRow key={index}>
+      <TableCell sx={{ minWidth: 200 }}>
+        <Typography sx={{ fontWeight: 500 }}>
+          {/* Corregido para acceder correctamente a los datos del producto */}
+          {item.idProducto?._id && `  ${item.idProducto._id}`}
+        </Typography>
+      </TableCell>
+      
+      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+          {item.idProducto?.tamañoProducto && `  ${item.idProducto.tamañoProducto}`}
+      </TableCell>
+      <TableCell align="right">{item.cantidadDetalleFactura}</TableCell>
+      
+      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+        ${typeof item.precioDetalleFactura === 'number' 
+          ? item.precioDetalleFactura.toLocaleString("es-CO") 
+          : parseFloat(item.precioDetalleFactura || 0).toLocaleString("es-CO")}
+      </TableCell>
+     
+      <TableCell align="right" sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+        ${(parseFloat(item.precioDetalleFactura || 0) * (item.cantidadDetalleFactura || 1)).toLocaleString("es-CO")}
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
           </Table>
         </Box>
 
-        {/* Total y Acciones Responsive */}
         <Box sx={{
           backgroundColor: 'white',
           p: { xs: 2, md: 3 },

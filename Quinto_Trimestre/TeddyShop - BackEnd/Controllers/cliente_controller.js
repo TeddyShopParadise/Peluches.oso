@@ -15,28 +15,28 @@ const listarClientes = async (req, res) => {
 // Controlador para crear un cliente
 const crearCliente = async (req, res) => {
     const body = req.body;
-    console.log('Cuerpo de la solicitud:', body);  // Log para verificar el cuerpo de la solicitud
+    console.log('Cuerpo de la solicitud:', body);  
 
     // Validación del cliente con Joi
     const { error, value } = clienteSchemaValidation.validate(body);
     if (error) {
-        console.log('Error en la validación:', error.details[0].message);  // Log para verificar el error de validación
+        console.log('Error en la validación:', error.details[0].message);  
         return res.status(400).json({ error: error.details[0].message });
     }
 
     try {
-        console.log('Datos validados:', value);  // Log para verificar los datos validados
+        console.log('Datos validados:', value);  
 
         const { nombre, apellido } = logic.separarNombreYApellido(value.nombreCliente);
-        console.log('Nombre descompuesto:', nombre);  // Verifica el nombre
-        console.log('Apellido descompuesto:', apellido);  // Verifica el apellido
+        console.log('Nombre descompuesto:', nombre);  
+        console.log('Apellido descompuesto:', apellido);  
 
         const nuevoCliente = await logic.crearCliente(value);
-        console.log('Nuevo cliente creado:', nuevoCliente);  // Log para verificar el cliente creado
+        console.log('Nuevo cliente creado:', nuevoCliente);  
 
         res.status(201).json(nuevoCliente);
     } catch (err) {
-        console.log('Error al crear el cliente:', err.message);  // Log para capturar el error al crear el cliente
+        console.log('Error al crear el cliente:', err.message);  
         if (err.message === 'Ya existe un cliente con este numero de telefono') {
             return res.status(409).json({ error: err.message });
         }
