@@ -58,17 +58,15 @@ const crearPedido = async (body) => {
       pedidoGuardado.detallesPedido = detallesIds;
       await pedidoGuardado.save();
   
-      // ✅ Crear factura asociada
       const factura = new Factura({
         idPedido: pedidoGuardado._id,
         fecha: new Date(),
-        totalFactura: body.totalFactura || 0, // o cálcula el total si no viene del body
+        totalFactura: body.totalFactura || 0, 
         estado: "emitida"
       });
   
       const facturaGuardada = await factura.save();
   
-      // ✅ Asociar factura al pedido y al cliente
       pedidoGuardado.facturas.push(facturaGuardada._id);
       await pedidoGuardado.save();
   

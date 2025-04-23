@@ -17,18 +17,14 @@ const listarPedidos = async (req, res) => {
 const crearPedido = async (req, res) => {
     const body = req.body;
 
-    console.log('📦 Body recibido en crearPedido:', JSON.stringify(body, null, 2));
-
     const { error, value } = pedidoSchemaValidation.validate(body);
 
     if (error) {
-        console.log('❌ Error de validación:', error.details[0].message);
         return res.status(400).json({ error: error.details[0].message });
     }
 
     try {
         const nuevoPedido = await logic.crearPedido(value);
-        console.log('✅ Pedido creado exitosamente:', nuevoPedido);
         res.status(201).json(nuevoPedido);
     } catch (err) {
         console.error('🔥 Error al crear pedido:', err.message);
@@ -42,8 +38,6 @@ const actualizarPedido = async (req, res) => {
     const { id } = req.params;
     const body = req.body;
 
-    console.log('[ActualizarPedido] ID recibido:', id);
-    console.log('[ActualizarPedido] Body recibido:', JSON.stringify(body, null, 2));
 
     const { error, value } = pedidoSchemaValidation.validate(body);
 
@@ -52,11 +46,10 @@ const actualizarPedido = async (req, res) => {
         return res.status(400).json({ error: error.details[0].message });
     }
 
-    console.log('[ActualizarPedido] Body validado correctamente:', JSON.stringify(value, null, 2));
+
 
     try {
         const pedidoActualizado = await logic.actualizarPedido(id, value);
-        console.log('[ActualizarPedido] Resultado de lógica:', pedidoActualizado);
 
         if (!pedidoActualizado) {
             console.warn('[ActualizarPedido] Pedido no encontrado con ID:', id);

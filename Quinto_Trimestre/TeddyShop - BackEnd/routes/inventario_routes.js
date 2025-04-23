@@ -5,7 +5,8 @@ const {
     crearInventario,
     actualizarInventario,
     obtenerInventarioPorId,
-    eliminarInventario
+    eliminarInventario,
+    obtenerInventarioPorProducto
 } = require('../Controllers/inventario_controller'); // Importa los controladores
 
 /**
@@ -196,5 +197,30 @@ router.put('/:id', actualizarInventario);
  */
 
 router.delete('/:id', eliminarInventario);
+
+/**
+ * @swagger
+ * /inventario/por-producto/{idProducto}:
+ *   get:
+ *     summary: Obtiene el inventario por idProducto
+ *     tags:
+ *       - Inventario
+ *     parameters:
+ *       - in: path
+ *         name: idProducto
+ *         required: true
+ *         description: ID del producto para buscar el inventario
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Inventario encontrado
+ *       404:
+ *         description: Inventario no encontrado para el producto
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+router.get('/por-producto/:idProducto', obtenerInventarioPorProducto);
 
 module.exports = router;

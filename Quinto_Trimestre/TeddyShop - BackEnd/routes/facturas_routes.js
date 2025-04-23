@@ -6,7 +6,8 @@ const {
     actualizarFactura,
     obtenerFacturaPorId,
     eliminarFactura,
-    generarFacturaDesdePedido
+    generarFacturaDesdePedido,
+    buscarFacturaPorPedido
 } = require('../Controllers/factura_controller'); // Importa los controladores
 
 /**
@@ -235,6 +236,26 @@ router.delete('/:id', eliminarFactura);
  *         description: Pedido no encontrado
  */
 router.post('/generar/:pedidoId', generarFacturaDesdePedido);
+
+/**
+ * @swagger
+ * /factura/pedido/{pedidoId}:
+ *   get:
+ *     summary: Busca una factura por ID de pedido
+ *     tags: [Facturas]
+ *     parameters:
+ *       - in: path
+ *         name: pedidoId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Factura encontrada
+ *       404:
+ *         description: No se encontró factura para este pedido
+ */
+router.get('/pedido/:pedidoId', buscarFacturaPorPedido);
 
 
 module.exports = router;

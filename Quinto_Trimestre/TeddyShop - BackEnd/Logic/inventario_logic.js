@@ -120,10 +120,29 @@ async function eliminarInventario(id) {
     }
 }
 
+// Función asíncrona para obtener el inventario por idProducto
+async function obtenerInventarioPorProducto(idProducto) {
+    try {
+        // Buscar el inventario que tenga el idProducto correspondiente
+        const inventario = await Inventario.findOne({ idProducto: idProducto });
+        
+        // Si no se encuentra, retornamos null
+        if (!inventario) {
+            return null;
+        }
+        
+        return inventario;
+    } catch (error) {
+        console.error('Error al buscar inventario por idProducto:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     crearInventario,
     actualizarInventario,
     listarInventarios,
     buscarInventarioPorId,
-    eliminarInventario
+    eliminarInventario,
+    obtenerInventarioPorProducto
 };
