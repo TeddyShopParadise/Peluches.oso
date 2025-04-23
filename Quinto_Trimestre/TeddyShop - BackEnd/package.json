@@ -25,10 +25,10 @@
     "mongoose": "^8.7.2",
     "multer": "^1.4.5-lts.1",
     "path": "^0.12.7",
-    "swagger": "^0.7.5",
+    "swagger": "^0.0.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "sweetalert2": "^11.16.0",
+    "sweetalert2": "^11.6.13",
     "teddyshop": "file:",
     "uuid": "^11.0.3"
   },

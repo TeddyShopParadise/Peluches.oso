@@ -7,6 +7,22 @@ const {
     obtenerMovimientoPorId,
     eliminarMovimiento
 } = require('../Controllers/movimiento_controller'); // Importa los controladores
+
+//const authorizeAccess = require('../middlewares/authorizeAccess');
+//router.use(authorizeAccess('Administrador'));
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ * security:
+ *   - bearerAuth: []
+ */
+
 /**
  * @swagger
  * /movimiento:

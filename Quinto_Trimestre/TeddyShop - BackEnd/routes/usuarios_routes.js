@@ -8,6 +8,21 @@ const {
     eliminarUsuario
 } = require('../Controllers/usuario_controller'); // Asegúrate de importar los controladores
 
+//const authorizeAccess = require('../middlewares/authorizeAccess');
+//router.use(authorizeAccess('Administrador', 'Empleado'));
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ * security:
+ *   - bearerAuth: []
+ */
+
 /**
  * @swagger
  * /usuario:
