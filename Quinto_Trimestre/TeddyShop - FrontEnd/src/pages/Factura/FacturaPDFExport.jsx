@@ -65,6 +65,11 @@ const styles = StyleSheet.create({
     width: '40%',
     fontSize: 9,
   },
+  columnaTamaño: {
+    width: '20%',
+    fontSize: 9,
+    textAlign: 'right',
+  },
   columnaPrecio: {
     width: '20%',
     fontSize: 9,
@@ -142,32 +147,42 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
           </Text>
         </View>
 
-        {/* Tabla de Productos */}
-        <View style={styles.tabla}>
-          <View style={styles.tablaHeader}>
-            <Text style={styles.columnaProducto}>Producto</Text>
-            <Text style={styles.columnaPrecio}>Precio Unitario</Text>
-            <Text style={styles.columnaCantidad}>Cantidad</Text>
-            <Text style={styles.columnaTotal}>Total</Text>
-          </View>
+       {/* Tabla de Productos */}
+<View style={styles.tabla}>
+  <View style={styles.tablaHeader}>
+    <Text style={styles.columnaProducto}>Producto</Text>
+    <Text style={styles.columnaTamaño}>Tamaño</Text>
+    <Text style={styles.columnaPrecio}>Precio Unitario</Text>
+    <Text style={styles.columnaCantidad}>Cantidad</Text>
+    <Text style={styles.columnaTotal}>Total</Text>
+  </View>
 
-          {factura.detallesFactura?.map((item, index) => (
-            <View key={index} style={styles.tablaRow}>
-              <Text style={styles.columnaProducto}>
-                {item.idProducto?._id || "Producto no especificado"}
-              </Text>
-              <Text style={styles.columnaPrecio}>
-                ${item.precioDetalleFactura?.toLocaleString('es-CO')}
-              </Text>
-              <Text style={styles.columnaCantidad}>
-                {item.cantidadDetalleFactura}
-              </Text>
-              <Text style={styles.columnaTotal}>
-                ${(item.precioDetalleFactura * item.cantidadDetalleFactura)?.toLocaleString('es-CO')}
-              </Text>
-            </View>
-          ))}
-        </View>
+  {factura.detallesFactura?.map((item, index) => {
+    const precioUnitario = parseFloat(item.precioDetalleFactura || 0);
+    const cantidad = item.cantidadDetalleFactura || 1;
+    const total = precioUnitario * cantidad;
+
+    return (
+      <View key={index} style={styles.tablaRow}>
+        <Text style={styles.columnaProducto}>
+          {item.idProducto?._id || "Producto no especificado"}
+        </Text>
+        <Text style={styles.columnaTamaño}>
+          {item.idProducto?.tamañoProducto || "-"}
+        </Text>
+        <Text style={styles.columnaPrecio}>
+          ${precioUnitario.toLocaleString('es-CO')}
+        </Text>
+        <Text style={styles.columnaCantidad}>
+          {cantidad}
+        </Text>
+        <Text style={styles.columnaTotal}>
+          ${total.toLocaleString('es-CO')}
+        </Text>
+      </View>
+    );
+  })}
+</View>
 
         {/* Totales */}
         <View style={styles.totalSection}>

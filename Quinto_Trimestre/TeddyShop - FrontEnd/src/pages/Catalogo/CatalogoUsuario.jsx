@@ -209,7 +209,6 @@ export default function CatalogoUsuario() {
         detallesPedido: [] // Inicializar como array vacío
       };
   
-      console.log("Enviando pedido:", JSON.stringify(pedidoCompleto, null, 2));
   
       const response = await fetch(`${apiUrl}/pedido`, {
         method: 'POST',
@@ -252,12 +251,7 @@ export default function CatalogoUsuario() {
       // Paso 3: Crear la factura
       const factura = {
         fechaCreacionFactura: new Date().toISOString(),
-        horaCreacionFactura: new Date().toLocaleTimeString('es-CO', { 
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false 
-        }),
+        horaCreacionFactura: new Date().toLocaleTimeString('es-MX'),
         pedido: responseData._id,
         detallesFactura: [],
         metodoPago: pedido.metodoPago,
