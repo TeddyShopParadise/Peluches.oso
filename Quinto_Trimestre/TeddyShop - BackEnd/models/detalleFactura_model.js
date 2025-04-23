@@ -22,7 +22,7 @@ const detalleFacturaSchema = new mongoose.Schema({
   idFactura: {
     type: mongoose.Schema.Types.ObjectId, // Referencia a Factura por ObjectId
     ref: 'Factura',
-    required: true
+    required: false
   }
 }, {
   collection: 'Detalle_Factura',
