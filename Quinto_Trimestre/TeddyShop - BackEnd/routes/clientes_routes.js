@@ -1,6 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const clienteController = require('../Controllers/cliente_controller');
+const authorizeAccess = require('../middlewares/authorizeAccess');
+
+//router.use(authorizeAccess('Administrador'));
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ * security:
+ *   - bearerAuth: []
+ */
 
 /**
  * @swagger
