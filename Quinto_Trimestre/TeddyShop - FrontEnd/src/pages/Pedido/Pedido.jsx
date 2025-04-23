@@ -33,7 +33,7 @@ import {
   DialogActions,
   MenuItem,
   Checkbox,
-  Divider
+  Divider,
 } from '@mui/material';
 
 import sortBy from 'lodash/sortBy';
@@ -67,6 +67,7 @@ const Pedido = () => {
   const [selectedPedido, setSelectedPedido] = useState(null);
   const [currentId, setCurrentId] = useState(null);
   const [page, setPage] = useState(0);
+  const [detalles, setDetalles] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -75,11 +76,15 @@ const Pedido = () => {
   const [facturaDialogOpen, setFacturaDialogOpen] = useState(false);
   const [facturaGenerada, setFacturaGenerada] = useState(null);
   const [compania, setCompania] = useState([]);
+  const [detalleSeleccionado, setDetalleSeleccionado] = useState(null);
+  
 
   
   useEffect(() => {
     fetchPedidos();
     fetchCompania(); 
+    fetchDetalles();
+
   }, []);
 
 
@@ -108,6 +113,24 @@ const Pedido = () => {
       setLoading(false);
     }
   };
+  const fetchDetalles = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/detallesPedido`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Error al obtener los detalles de pedido');
+      }
+      const data = await response.json();
+      setDetalles(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   const crearPedido = async () => {
     try {
@@ -279,34 +302,49 @@ const Pedido = () => {
   });
 
   
-  
   const handleGenerarFactura = async (pedidoId) => {
     try {
       const pedidoSeleccionado = pedidos.find(p => p._id === pedidoId);
+  
+      if (pedidoSeleccionado.estado !== 'realizado') {
+        setSnackbarMessage('Solo puedes generar factura para pedidos realizados');
+        setOpenSnackbar(true);
+        return;
+      }
+  
       setSelectedPedido(pedidoSeleccionado);
   
       const response = await fetch(`${apiUrl}/factura/generar/${pedidoId}`, {
         method: 'POST'
       });
-      
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Error al generar factura");
       }
   
       const facturaData = await response.json();
-      const facturaCompleta = await fetch(`${apiUrl}/factura/${facturaData._id}?populate=detallesFactura`);
-      const facturaPoblada = await facturaCompleta.json();
+      console.log('🧾 Factura data recibida:', facturaData);
       
-      setFacturaGenerada(facturaPoblada);
-      setFacturaDialogOpen(true); 
-      
+      // Verificar estructura de datos
+      if (facturaData.detallesFactura && facturaData.detallesFactura.length > 0) {
+        console.log('🧾 Primer detalle de factura:', facturaData.detallesFactura[0]);
+        console.log('🧾 Producto en primer detalle:', facturaData.detallesFactura[0].idProducto);
+      }
+  
+      setFacturaGenerada(facturaData);
+      setFacturaDialogOpen(true);
+  
     } catch (error) {
       console.error("Error:", error);
       setSnackbarMessage(error.message);
       setOpenSnackbar(true);
     }
   };
+  
+  const detallesFiltrados = detalles.filter(
+    (detalle) => detalle.idPedido?._id === selectedPedido?._id
+  );
   
   return (
     <Box className="BoxInicial">
@@ -619,84 +657,7 @@ const Pedido = () => {
               </Box>
             </Paper>
           </Box>
-  
-          {/* Mini Chart for Visual Data */}
-          <Paper
-            elevation={2}
-            sx={{
-              padding: '20px',
-              borderRadius: '20px',
-              marginBottom: '30px',
-              backgroundColor: '#fff0f5',
-              position: 'relative',
-              overflow: 'hidden',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                width: '100%',
-                height: '5px',
-                background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
-              },
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                color: '#b04e6f',
-                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
-                mb: 2,
-              }}
-            >
-              Resumen de Pedidos
-            </Typography>
-            <Box sx={{ height: '200px', position: 'relative' }}>
-              {/* Simple visual chart bars */}
-              <Box sx={{ display: 'flex', height: '150px', alignItems: 'flex-end', justifyContent: 'space-around' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
-                  <Box 
-                    sx={{ 
-                      width: '60px', 
-                      height: `${(sortedPedidos.filter(p => p.estado === 'realizado').length / sortedPedidos.length) * 100}%`,
-                      backgroundColor: '#90caf9',
-                      borderRadius: '6px 6px 0 0',
-                      minHeight: '20px',
-                      transition: 'height 0.5s ease'
-                    }} 
-                  />
-                  <Typography sx={{ mt: 1, fontSize: '12px', color: '#1976d2', fontWeight: 'bold' }}>Realizados</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
-                  <Box 
-                    sx={{ 
-                      width: '60px', 
-                      height: `${(sortedPedidos.filter(p => p.estado === 'en_proceso').length / sortedPedidos.length) * 100}%`,
-                      backgroundColor: '#ffee58',
-                      borderRadius: '6px 6px 0 0',
-                      minHeight: '20px',
-                      transition: 'height 0.5s ease'
-                    }} 
-                  />
-                  <Typography sx={{ mt: 1, fontSize: '12px', color: '#f57f17', fontWeight: 'bold' }}>En Proceso</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100px' }}>
-                  <Box 
-                    sx={{ 
-                      width: '60px', 
-                      height: `${(sortedPedidos.filter(p => p.estado === 'pendiente').length / sortedPedidos.length) * 100}%`,
-                      backgroundColor: '#ef9a9a',
-                      borderRadius: '6px 6px 0 0',
-                      minHeight: '20px',
-                      transition: 'height 0.5s ease'
-                    }} 
-                  />
-                  <Typography sx={{ mt: 1, fontSize: '12px', color: '#c62828', fontWeight: 'bold' }}>Cancelados</Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Paper>
-    
+
           <Paper
             elevation={2}
             sx={{
@@ -1037,6 +998,42 @@ const Pedido = () => {
                   <Typography variant="body1" sx={{ mb: 1 }}><strong>Barrio:</strong> {selectedPedido.barrio}</Typography>
                 </Paper>
               )}
+            <Divider sx={{ my: 2, backgroundColor: '#f8c8dc' }} />
+<Typography 
+  variant="h6" 
+  sx={{ 
+    color: '#b04e6f',
+    fontFamily: '"Baloo 2", cursive',
+    mb: 1
+  }}
+>
+  Productos del Pedido:
+</Typography>
+
+<Table size="small" sx={{ backgroundColor: '#fff0f4', borderRadius: '10px', overflow: 'hidden' }}>
+  <TableHead>
+    <TableRow sx={{ backgroundColor: '#ffe4ec' }}>
+      <TableCell><strong>Producto</strong></TableCell>
+      <TableCell><strong>Cantidad</strong></TableCell>
+      <TableCell><strong> Precio</strong></TableCell>
+      <TableCell><strong>Pedido</strong></TableCell>
+    </TableRow>
+  </TableHead>
+  
+  <TableBody>
+  {detalles
+    .filter((detalle) => detalle.idPedido?._id === selectedPedido?._id)
+    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    .map((detalle) => (
+      <TableRow key={detalle._id}>
+        <TableCell>{detalle.idProducto?.tamañoProducto || 'Producto eliminado'}</TableCell>
+        <TableCell>{detalle.cantidadDetallePedido}</TableCell>
+        <TableCell>${detalle.precioDetallePedido.toFixed(2)}</TableCell>
+        <TableCell>{detalle.idPedido?._id || 'Sin pedido'}</TableCell>
+      </TableRow>
+  ))}
+</TableBody>
+</Table>
             </DialogContent>
             <DialogActions>
               <Button 

@@ -38,7 +38,7 @@ const detalleFacturaSchemaValidation = Joi.object({
         idFactura: Joi.string()
         .length(24)
         .hex()
-        .required()
+        .optional()
         .messages({
             'string.base': 'El ID de la factura debe ser un ID válido',
             'string.length': 'El ID de la factura debe tener 24 caracteres',

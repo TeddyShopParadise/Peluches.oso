@@ -66,7 +66,7 @@ async function actualizarMovimiento(id, body) {
 // Función asíncrona para listar todos los movimientos
 async function listarMovimientos() {
     const movimientos = await Movimiento.find()
-        .populate('inventario'); // Puedes optar por mostrar información del inventario asociado
+        .populate('inventario'); 
     return movimientos;
 }
 
@@ -74,7 +74,7 @@ async function listarMovimientos() {
 async function buscarMovimientoPorId(id) {
     try {
         const movimiento = await Movimiento.findById(id)
-            .populate('inventario'); // Puedes optar por mostrar información del inventario asociado
+            .populate('inventario'); 
 
         if (!movimiento) {
             throw new Error(`Movimiento con ID ${id} no encontrado`);

@@ -192,9 +192,7 @@ export default function Navbar() {
                   onClose={() => setAnchorElPedidos(null)}
                 >
                   <MenuItem component={LinkBehavior} to="/pedido" onClick={() => setAnchorElPedidos(null)}>Pedidos</MenuItem>
-                  <MenuItem component={LinkBehavior} to="/detallePedido" onClick={() => setAnchorElPedidos(null)}>Detalle Pedido</MenuItem>
                   <MenuItem component={LinkBehavior} to="/Factura" onClick={() => setAnchorElPedidos(null)}>Facturas</MenuItem>
-                  <MenuItem component={LinkBehavior} to="/detalleFactura" onClick={() => setAnchorElPedidos(null)}>detalle de Factura</MenuItem>
                   <MenuItem component={LinkBehavior} to="/metodoPago" onClick={() => setAnchorElPedidos(null)}>Método de Pago</MenuItem>
                   <MenuItem component={LinkBehavior} to="/devoluciones" onClick={() => setAnchorElPedidos(null)}>Devoluciones</MenuItem>
 

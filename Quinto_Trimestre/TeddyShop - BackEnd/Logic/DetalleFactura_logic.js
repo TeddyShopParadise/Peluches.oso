@@ -34,9 +34,9 @@ async function actualizarDetalleFactura(id, body) {
 // Función asíncrona para listar todos los detalles de factura
 async function listarDetallesFactura() {
     let detallesFactura = await DetalleFactura.find()
-        .populate('idInventario', 'stock') // Reemplazar con los campos relevantes de Inventario
-        .populate('idProducto', 'nombreProducto') // Reemplazar con los campos relevantes de Producto
-        .populate('idFactura', 'numeroFactura'); // Reemplazar con los campos relevantes de Factura
+        .populate('idInventario', 'stock') 
+        .populate('idProducto', '_id') 
+        .populate('idFactura', '_id') 
     return detallesFactura;
 }
 
@@ -44,9 +44,8 @@ async function listarDetallesFactura() {
 async function buscarDetalleFacturaPorId(id) {
     try {
         const detalleFactura = await DetalleFactura.findById(id)
-            .populate('idInventario', 'stock') // Reemplazar con los campos relevantes de Inventario
-            .populate('idProducto', 'nombreProducto') // Reemplazar con los campos relevantes de Producto
-            .populate('idFactura', 'numeroFactura'); // Reemplazar con los campos relevantes de Factura
+            .populate('idInventario', 'stock') 
+            .populate('idProducto', '_id') 
         if (!detalleFactura) {
             throw new Error(`Detalle de Factura con ID ${id} no encontrado`);
         }

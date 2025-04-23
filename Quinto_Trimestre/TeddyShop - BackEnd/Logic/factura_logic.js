@@ -7,26 +7,28 @@ const { agregarFacturaAPedido } = require('./pedido_logic');
 
 // Crear factura
 async function crearFactura(body) {
-    const facturaExistente = await Factura.findOne({ pedido: body.pedido });
-    if (facturaExistente) {
-        throw new Error('Este pedido ya tiene una factura generada.');
-    }
+  // Verificar si el pedido ya tiene una factura asociada
+  const facturaExistente = await Factura.findOne({ pedido: body.pedido });
+  if (facturaExistente) {
+    // Si ya existe una factura, no la volvemos a crear, sino que la devolvemos
+    return facturaExistente; // Retorna la factura existente
+  }
 
-    const factura = new Factura({
-        fechaCreacionFactura: body.fechaCreacionFactura,
-        horaCreacionFactura: body.horaCreacionFactura,
-        pedido: body.pedido,
-        cliente: body.cliente,
-        detallesFactura: body.detallesFactura || [],
-        metodoPago: body.metodoPago
-    });
+  // Si no existe una factura, procedemos a crearla
+  const factura = new Factura({
+    fechaCreacionFactura: body.fechaCreacionFactura,
+    horaCreacionFactura: body.horaCreacionFactura,
+    pedido: body.pedido,
+    cliente: body.cliente,
+    detallesFactura: body.detallesFactura || [],
+    metodoPago: body.metodoPago
+  });
 
-    const facturaGuardada = await factura.save();
-    await agregarFacturaAPedido(facturaGuardada.pedido, facturaGuardada._id);
+  const facturaGuardada = await factura.save();
+  await agregarFacturaAPedido(facturaGuardada.pedido, facturaGuardada._id);
 
-    return facturaGuardada;
+  return facturaGuardada;
 }
-
 // Actualizar factura
 async function actualizarFactura(id, body) {
     const facturaOriginal = await Factura.findById(id);
@@ -67,7 +69,7 @@ async function listarFacturas() {
           ]
         })
         .populate('metodoPago', 'nombreMetodoPago')
-        .lean();  // <-- aquí convertimos a objetos JS planos
+        .lean();
   
       // Imprime TODO el objeto con identación
       console.log('Facturas con detalles completos:\n', JSON.stringify(facturas, null, 2));
