@@ -14,8 +14,8 @@ public class ProductosUsuarioStepDefinitions {
         theActorInTheSpotlight().wasAbleTo(AbrirPaginaProductosUsuario.lapagina());
     }
 
-    @Cuando("^ingrese correctamente a la página$")
-    public void ingreseCorrectamenteALaPágina() {
+    @Cuando("^ingrese correctamente a la página productos usuario$")
+    public void ingreseCorrectamenteALaPáginaProductosUsuario() {
 
 
     }
