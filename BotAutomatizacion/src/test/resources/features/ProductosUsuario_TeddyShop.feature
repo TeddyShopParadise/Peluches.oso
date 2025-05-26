@@ -11,4 +11,6 @@ Característica: Visualización en la página de Productos en la vista de usuari
   Escenario: Verificar la visualización exitosa en la página de Productos en la vista de usuarios de TeddyShop
     Dado que el usuario se encuentra en la pagina de productos en la vista de usuarios de TeddyShop
     Cuando ingrese correctamente a la página productos usuario
+      | nombrePaga | telefonoPaga | nombreRecibe | telefonoRecibe | direccion          | barrio        | localidad      |
+      | Andres     | 3166701994   | Dayana       | 3158725015     | cra 21a #64-10 Sur | San Francisco | Ciudad Bolivar |
     Entonces se debe verificar que el usuario haya visualizado correctamente los productos disponibles de TeddyShop

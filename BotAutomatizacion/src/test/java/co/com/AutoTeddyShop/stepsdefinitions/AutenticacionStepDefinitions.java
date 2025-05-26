@@ -2,8 +2,8 @@ package co.com.AutoTeddyShop.stepsdefinitions;
 
 import co.com.AutoTeddyShop.models.DatosLogin;
 import co.com.AutoTeddyShop.questions.validacionLogin;
-import co.com.AutoTeddyShop.tasks.AbrirPaginaLogin;
-import co.com.AutoTeddyShop.tasks.IniciarSesionTeddyShop;
+import co.com.AutoTeddyShop.tasks.Login.AbrirPaginaLogin;
+import co.com.AutoTeddyShop.tasks.Login.IniciarSesionTeddyShop;
 import cucumber.api.DataTable;
 import cucumber.api.java.es.Cuando;
 import cucumber.api.java.es.Dado;
