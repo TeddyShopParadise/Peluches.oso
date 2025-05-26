@@ -1,4 +1,4 @@
-package co.com.AutoTeddyShop.tasks.ProductosAdmin;
+package co.com.AutoTeddyShop.tasks;
 
 import co.com.AutoTeddyShop.userinterface.ProductoAdminTeddyShop;
 import net.serenitybdd.screenplay.Actor;
