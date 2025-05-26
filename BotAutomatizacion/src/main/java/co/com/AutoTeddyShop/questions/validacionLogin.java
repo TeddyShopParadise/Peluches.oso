@@ -1,5 +1,5 @@
 package co.com.AutoTeddyShop.questions;
-import static co.com.AutoTeddyShop.userinterface.LoginPageTeddyShop.BOTON_GESTION_PEDIDO;
+import static co.com.AutoTeddyShop.userinterface.Login.LoginPageTeddyShop.BOTON_GESTION_PEDIDO;
 import static jxl.biff.FormatRecord.logger;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Question;

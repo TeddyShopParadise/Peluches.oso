@@ -9,6 +9,6 @@ Característica: Visualización en la página de catalogos en la vista de usuari
   @visualizacioncatalogos
 
   Escenario: Verificar la visualización exitosa en la página de catalogos en la vista de usuarios de TeddyShop
-    Dado que el usuario se encuentra en la pagina de catalogos en la vista de usuarios de TeddyShop
-    Cuando ingrese correctamente a la página catalogos usuario
-    Entonces se debe verificar que el usuario haya visualizado correctamente los catalogos disponibles de TeddyShop
+    Dado que el usuario se encuentra en la pagina principal de TeddyShop
+    Cuando ingrese correctamente a la seccion catalogos usuario desde el menú de productos
+    Entonces debería visualizar las categorías disponibles y los productos correspondientes
