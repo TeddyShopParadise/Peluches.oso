@@ -29,7 +29,7 @@ public class NavegacionProductosUsuario implements Task {
     public <T extends Actor> void performAs(T actor) {
         actor.attemptsTo(
                 Click.on(BTN_CATEGORIA),
-                Click.on(BTN_OSOS110),
+                Click.on(BTN_OSOSCOLORES),
                 Click.on((BTN_DETALLES)),
                 Click.on(BTN_CERRAR),
                 Click.on(BTN_COMPRAR),
@@ -50,7 +50,7 @@ public class NavegacionProductosUsuario implements Task {
                 Click.on(INPUT_LOCALIDAD),
                 Enter.theValue(datosCompra.get(0).getLocalidad()).into(INPUT_LOCALIDAD),
                 Click.on(BTN_ENVIARPEDIDO),
-                unosSegundos(5)
+                unosSegundos(3)
         );
     }
 }
