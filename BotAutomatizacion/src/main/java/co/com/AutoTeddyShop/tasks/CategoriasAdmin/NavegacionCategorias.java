@@ -32,9 +32,7 @@ public class NavegacionCategorias implements Task{
                 Click.on(INPUT_DESCRIPCIONCATEGORIA),
                 Enter.theValue(datosCategoria.get(0).getDescripcionCategoria()).into(INPUT_DESCRIPCIONCATEGORIA),
                 Click.on(BTN_CATEGORIA),
-                Click.on(BTN_CONFIRMACION),
-
-                unosSegundos(1)
+                Click.on(BTN_CONFIRMACION)
         );
     }
 }
