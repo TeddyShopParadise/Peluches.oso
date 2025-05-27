@@ -7,10 +7,9 @@ import org.junit.runner.RunWith;
 
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(
-        features = "src/test/resources/features/producto_TeddyShop.feature",
+        features = "src/test/resources/features/categoriasAdmin_TeddyShop.feature",
         glue = {"co.com.AutoTeddyShop.stepsdefinitions", "co.com.AutoTeddyShop.utils.hooks"},
         snippets = SnippetType.CAMELCASE
 )
-
-public class ProductoAdminRunner {
+public class CategoriasAdminRunner {
 }
