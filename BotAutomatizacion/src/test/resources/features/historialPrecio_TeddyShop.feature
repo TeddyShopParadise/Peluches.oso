@@ -5,6 +5,12 @@ Característica: Registro de Historial de Precios en TeddyShop
   Quiero registrar y visualizar el historial de precios de un producto en el portal de TeddyShop
   Para poder acceder al contenido y funcionalidades disponibles según mi rol.
 
+  Antecedentes:
+    Dado que el usuario se encuentra en la pagina de inicio de sesion de TeddyShop
+    Cuando ingrese las credenciales correctas (usuario y contrasena)
+      | usuarios                | clave        |
+      | angelabonilla@gmail.com | Peluches.oso |
+
   @historialPrecio
   Escenario: Registrar un nuevo historial de precio exitosamente
     Dado que el usuario se encuentra en la página de Historial de Precios en la vista de administrador de TeddyShop
