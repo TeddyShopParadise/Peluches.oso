@@ -13,10 +13,14 @@ Característica: Gestión de productos en la vista de administrador de TeddyShop
       | angelabonilla@gmail.com | Peluches.oso |
 
 
-  @visualizacionproductosAdministrador
-  Escenario: Verificar la visualización exitosa en la página de Productos
+  @registroProductoConInventario
+  Escenario: Registrar un producto con su inventario inicial
     Dado que el usuario se encuentra en la pagina de productos en la vista de administrador de TeddyShop
     Cuando el usuario registra un nuevo producto con los siguientes datos:
       | estiloProducto | disponibilidadProducto | tamañoProducto | imagen            |
-      | FEEOOO         | 15                     | Mediano        | http://imagen.jpg |
-    Entonces se debe verificar que el producto se haya creado correctamente
+      | Oso 80cm         | 10                    | 80cm        | http://imagen.jpg |
+    Y el usuario registra el inventario del producto con los siguientes datos:
+      | stockInicial | stockMinimo | stockMaximo | precioVenta | precioCompra |
+      | 10           | 5           | 30          | 128000      | 100000        |
+    Entonces se debe verificar que el inventario se haya creado correctamente
+

@@ -51,5 +51,7 @@ public class ProductoAdminPage {
     public static final Target MENSAJE_EXITO = Target.the("mensaje de producto creado")
             .located(By.xpath("//h2[@class='swal2-title' and @id='swal2-title' and text()='Éxito']\n"));
 
+
+
 }
 
