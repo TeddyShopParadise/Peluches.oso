@@ -14,3 +14,5 @@ Característica: Visualización en la página de Empleados con el rol de adminis
       | dni        | nombreEmpleado  | telefonoEmpleado |
       | 8762340981 | Andres Espinosa | 3166701994       |
     Entonces se debe verificar que el Empleado se haya creado correctamente
+      | dni        | nombreEmpleado  | telefonoEmpleado |
+      | 8762340981 | Andres Espinosa | 3166701994       |
