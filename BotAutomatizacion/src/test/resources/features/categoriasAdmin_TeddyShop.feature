@@ -5,6 +5,11 @@ Característica: Visualización en la página de Categoria con el rol de adminis
   Como Administrador de TeddyShop
   Quiero visualizar las categorias en el portal de TeddyShop
   Para poder acceder al contenido y funcionalidades disponibles según mi rol.
+  Antecedentes:
+    Dado que el usuario se encuentra en la pagina de inicio de sesion de TeddyShop
+    Cuando ingrese las credenciales correctas (usuario y contrasena)
+      | usuarios                | clave        |
+      | angelabonilla@gmail.com | Peluches.oso |
 
   @visualizacionCategoriasAdministrador
 

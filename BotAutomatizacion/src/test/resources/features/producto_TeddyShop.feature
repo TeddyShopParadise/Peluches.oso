@@ -1,16 +1,26 @@
-#language:es
-#author:JordanCastaneda
+# language: es
+# author: Joseph_Socha
 
-Característica: Visualización en la página de Producto en la vista de administrador de TeddyShop
+Característica: Gestión de productos en la vista de administrador de TeddyShop
   Como Usuario de TeddyShop
-  Quiero visualizar los productos en el portal de TeddyShop
-  Para poder acceder al contenido y funcionalidades disponibles según mi rol.
+  Quiero visualizar y registrar productos
+  Para poder gestionar el catálogo de forma eficiente
 
-  @visualizacionproductosAdministrador
+  Antecedentes:
+    Dado que el usuario se encuentra en la pagina de inicio de sesion de TeddyShop
+    Cuando ingrese las credenciales correctas (usuario y contrasena)
+      | usuarios                | clave        |
+      | angelabonilla@gmail.com | Peluches.oso |
 
-  Escenario: Verificar la visualización exitosa en la página de Productos en la vista de administrador de TeddyShop
+
+  @registroProductoConInventario
+  Escenario: Registrar un producto con su inventario inicial
     Dado que el usuario se encuentra en la pagina de productos en la vista de administrador de TeddyShop
     Cuando el usuario registra un nuevo producto con los siguientes datos:
       | estiloProducto | disponibilidadProducto | tamañoProducto | imagen            |
-      | FEEOOO         | 15                     | Mediano        | http://imagen.jpg |
-    Entonces se debe verificar que el producto se haya creado correctamente
+      | Oso 80cm         | 10                    | 80cm        | http://imagen.jpg |
+    Y el usuario registra el inventario del producto con los siguientes datos:
+      | stockInicial | stockMinimo | stockMaximo | precioVenta | precioCompra |
+      | 10           | 5           | 30          | 128000      | 100000        |
+    Entonces se debe verificar que el inventario se haya creado correctamente
+

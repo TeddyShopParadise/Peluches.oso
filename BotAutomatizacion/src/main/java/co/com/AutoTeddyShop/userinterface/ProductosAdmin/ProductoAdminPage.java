@@ -49,7 +49,9 @@ public class ProductoAdminPage {
             .located(By.xpath("/html/body/div[1]/div/div/div/div[2]/form/div[8]/button[1]"));
 
     public static final Target MENSAJE_EXITO = Target.the("mensaje de producto creado")
-            .located(By.xpath("//div[@id='swal2-html-container' and contains(text(),'Producto creado correctamente')]"));
+            .located(By.xpath("//h2[@class='swal2-title' and @id='swal2-title' and text()='Éxito']\n"));
+
+
 
 }
 

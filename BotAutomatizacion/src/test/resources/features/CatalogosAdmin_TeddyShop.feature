@@ -6,6 +6,12 @@ Característica: Visualización de la pagina de Catalogos con el rol de administ
   Quiero visualizar los catalogos con su informacion en la pagina de TeddyShop
   Para poder acceder al contenido y funcionalidades disponibles según mi rol.
 
+  Antecedentes:
+    Dado que el usuario se encuentra en la pagina de inicio de sesion de TeddyShop
+    Cuando ingrese las credenciales correctas (usuario y contrasena)
+      | usuarios                | clave        |
+      | angelabonilla@gmail.com | Peluches.oso |
+
   @visualizacionCatalogosAdministrador
 
   Escenario: Verificar la visualización exitosa en la pagina de Catalogos con el rol de administrador de TeddyShop
