@@ -81,11 +81,47 @@
     }
 
 
-    
+    // Función para incrementar el contador de clics
+    async function incrementarClickCount(id) {
+        try {
+          const producto = await Producto.findByIdAndUpdate(
+            id,
+            { $inc: { clickCount: 1 } },
+            { new: true }
+          );
+
+          if (!producto) {
+            throw new Error('Producto no encontrado');
+          }
+
+          return producto;
+        } catch (err) {
+          console.error(`Error al incrementar clics: ${err.message}`);
+          throw err;
+        }
+      }
+
+      // Función para obtener productos populares
+      async function obtenerProductosPopulares(limite = 8) {
+        try {
+          const productos = await Producto.find()
+            .sort({ clickCount: -1 })
+            .limit(limite)
+            .populate('historialPrecios');
+        
+          return productos;
+        } catch (err) {
+          console.error(`Error al obtener productos populares: ${err.message}`);
+          throw err;
+        }
+    }
+
     module.exports = {
         crearProducto,
         actualizarProducto,
         listarProductos,
         buscarProductoPorId,
-        eliminarProducto
+        eliminarProducto,
+        incrementarClickCount,
+        obtenerProductosPopulares
     };

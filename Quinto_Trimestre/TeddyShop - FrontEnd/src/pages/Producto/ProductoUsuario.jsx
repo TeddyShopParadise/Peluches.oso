@@ -46,6 +46,7 @@ const ProductoUsuario = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [categoriaFiltro, setCategoriaFiltro] = useState('todos');
   const productosPerPage = 12;
+  const [refreshPopular, setRefreshPopular] = useState(false);
 
   const [pedido, setPedido] = useState({
     metodoPago: '',
@@ -193,6 +194,23 @@ const ProductoUsuario = () => {
     setPedido({ ...pedido, [e.target.name]: e.target.value });
   };
 
+//Contador de clicks para la sección de los mas populares
+  const incrementClickCount = async (productId) => {
+    try {
+      const response = await fetch(`${PRODUCTOS_API_URL}/${productId}/clics`, {
+        method: 'POST'
+      });
+
+      if (!response.ok) throw new Error('Error en el servidor');
+
+      setRefreshPopular(prev => !prev);
+
+    } catch (error) {
+      console.error('Error al registrar clic:', error);
+      setSnackbarMessage('Error al actualizar popularidad');
+      setOpenSnackbar(true);
+    }
+  };
 
     const handleSubmitPedido = async () => {
       const { precioFormateado, precioNumerico } = (() => {
@@ -382,8 +400,9 @@ try {
         if (!updateResponsePedido.ok) {
           throw new Error(`Error actualizando pedido: ${updateResponseText}`);
         }
-        
         console.log('Pedido actualizado con detalle y factura');
+                await incrementClickCount(productoSeleccionado._id);
+
         setSnackbarMessage('Pedido realizado con éxito');
       } catch (error) {
         console.error('Error completo:', error);
