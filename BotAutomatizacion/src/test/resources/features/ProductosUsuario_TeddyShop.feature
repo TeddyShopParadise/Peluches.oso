@@ -20,3 +20,5 @@ Característica: Visualización en la página de Productos en la vista de usuari
       | nombrePaga | telefonoPaga | nombreRecibe | telefonoRecibe | direccion          | barrio        | localidad      |
       | Andres     | 3166701994   | Dayana       | 3158725015     | cra 21a #64-10 Sur | San Francisco | Ciudad Bolivar |
     Entonces se debe verificar que el usuario haya visualizado correctamente los productos disponibles de TeddyShop
+      | nombrePaga | telefonoPaga | nombreRecibe | telefonoRecibe | direccion          | barrio        | localidad      |
+      | Andres     | 3166701994   | Dayana       | 3158725015     | cra 21a #64-10 Sur | San Francisco | Ciudad Bolivar |

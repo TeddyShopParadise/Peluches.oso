@@ -1,13 +1,18 @@
 package co.com.AutoTeddyShop.tasks.ProductosUsuario;
 
+import co.com.AutoTeddyShop.models.Utilidades.NumeroRandom;
+import co.com.AutoTeddyShop.models.Utilidades.SessionVariables;
 import net.serenitybdd.core.steps.Instrumented;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Enter;
 import co.com.AutoTeddyShop.models.DatosCompraProducto;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTHeaderFooter;
+
 import static co.com.AutoTeddyShop.tasks.Esperar.unosSegundos;
 import static co.com.AutoTeddyShop.userinterface.ProductosUsuario.InteraccionProductosUsuario.*;
+import static net.serenitybdd.screenplay.actors.OnStage.theActorInTheSpotlight;
 
 import java.util.List;
 
@@ -27,6 +32,9 @@ public class NavegacionProductosUsuario implements Task {
 
     @Override
     public <T extends Actor> void performAs(T actor) {
+        DatosCompraProducto comprador = datosCompra.get(0);
+        String Comprador = comprador.getNombrePaga() + NumeroRandom.generarNumeroAleatorio();
+
         actor.attemptsTo(
                 Click.on(BTN_CATEGORIA),
                 Click.on(BTN_OSOSCOLORES),
@@ -36,7 +44,7 @@ public class NavegacionProductosUsuario implements Task {
                 Click.on(BTN_METODOPAGO),
                 Click.on(BTN_NEQUI),
                 Click.on(INPUT_NOMBREPAGA),
-                Enter.theValue(datosCompra.get(0).getNombrePaga()).into(INPUT_NOMBREPAGA),
+                Enter.theValue(Comprador).into(INPUT_NOMBREPAGA),
                 Click.on(INPUT_TELEFONOPAGA),
                 Enter.theValue(datosCompra.get(0).getTelefonoPaga()).into(INPUT_TELEFONOPAGA),
                 Click.on(INPUT_NOMBRERECIBE),
@@ -52,5 +60,6 @@ public class NavegacionProductosUsuario implements Task {
                 Click.on(BTN_ENVIARPEDIDO),
                 unosSegundos(3)
         );
+        theActorInTheSpotlight().remember(SessionVariables.NombrePedido.toString(), comprador);
     }
 }

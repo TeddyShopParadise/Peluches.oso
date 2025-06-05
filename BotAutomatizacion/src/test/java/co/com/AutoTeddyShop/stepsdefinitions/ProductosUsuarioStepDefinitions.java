@@ -25,8 +25,8 @@ public class ProductosUsuarioStepDefinitions {
     }
 
     @Entonces("^se debe verificar que el usuario haya visualizado correctamente los productos disponibles de TeddyShop$")
-    public void seDebeVerificarQueElUsuarioHayaVisualizadoCorrectamenteLosProductosDisponiblesDeTeddyShop() {
-        theActorInTheSpotlight().should(seeThat(ValidacionProductosUsuario.esExitoso()));
+    public void seDebeVerificarQueElUsuarioHayaVisualizadoCorrectamenteLosProductosDisponiblesDeTeddyShop(List<DatosCompraProducto> datosCompra) {
+        theActorInTheSpotlight().should(seeThat(ValidacionProductosUsuario.esExitoso(datosCompra)));
     }
 
 }

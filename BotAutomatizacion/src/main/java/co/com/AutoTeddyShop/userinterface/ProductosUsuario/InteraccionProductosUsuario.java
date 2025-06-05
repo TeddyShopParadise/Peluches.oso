@@ -21,4 +21,13 @@ public class InteraccionProductosUsuario {
     public static Target INPUT_LOCALIDAD = Target.the("Ingreso de la Localidad").located(By.xpath("/html/body/div[3]/div[3]/div/div[1]/div[8]/div/input"));
     public static Target BTN_ENVIARPEDIDO = Target.the("Boton selector de Metodo de Pago").located(By.xpath("/html/body/div[3]/div[3]/div/div[2]/button[1]"));
     public static Target BTN_VALIDACION = Target.the("Boton para cerrar el mensaje que revela el exito al crear el pedido").located(By.xpath("//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/button"));
+
+    //Validaciones
+    public static Target BTN_GESTIONPEDIDO = Target.the("Boton para la gestión de pedidos").located(By.xpath("//*[@id=\"root\"]/header/div/div/button[4]"));
+    public static Target BTN_PEDIDOS = Target.the("Boton para validar que el pedido se creo correctamente").located(By.xpath("/html/body/div[3]/div[3]/ul/a[1]"));
+    public static Target BTN_BUSCAR = Target.the("Barra de busqueda para filtrar los pedidos").located(By.xpath("//*[@id=\":r1:\"]"));
+    public static Target NOMBRE_PEDIDO = Target.the("Nombre de la persona que realizo el pedido").located(By.xpath("//*[@id=\"root\"]/div/div/div/div/div[3]/div[2]/table/tbody/tr/td[1]"));
+    public static Target LISTA_ESTADO = Target.the("Estado actual del pedido").located(By.xpath("//*[@id=\"root\"]/div/div/div/div/div[3]/div[2]/table/tbody/tr/td[3]/div/div/div"));
+    public static Target ESTADO = Target.the("Estado seleccionado del pedido").located(By.xpath("//*[@id=\":r3:\"]/li[3]"));
+    public static Target MENSAJE_ESTADO = Target.the("Mensaje de exito del cambio del estado").located(By.xpath("//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[2]"));
 }
