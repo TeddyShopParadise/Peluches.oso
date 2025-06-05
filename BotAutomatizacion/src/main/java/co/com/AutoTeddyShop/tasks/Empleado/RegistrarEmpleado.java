@@ -1,8 +1,8 @@
 package co.com.AutoTeddyShop.tasks.Empleado;
 
 import co.com.AutoTeddyShop.models.DatosEmpleado;
-import co.com.AutoTeddyShop.models.NumeroRandom.NumeroRandom;
-import co.com.AutoTeddyShop.models.SessionVariables;
+import co.com.AutoTeddyShop.models.Utilidades.NumeroRandom;
+import co.com.AutoTeddyShop.models.Utilidades.SessionVariables;
 import net.serenitybdd.core.steps.Instrumented;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
@@ -46,5 +46,7 @@ public class RegistrarEmpleado implements Task {
                 unosSegundos(2)
         );
         theActorInTheSpotlight().remember(SessionVariables.DniEmpleado.toString(), DNI);
+        theActorInTheSpotlight().remember(SessionVariables.NombreEmpleado.toString(), empleado.getNombreEmpleado());
+        theActorInTheSpotlight().remember(SessionVariables.NumeroEmpleado.toString(), empleado.getTelefonoEmpleado());
     }
 }

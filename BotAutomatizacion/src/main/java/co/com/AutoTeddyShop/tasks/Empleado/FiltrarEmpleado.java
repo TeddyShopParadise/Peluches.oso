@@ -1,10 +1,9 @@
 package co.com.AutoTeddyShop.tasks.Empleado;
 
 import co.com.AutoTeddyShop.models.DatosEmpleado;
-import co.com.AutoTeddyShop.models.SessionVariables;
+import co.com.AutoTeddyShop.models.Utilidades.SessionVariables;
 import net.serenitybdd.core.steps.Instrumented;
 import net.serenitybdd.screenplay.Actor;
-import net.serenitybdd.screenplay.Performable;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Enter;

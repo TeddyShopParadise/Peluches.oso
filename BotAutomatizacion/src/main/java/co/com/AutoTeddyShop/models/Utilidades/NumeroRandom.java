@@ -1,4 +1,4 @@
-package co.com.AutoTeddyShop.models.NumeroRandom;
+package co.com.AutoTeddyShop.models.Utilidades;
 
 import java.util.Random;
 
