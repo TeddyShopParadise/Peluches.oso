@@ -6,6 +6,12 @@ Característica: Visualización en la página de Productos en la vista de usuari
   Quiero visualizar los productos en el portal de TeddyShop
   Para poder acceder al contenido y funcionalidades disponibles según mi rol.
 
+  Antecedentes:
+    Dado que el usuario se encuentra en la pagina de inicio de sesion de TeddyShop
+    Cuando ingrese las credenciales correctas (usuario y contrasena)
+      | usuarios                | clave        |
+      | angelabonilla@gmail.com | Peluches.oso |
+
   @visualizacionproductos
 
   Escenario: Verificar la visualización exitosa en la página de Productos en la vista de usuarios de TeddyShop
