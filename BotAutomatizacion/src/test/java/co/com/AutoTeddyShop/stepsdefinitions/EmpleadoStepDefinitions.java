@@ -25,7 +25,7 @@ public class EmpleadoStepDefinitions {
     }
 
     @Entonces("^se debe verificar que el Empleado se haya creado correctamente$")
-    public void seDebeVerificarQueElEmpleadoSeHayaCreadoCorrectamente() {
-        theActorInTheSpotlight().should(seeThat(ValidacionEmpleado.validacionEmpleado()));
+    public void seDebeVerificarQueElEmpleadoSeHayaCreadoCorrectamente(List<DatosEmpleado> datosEmpleado) {
+        theActorInTheSpotlight().should(seeThat(ValidacionEmpleado.validacionEmpleado(datosEmpleado)));
     }
 }
