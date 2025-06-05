@@ -5,19 +5,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
 
-const authorizeAccess = require('../middlewares/authorizeAccess');
 
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- * security:
- *   - bearerAuth: []
- */
 
 /**
  * @swagger
@@ -72,8 +60,6 @@ const authorizeAccess = require('../middlewares/authorizeAccess');
 
 router.get('/', productoController.listarProductos);
 
-//router.use(authorizeAccess('Administrador', 'Empleado'));
-
 /**
  * @swagger
  * /producto:
@@ -125,6 +111,66 @@ router.get('/', productoController.listarProductos);
  */
 
 router.post('/',upload.single('image'), productoController.crearProducto);
+
+
+
+/**
+ * @swagger
+ * /producto/mas-populares:
+ *   get:
+ *     summary: Obtiene los productos más populares por clics
+ *     tags:
+ *       - Productos
+ *     responses:
+ *       200:
+ *         description: Lista de productos populares
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Producto'
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get('/mas-populares', productoController.obtenerMasPopulares);
+
+
+/**
+ * @swagger
+ * /producto/{id}/clics:
+ *   post:
+ *     summary: Incrementa el contador de clics de un producto
+ *     tags:
+ *       - Productos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del producto
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Contador actualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Contador actualizado"
+ *                 clickCount:
+ *                   type: number
+ *                   example: 15
+ *       404:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.post('/:id/clics', productoController.incrementarClics);
+
 
 /**
  * @swagger
