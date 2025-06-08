@@ -60,6 +60,6 @@ public class NavegacionProductosUsuario implements Task {
                 Click.on(BTN_ENVIARPEDIDO),
                 unosSegundos(3)
         );
-        theActorInTheSpotlight().remember(SessionVariables.NombrePedido.toString(), comprador);
+        actor.remember(SessionVariables.NombrePedido.toString(), Comprador);
     }
 }
