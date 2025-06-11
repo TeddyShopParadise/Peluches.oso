@@ -3,10 +3,8 @@ const logic = require('../Logic/DetallePedido_logic');
 const { detallePedidoSchemaValidation } = require('../Validations/detallePedido_validation'); 
 
 const listarDetallesPedido = async (req, res) => {
-    console.log('Recibiendo solicitud para listar todos los detalles de pedido');
     try {
         const detallesPedido = await logic.listarDetallesPedido();
-        console.log('Detalles de pedido obtenidos:', detallesPedido);
         res.json(detallesPedido);
     } catch (err) {
         console.error('Error al listar detalles de pedido:', err);

@@ -7,14 +7,11 @@ const { agregarFacturaAPedido } = require('./pedido_logic');
 
 // Crear factura
 async function crearFactura(body) {
-  // Verificar si el pedido ya tiene una factura asociada
   const facturaExistente = await Factura.findOne({ pedido: body.pedido });
   if (facturaExistente) {
-    // Si ya existe una factura, no la volvemos a crear, sino que la devolvemos
-    return facturaExistente; // Retorna la factura existente
+    return facturaExistente; 
   }
 
-  // Si no existe una factura, procedemos a crearla
   const factura = new Factura({
     fechaCreacionFactura: body.fechaCreacionFactura,
     horaCreacionFactura: body.horaCreacionFactura,
@@ -71,8 +68,6 @@ async function listarFacturas() {
         .populate('metodoPago', 'nombreMetodoPago')
         .lean();
   
-      // Imprime TODO el objeto con identación
-      console.log('Facturas con detalles completos:\n', JSON.stringify(facturas, null, 2));
       return facturas;
     } catch (err) {
       console.error("Error al listar facturas:", err.message);

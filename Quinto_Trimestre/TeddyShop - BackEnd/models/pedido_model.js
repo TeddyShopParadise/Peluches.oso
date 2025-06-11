@@ -3,50 +3,50 @@ const mongoose = require('mongoose');
 // Define el esquema para la colección Pedido
 const pedidoSchema = new mongoose.Schema({
   nombreComprador: {
-    type: String, // NVARCHAR en SQL
+    type: String, 
     required: false
   },
   numeroComprador: {
-    type: String, // NVARCHAR en SQL
+    type: String, 
     required: false
   },
   nombreAgendador: {
-    type: String, // NVARCHAR en SQL
+    type: String, 
     required: false
   },
   numeroAgendador: {
-    type: String, // NVARCHAR en SQL
+    type: String, 
     required: false
   },
   localidad: {
-    type: String, // NVARCHAR en SQL
+    type: String, 
     required: false
   },
   direccion: {
-    type: String, // NVARCHAR en SQL
+    type: String, 
     required: false
   },
   barrio: {
-    type: String, // NVARCHAR en SQL
+    type: String, 
     required: false
   },
   cliente: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Cliente', // Referencia a la colección Cliente
+    ref: 'Cliente', 
   },
  
   detallesPedido: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'DetallePedido' // Referencia a la colección DetallePedido
+    ref: 'DetallePedido' 
   }],
   facturas: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Factura' // Referencia a la colección Factura
+    ref: 'Factura' 
   }],
 
   estado: {
     type: String,
-    enum: ['pendiente', 'en_proceso', 'realizado'],
+    enum: ['cancelado', 'en_proceso', 'realizado'],
     default: 'en_proceso'
   },
   
@@ -54,8 +54,6 @@ const pedidoSchema = new mongoose.Schema({
   collection: 'Pedido',
   timestamps: false
 });
-
-
 
 //exportar el modelo
 module.exports = mongoose.model('Pedido', pedidoSchema);

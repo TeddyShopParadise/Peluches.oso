@@ -1,26 +1,49 @@
+// routes/devoluciones_routes.js
 const express = require('express');
 const router = express.Router();
 const {
-    listarDevoluciones,
-    crearDevolucion,
-    actualizarDevolucion,
-    obtenerDevolucionPorId,
-    eliminarDevolucion
-} = require('../Controllers/devoluciones_controller'); 
+  listarDevoluciones,
+  crearDevolucion,
+  obtenerDevolucionPorId,
+  buscarDevolucionesPorPedido,
+  eliminarDevolucion
+} = require('../Controllers/devoluciones_controller');
 
-//const authorizeAccess = require('../middlewares/authorizeAccess');
-//router.use(authorizeAccess('Administrador', 'Empleado'));
+// const authorizeAccess = require('../middlewares/authorizeAccess');
+// router.use(authorizeAccess('Administrador', 'Empleado'));
 
 /**
  * @swagger
  * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- * security:
- *   - bearerAuth: []
+ *   schemas:
+ *     DevolucionItem:
+ *       type: object
+ *       properties:
+ *         inventario:
+ *           type: string
+ *           example: "60d2b6e3e6b0f99dbe0c5a7a"
+ *         cantidad:
+ *           type: integer
+ *           example: 2
+ *     Devolucion:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: "60d2b6e3e6b0f99dbe0c5a79"
+ *         pedido:
+ *           type: string
+ *           example: "60d2b6e3e6b0f99dbe0c5a78"
+ *         fecha:
+ *           type: string
+ *           format: date-time
+ *         motivo:
+ *           type: string
+ *           example: "PRODUCTO_DEFECTUOSO"
+ *         items:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/DevolucionItem'
  */
 
 /**
@@ -38,23 +61,10 @@ const {
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                     example: "60d2b6e3e6b0f99dbe0c5a79"
- *                   detalleDevolucion:
- *                     type: string
- *                     example: "Producto defectuoso"
- *                   idInventario:
- *                     type: string
- *                     example: "60d2b6e3e6b0f99dbe0c5a7a"
+ *                 $ref: '#/components/schemas/Devolucion'
  *       500:
  *         description: Error interno del servidor
  */
-
-
-// Ruta para listar todas las devoluciones
 router.get('/', listarDevoluciones);
 
 /**
@@ -70,105 +80,91 @@ router.get('/', listarDevoluciones);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - pedido
+ *               - motivo
+ *               - items
  *             properties:
- *               detalleDevolucion:
+ *               pedido:
  *                 type: string
- *                 example: "Producto defectuoso"
- *               idInventario:
+ *                 example: "60d2b6e3e6b0f99dbe0c5a78"
+ *               motivo:
  *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
+ *                 example: "El producto llegó con daños en el empaque"
+ *               fecha:
+ *                 type: string
+ *                 format: date-time
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/DevolucionItem'
  *     responses:
  *       201:
  *         description: Devolución creada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Devolucion'
  *       400:
  *         description: Error en los datos enviados
  *       500:
  *         description: Error interno del servidor
  */
-
-
-// Ruta para crear una nueva devolución
 router.post('/', crearDevolucion);
 
 /**
  * @swagger
- * /devoluciones/{id}:
- *   put:
- *     summary: Actualiza una devolución por su ID
+ * /devoluciones/pedido/{pedidoId}:
+ *   get:
+ *     summary: Obtiene todas las devoluciones de un pedido específico
  *     tags:
  *       - Devoluciones
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: pedidoId
  *         required: true
- *         description: ID de la devolución
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               detalleDevolucion:
- *                 type: string
- *                 example: "Producto defectuoso"
- *               idInventario:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
  *       200:
- *         description: Devolución actualizada exitosamente
- *       400:
- *         description: Error en los datos enviados
- *       404:
- *         description: Devolución no encontrada
+ *         description: Lista de devoluciones del pedido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Devolucion'
+ *       500:
+ *         description: Error interno del servidor
  */
+router.get('/pedido/:pedidoId', buscarDevolucionesPorPedido);
 
-
-
-// Ruta para actualizar una devolución por su ID
-router.put('/:id', actualizarDevolucion);
 
 /**
  * @swagger
  * /devoluciones/{id}:
- *   put:
- *     summary: Actualiza una devolución por su ID
+ *   get:
+ *     summary: Obtiene una devolución por su ID
  *     tags:
  *       - Devoluciones
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la devolución
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               detalleDevolucion:
- *                 type: string
- *                 example: "Producto defectuoso"
- *               idInventario:
- *                 type: string
- *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
  *     responses:
  *       200:
- *         description: Devolución actualizada exitosamente
- *       400:
- *         description: Error en los datos enviados
+ *         description: Devolución encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Devolucion'
  *       404:
  *         description: Devolución no encontrada
  *       500:
  *         description: Error interno del servidor
  */
-// Ruta para obtener una devolución por su ID
 router.get('/:id', obtenerDevolucionPorId);
 
 /**
@@ -182,7 +178,6 @@ router.get('/:id', obtenerDevolucionPorId);
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la devolución
  *         schema:
  *           type: string
  *     responses:
@@ -193,9 +188,6 @@ router.get('/:id', obtenerDevolucionPorId);
  *       500:
  *         description: Error interno del servidor
  */
-
-
-// Ruta para eliminar una devolución por su ID
 router.delete('/:id', eliminarDevolucion);
 
 module.exports = router;
