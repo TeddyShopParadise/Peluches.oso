@@ -6,6 +6,7 @@ const Pedido = require('../models/pedido_model');
 const { separarNombreYApellido } = require('./cliente_logic'); 
 
 
+
 // Crear nuevo pedido
 const crearPedido = async (body) => {
     try {
@@ -33,7 +34,7 @@ const crearPedido = async (body) => {
         direccion: body.direccion,
         barrio: body.barrio,
         cliente: cliente._id,
-        estado: body.estado || "pendiente",
+        estado: body.estado || "en_proceso",
         detallesPedido: [],
         facturas: []
       });
@@ -160,16 +161,23 @@ async function eliminarPedido(id) {
     }
 }
 
-// Actualizar estado del pedido
-async function actualizarEstado(id, nuevoEstado) {
-    const pedido = await Pedido.findByIdAndUpdate(
-        id,
-        { estado: nuevoEstado },
-        { new: true }
-    );
 
-    if (!pedido) throw new Error(`Pedido con ID ${id} no encontrado`);
-    return pedido;
+// Reemplazar la función actualizarEstado existente con esta:
+async function actualizarEstado(id, nuevoEstado, motivoCancelacion = null) {
+    try {
+        const pedidoAnterior = await Pedido.findById(id);
+        if (!pedidoAnterior) throw new Error(`Pedido con ID ${id} no encontrado`);
+
+        const pedido = await Pedido.findByIdAndUpdate(
+            id,
+            { estado: nuevoEstado },
+            { new: true }
+        );
+
+        return pedido;
+    } catch (err) {
+        console.error(`Error al actualizar estado del pedido: ${err.message}`);
+    }
 }
 
 // Agregar factura a pedido

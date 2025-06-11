@@ -27,7 +27,7 @@ const crearPedido = async (req, res) => {
         const nuevoPedido = await logic.crearPedido(value);
         res.status(201).json(nuevoPedido);
     } catch (err) {
-        console.error('🔥 Error al crear pedido:', err.message);
+        console.error(' Error al crear pedido:', err.message);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
@@ -45,9 +45,6 @@ const actualizarPedido = async (req, res) => {
         console.error('[ActualizarPedido] Error de validación:', error.details[0].message);
         return res.status(400).json({ error: error.details[0].message });
     }
-
-
-
     try {
         const pedidoActualizado = await logic.actualizarPedido(id, value);
 
@@ -98,10 +95,10 @@ const actualizarEstadoPedido = async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
 
-    const estadosValidos = ['pendiente', 'en_proceso', 'realizado'];
+    const estadosValidos = ['cancelado', 'en_proceso', 'realizado'];
 
     if (!estadosValidos.includes(estado)) {
-        return res.status(400).json({ error: 'Estado inválido. Debe ser: pendiente, en proceso o realizado' });
+        return res.status(400).json({ error: 'Estado inválido. Debe ser: cancelado, en proceso o realizado' });
     }
 
     try {

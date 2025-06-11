@@ -92,7 +92,6 @@ app.use('/api/inventario', inventarioRoutes);
 app.use('/api/metodoPago', metodoPagoRoutes);
 app.use('/api/movimiento', movimientoRoutes);
 app.use('/api/pedido', pedidoRoutes);
-app.use('/api/producto', productoRoutes);
 app.use('/api/roles', rolesRoutes);
 app.use('/api/usuario', usuarioRoutes);
 app.use('/api/auth', loginRoute);

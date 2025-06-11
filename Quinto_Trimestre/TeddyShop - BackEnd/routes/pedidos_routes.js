@@ -282,7 +282,7 @@ router.delete('/:id', pedidoController.eliminarPedido);
  *             properties:
  *               estado:
  *                 type: string
- *                 enum: [pendiente, en_proceso, realizado]
+ *                 enum: [cancelado, en_proceso, realizado]
  *                 example: "en_proceso"
  *     responses:
  *       200:

@@ -88,7 +88,6 @@ const generarFacturaDesdePedido = async (req, res) => {
   try {
     const { pedidoId } = req.params;
 
-    // 1. Obtener el pedido con todos sus detalles
     const pedido = await Pedido.findById(pedidoId)
       .populate({
         path: 'detallesPedido',
@@ -106,7 +105,6 @@ const generarFacturaDesdePedido = async (req, res) => {
 
     console.log('🔍 Estado del pedido:', pedido.estado);
 
-    // 2. Verificar si ya tiene factura
     if (pedido.facturas && pedido.facturas.length > 0) {
       const facturaId = pedido.facturas[0];
       
@@ -122,11 +120,9 @@ const generarFacturaDesdePedido = async (req, res) => {
         })
         .populate('metodoPago');
         
-      console.log('✅ Factura existente recuperada y populada:', facturaExistente);
       return res.status(200).json(facturaExistente);
     }
   
-      // 3. Crear detallesFactura a partir de detallesPedido
       const detallesFacturaIds = [];
       for (const detalle of pedido.detallesPedido) {
   
@@ -141,7 +137,6 @@ const generarFacturaDesdePedido = async (req, res) => {
         detallesFacturaIds.push(detalleGuardado._id);
       }
   
-      // 4. Crear factura
       const nuevaFactura = new Factura({
         fechaCreacionFactura: new Date().toISOString().split('T')[0],
         horaCreacionFactura: new Date().toLocaleTimeString('es-MX', { hour12: false }),
@@ -153,11 +148,9 @@ const generarFacturaDesdePedido = async (req, res) => {
   
       const facturaGuardada = await nuevaFactura.save();
   
-      // 5. Marcar el pedido con la factura creada
       pedido.factura = facturaGuardada._id;
       await pedido.save();
   
-      // 6. Recuperar la factura con todos los datos populados
       const facturaCompletaPopulada = await Factura.findById(facturaGuardada._id)
         .populate('pedido')
         .populate('cliente')

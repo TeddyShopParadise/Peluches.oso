@@ -5,70 +5,53 @@ const Inventario = require('../models/inventario_model');
 const Movimiento = require('../models/movimiento_model');
 
 async function crearDetallePedido(body) {
-    const session = await DetallePedido.startSession();
-    session.startTransaction();
+  const session = await DetallePedido.startSession();
+  session.startTransaction();
 
-    try {
-        // Buscar el producto para validar el tamaño
-        const producto = await Producto.findById(body.idProducto);
-        if (!producto) {
-            throw new Error('Producto no encontrado');
-        }
+  try {
+    const producto = await Producto.findById(body.idProducto).session(session);
+    if (!producto) throw new Error('Producto no encontrado');
+    if (!producto.tamañoProducto) throw new Error('El producto no tiene tamaño definido');
 
-        if (!producto.tamañoProducto) {
-            throw new Error('El producto no tiene tamaño definido');
-        }
+    const inventario = await Inventario.findOne({ idProducto: body.idProducto }).session(session);
+    if (!inventario) throw new Error('No se encontró inventario asociado al producto');
 
-        // Crear el detalle del pedido
-        const detallePedido = new DetallePedido({
-            precioDetallePedido: body.precioDetallePedido,
-            cantidadDetallePedido: body.cantidadDetallePedido,
-            idPedido: body.idPedido,
-            idProducto: body.idProducto
-        });
-
-        const detalleGuardado = await detallePedido.save({ session });
-
-        // Buscar inventario relacionado al producto
-        const inventario = await Inventario.findOne({ idProducto: body.idProducto }).session(session);
-
-        if (!inventario) {
-            throw new Error('No se encontró inventario asociado al producto');
-        }
-
-        // Validar stock suficiente
-        if (inventario.stock < body.cantidadDetallePedido) {
-            throw new Error('Stock insuficiente para completar el pedido');
-        }
-
-        // Crear movimiento por venta
-        const movimiento = new Movimiento({
-            fecha: new Date(),
-            cantidadIngreso: 0,
-            cantidadVendida: body.cantidadDetallePedido,
-            inventario: inventario._id
-        });
-
-        const movimientoGuardado = await movimiento.save({ session });
-
-        // Descontar stock y agregar movimiento al inventario
-        inventario.stock -= body.cantidadDetallePedido;
-        inventario.movimientos.push(movimientoGuardado._id);
-        await inventario.save({ session });
-
-        // Confirmar transacción
-        await session.commitTransaction();
-        session.endSession();
-
-        return detalleGuardado;
-
-    } catch (error) {
-        // Si ocurre un error, revertimos la transacción
-        await session.abortTransaction();
-        session.endSession();
-        console.error('Error al crear detalle y actualizar inventario/movimiento:', error);
-        throw error;
+    if (inventario.stock < body.cantidadDetallePedido) {
+      throw new Error('Stock insuficiente para completar el pedido');
     }
+
+    const detallePedido = new DetallePedido({
+      precioDetallePedido:    body.precioDetallePedido,
+      cantidadDetallePedido:  body.cantidadDetallePedido,
+      idPedido:               body.idPedido,
+      idProducto:             body.idProducto,
+      idInventario:           inventario._id        
+    });
+    const detalleGuardado = await detallePedido.save({ session });
+
+    const movimiento = new Movimiento({
+      fecha:           new Date(),
+      cantidadIngreso: 0,
+      cantidadVendida: body.cantidadDetallePedido,
+      inventario:      inventario._id
+    });
+    const movimientoGuardado = await movimiento.save({ session });
+
+    inventario.stock -= body.cantidadDetallePedido;
+    inventario.movimientos.push(movimientoGuardado._id);
+    await inventario.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return detalleGuardado;
+  }
+  catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error('Error al crear detalle y actualizar inventario/movimiento:', error);
+    throw error;
+  }
 }
 
 
@@ -89,11 +72,9 @@ async function actualizarDetallePedido(id, body) {
 
 // Función asíncrona para listar todos los detalles de pedido
 async function listarDetallesPedido() {
-    console.log('Listando todos los detalles de pedido...');
     let detallesPedido = await DetallePedido.find()
         .populate('idPedido', 'nombreComprador') 
         .populate('idProducto', 'tamañoProducto'); 
-    console.log('Detalles de pedido encontrados:', detallesPedido);
     return detallesPedido;
 }
 
