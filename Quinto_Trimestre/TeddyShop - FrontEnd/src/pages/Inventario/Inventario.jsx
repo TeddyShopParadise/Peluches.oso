@@ -30,7 +30,8 @@ import {
   DialogContentText,
   DialogActions,
   MenuItem,
-  Checkbox
+  Checkbox,
+  Pagination 
    
 } from '@mui/material';
 import sortBy from 'lodash/sortBy';
@@ -47,6 +48,10 @@ const Inventario = () => {
   const [selectedInventario, setSelectedInventario] = useState(null);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+ const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+
   const [inventarioData, setInventarioData] = useState({
     stock: 0,
     stockMinimo: 0,
@@ -192,6 +197,21 @@ const eliminarInventario = async (id) => {
     setOpenEditDialog(false);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+    const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  
+  const paginatedInventarios = inventarios.slice(
+  page * rowsPerPage,
+  page * rowsPerPage + rowsPerPage
+);
+
+
   const totalStock = useMemo(
   () => inventarios.reduce((sum, inv) => sum + (inv.stock || 0), 0),
   [inventarios]
@@ -275,8 +295,6 @@ return (
             </Typography>
           </Paper>
 
-        
-
           <Paper
             elevation={3}
             sx={{
@@ -350,7 +368,7 @@ return (
                 </TableRow>
               </TableHead>
               <TableBody>
-                {inventarios.map((inv) => (
+                {paginatedInventarios.map((inv) => (
                   <TableRow
                     key={inv._id}
                     sx={{ '&:hover': { backgroundColor: '#fff0f5' } }}
@@ -386,6 +404,24 @@ return (
               </TableBody>
             </Table>
           </TableContainer>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <TablePagination
+                      rowsPerPageOptions={[5, 10, 25]}
+                      component="div"
+                      count={inventarios.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      sx={{
+                        color: '#b04e6f',
+                        '& .MuiTablePagination-selectIcon': {
+                          color: '#f48fb1',
+                        },
+                      }}
+                    />
+          </Box>
         </Paper>
 
         <Dialog
@@ -428,16 +464,17 @@ return (
               </Box>
             )}
           </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDetailDialog} sx={{ borderRadius: '12px', color: '#f48fb1', textTransform: 'none', fontWeight: 'bold', '&:hover': { backgroundColor: 'rgba(244, 143, 177, 0.08)' } }}>
-                Cerrar
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </Container>
-      </Box>
+          <DialogActions>
+            <Button onClick={handleCloseDetailDialog} sx={{ borderRadius: '12px', color: '#f48fb1', textTransform: 'none', fontWeight: 'bold', '&:hover': { backgroundColor: 'rgba(244, 143, 177, 0.08)' } }}>
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </Box>
-  );
+  </Box>
+);
+
 };
 
 export default Inventario;

@@ -10,7 +10,6 @@ import { getApiUrl } from '../../utils/apiConfig';
 const apiUrl = getApiUrl();
 
 const Home = () => {
-  // Estado para el carrusel
   const [currentIndex, setCurrentIndex] = useState(0);
   const [popularProducts, setPopularProducts] = useState([]);
   const [loadingPopular, setLoadingPopular] = useState(true);
@@ -32,21 +31,18 @@ const Home = () => {
     }
   ];
 
-  // Función para ir a la siguiente imagen
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => 
       prevIndex === carouselImages.length - 1 ? 0 : prevIndex + 1
     );
   };
 
-  // Función para ir a la imagen anterior
   const prevSlide = () => {
     setCurrentIndex((prevIndex) => 
       prevIndex === 0 ? carouselImages.length - 1 : prevIndex - 1
     );
   };
 
-  // Auto-rotación del carrusel
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
@@ -55,7 +51,6 @@ const Home = () => {
   }, []);
 
 
-  // Obtener productos populares
   useEffect(() => {
     const fetchPopularProducts = async () => {
       try {
@@ -82,7 +77,6 @@ return (
   <Container disableGutters sx={{ maxWidth: "100vw", padding: 0, margin: 0 }}>
     <div className="background-image"></div>
 
-    {/* Sección de Carrusel */}
     <Box className="BoxInicial">
       <Box
         className="Box"
@@ -108,7 +102,6 @@ return (
             border: '1px solid #f8c8dc',
           }}
         >
-          {/* Imágenes del carrusel */}
           <div className="carousel-track" style={{
             display: "flex",
             transition: "transform 0.5s ease",
@@ -145,7 +138,6 @@ return (
             ))}
           </div>
           
-          {/* Botones de navegación */}
           <IconButton 
             onClick={prevSlide}
             sx={{
@@ -190,7 +182,6 @@ return (
             <ArrowForwardIosIcon />
           </IconButton>
           
-          {/* Indicadores */}
           <div style={{
             position: "absolute",
             bottom: "20px",
@@ -221,7 +212,6 @@ return (
       </Box>
     </Box>
 
-    {/* Sección de Bienvenida */}
     <Box className="BoxInicial">
       <Box
         className="Box"
@@ -294,7 +284,6 @@ return (
             margin: '0 auto',
             backgroundColor: '#fff0f5',
             borderRadius: '15px',
-            p: 3,
             border: '1px solid #f8c8dc',
           }}
         >
@@ -339,7 +328,6 @@ return (
       </Box>
     </Box>
 
-    {/* Sección de los más populares */}
     <Box className="BoxInicial">
       <Box className="Box"
         sx={{
@@ -539,7 +527,6 @@ return (
       </Box>
     </Box>
 
-    {/* Sección de ubicación */}
     <Box className="BoxInicial">
       <Box className="Box"
         sx={{
