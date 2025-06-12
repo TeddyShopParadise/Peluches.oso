@@ -8,4 +8,7 @@ public enum SessionVariables {
 
     EmailUsuario,
     NombreUsuario,
+    EstiloProducto,
+
+    id
 }

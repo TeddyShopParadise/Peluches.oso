@@ -18,7 +18,7 @@ public class Esperar implements Task {
     @Override
     public <T extends Actor> void performAs(T actor) {
         try {
-            Thread.sleep(segundos * 2000);
+            Thread.sleep(segundos * 500);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

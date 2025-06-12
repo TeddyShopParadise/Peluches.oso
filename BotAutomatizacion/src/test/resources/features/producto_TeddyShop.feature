@@ -23,4 +23,6 @@ Característica: Gestión de productos en la vista de administrador de TeddyShop
       | stockInicial | stockMinimo | stockMaximo | precioVenta | precioCompra |
       | 10           | 5           | 30          | 128000      | 100000        |
     Entonces se debe verificar que el inventario se haya creado correctamente
+      | stockInicial | stockMinimo | stockMaximo | precioVenta | precioCompra |
+      | 10           | 5           | 30          | 128000      | 100000       |
 

@@ -26,10 +26,9 @@ public class ProductoAdminStepsDefinitions {
     }
 
     @Cuando("^el usuario registra un nuevo producto con los siguientes datos:$")
-    public void elUsuarioRegistraUnNuevoProductoConLosSiguientesDatos(List<DatosProducto> datosProductoList) {
-        DatosProducto datosProducto = datosProductoList.get(0);
+    public void elUsuarioRegistraUnNuevoProductoConLosSiguientesDatos(List<DatosProducto> datos) {
         theActorInTheSpotlight().attemptsTo(
-                RegistrarProducto.conLosDatos(datosProducto)
+                RegistrarProducto.conLosDatos(datos)
         );
     }
 
@@ -40,14 +39,13 @@ public class ProductoAdminStepsDefinitions {
     }
     @Cuando("^el usuario registra el inventario del producto con los siguientes datos:$")
     public void elUsuarioRegistraElInventarioDelProductoConLosSiguientesDatos(List<DatosInventario> datosInventarioList) {
-        DatosInventario datos = datosInventarioList.get(0);
         theActorInTheSpotlight().attemptsTo(
                 RegistrarInventario.conLosDatos(datosInventarioList)
         );
 
     }
     @Entonces("^se debe verificar que el inventario se haya creado correctamente$")
-    public void seDebeVerificarQueElInventarioSeHayaCreadoCorrectamente() {
-        theActorInTheSpotlight().should(seeThat(ValidacionInventario.validacionInventario()));
+    public void seDebeVerificarQueElInventarioSeHayaCreadoCorrectamente(List<DatosInventario> datosInventarios) {
+        theActorInTheSpotlight().should(seeThat(ValidacionInventario.validacionInventario(datosInventarios)));
     }
 }
