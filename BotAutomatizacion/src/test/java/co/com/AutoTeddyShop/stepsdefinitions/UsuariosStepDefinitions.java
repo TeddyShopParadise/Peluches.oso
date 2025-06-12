@@ -24,7 +24,7 @@ public class UsuariosStepDefinitions {
     }
 
     @Entonces("^verifica que el usuario se creó correctamente$")
-    public void verificarCreacion() {
-        theActorInTheSpotlight().should(seeThat(ValidacionUsuario.mensajeExitoso()));
+    public void verificarCreacion(List<DatosUsuario> datosUsuarios) {
+        theActorInTheSpotlight().should(seeThat(ValidacionUsuario.mensajeExitoso(datosUsuarios)));
     }
 }

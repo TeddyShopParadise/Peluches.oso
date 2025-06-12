@@ -15,3 +15,5 @@ Característica: Administración de Usuarios
       | Email          | contrasena | nombreUsuario |
       | user1@test.com | Password12 | test_user     |
     Entonces verifica que el usuario se creó correctamente
+      | Email          | contrasena | nombreUsuario |
+      | user1@test.com | Password12 | test_user     |

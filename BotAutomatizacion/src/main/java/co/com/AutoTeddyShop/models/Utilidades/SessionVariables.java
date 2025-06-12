@@ -5,4 +5,7 @@ public enum SessionVariables {
     DniEmpleado,
     NumeroEmpleado,
     NombrePedido,
+
+    EmailUsuario,
+    NombreUsuario,
 }

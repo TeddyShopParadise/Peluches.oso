@@ -50,4 +50,9 @@ public class InteraccionUsuariosAdmin {
     public static Target MENSAJE_CONFIRMACION =
             Target.the("Mensaje de usuario creado")
                     .located(By.xpath("//div[@id='swal2-html-container' and normalize-space()='El usuario se ha registrado correctamente']\n"));
+
+    //Validaciones
+    public static Target BUSCAR_USUARIO = Target.the("Barra de busqueda de usuarios").located(By.xpath("/html/body/div[1]/div/div/div/div/div[3]/div/div/div/input"));
+    public static Target NOMBRE_USUARIO = Target.the("Nombre del usuario recien registrador").located(By.xpath("/html/body/div[1]/div/div/div/div/div[4]/table/tbody/tr/td[1]"));
+    public static Target EMAIL_USUARIO = Target.the("Email del usuario recien creado").located(By.xpath("/html/body/div[1]/div/div/div/div/div[4]/table/tbody/tr/td[2]"));
 }
