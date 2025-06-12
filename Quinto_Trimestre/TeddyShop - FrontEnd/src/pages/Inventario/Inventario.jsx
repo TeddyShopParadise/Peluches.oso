@@ -103,7 +103,7 @@ const Inventario = () => {
 
   const { makeRequest } = useApiRequest();
 
-const actualizarInventario = async () => {
+const actualizarInventario = async () => {  
   if (!selectedInventario) {
     await Swal.fire({
       icon: 'error',
@@ -361,6 +361,7 @@ return (
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                  <TableCell sx={{ fontWeight: 'bold' }} align="center">Detalle Producto</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }} align="center">Stock Actual</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }} align="center">Precio Venta</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }} align="center">Precio Compra</TableCell>
@@ -373,6 +374,7 @@ return (
                     key={inv._id}
                     sx={{ '&:hover': { backgroundColor: '#fff0f5' } }}
                   >
+                    <TableCell align="center">{inv.idProducto?.estiloProducto || 'Sin nombre'}</TableCell>
                     <TableCell align="center">{inv.stock}</TableCell>
                     <TableCell align="center">
                       {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(

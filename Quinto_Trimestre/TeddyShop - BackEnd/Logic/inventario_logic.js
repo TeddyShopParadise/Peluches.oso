@@ -81,7 +81,7 @@ async function actualizarInventario(id, body) {
 async function listarInventarios() {
     let inventarios = await Inventario.find()
         .populate('idDevolucion', 'descripcion')
-        .populate('idProducto', 'nombreProducto')
+        .populate('idProducto', 'estiloProducto tamañoProducto imagen')
         .populate('detalleFacturas', 'detalle')
         .populate('movimientos', 'descripcionMovimiento');
     return inventarios;
