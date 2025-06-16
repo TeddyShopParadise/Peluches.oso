@@ -8,11 +8,12 @@ const rolesSchema = new mongoose.Schema({
   },
   nombre: {
     type: String, // NVARCHAR en SQL
-    required: true
+    required: true,
+    unique: true
   },
   usuarios: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Usuario',// Referencia a la colección Usuario
+    ref: 'Usuario',
     required: false
   }]
 }, {
