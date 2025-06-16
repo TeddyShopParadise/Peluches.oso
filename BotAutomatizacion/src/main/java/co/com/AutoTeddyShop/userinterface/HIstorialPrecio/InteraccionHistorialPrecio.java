@@ -26,4 +26,14 @@ public class InteraccionHistorialPrecio {
     public static final Target TEXTO_HISTORIAL_CREADO = Target.the("Título del modal con el mensaje '¡Historial creado!'")
             .located(By.xpath("//h2[@id='swal2-title' and text()='¡Historial creado!']"));
 
+    public static final Target TABLA_HISTORIAL = Target.the("Tabla de historial de precios")
+            .located(By.cssSelector("div.MuiTableContainer-root"));
+
+    public static final Target FILAS_TABLA = Target.the("Filas de la tabla")
+            .locatedBy("//div[contains(@class, 'MuiTableContainer-root')]//tbody/tr");
+
+    public static final Target BOTON_SIGUIENTE = Target.the("Botón siguiente página")
+            .located(By.xpath("//button[@aria-label='Go to next page']"));
+
+
 }
