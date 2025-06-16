@@ -16,16 +16,26 @@ const crearEmpleado = async (req, res) => {
     const body = req.body;
 
     const { error, value } = empleadoSchemaValidation.validate(body, { abortEarly: false });
-    if (error) {
-        return res.status(400).json({ message: "Validación fallida", details: error.details });
-    }
-
+  if (error) {
+    return res.status(400).json({
+        message: "Validación fallida",
+        details: error.details  
+    });
+}
     try {
         const nuevoEmpleado = await logic.crearEmpleado(value);
         res.status(201).json(nuevoEmpleado);
-    } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor', details: err.message });
+   } catch (err) {
+    if (err.code === 11000) {
+        const campo = Object.keys(err.keyPattern || {})[0];
+        const mensaje = campo === 'dniEmpleado'
+            ? 'Ya existe un empleado registrado con este DNI.'
+            : `El valor del campo "${campo}" ya está en uso.`;
+        return res.status(400).json({ message: mensaje });
     }
+
+    res.status(500).json({ error: 'Error interno del servidor', details: err.message });
+}
 };
 
 // Controlador para actualizar un empleado

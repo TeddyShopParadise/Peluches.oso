@@ -5,7 +5,6 @@
 
     // Función asíncrona para crear un nuevo producto
     async function crearProducto(body) {
-        console.log('HistorialPrecios recibido:', body.historialPrecios);
         const producto = new Producto({
             estiloProducto: body.estiloProducto, 
             disponibilidadProducto: body.disponibilidadProducto,
@@ -21,7 +20,6 @@
 
     // Función asíncrona para actualizar un producto
     async function actualizarProducto(id, body) {
-        console.log('HistorialPrecios recibido:', body.historialPrecios);
         const producto = await Producto.findByIdAndUpdate(id, {
             
             $set: {

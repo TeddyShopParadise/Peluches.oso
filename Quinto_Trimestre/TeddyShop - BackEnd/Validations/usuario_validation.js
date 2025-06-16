@@ -45,14 +45,14 @@ const usuarioSchemaValidation = Joi.object({
         }),
         empleados: Joi.array()
             .items(Joi.string().length(24).hex())
-            .optional()
+            .required()
             .messages({
                 'array.base': 'Los roles deben ser un arreglo de IDs válidos',
                 'string.length': 'Cada ID de empleado debe tener 24 caracteres'
             }),
     roles: Joi.array()
         .items(Joi.string().length(24).hex())
-        .optional()
+        .required()
         .messages({
             'array.base': 'Los roles deben ser un arreglo de IDs válidos',
             'string.length': 'Cada ID de rol debe tener 24 caracteres'

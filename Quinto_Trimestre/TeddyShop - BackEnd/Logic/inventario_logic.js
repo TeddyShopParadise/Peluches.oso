@@ -4,23 +4,19 @@ const Inventario = require('../models/inventario_model');
 const Movimiento = require('../models/movimiento_model');
 
 async function crearInventario(body) {
-    // Validar que los precios sean positivos
     if (body.precioVenta <= 0 || body.precioCompra <= 0) {
         throw new Error('Los precios deben ser valores positivos');
     }
 
-    // Validar que precioVenta > precioCompra
     if (body.precioVenta <= body.precioCompra) {
         throw new Error('El precio de venta debe ser mayor al precio de compra');
     }
 
-    // Validar stocks
     if (body.stockMinimo > body.stockMaximo) {
         throw new Error('El stock mínimo no puede ser mayor al stock máximo');
     }
 
     try {
-        // Crear inventario
         const inventario = new Inventario({
             stockMinimo: body.stockMinimo,
             precioVenta: body.precioVenta,
@@ -32,7 +28,6 @@ async function crearInventario(body) {
 
         const inventarioGuardado = await inventario.save();
 
-        // Crear movimiento inicial con cantidad igual al stock inicial
         const movimientoInicial = new Movimiento({
             fecha: new Date(),
             cantidadIngreso: body.stock,
@@ -42,7 +37,6 @@ async function crearInventario(body) {
 
         const movimientoGuardado = await movimientoInicial.save();
 
-        // Asociar el movimiento al inventario
         inventarioGuardado.movimientos.push(movimientoGuardado._id);
         await inventarioGuardado.save();
 
@@ -81,7 +75,7 @@ async function actualizarInventario(id, body) {
 async function listarInventarios() {
     let inventarios = await Inventario.find()
         .populate('idDevolucion', 'descripcion')
-        .populate('idProducto', 'estiloProducto tamañoProducto imagen')
+        .populate('idProducto', 'estiloProducto')
         .populate('detalleFacturas', 'detalle')
         .populate('movimientos', 'descripcionMovimiento');
     return inventarios;

@@ -1,22 +1,30 @@
 const Joi = require('@hapi/joi');
 
 const empleadoSchemaValidation = Joi.object({
-    dniEmpleado: Joi.number()
-        .integer()
-        .required()
-        .messages({
-            'number.base': 'El DNI del empleado debe ser un número',
-            'number.integer': 'El DNI del empleado debe ser un número entero',
-            'any.required': 'El DNI del empleado es un campo requerido'
-        }),
+   dniEmpleado: Joi.number()
+    .integer()
+    .min(100000)         
+    .max(99999999999)  
+    .required()
+    .messages({
+        'number.base': 'DNI inválido: debe contener solo números entre 8 y 15 dígitos',
+    'number.integer': 'DNI inválido: debe contener solo números entre 8 y 15 dígitos',
+    'number.min': 'DNI inválido: debe contener solo números entre 8 y 15 dígitos',
+    'number.max': 'DNI inválido: debe contener solo números entre 8 y 15 dígitos',
+    'any.required': 'El DNI del empleado es un campo obligatorio'
+    }),
     telefonoEmpleado: Joi.number()
         .integer()
         .required()
+        .min(100000)         
+        .max(99999999999)  
         .messages({
             'number.base': 'El teléfono del empleado debe ser un número',
             'number.integer': 'El teléfono del empleado debe ser un número entero',
+            'number.min': 'Teléfono inválido: debe tener al menos 6 dígitos',
+            'number.max': 'Teléfono inválido: debe tener máximo 15 dígitos',
             'any.required': 'El teléfono del empleado es un campo requerido'
-        }),
+                }),
     nombreEmpleado: Joi.string()
         .required()
         .messages({

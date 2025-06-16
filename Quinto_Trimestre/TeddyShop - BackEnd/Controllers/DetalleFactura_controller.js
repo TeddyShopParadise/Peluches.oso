@@ -23,9 +23,7 @@ const crearDetalleFactura = async (req, res) => {
     }
 
     try {
-        console.log('Creando detalle con:', value);
         const nuevoDetalleFactura = await logic.crearDetalleFactura(value);
-        console.log('Detalle creado:', nuevoDetalleFactura);
         res.status(201).json(nuevoDetalleFactura);
     } catch (err) {
         res.status(500).json({ 
