@@ -50,9 +50,9 @@ const ProductoComponent = () => {
   const [estiloProducto, setEstiloProducto] = useState('');
   const [disponibilidadProducto, setDisponibilidadProducto] = useState('');
   const [tamañoProducto, setTamañoProducto] = useState('');
-  const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState([]);
-  const [catalogosSeleccionados, setCatalogosSeleccionados] = useState([]);
-  const [preciosSeleccionados, setPreciosSeleccionados] = useState([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(''); 
+  const [catalogoSeleccionado, setCatalogoSeleccionado] = useState(''); 
+  const [precioSeleccionado, setPrecioSeleccionado] = useState(''); 
   const [editingId, setEditingId] = useState(null);
   const [imagenProducto, setImagenProducto] = useState(null); 
   const [currentPage, setCurrentPage] = useState(0);
@@ -222,59 +222,60 @@ const ProductoComponent = () => {
   const { makeRequest } = useApiRequest();
 
   const crearProducto = async () => {
-    if (!estiloProducto || !disponibilidadProducto || !tamañoProducto || 
-        categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
-      await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
-      return;
-    }
-  
-    const productoData = {
-      estiloProducto,
-      disponibilidadProducto,
-      tamañoProducto,
-      categorias: categoriasSeleccionadas,
-      catalogos: catalogosSeleccionados,
-      historialPrecios: preciosSeleccionados,
-      imagen: imagenProducto
-    };
-  
-    await makeRequest({
-      url: `${apiUrl}/producto`,
-      method: 'POST',
-      data: productoData,
-      success: {
-        title: 'Éxito',
-        text: 'Producto creado correctamente',
-        icon: 'success'
-      },
-      error: {
-        title: 'Error',
-        text: (error) => error.message || 'Error al crear el producto',
-        icon: 'error'
-      },
-      onSuccess: (data) => {
-        setNewProductId(data._id);
-        setOpenInventarioDialog(true);
-      }
-    });
+  if (!estiloProducto || !disponibilidadProducto || !tamañoProducto || 
+      !categoriaSeleccionada || !catalogoSeleccionado) { // Cambiar de .length === 0 a !valor
+    await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
+    return;
+  }
+
+  const productoData = {
+    estiloProducto,
+    disponibilidadProducto,
+    tamañoProducto,
+    categorias: [categoriaSeleccionada], 
+    catalogos: [catalogoSeleccionado], 
+    historialPrecios: precioSeleccionado ? [precioSeleccionado] : [], 
+    imagen: imagenProducto
   };
-  
-  const actualizarProducto = async () => {
-    if (!editingId || !estiloProducto || !disponibilidadProducto || 
-        categoriasSeleccionadas.length === 0 || catalogosSeleccionados.length === 0) {
-      await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
-      return;
+
+  await makeRequest({
+    url: `${apiUrl}/producto`,
+    method: 'POST',
+    data: productoData,
+    success: {
+      title: 'Éxito',
+      text: 'Producto creado correctamente',
+      icon: 'success'
+    },
+    error: {
+      title: 'Error',
+      text: (error) => error.message || 'Error al crear el producto',
+      icon: 'error'
+    },
+    onSuccess: (data) => {
+      setNewProductId(data._id);
+      setInventarioExistente(null); 
+      setOpenInventarioDialog(true);
     }
+  });
+};
   
-    const productoData = {
-      estiloProducto,
-      disponibilidadProducto,
-      tamañoProducto,
-      imagen: imagenProducto,
-      categorias: categoriasSeleccionadas || [],
-      catalogos: catalogosSeleccionados,
-      historialPrecios: preciosSeleccionados
-    };
+const actualizarProducto = async () => {
+  if (!editingId || !estiloProducto || !disponibilidadProducto || 
+      !categoriaSeleccionada || !catalogoSeleccionado) { 
+    await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
+    return;
+  }
+
+  const productoData = {
+    estiloProducto,
+    disponibilidadProducto,
+    tamañoProducto,
+    imagen: imagenProducto,
+    categorias: [categoriaSeleccionada], 
+    catalogos: [catalogoSeleccionado], 
+    historialPrecios: precioSeleccionado ? [precioSeleccionado] : [] 
+  };
   
     await makeRequest({
       url: `${apiUrl}/producto/${editingId}`,
@@ -344,54 +345,140 @@ const ProductoComponent = () => {
     });
   };
   
-  const editarProducto = (producto) => {
-    setEditingId(producto._id);
-    setEstiloProducto(producto.estiloProducto || '');
-    setDisponibilidadProducto(producto.disponibilidadProducto || 0);
-    setTamañoProducto(producto.tamañoProducto || '');
-    setImagenProducto(producto.imagen || '');
-    const categorias = Array.isArray(producto.categorias) ? producto.categorias : [];
-    const catalogos = Array.isArray(producto.catalogos) ? producto.catalogos : [];
-    const historialPrecio = Array.isArray(producto.historialPrecio) ? producto.historialPrecio : [];
-  };
+ const editarProducto = (producto) => {
+  setEditingId(producto._id);
+  setEstiloProducto(producto.estiloProducto || '');
+  setDisponibilidadProducto(producto.disponibilidadProducto || 0);
+  setTamañoProducto(producto.tamañoProducto || '');
+  setImagenProducto(producto.imagen || '');
+  
+  const categorias = Array.isArray(producto.categorias) ? producto.categorias : [];
+  const catalogos = Array.isArray(producto.catalogos) ? producto.catalogos : [];
+  const historialPrecio = Array.isArray(producto.historialPrecio) ? producto.historialPrecio : [];
+  
+  setCategoriaSeleccionada(categorias.length > 0 ? categorias[0] : '');
+  setCatalogoSeleccionado(catalogos.length > 0 ? catalogos[0] : '');
+  setPrecioSeleccionado(historialPrecio.length > 0 ? historialPrecio[0] : '');
+};
 
-  const crearInventario = async () => {
-    try {
-      const productId = inventarioExistente ? editingId : newProductId;
-      
-      if (!productId) {
-        throw new Error('No se encontró el ID del producto');
+const validarAntesDeEnviar = () => {
+  const errors = [];
+  const {
+    stockMinimo, stock, stockMaximo,
+    precioCompra, precioVenta
+  } = inventarioData;
+
+  const moneyRe = /^[0-9]+(\.[0-9]{1,2})?$/;
+  if (!moneyRe.test(precioCompra) || !moneyRe.test(precioVenta)) {
+    errors.push('Formato monetario inválido (ej: 1234.56)');
+  }
+
+  if (
+    moneyRe.test(precioCompra) &&
+    moneyRe.test(precioVenta) &&
+    parseFloat(precioVenta) <= parseFloat(precioCompra)
+  ) {
+    errors.push('El precio de venta debe ser mayor que el precio de compra');
+  }
+
+  if (
+    Number.isInteger(+stockMinimo) &&
+    Number.isInteger(+stock) &&
+    parseInt(stock) <= parseInt(stockMinimo)
+  ) {
+    errors.push('El stock inicial debe ser mayor que el stock mínimo');
+  }
+
+  return errors;
+};
+
+const limpiarValor = (valor) => valor.replace(/\./g, '');
+
+
+ const crearInventario = async () => {
+  const productId = inventarioExistente ? editingId : newProductId;
+
+  const errores = validarAntesDeEnviar();
+  if (errores.length > 0) {
+    return Swal.fire({
+      icon: 'error',
+      title: 'Revisa los campos',
+      html: errores.join('<br/>'),
+      customClass: {
+        container: 'swal-high-zindex'
+      }
+    });
+  }
+ const precioCompraLimpio = limpiarValor(inventarioData.precioCompra);
+  const precioVentaLimpio = limpiarValor(inventarioData.precioVenta);
+  try {
+    const response = await fetch(
+      inventarioExistente
+        ? `${apiUrl}/inventario/${inventarioExistente._id}`
+        : `${apiUrl}/inventario`,
+      {
+        method: inventarioExistente ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...inventarioData,
+          precioCompra: parseFloat(precioCompraLimpio),
+          precioVenta: parseFloat(precioVentaLimpio),
+          stockMinimo: parseInt(inventarioData.stockMinimo, 10),
+          stock: parseInt(inventarioData.stock, 10),
+          stockMaximo: parseInt(inventarioData.stockMaximo, 10),
+          idProducto: productId
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const data = await response.json();
+
+      if (data.details) {
+        const errores = data.details.map(e => `• ${e.message}`).join('<br/>');
+        return Swal.fire({
+          icon: 'error',
+          title: 'Errores de validación',
+          html: errores,
+          customClass: {
+            container: 'swal-high-zindex'
+          }
+        });
       }
 
-      let response;
-      if (inventarioExistente) {
-        response = await fetch(`${apiUrl}/inventario/${inventarioExistente._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...inventarioData, idProducto: productId })
-        });
-      } else {
-        response = await fetch(`${apiUrl}/inventario`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...inventarioData, idProducto: productId })
-        });
-      }
-
-      if (!response.ok) throw new Error(await response.text());
-
-      Swal.fire('Éxito', inventarioExistente 
-        ? 'Inventario actualizado correctamente' 
-        : 'Inventario creado correctamente', 'success');
-        
-      setOpenInventarioDialog(false);
-      resetForm();
-      fetchProductos();
-      setInventarioExistente(null);
-    } catch (error) {
-      Swal.fire('Error', error.message, 'error');
+      return Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: data.error || data.message || 'Ocurrió un error al guardar',
+        customClass: {
+          container: 'swal-high-zindex'
+        }
+      });
     }
-  };
+
+    setOpenInventarioDialog(false);
+    resetForm();
+    
+    Swal.fire(
+      'Éxito',
+      inventarioExistente ? 'Inventario actualizado correctamente' : 'Inventario creado correctamente',
+      'success'
+    );
+    
+    fetchProductos();
+    setInventarioExistente(null);
+  } catch (err) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: err.message,
+      customClass: {
+        container: 'swal-high-zindex'
+      }
+    });
+  }
+};
+
   
   const handleActualizarInventario = async () => {
     setOpenConfirmDialog(false);
@@ -414,16 +501,16 @@ const ProductoComponent = () => {
     fetchProductos();
   };
 
-  const resetForm = () => {
-    setEstiloProducto('');
-    setDisponibilidadProducto(0);
-    setTamañoProducto('');
-    setImagenProducto('');
-    setCategoriasSeleccionadas([]);
-    setCatalogosSeleccionados([]);
-    setPreciosSeleccionados([]);
-    setEditingId(null);
-  };
+ const resetForm = () => {
+  setEditingId(null);
+  setEstiloProducto('');
+  setDisponibilidadProducto('');
+  setTamañoProducto('');
+  setCategoriaSeleccionada('');
+  setCatalogoSeleccionado('');
+  setPrecioSeleccionado('');
+  setImagenProducto(null);
+};
 
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -587,14 +674,13 @@ const ProductoComponent = () => {
             >
               <InputLabel>Categorías</InputLabel>
               <Select
-                multiple
-                value={categoriasSeleccionadas}
-                onChange={(e) => setCategoriasSeleccionadas(e.target.value)}
+                value={categoriaSeleccionada} 
+                onChange={(e) => setCategoriaSeleccionada(e.target.value)}
                 label="Categorías"
-                renderValue={(selected) => selected.map(id => {
-                  const categoria = categorias.find(cat => cat._id === id);
+                renderValue={(selected) => {
+                  const categoria = categorias.find(cat => cat._id === selected);
                   return categoria ? categoria.nombreCategoria : "";
-                }).join(", ")}
+                }}
                 MenuProps={{
                   PaperProps: {
                     style: {
@@ -605,14 +691,13 @@ const ProductoComponent = () => {
                 }}
               >
                 {categorias.map((cat) => (
-                  <MenuItem key={cat._id} value={cat._id}>
-                    {cat.nombreCategoria}
-                  </MenuItem>
-                ))}
-              </Select>
+                <MenuItem key={cat._id} value={cat._id}>
+                  {cat.nombreCategoria}
+                </MenuItem>
+              ))}
+            </Select>
             </FormControl>
-  
-            <FormControl fullWidth margin="normal" required
+              <FormControl fullWidth margin="normal" required
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: '12px',
@@ -629,14 +714,13 @@ const ProductoComponent = () => {
             >
               <InputLabel>Catálogos</InputLabel>
               <Select
-                multiple
-                value={catalogosSeleccionados}
-                onChange={(e) => setCatalogosSeleccionados(e.target.value)}
+                value={catalogoSeleccionado} 
+                onChange={(e) => setCatalogoSeleccionado(e.target.value)} 
                 label="Catálogos"
-                renderValue={(selected) => selected.map(id => {
-                  const catalogo = catalogos.find(cat => cat._id === id);
+                renderValue={(selected) => {
+                  const catalogo = catalogos.find(cat => cat._id === selected);
                   return catalogo ? catalogo.nombreCatalogo : "";
-                }).join(", ")}
+                }}
                 MenuProps={{
                   PaperProps: {
                     style: {
@@ -653,49 +737,45 @@ const ProductoComponent = () => {
                 ))}
               </Select>
             </FormControl>
-  
-            <FormControl fullWidth margin="normal" required
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '12px',
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#f48fb1',
-                  },
+
+           <FormControl fullWidth margin="normal" required
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '12px',
+                '&.Mui-focused fieldset': {
+                  borderColor: '#f48fb1',
                 },
-                '& .MuiInputLabel-root': {
-                  '&.Mui-focused': {
-                    color: '#f48fb1',
-                  },
+              },
+              '& .MuiInputLabel-root': {
+                '&.Mui-focused': {
+                  color: '#f48fb1',
                 },
+              },
+            }}
+          >
+            <InputLabel>Precio Histórico</InputLabel>
+            <Select
+              value={precioSeleccionado} 
+              onChange={(e) => setPrecioSeleccionado(e.target.value)} 
+              label="Precio Histórico"
+              renderValue={(selected) => {
+                const precio = historialPrecios.find(p => p._id === selected);
+                return precio ? new Intl.NumberFormat('es-CO', { 
+                  style: 'currency', 
+                  currency: 'COP' 
+                }).format(precio.precio) : "";
               }}
             >
-              <InputLabel>Precio Histórico</InputLabel>
-              <Select
-                multiple
-                value={preciosSeleccionados}
-                onChange={(e) => { setPreciosSeleccionados(e.target.value); }}
-                label="Precio Histórico"
-                renderValue={(selected) => 
-                  selected.map(id => {
-                    const precio = historialPrecios.find(p => p._id === id);
-                    return precio ? new Intl.NumberFormat('es-CO', { 
-                      style: 'currency', 
-                      currency: 'COP' 
-                    }).format(precio.precio) : "";
-                  }).join(", ")
-                }
-              >
-                {historialPrecios.map((precio) => (
-                  <MenuItem key={precio._id} value={precio._id}>
-                    {new Intl.NumberFormat('es-CO', { 
-                      style: 'currency', 
-                      currency: 'COP' 
-                    }).format(precio.precio)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-  
+              {(historialPrecios || []).map((precio) => (
+                <MenuItem key={precio._id} value={precio._id}>
+                  {new Intl.NumberFormat('es-CO', { 
+                    style: 'currency', 
+                    currency: 'COP' 
+                  }).format(precio.precio)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
             <TextField
               type="file"
               inputProps={{ accept: 'image/*' }}
@@ -775,157 +855,157 @@ const ProductoComponent = () => {
             </Box>
           </Box>
         </Paper>
-  
-                        <Paper
-                  elevation={3}
+
+              <Paper
+        elevation={3}
+        sx={{
+          padding: '20px',
+          borderRadius: '20px',
+          backgroundColor: '#fff5f7',
+          marginBottom: '30px',
+          border: '1px solid #f8c8dc',
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            marginBottom: '15px',
+            color: '#b04e6f',
+            fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <Search fontSize="small" /> Buscar Producto por ID
+        </Typography>
+        
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          alignItems: 'center',
+          flexWrap: { xs: 'wrap', sm: 'nowrap' } 
+        }}>
+          <TextField
+            fullWidth
+            value={searchProductId}
+            onChange={(e) => setSearchProductId(e.target.value)}
+            placeholder="Ingresa el ID del producto"
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search color="action" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '12px',
+                '&.Mui-focused fieldset': {
+                  borderColor: '#f48fb1',
+                },
+              },
+              flexGrow: 1
+            }}
+          />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="contained"
+              onClick={handleSearch}
+              sx={{
+                borderRadius: '12px',
+                backgroundColor: '#f48fb1',
+                '&:hover': {
+                  backgroundColor: '#ec7096',
+                },
+                textTransform: 'none',
+                fontWeight: 'bold',
+                whiteSpace: 'nowrap',
+              }}
+              startIcon={<Search />}
+            >
+              Buscar
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={clearSearch}
+              sx={{
+                borderRadius: '12px',
+                borderColor: '#f48fb1',
+                color: '#f48fb1',
+                '&:hover': {
+                  borderColor: '#ec7096',
+                  backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                },
+                textTransform: 'none',
+                fontWeight: 'bold',
+              }}
+              startIcon={<Clear />}
+            >
+              Limpiar
+            </Button>
+          </Box>
+        </Box>
+        
+        {foundProduct && (
+          <Paper 
+            elevation={2} 
+            sx={{ 
+              mt: 2, 
+              p: 2, 
+              backgroundColor: '#fff0f5',
+              borderRadius: '12px',
+              border: '1px solid #f8c8dc'
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ color: '#b04e6f', mb: 1 }}>
+              Producto encontrado:
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box>
+                <Typography><strong>ID:</strong> {foundProduct._id}</Typography>
+                <Typography><strong>Descripción:</strong> {foundProduct.estiloProducto}</Typography>
+                <Typography><strong>Tamaño:</strong> {foundProduct.tamañoProducto}</Typography>
+              </Box>
+              <Box>
+                <IconButton
+                  onClick={() => editarProducto(foundProduct)}
                   sx={{
-                    padding: '20px',
-                    borderRadius: '20px',
-                    backgroundColor: '#fff5f7',
-                    marginBottom: '30px',
-                    border: '1px solid #f8c8dc',
+                    color: '#4caf50',
+                    '&:hover': {
+                      backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    },
                   }}
                 >
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      marginBottom: '15px',
-                      color: '#b04e6f',
-                      fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <Search fontSize="small" /> Buscar Producto por ID
-                  </Typography>
-                  
-                  <Box sx={{ 
-                    display: 'flex', 
-                    gap: 2, 
-                    alignItems: 'center',
-                    flexWrap: { xs: 'wrap', sm: 'nowrap' } 
-                  }}>
-                    <TextField
-                      fullWidth
-                      value={searchProductId}
-                      onChange={(e) => setSearchProductId(e.target.value)}
-                      placeholder="Ingresa el ID del producto"
-                      variant="outlined"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Search color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: '12px',
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#f48fb1',
-                          },
-                        },
-                        flexGrow: 1
-                      }}
-                    />
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Button
-                        variant="contained"
-                        onClick={handleSearch}
-                        sx={{
-                          borderRadius: '12px',
-                          backgroundColor: '#f48fb1',
-                          '&:hover': {
-                            backgroundColor: '#ec7096',
-                          },
-                          textTransform: 'none',
-                          fontWeight: 'bold',
-                          whiteSpace: 'nowrap',
-                        }}
-                        startIcon={<Search />}
-                      >
-                        Buscar
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        onClick={clearSearch}
-                        sx={{
-                          borderRadius: '12px',
-                          borderColor: '#f48fb1',
-                          color: '#f48fb1',
-                          '&:hover': {
-                            borderColor: '#ec7096',
-                            backgroundColor: 'rgba(244, 143, 177, 0.08)',
-                          },
-                          textTransform: 'none',
-                          fontWeight: 'bold',
-                        }}
-                        startIcon={<Clear />}
-                      >
-                        Limpiar
-                      </Button>
-                    </Box>
-                  </Box>
-                  
-                  {foundProduct && (
-                    <Paper 
-                      elevation={2} 
-                      sx={{ 
-                        mt: 2, 
-                        p: 2, 
-                        backgroundColor: '#fff0f5',
-                        borderRadius: '12px',
-                        border: '1px solid #f8c8dc'
-                      }}
-                    >
-                      <Typography variant="subtitle1" sx={{ color: '#b04e6f', mb: 1 }}>
-                        Producto encontrado:
-                      </Typography>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Box>
-                          <Typography><strong>ID:</strong> {foundProduct._id}</Typography>
-                          <Typography><strong>Descripción:</strong> {foundProduct.estiloProducto}</Typography>
-                          <Typography><strong>Tamaño:</strong> {foundProduct.tamañoProducto}</Typography>
-                        </Box>
-                        <Box>
-                          <IconButton
-                            onClick={() => editarProducto(foundProduct)}
-                            sx={{
-                              color: '#4caf50',
-                              '&:hover': {
-                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                              },
-                            }}
-                          >
-                            <Edit />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => eliminarProducto(foundProduct._id)}
-                            sx={{
-                              color: '#e57373',
-                              '&:hover': {
-                                backgroundColor: 'rgba(229, 115, 115, 0.1)',
-                              },
-                            }}
-                          >
-                            <Delete />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => openDetailsDialog(foundProduct)}
-                            sx={{
-                              color: '#6c63ff',
-                              '&:hover': {
-                                backgroundColor: 'rgba(108, 99, 255, 0.1)',
-                              },
-                            }}
-                          >
-                            <Info />
-                          </IconButton>
-                        </Box>
-                      </Box>
-                    </Paper>
-                  )}
+                  <Edit />
+                </IconButton>
+                <IconButton
+                  onClick={() => eliminarProducto(foundProduct._id)}
+                  sx={{
+                    color: '#e57373',
+                    '&:hover': {
+                      backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                    },
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+                <IconButton
+                  onClick={() => openDetailsDialog(foundProduct)}
+                  sx={{
+                    color: '#6c63ff',
+                    '&:hover': {
+                      backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                    },
+                  }}
+                >
+                  <Info />
+                </IconButton>
+              </Box>
+            </Box>
+          </Paper>
+        )}
   
           {searching && !foundProduct && (
             <Typography 
