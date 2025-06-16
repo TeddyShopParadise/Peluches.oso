@@ -12,45 +12,70 @@ const listarInventarios = async (req, res) => {
     }
 };
 
+const limpiarPrecio = (valor) => {
+  if (typeof valor !== 'string') return valor;
+  return parseFloat(valor.replace(/\./g, '').replace(',', '.'));
+};
+
 // Controlador para crear un nuevo inventario
 const crearInventario = async (req, res) => {
-    const body = req.body;
+  const body = req.body;
 
-    const { error, value } = inventariosSchemaValidation.validate(body);
+  const { error, value } = inventariosSchemaValidation.validate(body, { abortEarly: false });
 
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
-    }
+  if (error) {
+    return res.status(400).json({
+      message: 'Validación fallida',
+      details: error.details.map(err => ({
+        message: err.message,
+        path: err.path,
+        type: err.type
+      }))
+    });
+  }
 
-    try {
-        const nuevoInventario = await logic.crearInventario(value);
-        res.status(201).json(nuevoInventario);
-    } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
+  try {
+    value.precioCompra = limpiarPrecio(value.precioCompra);
+    value.precioVenta = limpiarPrecio(value.precioVenta);
+
+    const nuevoInventario = await logic.crearInventario(value);
+    res.status(201).json(nuevoInventario);
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 };
 
 // Controlador para actualizar un inventario
 const actualizarInventario = async (req, res) => {
-    const { id } = req.params;
-    const body = req.body;
-    const { error, value } = inventariosSchemaValidation.validate(body);
+  const { id } = req.params;
+  const body = req.body;
 
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
-    }
+  const { error, value } = inventariosSchemaValidation.validate(body, { abortEarly: false });
 
-    try {
-        const inventarioActualizado = await logic.actualizarInventario(id, value);
-        if (!inventarioActualizado) {
-            return res.status(404).json({ error: 'Inventario no encontrado' });
-        }
-        res.json(inventarioActualizado);
-    } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor' });
+  if (error) {
+    return res.status(400).json({
+      message: 'Validación fallida',
+      details: error.details.map(err => ({
+        message: err.message,
+        path: err.path,
+        type: err.type
+      }))
+    });
+  }
+
+  try {
+    value.precioCompra = limpiarPrecio(value.precioCompra);
+    value.precioVenta = limpiarPrecio(value.precioVenta);
+
+    const inventarioActualizado = await logic.actualizarInventario(id, value);
+    if (!inventarioActualizado) {
+      return res.status(404).json({ error: 'Inventario no encontrado' });
     }
+    res.json(inventarioActualizado);
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 };
-
 // Controlador para obtener un inventario por su ID
 const obtenerInventarioPorId = async (req, res) => {
     const { id } = req.params;

@@ -3,10 +3,15 @@ const Usuario = require('../models/usuario_model');
 
 // Función asíncrona para crear un nuevo rol
 async function crearRol(body) {
+    const rolExistente = await Roles.findOne({ nombre: body.nombre.trim() });
+    if (rolExistente) {
+        throw new Error(`Ya existe un rol con el nombre "${body.nombre}"`);
+    }
+
     const rol = new Roles({
         estado: body.estado,
-        nombre: body.nombre,
-        usuarios: body.usuarios || [] 
+        nombre: body.nombre.trim(),
+        usuarios: body.usuarios || []
     });
 
     return await rol.save();
