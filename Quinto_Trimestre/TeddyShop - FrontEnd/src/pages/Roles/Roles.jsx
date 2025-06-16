@@ -73,156 +73,7 @@ const Roles = () => {
     }
   };
 
-const crearRol = async () => {
-  if (!role.nombre) {
-    await Swal.fire({
-      icon: 'error',
-      title: 'Campo incompleto',
-      text: 'Por favor, ingresa el nombre del rol',
-      confirmButtonText: 'Entendido',
-      confirmButtonColor: '#3085d6',
-      backdrop: `
-        rgba(0,0,0,0.7)
-        url("/images/empty-field.gif")
-        center top
-        no-repeat
-      `
-    });
-    return;
-  }
 
-  await makeRequest({
-    url: `${apiUrl}/roles`,
-    method: 'POST',
-    data: role,
-    confirm: {
-      title: 'Crear nuevo rol',
-      text: '¿Estás seguro de que deseas crear este rol?',
-      icon: 'question',
-      confirmButtonText: 'Sí, crear',
-      cancelButtonText: 'Cancelar'
-    },
-    loading: {
-      title: 'Procesando...',
-      html: 'Estamos creando el rol'
-    },
-    success: {
-      title: '¡Rol creado!',
-      text: 'El rol se ha creado correctamente',
-      timer: 2000,
-      timerProgressBar: true
-    },
-    error: {
-      title: 'Error',
-      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
-    },
-    onSuccess: () => {
-      fetchRoles();
-      setRole({ nombre: '', estado: true });
-    }
-  });
-};
-
-const actualizarRol = async () => {
-  if (!currentId) return;
-
-  await makeRequest({
-    url: `${apiUrl}/roles/${currentId}`,
-    method: 'PUT',
-    data: role,
-    confirm: {
-      title: 'Actualizar rol',
-      text: '¿Estás seguro de que deseas actualizar este rol?',
-      icon: 'question',
-      confirmButtonText: 'Sí, actualizar',
-      cancelButtonText: 'Cancelar'
-    },
-    loading: {
-      title: 'Procesando...',
-      html: 'Estamos actualizando el rol'
-    },
-    success: {
-      title: '¡Rol actualizado!',
-      text: 'El rol se ha actualizado correctamente',
-      timer: 2000,
-      timerProgressBar: true
-    },
-    error: {
-      title: 'Error',
-      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
-    },
-    onSuccess: () => {
-      fetchRoles();
-      setRole({ nombre: '', estado: true });
-      setIsEditing(false);
-      setCurrentId(null);
-    }
-  });
-};
-
-const EliminarRol = async (id) => {
-  await makeRequest({
-    url: `${apiUrl}/roles/${id}`,
-    method: 'DELETE',
-    confirm: {
-      title: 'Eliminar rol',
-      text: '¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer',
-      icon: 'warning',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      backdrop: `
-        rgba(0,0,0,0.7)
-        url("/images/warning.gif")
-        center top
-        no-repeat
-      `
-    },
-    loading: {
-      title: 'Eliminando...',
-      html: 'Estamos eliminando el rol'
-    },
-    success: {
-      title: '¡Rol eliminado!',
-      text: 'El rol se ha eliminado correctamente',
-      timer: 2000,
-      timerProgressBar: true
-    },
-    error: {
-      title: 'Error',
-      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
-    },
-    onSuccess: fetchRoles
-  });
-};
-
-  const resetRoleForm = () => {
-    setRole({ nombre: "", estado: true });
-    setIsEditing(false);
-    setCurrentId(null);
-  };
-  
-  const handleSaveRole = () => {
-    isEditing ? actualizarRol() : crearRol();
-  };
-  
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-  
-    setRole(prevRole => ({
-      ...prevRole,
-      [name]: name === "estado" ? Boolean(value) : value  
-    }));
-  };
-  
-    const handleEstadoChange = (event) => {
-      setRole({ ...role, estado: Boolean(event.target.checked) });
-    };
-
-  const handleEditClick = (role) => {
-    setRole({ nombre: role.nombre, estado: role.estado });
-    setIsEditing(true);
-    setCurrentId(role._id);
-  };
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
@@ -304,97 +155,6 @@ const EliminarRol = async (id) => {
             </Typography>
           </Box>
   
-          <Paper
-            elevation={3}
-            sx={{
-              padding: '20px',
-              borderRadius: '20px',
-              backgroundColor: '#fff5f7',
-              marginBottom: '30px',
-              border: '1px solid #f8c8dc',
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                marginBottom: '15px',
-                color: '#b04e6f',
-                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
-              }}
-            >
-              {isEditing ? '✏️ Editar Rol' : '✨ Nuevo Rol'}
-            </Typography>
-  
-            <TextField
-              label="Nombre del Rol"
-              name="nombre"
-              value={role.nombre}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-              required
-              variant="outlined"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '12px',
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#f48fb1',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  '&.Mui-focused': {
-                    color: '#f48fb1',
-                  },
-                },
-              }}
-            />
-  
-            <FormControlLabel
-              control={<Switch checked={role.estado} onChange={handleEstadoChange} />}
-              label={role.estado ? 'Activo' : 'Inactivo'}
-              sx={{
-                color: '#b04e6f',
-                fontWeight: 'bold',
-                marginTop: '10px',
-              }}
-            />
-  
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Button
-                variant="contained"
-                onClick={handleSaveRole}
-                sx={{
-                  borderRadius: '12px',
-                  backgroundColor: '#f48fb1',
-                  '&:hover': {
-                    backgroundColor: '#ec7096',
-                  },
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                  boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
-                }}
-              >
-                {isEditing ? 'Actualizar Rol' : 'Crear Rol'}
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={resetRoleForm}
-                sx={{
-                  borderRadius: '12px',
-                  borderColor: '#f48fb1',
-                  color: '#f48fb1',
-                  '&:hover': {
-                    borderColor: '#ec7096',
-                    backgroundColor: 'rgba(244, 143, 177, 0.08)',
-                  },
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                }}
-              >
-                Cancelar
-              </Button>
-            </Box>
-          </Paper>
   
           <Paper
             elevation={2}
@@ -499,7 +259,6 @@ const EliminarRol = async (id) => {
                           ))}
                       </Box>
                     </TableCell>
-                    <TableCell align="center">Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -526,28 +285,7 @@ const EliminarRol = async (id) => {
                         />
                       </TableCell>
                         <TableCell align="center">
-                          <IconButton
-                            onClick={() => handleEditClick(r)}
-                            sx={{
-                              color: '#6c63ff',
-                              '&:hover': {
-                                backgroundColor: 'rgba(108, 99, 255, 0.1)',
-                              },
-                            }}
-                          >
-                            <Edit />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => EliminarRol(r._id)}
-                            sx={{
-                              color: '#e57373',
-                              '&:hover': {
-                                backgroundColor: 'rgba(229, 115, 115, 0.1)',
-                              },
-                            }}
-                          >
-                            <Delete />
-                          </IconButton>
+                        
                         </TableCell>
                       </TableRow>
                     ))}
