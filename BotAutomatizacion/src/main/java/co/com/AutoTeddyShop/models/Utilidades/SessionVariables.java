@@ -10,5 +10,9 @@ public enum SessionVariables {
     NombreUsuario,
     EstiloProducto,
 
-    id
+    id,
+    PrecioHistorial,
+    FechaInicioHistorial,
+    FechaFinalHistorial
+
 }
