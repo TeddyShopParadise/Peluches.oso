@@ -127,9 +127,7 @@ const Empleado = () => {
       });
       return;
     }
-  
-    console.log("Enviando datos:", JSON.stringify(formData));
-  
+    
     await makeRequest({
       url: `${apiUrl}/empleado`,
       method: 'POST',
@@ -160,9 +158,40 @@ const Empleado = () => {
       error: {
         icon: 'error',
         title: 'Error al crear empleado',
-        text: (error) => error.message || 'Ocurrió un error al crear el empleado',
+        html: (error) => {
+          const mensaje = error.response?.data?.message || error.message || '';
+          const detalles = error.response?.data?.details;
+
+          let mensajeFinal = mensaje;
+
+          if (Array.isArray(detalles)) {
+            const lista = detalles.map(d => `<li>${d.message}</li>`).join('');
+            return `<div style="text-align:left;">
+              <p>Se encontraron los siguientes errores:</p>
+              <ul>${lista}</ul>
+              <small>Verifica los datos e intenta nuevamente</small>
+            </div>`;
+          }
+
+          if (mensaje.includes('E11000')) {
+            if (mensaje.includes('email')) {
+              mensajeFinal = 'Este correo electrónico ya está registrado.';
+            } else if (mensaje.includes('dniEmpleado')) {
+              mensajeFinal = 'No se puede crear un empleado con un DNI ya registrado.';
+            } else if (mensaje.includes('username')) {
+              mensajeFinal = 'Este nombre de usuario ya está en uso.';
+            } else {
+              mensajeFinal = 'Ya existe un registro con un campo único duplicado.';
+            }
+          }
+          return `<div style="text-align:left;">
+            <p>${mensajeFinal}</p>
+            <small>Verifica los datos e intenta nuevamente</small>
+          </div>`;
+        },
         footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
       },
+
       onSuccess: () => {
         fetchEmpleados();
         resetForm();
@@ -219,15 +248,32 @@ const Empleado = () => {
         timerProgressBar: true,
         showConfirmButton: false
       },
-      error: {
-        icon: 'error',
-        title: 'Error en la actualización',
-        html: (error) => `<div style="text-align:left;">
-               <p>${error.message}</p>
-               <small>Si el problema persiste, contacte al administrador</small>
-             </div>`,
-        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+     error: {
+      icon: 'error',
+      title: 'Error al crear usuario',
+      html: (error) => {
+
+        let mensajeFinal = mensaje;
+
+        if (mensaje.includes('E11000')) {
+          if (mensaje.includes('email')) {
+            mensajeFinal = 'Este correo electrónico ya está registrado.';
+          } else if (mensaje.includes('dniEmpleado')) {
+            mensajeFinal = 'No se puede crear un empleado con el mismo DNI.';
+          } else if (mensaje.includes('username')) {
+            mensajeFinal = 'Este nombre de usuario ya está en uso.';
+          } else {
+            mensajeFinal = 'Ya existe un registro con uno de los campos únicos.';
+          }
+        }
+
+        return `<div style="text-align:left;">
+          <p>${mensajeFinal}</p>
+          <small>Verifica los datos e intenta nuevamente</small>
+        </div>`;
       },
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
       onSuccess: () => {
         fetchEmpleados();
         resetForm();
@@ -509,7 +555,6 @@ const Empleado = () => {
                   onChange={(e) => setFormData({ ...formData, compania: e.target.value })}
                   displayEmpty
                 >
-                  <MenuItem value="" disabled>Selecciona una Compañía</MenuItem>
                   {companias.map((comp) => (
                     <MenuItem key={comp._id} value={comp._id}>
                       {comp.nombreEmpresa}

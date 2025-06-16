@@ -158,3 +158,30 @@ tr:nth-child(even) {
       display: none !important;
     }
   }
+
+  .swal-high-zindex {
+  z-index: 999999 !important;
+}
+
+.swal-high-zindex .swal2-container {
+  z-index: 999999 !important;
+}
+
+.swal-high-zindex .swal2-popup {
+  z-index: 999999 !important;
+}
+
+/* Para móviles específicamente */
+@media (max-width: 768px) {
+  .swal-high-zindex {
+    z-index: 9999999 !important;
+  }
+  
+  .swal-high-zindex .swal2-container {
+    z-index: 9999999 !important;
+  }
+  
+  .swal-high-zindex .swal2-popup {
+    z-index: 9999999 !important;
+  }
+}

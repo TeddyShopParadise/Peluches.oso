@@ -316,7 +316,6 @@ const Pedido = () => {
       }
   
       const facturaData = await response.json();
-      console.log('🧾 Factura data recibida:', facturaData);
       
       if (facturaData.detallesFactura && facturaData.detallesFactura.length > 0) {
         console.log('🧾 Primer detalle de factura:', facturaData.detallesFactura[0]);
