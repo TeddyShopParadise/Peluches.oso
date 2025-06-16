@@ -19,7 +19,15 @@ import {
   Select,
   MenuItem,
   Chip,
-  Tooltip
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemText,
+  Divider
 } from '@mui/material';
 import {
   Edit,
@@ -32,7 +40,9 @@ import {
   Remove,
   AddCircle,
   AssignmentReturn,
-  Inventory
+  Inventory,
+  Visibility,
+  Close
 } from '@mui/icons-material';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig';
@@ -44,6 +54,9 @@ const apiUrl = getApiUrl();
 const Devoluciones = () => {
   const [devoluciones, setDevoluciones] = useState([]);
   const [inventarios, setInventarios] = useState([]);
+  const [productos, setProductos] = useState([]);
+    const [selectedInventario, setSelectedInventario] = useState(null);
+  
   const [nuevaDevolucion, setNuevaDevolucion] = useState({
     fecha: '',
     items: [{ inventario: '', cantidad: 1 }]
@@ -54,21 +67,26 @@ const Devoluciones = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState('asc');
+  const [sortBy, setSortBy] = useState('fecha');
+  const [openDetalles, setOpenDetalles] = useState(false);
+  const [devolucionSeleccionada, setDevolucionSeleccionada] = useState(null);
   const { makeRequest } = useApiRequest();
-const [sortBy, setSortBy] = useState('fecha'); 
 
   const fetchData = async () => {
     try {
-      const [devolucionesRes, inventariosRes] = await Promise.all([
+      const [devolucionesRes, inventariosRes, productosRes] = await Promise.all([
         fetch(`${apiUrl}/devoluciones`),
-        fetch(`${apiUrl}/inventario`)
+        fetch(`${apiUrl}/inventario`),
+        fetch(`${apiUrl}/producto`)
       ]);
       
       const devolucionesData = await devolucionesRes.json();
       const inventariosData = await inventariosRes.json();
+      const productosData = await productosRes.json();
       
       setDevoluciones(devolucionesData);
       setInventarios(inventariosData);
+      setProductos(productosData);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -293,15 +311,54 @@ const [sortBy, setSortBy] = useState('fecha');
     setSortBy(field);
   };
 
-  const getInventarioName = (inventarioId) => {
-    const inventario = inventarios.find(inv => inv._id === inventarioId);
-    return inventario ? inventario.nombre : 'Producto no encontrado';
+// Extrae correctamente el _id de producto y busca estilo
+const getEstiloProductoFromInventarioId = (inventarioId) => {
+  // 1. Encuentra el inventario
+  const inv = inventarios.find(i => i._id === inventarioId);
+  if (!inv) return 'Inventario no encontrado';
+
+  // 2. Saca el productId (puede venir como string o como { _id })
+  const prodId = typeof inv.idProducto === 'object' 
+    ? inv.idProducto._id 
+    : inv.idProducto;
+
+  // 3. Busca el producto
+  const prod = productos.find(p => p._id === prodId);
+  return prod?.estiloProducto ?? 'Sin estilo';
+};
+
+// Si quieres devolver todo junto
+const getInventarioDetails = (inventarioId) => {
+  const inv = inventarios.find(i => i._id === inventarioId);
+  if (!inv) return null;
+
+  const prodId = typeof inv.idProducto === 'object' 
+    ? inv.idProducto._id 
+    : inv.idProducto;
+  const prod = productos.find(p => p._id === prodId);
+
+  return {
+    inventario: inv,
+    producto:    prod || null,
+    estiloProducto: prod?.estiloProducto ?? 'No especificado'
+  };
+};
+
+
+  // Función para abrir el modal de detalles
+const handleDetallesClick = (devolucion) => {
+    setDevolucionSeleccionada(devolucion);
+    setOpenDetalles(true);
+  };
+  // Función para cerrar el modal de detalles
+  const handleCloseDetalles = () => {
+    setOpenDetalles(false);
+    setDevolucionSeleccionada(null);
   };
 
-  
-const filteredDevoluciones = devoluciones.filter((devolucion) =>
-  devolucion?.motivo?.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  const filteredDevoluciones = devoluciones.filter((devolucion) =>
+    devolucion?.motivo?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const sortedDevoluciones = [...filteredDevoluciones].sort((a, b) => {
     const aValue = a[sortBy];
@@ -313,20 +370,20 @@ const filteredDevoluciones = devoluciones.filter((devolucion) =>
   });
 
   return (
-     <Box className="BoxInicial">
-        <Box
-          className="Box"
-          sx={{
-            width: '90%',
-            maxWidth: '900px',
-            padding: { xs: '20px', md: '30px' },
-            borderRadius: '30px',
-            margin: '0 auto',
-            backgroundColor: '#fffafc',
-            boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
-            border: '2px solid #f8c8dc',
-          }}
-        >
+    <Box className="BoxInicial">
+      <Box
+        className="Box"
+        sx={{
+          width: '90%',
+          maxWidth: '900px',
+          padding: { xs: '20px', md: '30px' },
+          borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
+        }}
+      >
         <Container>
           <Box
             sx={{
@@ -356,230 +413,6 @@ const filteredDevoluciones = devoluciones.filter((devolucion) =>
               🔄 Gestión de Devoluciones
             </Typography>
           </Box>
-
-          <Paper
-            elevation={3}
-            sx={{
-              padding: '20px',
-              borderRadius: '20px',
-              backgroundColor: '#fff5f7',
-              marginBottom: '30px',
-              border: '1px solid #f8c8dc',
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                marginBottom: '15px',
-                color: '#b04e6f',
-                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
-              }}
-            >
-              {editarDevolucion ? '✏️ Editar Devolución' : '✨ Nueva Devolución'}
-            </Typography>
-    
-
-            <TextField
-              label="Fecha de Devolución"
-              type="date"
-              value={nuevaDevolucion.fecha}
-              onChange={(e) =>
-                setNuevaDevolucion({ ...nuevaDevolucion, fecha: e.target.value })
-              }
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '12px',
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#f48fb1',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  '&.Mui-focused': {
-                    color: '#f48fb1',
-                  },
-                },
-              }}
-            />
-
-            <Box sx={{ mt: 3, mb: 2 }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  color: '#b04e6f',
-                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
-                  mb: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1
-                }}
-              >
-                <Inventory /> Items a Devolver
-              </Typography>
-
-              {nuevaDevolucion.items.map((item, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: 'flex',
-                    gap: 2,
-                    alignItems: 'center',
-                    mb: 2,
-                    p: 2,
-                    backgroundColor: '#fff',
-                    borderRadius: '12px',
-                    border: '1px solid #f8c8dc',
-                  }}
-                >
-                  <FormControl
-                    sx={{
-                      flex: 2,
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: '12px',
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#f48fb1',
-                        },
-                      },
-                      '& .MuiInputLabel-root': {
-                        '&.Mui-focused': {
-                          color: '#f48fb1',
-                        },
-                      },
-                    }}
-                  >
-                    <InputLabel>Producto</InputLabel>
-                    <Select
-                      value={item.inventario}
-                      onChange={(e) => handleItemChange(index, 'inventario', e.target.value)}
-                      label="Producto"
-                    >
-                      {inventarios.map((inventario) => (
-                        <MenuItem key={inventario._id} value={inventario._id}>
-                          {inventario.stock}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-
-                  <TextField
-                    label="Cantidad"
-                    type="number"
-                    value={item.cantidad}
-                    onChange={(e) => handleItemChange(index, 'cantidad', parseInt(e.target.value) || 1)}
-                    sx={{
-                      flex: 1,
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: '12px',
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#f48fb1',
-                        },
-                      },
-                      '& .MuiInputLabel-root': {
-                        '&.Mui-focused': {
-                          color: '#f48fb1',
-                        },
-                      },
-                    }}
-                    inputProps={{ min: 1 }}
-                  />
-
-                  <IconButton
-                    onClick={() => removeItem(index)}
-                    disabled={nuevaDevolucion.items.length === 1}
-                    sx={{
-                      color: '#e57373',
-                      '&:hover': {
-                        backgroundColor: 'rgba(229, 115, 115, 0.1)',
-                      },
-                      '&:disabled': {
-                        color: '#ccc',
-                      },
-                    }}
-                  >
-                    <Remove />
-                  </IconButton>
-                </Box>
-              ))}
-
-              <Button
-                onClick={addItem}
-                startIcon={<AddCircle />}
-                sx={{
-                  color: '#f48fb1',
-                  '&:hover': {
-                    backgroundColor: 'rgba(244, 143, 177, 0.08)',
-                  },
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                }}
-              >
-                Agregar Item
-              </Button>
-            </Box>
-
-            <Box display="flex" justifyContent="flex-end" gap={2} mt={3}>
-              {editarDevolucion ? (
-                <Button
-                  variant="contained"
-                  onClick={actualizarDevolucion}
-                  startIcon={<Edit />}
-                  sx={{
-                    borderRadius: '12px',
-                    backgroundColor: '#f48fb1',
-                    '&:hover': {
-                      backgroundColor: '#ec7096',
-                    },
-                    textTransform: 'none',
-                    fontWeight: 'bold',
-                    boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
-                  }}
-                >
-                  Actualizar
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  onClick={crearDevolucion}
-                  startIcon={<Add />}
-                  sx={{
-                    borderRadius: '12px',
-                    backgroundColor: '#f48fb1',
-                    '&:hover': {
-                      backgroundColor: '#ec7096',
-                    },
-                    textTransform: 'none',
-                    fontWeight: 'bold',
-                    boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
-                  }}
-                >
-                  Crear
-                </Button>
-              )}
-              <Button
-                variant="outlined"
-                onClick={resetDevolucionForm}
-                startIcon={<Clear />}
-                sx={{
-                  borderRadius: '12px',
-                  borderColor: '#f48fb1',
-                  color: '#f48fb1',
-                  '&:hover': {
-                    borderColor: '#ec7096',
-                    backgroundColor: 'rgba(244, 143, 177, 0.08)',
-                  },
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                }}
-              >
-                Cancelar
-              </Button>
-            </Box>
-          </Paper>
 
           <Paper
             elevation={2}
@@ -745,23 +578,45 @@ const filteredDevoluciones = devoluciones.filter((devolucion) =>
                       <TableCell>
                         {new Date(devolucion.fecha).toLocaleDateString('es-ES')}
                       </TableCell>
-                      <TableCell>
+                     <TableCell>
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {devolucion.items && devolucion.items.map((item, index) => (
-                            <Chip
-                              key={index}
-                              label={`${getInventarioName(item.inventario._id || item.inventario)} (${item.cantidad})`}
-                              size="small"
-                              sx={{
-                                backgroundColor: '#fce4ec',
-                                color: '#b04e6f',
-                                fontSize: '0.75rem',
-                              }}
-                            />
-                          ))}
+                        {devolucion.items.map((item, idx) => {
+                        const invId = typeof item.inventario === 'string' 
+                          ? item.inventario 
+                          : item.inventario._id;
+
+                        const estilo = getEstiloProductoFromInventarioId(invId);
+
+                            
+                          return (
+                          <Chip
+                            key={idx}
+                            label={`${estilo} (${item.cantidad})`}
+                            size="small"
+                            sx={{
+                              backgroundColor: '#fce4ec',
+                              color: '#b04e6f',
+                              fontSize: '0.75rem',
+                            }}
+                          />
+                        );
+                      })}
                         </Box>
                       </TableCell>
                       <TableCell align="center">
+                        <Tooltip title="Ver detalles del inventario">
+                          <IconButton
+                            onClick={() => handleDetallesClick(devolucion)}
+                            sx={{
+                              color: '#2196f3',
+                              '&:hover': {
+                                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                              },
+                            }}
+                          >
+                            <Visibility />
+                          </IconButton>
+                        </Tooltip>
                         <Tooltip title="Editar devolución">
                           <IconButton
                             onClick={() => handleEditClick(devolucion)}
@@ -817,6 +672,162 @@ const filteredDevoluciones = devoluciones.filter((devolucion) =>
           />
         </Container>
       </Box>
+
+      <Dialog
+        open={openDetalles}
+        onClose={handleCloseDetalles}
+        maxWidth="md"
+        fullWidth
+        sx={{
+          '& .MuiDialog-paper': {
+            borderRadius: '20px',
+            overflow: 'hidden',
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: '#ffeef3',
+            color: '#b04e6f',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 24px',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Inventory />
+            Detalles del Inventario - Devolución
+          </Box>
+          <IconButton
+            onClick={handleCloseDetalles}
+            sx={{
+              color: '#b04e6f',
+              '&:hover': {
+                backgroundColor: 'rgba(176, 78, 111, 0.1)',
+              },
+            }}
+          >
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        
+        <DialogContent sx={{ padding: '24px' }}>
+          {devolucionSeleccionada && (
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  marginBottom: '16px',
+                  color: '#b04e6f',
+                  fontWeight: 'bold',
+                }}
+              >
+                Información de la Devolución
+              </Typography>
+              
+              <Box sx={{ marginBottom: '20px' }}>
+                <Typography variant="body1" sx={{ marginBottom: '8px' }}>
+                  <strong>Motivo:</strong> {devolucionSeleccionada.motivo}
+                </Typography>
+                <Typography variant="body1" sx={{ marginBottom: '8px' }}>
+                  <strong>Fecha:</strong> {new Date(devolucionSeleccionada.fecha).toLocaleDateString('es-ES')}
+                </Typography>
+                <Typography variant="body1" sx={{ marginBottom: '8px' }}>
+                  <strong>ID Devolución:</strong> {devolucionSeleccionada._id}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ margin: '20px 0' }} />
+
+              <Typography
+                variant="h6"
+                sx={{
+                  marginBottom: '16px',
+                  color: '#b04e6f',
+                  fontWeight: 'bold',
+                }}
+              >
+                Items Devueltos
+              </Typography>
+
+              <List>
+                {devolucionSeleccionada.items?.map((item, index) => {
+                  const inventarioId = typeof item.inventario === 'string' 
+                    ? item.inventario 
+                    : item.inventario._id;
+                  
+                  const estiloProducto = getEstiloProductoFromInventarioId(inventarioId);
+                  
+                  return (
+                    <React.Fragment key={index}>
+                      <ListItem
+                        sx={{
+                          backgroundColor: '#fff0f5',
+                          borderRadius: '10px',
+                          marginBottom: '12px',
+                          padding: '16px',
+                        }}
+                      >
+                        <ListItemText
+                          primary={
+                            <Box>
+                              <Typography
+                                variant="subtitle1"
+                                sx={{
+                                  fontWeight: 'bold',
+                                  color: '#b04e6f',
+                                  marginBottom: '8px',
+                                }}
+                              >
+                                Item #{index + 1}
+                              </Typography>
+                              
+                              <Box sx={{ marginLeft: '16px' }}>
+                                <Typography variant="body2" sx={{ marginBottom: '4px' }}>
+                                  <strong>Estilo del Producto:</strong> {estiloProducto}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: '4px' }}>
+                                  <strong>Cantidad Devuelta:</strong> {item.cantidad}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: '4px' }}>
+                                  <strong>ID del Inventario:</strong> {inventarioId}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          }
+                        />
+                      </ListItem>
+                      {index < devolucionSeleccionada.items.length - 1 && (
+                        <Divider sx={{ margin: '8px 0' }} />
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </List>
+            </Box>
+          )}
+        </DialogContent>
+        
+        <DialogActions sx={{ padding: '20px 24px', backgroundColor: '#fafafa' }}>
+          <Button
+            onClick={handleCloseDetalles}
+            variant="contained"
+            sx={{
+              backgroundColor: '#b04e6f',
+              color: 'white',
+              borderRadius: '10px',
+              padding: '8px 24px',
+              '&:hover': {
+                backgroundColor: '#9c3d5a',
+              },
+            }}
+          >
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

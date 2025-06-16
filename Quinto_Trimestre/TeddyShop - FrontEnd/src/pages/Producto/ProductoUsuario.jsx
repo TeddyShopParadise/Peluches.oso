@@ -250,10 +250,10 @@ const ProductoUsuario = () => {
       💰 *Total:* ${precioFormateado}  
       
       🔹 *Datos del Pedido*  
-      👤 *Nombre del Comprador:* ${pedido.nombreComprador}  
-      📞 *Número del Comprador:* ${pedido.numeroComprador}  
-      👤 *Nombre del Agendador:* ${pedido.nombreAgendador}  
-      📞 *Número del Agendador:* ${pedido.numeroAgendador}  
+      👤 *Nombre del que paga:* ${pedido.nombreComprador}  
+      📞 *Número del que paga:* ${pedido.numeroComprador}  
+      👤 *Nombre del que recibe:* ${pedido.nombreAgendador}  
+      📞 *Número del que recibe:* ${pedido.numeroAgendador}  
       📍 *Localidad:* ${pedido.localidad}  
       🏠 *Dirección:* ${pedido.direccion}  
       🏘 *Barrio:* ${pedido.barrio}`;
@@ -275,10 +275,9 @@ const ProductoUsuario = () => {
           barrio: pedido.barrio || "Sin barrio",
           cliente: "671976d2269e33c817066681",
           facturas: [],
-          detallesPedido: [] // Inicializar como array vacío
+          detallesPedido: [] 
         };
     
-        console.log("Enviando pedido:", JSON.stringify(pedidoCompleto, null, 2));
     
         const response = await fetch(`${apiUrl}/pedido`, {
           method: 'POST',

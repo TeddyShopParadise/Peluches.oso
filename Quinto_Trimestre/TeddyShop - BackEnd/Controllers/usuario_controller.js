@@ -28,7 +28,6 @@ const crearUsuario = async (req, res) => {
     value.contraseña = await bcrypt.hash(value.contraseña, salt);
 
     try {
-        console.log("Datos recibidos:", req.body);
         const nuevoUsuario = await logic.crearUsuario(value);
         res.status(201).json(nuevoUsuario);
     } catch (err) {

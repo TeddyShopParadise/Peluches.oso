@@ -180,14 +180,14 @@ export default function CatalogoUsuario() {
     💵 *Metodo de pago seleccionado:* ${metodoPagoNombre}
     💰 *Total:* ${precioFormateado}  
     
-    🔹 *Datos del Pedido*  
-    👤 *Nombre del Comprador:* ${pedido.nombreComprador}  
-    📞 *Número del Comprador:* ${pedido.numeroComprador}  
-    👤 *Nombre del Agendador:* ${pedido.nombreAgendador}  
-    📞 *Número del Agendador:* ${pedido.numeroAgendador}  
-    📍 *Localidad:* ${pedido.localidad}  
-    🏠 *Dirección:* ${pedido.direccion}  
-    🏘 *Barrio:* ${pedido.barrio}`;
+     🔹 *Datos del Pedido*  
+      👤 *Nombre del que paga:* ${pedido.nombreComprador}  
+      📞 *Número del que paga:* ${pedido.numeroComprador}  
+      👤 *Nombre del que recibe:* ${pedido.nombreAgendador}  
+      📞 *Número del que recibe:* ${pedido.numeroAgendador}  
+      📍 *Localidad:* ${pedido.localidad}  
+      🏠 *Dirección:* ${pedido.direccion}  
+      🏘 *Barrio:* ${pedido.barrio}`;
   
     const mensajeCodificado = encodeURIComponent(mensaje.trim());
     const numeroWhatsApp = "573217292955";
@@ -232,7 +232,6 @@ export default function CatalogoUsuario() {
         idProducto: productoSeleccionado._id
       };
   
-      console.log("Enviando detallePedido:", detallePedido);
   
       const detalleResponse = await fetch(`${apiUrl}/detallesPedido`, {
         method: 'POST',
@@ -257,7 +256,6 @@ export default function CatalogoUsuario() {
         metodoPago: pedido.metodoPago,
       };
   
-      console.log("Enviando Factura:", factura);
       
       const facturaResponse = await fetch(`${apiUrl}/factura`, {
         method: 'POST',
@@ -281,7 +279,6 @@ export default function CatalogoUsuario() {
         idFactura: facturaData._id 
       };
   
-      console.log("Enviando Detalle Factura:", detalleFactura);
       
       const detalleFacturaResponse = await fetch(`${apiUrl}/detallesFactura`, {
         method: 'POST',
@@ -319,36 +316,34 @@ export default function CatalogoUsuario() {
       console.log('Factura actualizada con detalle');
   
       // Paso 6: Actualizar el pedido con el detalle y la factura
-const updatePedido = {
-nombreComprador: responseData.nombreComprador,
-numeroComprador: responseData.numeroComprador,
-nombreAgendador: responseData.nombreAgendador,
-numeroAgendador: responseData.numeroAgendador,
-localidad: responseData.localidad,
-direccion: responseData.direccion,
-barrio: responseData.barrio,
-detallesPedido: [detalleData._id],
-facturas: [facturaData._id],
-cliente: responseData.cliente
-};
+      const updatePedido = {
+      nombreComprador: responseData.nombreComprador,
+      numeroComprador: responseData.numeroComprador,
+      nombreAgendador: responseData.nombreAgendador,
+      numeroAgendador: responseData.numeroAgendador,
+      localidad: responseData.localidad,
+      direccion: responseData.direccion,
+      barrio: responseData.barrio,
+      detallesPedido: [detalleData._id],
+      facturas: [facturaData._id],
+      cliente: responseData.cliente
+      };
 
-console.log('Intentando actualizar el pedido con:', updatePedido);
 
-const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
-method: 'PUT',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(updatePedido)
-});
+      const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatePedido)
+      });
 
-const updateResponseText = await updateResponsePedido.text();
+      const updateResponseText = await updateResponsePedido.text();
 
-if (!updateResponsePedido.ok) {
-console.error('Error al actualizar pedido - status:', updateResponsePedido.status);
-console.error('Respuesta del servidor:', updateResponseText);
-throw new Error(`Error actualizando pedido: ${updateResponseText}`);
-}
+      if (!updateResponsePedido.ok) {
+      console.error('Error al actualizar pedido - status:', updateResponsePedido.status);
+      console.error('Respuesta del servidor:', updateResponseText);
+      throw new Error(`Error actualizando pedido: ${updateResponseText}`);
+      }
 
-console.log('Pedido actualizado con detalle y factura');
 
       setSnackbarMessage('Pedido realizado con éxito');
     } catch (error) {
@@ -854,9 +849,6 @@ console.log('Pedido actualizado con detalle y factura');
                       {snackbarMessage}
                     </Alert>
                   </Snackbar>
-  
-  
-
                     <Snackbar 
                       open={openSnackbar} 
                       autoHideDuration={6000} 

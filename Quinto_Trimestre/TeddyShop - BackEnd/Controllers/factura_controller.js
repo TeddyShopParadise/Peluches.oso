@@ -103,7 +103,6 @@ const generarFacturaDesdePedido = async (req, res) => {
       return res.status(404).json({ error: 'Pedido no encontrado' });
     }
 
-    console.log('🔍 Estado del pedido:', pedido.estado);
 
     if (pedido.facturas && pedido.facturas.length > 0) {
       const facturaId = pedido.facturas[0];
