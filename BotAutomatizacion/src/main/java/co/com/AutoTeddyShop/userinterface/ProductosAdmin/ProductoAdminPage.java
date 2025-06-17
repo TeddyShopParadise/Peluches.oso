@@ -38,7 +38,7 @@ public class ProductoAdminPage {
     public static final Target BTN_ELEGIRCATEGORIA = Target.the("Boton Seleccionar Categoria ´Electronica´").located(By.xpath("/html/body/div[3]/div[3]/ul/li"));
     public static final Target BTN_CATALOGO = Target.the("Boton Seleccionar Catalogo").located(By.xpath("/html/body/div[1]/div/div/div/div[2]/form/div[5]/div/div"));
     public static final Target BTN_ELEGIRCATALOGO = Target.the("Boton Seleccionar el Catalogo ´General´").located(By.xpath("/html/body/div[3]/div[3]/ul/li[2]"));
-    public static final Target BTN_LL = Target.the("Boton Seleccionar el Catalogo ´General´").located(By.xpath("/html/body/div[3]/div[1]"));
+   // public static final Target BTN_LL = Target.the("Boton Seleccionar el Catalogo ´General´").located(By.xpath("/html/body/div[3]/div[1]"));
 
     public static final Target SELECT_HISTORIAL_PRECIO = Target.the("Selector de historial de precio")
             .located(By.xpath("/html/body/div[1]/div/div/div/div[2]/form/div[6]/div/div"));
