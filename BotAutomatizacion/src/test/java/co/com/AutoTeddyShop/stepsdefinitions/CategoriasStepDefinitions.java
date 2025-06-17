@@ -1,7 +1,8 @@
 package co.com.AutoTeddyShop.stepsdefinitions;
 
 import co.com.AutoTeddyShop.models.DatosCategoria;
-import co.com.AutoTeddyShop.questions.ValidacionCategoria;
+import co.com.AutoTeddyShop.models.Utilidades.ValidacionesCategoria;
+import co.com.AutoTeddyShop.questions.ValidacionDetalleCategoria;
 import co.com.AutoTeddyShop.tasks.CategoriasAdmin.AbrirPaginaCategoriaAdmin;
 import co.com.AutoTeddyShop.tasks.CategoriasAdmin.NavegacionCategorias;
 import cucumber.api.java.es.Cuando;
@@ -21,11 +22,11 @@ public class CategoriasStepDefinitions {
 
     @Cuando("^el usuario registra una nueva Categoria con los siguientes datos:$")
     public void elUsuarioRegistraUnaNuevaCategoriaConLosSiguientesDatos(List<DatosCategoria> datosCategoria) {
-        theActorInTheSpotlight().attemptsTo(NavegacionCategorias.aute(datosCategoria));
+        theActorInTheSpotlight().attemptsTo(NavegacionCategorias.conLosDatos(datosCategoria));
     }
 
     @Entonces("^se debe verificar que la Categoria se haya creado correctamente$")
     public void seDebeVerificarQueLaCategoriaSeHayaCreadoCorrectamente() {
-        theActorInTheSpotlight().should(seeThat(ValidacionCategoria.validacionCategoria()));
+        theActorInTheSpotlight().should(seeThat(ValidacionDetalleCategoria.validacionDetalleCategoria()));
     }
 }

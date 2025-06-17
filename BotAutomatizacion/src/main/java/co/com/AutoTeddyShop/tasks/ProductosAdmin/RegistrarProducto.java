@@ -49,16 +49,14 @@ public class RegistrarProducto implements Task {
 
                 Click.on(BTN_CATEGORIA),
                 Click.on(BTN_ELEGIRCATEGORIA),
-                Click.on(BTN_LL),
                 unosSegundos(1),
                 Click.on(BTN_CATALOGO),
                 Click.on(BTN_ELEGIRCATALOGO),
-                Click.on(BTN_LL),
+
                 unosSegundos(1),
 
                 Click.on(SELECT_HISTORIAL_PRECIO),
                 Click.on(BTN_ELEGIRHISTORIAL),
-                Click.on(BTN_LL),
 
                 Click.on(BTN_GUARDAR_PRODUCTO),
                 unosSegundos(1)

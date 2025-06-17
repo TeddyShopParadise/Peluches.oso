@@ -1,5 +1,4 @@
 #language:es
-#author:Andres_Espinosa
 
 Característica: Visualización en la página de Categoria con el rol de administrador de TeddyShop
   Como Administrador de TeddyShop
