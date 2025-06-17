@@ -10,8 +10,7 @@ import net.serenitybdd.screenplay.actions.Scroll;
 
 import java.util.List;
 
-import static co.com.AutoTeddyShop.userinterface.Inventario.InteraccionInventarioProducto.BOTON_ADMINISTRARPRODUCTOS;
-import static co.com.AutoTeddyShop.userinterface.Inventario.InteraccionInventarioProducto.BOTON_CERRAR;
+import static co.com.AutoTeddyShop.userinterface.Inventario.InteraccionInventarioProducto.*;
 import static co.com.AutoTeddyShop.userinterface.ProductosAdmin.ProductoAdminPage.*;
 import static jxl.biff.FormatRecord.logger;
 
@@ -32,7 +31,8 @@ public class FiltrarProducto implements Task {
 
         actor.attemptsTo(
                 Click.on(BOTON_CERRAR),
-                Click.on(BOTON_ADMINISTRARPRODUCTOS),
+                Click.on(ABRIR_LISTA),
+                //Click.on(BOTON_ADMINISTRARPRODUCTOS),
                 Click.on(BOTON_PRODUCTOS),
                 Scroll.to(BUSCAR_PRODCUTO),
                 Click.on(BUSCAR_PRODCUTO),
@@ -47,7 +47,7 @@ public class FiltrarProducto implements Task {
                 String[] partes = texto.split("ID Producto:");
                 if (partes.length > 1) {
 
-                    String posibleId = partes[1].trim().split(" ")[0]; // toma la primera palabra después de ID:
+                    String posibleId = partes[1].trim().split(" ")[0];
                     return posibleId;
                 }
             }

@@ -54,7 +54,7 @@ public class ProductoAdminPage {
 
 
     //Validaciones
-    public static Target BOTON_PRODUCTOS = Target.the("Boton para ir a la pagina de productos").located(By.xpath("/html/body/div[3]/div[3]/ul/a[3]"));
+    public static Target BOTON_PRODUCTOS = Target.the("Boton para ir a la pagina de productos").located(By.xpath("/html/body/div[2]/div[3]/div/ul/div/div/div/div/li[3]"));
     public static Target BUSCAR_PRODCUTO = Target.the("Buscar el producto recien creado por ID").located(By.xpath("/html/body/div[1]/div/div/div/div[3]/div/div[1]/div/input"));
     public static Target BOTON_BUSCAR = Target.the("Boton para buscar el producto").located(By.xpath("//*[@id=\"root\"]/div/div/div/div[3]/div/div[2]/button[1]"));
     public static Target DESCRIPCION_PRODUCTO = Target.the("Descripcion del producto recien creado").located(By.xpath("//*[@id=\"root\"]/div/div/div/div[3]/div[2]/div/div[1]/p[2]"));

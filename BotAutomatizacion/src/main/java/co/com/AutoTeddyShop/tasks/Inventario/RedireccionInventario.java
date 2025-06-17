@@ -26,6 +26,7 @@ public class RedireccionInventario implements Task {
 
         actor.attemptsTo(
                 Click.on(BOTON_OK),
+                Click.on(ABRIR_LISTA),
                 Click.on(BOTON_ADMINISTRARPRODUCTOS),
                 Click.on(BOTON_INVENTARIO),
                 Scroll.to(CANTIDAD_INVENTARIO),
@@ -33,9 +34,6 @@ public class RedireccionInventario implements Task {
                 Click.on(SELECCIONAR_CANTIDAD),
                 Click.on(BOTON_DETALLES)
                 );
-
-                System.out.printf("Siguiente Clase Guardar ");
-
                 actor.attemptsTo(
                 GuardarID.guardar("id", ID_PRODUCTO)
         );
