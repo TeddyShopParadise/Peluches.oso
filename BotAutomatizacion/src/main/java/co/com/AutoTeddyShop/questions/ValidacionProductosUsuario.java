@@ -37,7 +37,7 @@ public class ValidacionProductosUsuario implements Question<Boolean> {
             String nombreComprador = Text.of(NOMBRE_PEDIDO).viewedBy(actor).asString();
             String mensajeExito = Text.of(MENSAJE_ESTADO).viewedBy(actor).asString();
 
-            return filtroComprador.equals(nombreComprador) && mensajeExito.equals("Estado actualizado con éxito");
+            return filtroComprador.equals(nombreComprador) && mensajeExito.equals("Estado actualizado con éxito\n");
         } catch (Exception e) {
             logger.info("No se encontró el texto");
             return false;
