@@ -12,7 +12,9 @@ import net.serenitybdd.screenplay.questions.Text;
 
 import static co.com.AutoTeddyShop.userinterface.Inventario.InteraccionInventarioProducto.ESTILO_PRODUCTO;
 import static co.com.AutoTeddyShop.userinterface.Inventario.InteraccionInventarioProducto.MENSAJE_EXITO_INVENTARIO;
+import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.isVisible;
 
+import net.serenitybdd.screenplay.waits.WaitUntil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +43,8 @@ public class ValidacionInventario implements Question<Boolean> {
                     FiltrarProducto.filtrar(datosInventario)
             );
 
-            String estiloProcucto = Text.of(ESTILO_PRODUCTO).viewedBy(actor).asString();
-            return texto.equals("Éxito") && estilo.equals(estiloProcucto);
+            String estiloProducto = Text.of(ESTILO_PRODUCTO).viewedBy(actor).asString().replaceFirst("Descripción: ", "").trim();
+            return texto.equals("Éxito") && estilo.equals(estiloProducto);
         } catch (Exception e) {
             logger.info("No se encontró el texto en ValidacionInventario");
             return false;
