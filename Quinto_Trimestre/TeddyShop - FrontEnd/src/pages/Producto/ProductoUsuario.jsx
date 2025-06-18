@@ -20,6 +20,7 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Paper
 } from '@mui/material';
 
 import { getApiUrl } from '../../utils/apiConfig';
@@ -194,7 +195,6 @@ const ProductoUsuario = () => {
     setPedido({ ...pedido, [e.target.name]: e.target.value });
   };
 
-//Contador de clicks para la sección de los mas populares
   const incrementClickCount = async (productId) => {
     try {
       const response = await fetch(`${PRODUCTOS_API_URL}/${productId}/clics`, {
@@ -232,33 +232,31 @@ const ProductoUsuario = () => {
         };
       })();
     
-      // Obtener el nombre del método de pago
       const metodoPagoNombre = metodosPago.find(
         (metodo) => metodo._id === pedido.metodoPago
       )?.nombreMetodoPago || 'No seleccionado';
     
       // Crear mensaje de WhatsApp
-      const mensaje = `¡Hola! Me gustaría realizar el siguiente pedido:  
-    
-      📌 *Imagen del Producto:*  
-      ${productoSeleccionado?.imagen || 'No disponible'}  
-      
-      🆔 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}  
-      📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}  
-      📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}  
-      💵 *Metodo de pago seleccionado:* ${metodoPagoNombre}
-      💰 *Total:* ${precioFormateado}  
-      
-      🔹 *Datos del Pedido*  
-      👤 *Nombre del que paga:* ${pedido.nombreComprador}  
-      📞 *Número del que paga:* ${pedido.numeroComprador}  
-      👤 *Nombre del que recibe:* ${pedido.nombreAgendador}  
-      📞 *Número del que recibe:* ${pedido.numeroAgendador}  
-      📍 *Localidad:* ${pedido.localidad}  
-      🏠 *Dirección:* ${pedido.direccion}  
-      🏘 *Barrio:* ${pedido.barrio}`;
-    
-      const mensajeCodificado = encodeURIComponent(mensaje.trim());
+
+      const mensaje = [
+        "¡Hola! Me gustaría realizar el siguiente pedido:\n",
+        `📍 *Imagen del Producto:* ${productoSeleccionado?.imagen || 'No disponible'}`,
+        `🔢 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}`,
+        `📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}`,
+        `📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}`,
+        `💳 *Método de pago seleccionado:* ${metodoPagoNombre || 'No seleccionado'}`,
+        `💰 *Total:* ${precioFormateado || 'No disponible'}`,
+        "\n📋 *Datos del Pedido*",
+        `👤 *Nombre del que paga:* ${pedido.nombreComprador || 'No proporcionado'}`,
+        `📱 *Número del que paga:* ${pedido.numeroComprador || 'No proporcionado'}`,
+        `👥 *Nombre del que recibe:* ${pedido.nombreAgendador || 'No proporcionado'}`,
+        `📞 *Número del que recibe:* ${pedido.numeroAgendador || 'No proporcionado'}`,
+        `🌍 *Localidad:* ${pedido.localidad || 'No proporcionado'}`,
+        `🏠 *Dirección:* ${pedido.direccion || 'No proporcionado'}`,
+        `🏘️ *Barrio:* ${pedido.barrio || 'No proporcionado'}`,
+      ].join('\n');
+
+      const mensajeCodificado = encodeURIComponent(mensaje);
       const numeroWhatsApp = "573217292955";
       const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
       window.open(urlWhatsApp, "_blank");
@@ -344,37 +342,37 @@ const ProductoUsuario = () => {
         
         // Paso 5: Crear la factura con el detalle directamente
         let facturaData;
-try {
-  const facturaExistenteResponse = await fetch(`${apiUrl}/factura/pedido/${responseData._id}`);
-  if (facturaExistenteResponse.ok) {
-    // Si ya existe una factura, usamos esa
-    facturaData = await facturaExistenteResponse.json();
-    console.log('Factura existente encontrada:', facturaData);
-  } else {
-    // Si no existe, creamos una nueva
-    const factura = {
-      fechaCreacionFactura: new Date().toISOString(),
-      horaCreacionFactura: new Date().toLocaleTimeString('es-MX'),
+      try {
+        const facturaExistenteResponse = await fetch(`${apiUrl}/factura/pedido/${responseData._id}`);
+        if (facturaExistenteResponse.ok) {
+          // Si ya existe una factura, usamos esa
+          facturaData = await facturaExistenteResponse.json();
+          console.log('Factura existente encontrada:', facturaData);
+        } else {
+          // Si no existe, creamos una nueva
+          const factura = {
+            fechaCreacionFactura: new Date().toISOString(),
+            horaCreacionFactura: new Date().toLocaleTimeString('es-MX'),
 
-      pedido: responseData._id,
-      metodoPago: pedido.metodoPago,
-      detallesFactura: [detalleFacturaData._id]
-    };
-    
-    const facturaResponse = await fetch(`${apiUrl}/factura`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(factura)
-    });
-    facturaData = await facturaResponse.json();
-    if (!facturaResponse.ok) {
-      throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
-    }
-  }
-} catch (error) {
-  console.error('Error con la factura:', error);
-  throw error;
-}
+            pedido: responseData._id,
+            metodoPago: pedido.metodoPago,
+            detallesFactura: [detalleFacturaData._id]
+          };
+                  
+            const facturaResponse = await fetch(`${apiUrl}/factura`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(factura)
+            });
+            facturaData = await facturaResponse.json();
+            if (!facturaResponse.ok) {
+              throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
+            }
+          }
+        } catch (error) {
+          console.error('Error con la factura:', error);
+          throw error;
+        }
         
         // Paso 6: Actualizar el pedido con el detalle y la factura
         const updatePedido = {
@@ -417,26 +415,88 @@ try {
       setCurrentPage(value);
     };
 
-  return (
-    <Box className="BoxInicial">      
-      <Box className="Box" 
-        sx={{ 
-          width: "90%", 
-          maxWidth: "100%", 
-          padding: { xs: "20px", md: "50px" }, 
-          borderRadius: "30px", 
-        }}>
-        <Container>
-          <Typography variant="h4" align="center" gutterBottom>
-            PRODUCTOS
+return (
+  <Box className="BoxInicial">      
+    <Box 
+      className="Box" 
+      sx={{ 
+        width: "90%", 
+        maxWidth: "100%", 
+        padding: { xs: "20px", md: "50px" }, 
+        borderRadius: "30px", 
+        margin: '0 auto',
+        backgroundColor: '#fffafc',
+        boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+        border: '2px solid #f8c8dc',
+      }}
+    >
+      <Container>
+        <Box
+          sx={{
+            textAlign: 'center',
+            marginBottom: '30px',
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: '-10px',
+              left: '25%',
+              width: '50%',
+              height: '4px',
+              background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+              borderRadius: '10px',
+            },
+          }}
+        >
+          <Typography 
+            variant="h4" 
+            align="center" 
+            gutterBottom
+            sx={{
+              fontWeight: 'bold',
+              color: '#b04e6f',
+              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+            }}
+          >
+            ✨ PRODUCTOS ✨
           </Typography>
-          <FormControl style={{ width: "260px", height:"40px" }} sx={{ marginBottom: 5 }}>
-            <InputLabel id="categoriaFiltro-label">Filtrar por Categoría</InputLabel>
+        </Box>
+
+        <Paper
+          elevation={2}
+          sx={{
+            padding: '20px',
+            borderRadius: '20px',
+            marginBottom: '30px',
+            backgroundColor: '#fff0f5',
+            border: '1px solid #f8c8dc',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <FormControl 
+            sx={{ 
+              width: "280px", 
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '15px',
+                backgroundColor: 'white',
+                '&.Mui-focused fieldset': {
+                  borderColor: '#f48fb1',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                '&.Mui-focused': {
+                  color: '#f48fb1',
+                },
+              },
+            }}
+          >
+            <InputLabel id="categoriaFiltro-label">🔍 Filtrar por Categoría</InputLabel>
             <Select
               labelId="categoriaFiltro-label"
               value={categoriaFiltro}
               onChange={handleCategoriaFiltroChange}
-              label="Filtrar por Categoría"
+              label="🔍 Filtrar por Categoría"
             >
               <MenuItem value="todos">Todas las categorías</MenuItem>
               {categorias.map((categoria) => (
@@ -446,130 +506,360 @@ try {
               ))}
             </Select>
           </FormControl>
+        </Paper>
 
-          <Grid container spacing={3}>
-            {currentProductos.map((producto) => (
-              <Grid item xs={12} sm={6} md={3} key={producto._id}>
-                <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' }, borderRadius: 3, boxShadow: 3 }}>
-                  <CardMedia
-                    component="img"
-                    height="330"
-                    width="500"
-                    image={producto.imagen || 'default-image-url.jpg'}
-                    alt={producto.estiloProducto}
-                    sx={{ objectFit: 'cover', backgroundColor: '#f0f0f0', borderRadius: '12px 12px 0 0' }}
-                  />
-                  <CardContent sx={{ textAlign: 'left' }}>
-                    <Typography variant="body1" color="text.secondary">
-                      <strong>Precio:</strong>
-                      {producto.historialPrecios && producto.historialPrecios.length > 0 ? (
-                        producto.historialPrecios.map((precioId, index) => {
-                          const precio = historialPrecios.find(p => p._id === precioId);
-                          return (
-                            <div key={index}>
-                              {precio ? (
-                                new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio.precio)
-                              ) : (
-                                <span>Precio no disponible</span>
-                              )}
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <div>No hay precios históricos disponibles.</div>
-                      )}
-                    </Typography>
-
-                    <Typography variant="body1" color="text.secondary">
-                      <strong>Tamaño:</strong> {producto.tamañoProducto}
-                    </Typography>
-                    <Box mt={2} display="flex" justifyContent="space-between">
-                      <Button variant="outlined" color="primary" onClick={() => handleDetalleClick(producto)}>
-                        Ver Detalles
-                      </Button>
-                      <Button variant="contained" color="secondary" onClick={() => handleCarritoClick(producto)}>
-                        Comprar
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-
-          <Box mt={4} display="flex" justifyContent="center">
-            <Pagination
-              count={Math.ceil(filteredProductos.length / productosPerPage)}
-              page={currentPage}
-              onChange={handlePageChange}
-              color="primary"
-            />
-          </Box>
-
-          <Dialog open={openDetalleDialog} onClose={handleCloseDetalleDialog} maxWidth="sm" fullWidth={false}>
-            <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 2, textAlign: "center", position: "relative", maxWidth: "400px", margin: "auto" }}>
-              {productoSeleccionado && (
-                <>
-                  <CardMedia
-                    component="img"
-                    width="auto"
-                    height="290"
-                    image={productoSeleccionado.imagen || 'default-image-url.jpg'}
-                    alt={productoSeleccionado.estiloProducto}
+        <Grid container spacing={3}>
+          {currentProductos.map((producto) => (
+            <Grid item xs={12} sm={6} md={3} key={producto._id}>
+              <Card sx={{ 
+                transition: 'all 0.3s ease', 
+                '&:hover': { 
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 12px 28px rgba(248, 200, 220, 0.4)',
+                }, 
+                borderRadius: '20px', 
+                boxShadow: '0 8px 16px rgba(248, 200, 220, 0.2)',
+                border: '1px solid #f8c8dc',
+                backgroundColor: '#fff5f7',
+              }}>
+                <CardMedia
+                  component="img"
+                  height="330"
+                  image={producto.imagen || 'default-image-url.jpg'}
+                  alt={producto.estiloProducto}
+                  sx={{ 
+                    objectFit: 'cover', 
+                    backgroundColor: '#f0f0f0', 
+                    borderRadius: '20px 20px 0 0',
+                  }}
+                />
+                <CardContent sx={{ 
+                  textAlign: 'left',
+                  padding: '20px',
+                }}>
+                  <Typography 
+                    variant="body1" 
+                    color="text.secondary"
                     sx={{
-                      borderRadius: "10px",
-                      width: "auto",
-                      objectFit: "contain",
-                      boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-                      marginBottom: 2,
+                      marginBottom: '15px',
+                      lineHeight: 1.6,
                     }}
-                  />
-                 
-                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1, width: "90%", alignItems: "flex-start" }}>
-           <Typography variant="body2" sx={{ textAlign: "left" }} gutterBottom><strong>Descripción:</strong> {productoSeleccionado.estiloProducto}</Typography>
-           <Typography variant="body1"><strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}</Typography>
-           <Typography variant="body1"><strong>Disponibilidad:</strong> {productoSeleccionado.disponibilidadProducto}</Typography>
-
-                </Box>
-              
-                </>
-              )}
-              <Button onClick={handleCloseDetalleDialog} variant="contained" color="secondary" sx={{ mt: 2, borderRadius: "20px", px: 3, py: 1, boxShadow: "0 5px 15px rgba(0, 0, 0, 0.3)" }}>
-                Cerrar
-              </Button>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={openCarritoDialog} onClose={handleCloseCarritoDialog} maxWidth="sm" fullWidth={false}>
-            <DialogTitle>Detalles del pedido</DialogTitle>
-            
-            <DialogContent>
-              {productoSeleccionado && (
-
-                
-                <>
-
-                  
-                  <Typography variant="body1" color="text.secondary">
-                      <strong>Precio:</strong>
-                      {productoSeleccionado.historialPrecios && productoSeleccionado.historialPrecios.length > 0 ? (
-                        productoSeleccionado.historialPrecios.map((precioId, index) => {
-                          const precio = historialPrecios.find(p => p._id === precioId);
-                          return (
-                            <div key={index}> 
-                              {precio ? (
-                                new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio.precio)
-                              ) : (
-                                <span>Precio no disponible</span>
-                              )}
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <div>No hay precios históricos disponibles.</div>
-                      )}
+                  >
+                    <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                      💰 Precio:
+                    </Box>
+                    {producto.historialPrecios && producto.historialPrecios.length > 0 ? (
+                      producto.historialPrecios.map((precioId, index) => {
+                        const precio = historialPrecios.find(p => p._id === precioId);
+                        return precio ? (
+                          <Box key={index} sx={{ fontSize: '16px', fontWeight: 'bold', color: '#ec7096' }}>
+                            {new Intl.NumberFormat('es-CO', { 
+                              style: 'currency', 
+                              currency: 'COP' 
+                            }).format(precio.precio)}
+                          </Box>
+                        ) : (
+                          <Box key={index} sx={{ color: '#666' }}>Precio no disponible</Box>
+                        );
+                      })
+                    ) : (
+                      <Box sx={{ color: '#666' }}>No hay precios históricos disponibles.</Box>
+                    )}
+                    <Box sx={{ marginTop: '8px' }}>
+                      <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                        📏 Tamaño:
+                      </Box> {producto.tamañoProducto}
+                    </Box>
                   </Typography>
-                  <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                  
+                  <Box mt={2} display="flex" justifyContent="space-between" gap={1}>
+                    <Button 
+                      variant="outlined" 
+                      onClick={() => handleDetalleClick(producto)}
+                      sx={{
+                        borderRadius: '12px',
+                        borderColor: '#f48fb1',
+                        color: '#f48fb1',
+                        '&:hover': {
+                          borderColor: '#ec7096',
+                          backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                          transform: 'translateY(-1px)',
+                        },
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        padding: '8px 16px',
+                      }}
+                    >
+                      Ver Detalles
+                    </Button>
+                    <Button 
+                      variant="contained" 
+                      onClick={() => handleCarritoClick(producto)}
+                      sx={{
+                        borderRadius: '12px',
+                        backgroundColor: '#f48fb1',
+                        '&:hover': {
+                          backgroundColor: '#ec7096',
+                          transform: 'translateY(-1px)',
+                        },
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                        fontSize: '12px',
+                        padding: '8px 16px',
+                      }}
+                    >
+                      🛒 Comprar
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+
+        <Box mt={4} display="flex" justifyContent="center">
+          <Pagination
+            count={Math.ceil(filteredProductos.length / productosPerPage)}
+            page={currentPage}
+            onChange={handlePageChange}
+            sx={{
+              '& .MuiPaginationItem-root': {
+                color: '#b04e6f',
+                borderRadius: '12px',
+                '&.Mui-selected': {
+                  backgroundColor: '#f48fb1',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#ec7096',
+                  },
+                },
+                '&:hover': {
+                  backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                },
+              },
+            }}
+          />
+        </Box>
+
+        <Dialog 
+          open={openDetalleDialog} 
+          onClose={handleCloseDetalleDialog} 
+          maxWidth="sm" 
+          fullWidth={false}
+          PaperProps={{
+            sx: {
+              borderRadius: '20px',
+              border: '2px solid #f8c8dc',
+              backgroundColor: '#fffafc',
+            }
+          }}
+        >
+          <DialogContent sx={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center", 
+            padding: 3, 
+            textAlign: "center", 
+            position: "relative", 
+            maxWidth: "400px", 
+            margin: "auto" 
+          }}>
+            {productoSeleccionado && (
+              <>
+                <CardMedia
+                  component="img"
+                  width="auto"
+                  height="290"
+                  image={productoSeleccionado.imagen || 'default-image-url.jpg'}
+                  alt={productoSeleccionado.estiloProducto}
+                  sx={{
+                    borderRadius: "15px",
+                    width: "auto",
+                    objectFit: "contain",
+                    boxShadow: "0 8px 20px rgba(248, 200, 220, 0.4)",
+                    marginBottom: 3,
+                    border: '1px solid #f8c8dc',
+                  }}
+                />
+               
+                <Paper
+                  sx={{
+                    padding: '20px',
+                    borderRadius: '15px',
+                    backgroundColor: '#fff0f5',
+                    border: '1px solid #f8c8dc',
+                    width: '100%',
+                  }}
+                >
+                  <Box sx={{ 
+                    display: "flex", 
+                    flexDirection: "column", 
+                    gap: 2, 
+                    alignItems: "flex-start" 
+                  }}>
+                    <Typography variant="body1" sx={{ 
+                      textAlign: "left",
+                      color: '#666',
+                      lineHeight: 1.6,
+                    }}>
+                      <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                        📝 Descripción del Producto:
+                      </Box> {productoSeleccionado.estiloProducto}
+                    </Typography>
+                    <Typography variant="body1" sx={{ 
+                      textAlign: "left",
+                      color: '#666',
+                    }}>
+                      <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                        📏 Tamaño:
+                      </Box> {productoSeleccionado.tamañoProducto}
+                    </Typography>
+                    <Typography variant="body1" sx={{ 
+                      textAlign: "left",
+                      color: '#666',
+                    }}>
+                      <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                        ✅ Disponibilidad:
+                      </Box> {productoSeleccionado.disponibilidadProducto}
+                    </Typography>
+                  </Box>
+                </Paper>
+              </>
+            )}
+            <Button 
+              onClick={handleCloseDetalleDialog} 
+              variant="contained" 
+              sx={{ 
+                mt: 3, 
+                borderRadius: "15px", 
+                px: 4, 
+                py: 1.5, 
+                backgroundColor: '#f48fb1',
+                '&:hover': {
+                  backgroundColor: '#ec7096',
+                },
+                boxShadow: "0 4px 12px rgba(244, 143, 177, 0.3)",
+                textTransform: 'none',
+                fontWeight: 'bold',
+              }}
+            >
+              Cerrar
+            </Button>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog 
+          open={openCarritoDialog} 
+          onClose={handleCloseCarritoDialog} 
+          maxWidth="sm" 
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: '20px',
+              border: '2px solid #f8c8dc',
+              backgroundColor: '#fffafc',
+            }
+          }}
+        >
+          <Box
+            sx={{
+              padding: '20px 30px 10px 30px',
+              backgroundColor: '#fff0f5',
+              borderBottom: '1px solid #f8c8dc',
+            }}
+          >
+            <Typography 
+              variant="h5"
+              sx={{
+                fontWeight: 'bold',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                textAlign: 'center',
+              }}
+            >
+              🛒 Detalles del Pedido
+            </Typography>
+          </Box>
+          
+          <DialogContent sx={{ padding: '30px' }}>
+            {productoSeleccionado && (
+              <>
+                <Paper
+                  sx={{
+                    padding: '20px',
+                    borderRadius: '15px',
+                    backgroundColor: '#fff0f5',
+                    border: '1px solid #f8c8dc',
+                    marginBottom: '25px',
+                  }}
+                >
+                  <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                    <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                      🧸 Producto:
+                    </Box> {productoSeleccionado.estiloProducto}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                    <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                      📏 Tamaño:
+                    </Box> {productoSeleccionado.tamañoProducto}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                    <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                      💰 Precio:
+                    </Box>
+                    {productoSeleccionado.historialPrecios && productoSeleccionado.historialPrecios.length > 0 ? (
+                      productoSeleccionado.historialPrecios.map((precioId, index) => {
+                        const precio = historialPrecios.find(p => p._id === precioId);
+                        return precio ? (
+                          <Box component="span" key={index} sx={{ fontWeight: 'bold', color: '#ec7096', marginLeft: '8px' }}>
+                            {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio.precio)}
+                          </Box>
+                        ) : (
+                          <Box component="span" key={index} sx={{ color: '#666', marginLeft: '8px' }}>
+                            Precio no disponible
+                          </Box>
+                        );
+                      })
+                    ) : (
+                      <Box component="span" sx={{ color: '#666', marginLeft: '8px' }}>
+                        No hay precios históricos disponibles.
+                      </Box>
+                    )}
+                  </Typography>
+                </Paper>
+
+                <Box sx={{ mb: 3 }}>
+                  <Typography 
+                    variant="h6" 
+                    gutterBottom
+                    sx={{
+                      color: '#b04e6f',
+                      fontWeight: 'bold',
+                      fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    💳 Información de Pago
+                  </Typography>
+                  <FormControl 
+                    fullWidth 
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  >
                     <InputLabel id="metodo-pago-label">Método de Pago</InputLabel>
                     <Select
                       labelId="metodo-pago-label"
@@ -591,7 +881,20 @@ try {
                     name="nombreComprador"
                     value={pedido.nombreComprador}
                     onChange={handleInputChange}
-                    sx={{ marginBottom: 2 }}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
                   />
                   <TextField
                     label="Número de quién paga"
@@ -599,15 +902,56 @@ try {
                     name="numeroComprador"
                     value={pedido.numeroComprador}
                     onChange={handleInputChange}
-                    sx={{ marginBottom: 2 }}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
                   />
+                </Box>
+
+                <Box sx={{ mb: 3 }}>
+                  <Typography 
+                    variant="h6" 
+                    gutterBottom
+                    sx={{
+                      color: '#b04e6f',
+                      fontWeight: 'bold',
+                      fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    👤 Información del Receptor
+                  </Typography>
                   <TextField
                     label="Nombre del que recibe"
                     fullWidth
                     name="nombreAgendador"
                     value={pedido.nombreAgendador}
                     onChange={handleInputChange}
-                    sx={{ marginBottom: 2 }}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
                   />
                   <TextField
                     label="Número del que recibe"
@@ -615,23 +959,77 @@ try {
                     name="numeroAgendador"
                     value={pedido.numeroAgendador}
                     onChange={handleInputChange}
-                    sx={{ marginBottom: 2 }}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
                   />
-                    <TextField
+                </Box>
+
+                <Box sx={{ mb: 2 }}>
+                  <Typography 
+                    variant="h6" 
+                    gutterBottom
+                    sx={{
+                      color: '#b04e6f',
+                      fontWeight: 'bold',
+                      fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    🚚 Datos de Entrega
+                  </Typography>
+                  <TextField
                     label="Dirección"
                     fullWidth
                     name="direccion"
                     value={pedido.direccion}
                     onChange={handleInputChange}
-                    sx={{ marginBottom: 2 }}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
                   />
-                   <TextField
+                  <TextField
                     label="Barrio"
                     fullWidth
                     name="barrio"
                     value={pedido.barrio}
                     onChange={handleInputChange}
-                    sx={{ marginBottom: 2 }}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
                   />
                   <TextField
                     label="Localidad"
@@ -639,27 +1037,104 @@ try {
                     name="localidad"
                     value={pedido.localidad}
                     onChange={handleInputChange}
-                    sx={{ marginBottom: 2 }}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
                   />
-                </>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleSubmitPedido} variant="contained" color="secondary">Enviar Pedido</Button>
-              <Button onClick={handleCloseCarritoDialog} variant="outlined">Cancelar</Button>
-            </DialogActions>
-          </Dialog>
+                </Box>
+              </>
+            )}
+          </DialogContent>
+          <Box
+            sx={{
+              padding: '20px 30px 30px 30px',
+              backgroundColor: '#fff0f5',
+              borderTop: '1px solid #f8c8dc',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 2,
+            }}
+          >
+            <Button 
+              onClick={handleCloseCarritoDialog} 
+              variant="outlined" 
+              sx={{ 
+                borderRadius: '15px',
+                borderColor: '#f48fb1',
+                color: '#f48fb1',
+                '&:hover': {
+                  borderColor: '#ec7096',
+                  backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                },
+                textTransform: 'none',
+                fontWeight: 'bold',
+                padding: '10px 25px',
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleSubmitPedido} 
+              variant="contained" 
+              sx={{
+                borderRadius: '15px',
+                backgroundColor: '#f48fb1',
+                '&:hover': {
+                  backgroundColor: '#ec7096',
+                  transform: 'translateY(-1px)',
+                },
+                textTransform: 'none',
+                fontWeight: 'bold',
+                boxShadow: '0 4px 12px rgba(244, 143, 177, 0.3)',
+                padding: '10px 25px',
+              }}
+            >
+              Enviar Pedido
+            </Button>
+          </Box>
+        </Dialog>
 
-          {/* Snackbar */}
-          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
-            <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
-              {snackbarMessage}
-            </Alert>
-          </Snackbar>
-        </Container>
-      </Box>
+        <Snackbar 
+          open={openSnackbar} 
+          autoHideDuration={6000} 
+          onClose={() => setOpenSnackbar(false)}
+        >
+          <Alert 
+            onClose={() => setOpenSnackbar(false)} 
+            severity={snackbarMessage.includes('Error') ? 'error' : 'success'} 
+            sx={{ 
+              width: '100%',
+              borderRadius: '12px',
+              '&.MuiAlert-standardSuccess': {
+                backgroundColor: '#f0f9ff',
+                color: '#065f46',
+                border: '1px solid #34d399',
+              },
+              '&.MuiAlert-standardError': {
+                backgroundColor: '#fef2f2',
+                color: '#991b1b',
+                border: '1px solid #f87171',
+              },
+            }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Container>
     </Box>
-  );
+  </Box>
+);
 };
 
 export default ProductoUsuario;
