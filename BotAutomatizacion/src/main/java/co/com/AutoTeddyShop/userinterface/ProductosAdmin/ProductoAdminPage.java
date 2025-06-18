@@ -59,5 +59,9 @@ public class ProductoAdminPage {
     public static Target BOTON_BUSCAR = Target.the("Boton para buscar el producto").located(By.xpath("//*[@id=\"root\"]/div/div/div/div[3]/div/div[2]/button[1]"));
     public static Target DESCRIPCION_PRODUCTO = Target.the("Descripcion del producto recien creado").located(By.xpath("//*[@id=\"root\"]/div/div/div/div[3]/div[2]/div/div[1]/p[2]"));
 
+    //Eliminar Producto
+    public static Target BOTON_ELIMINAR = Target.the("Boton para eliminar el producto").located(By.xpath("/html/body/div[1]/div/div/div/div[3]/div[2]/div/div[2]/button[2]"));
+    public static Target BOTON_CONFIRMARELIMINACION = Target.the("Boton para confirmar la eliminacion").located(By.xpath("/html/body/div[3]/div/div[6]/button[3]"));
+
 }
 
