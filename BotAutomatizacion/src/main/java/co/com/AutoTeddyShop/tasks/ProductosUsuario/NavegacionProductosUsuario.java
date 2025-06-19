@@ -63,13 +63,15 @@ public class NavegacionProductosUsuario implements Task {
                 Click.on(INPUT_LOCALIDAD),
                 Enter.theValue(datosCompra.get(0).getLocalidad()).into(INPUT_LOCALIDAD),
                 Click.on(BTN_ENVIARPEDIDO),
-                unosSegundos(4),
+                unosSegundos(7),
                 Click.on(BTN_LISTADESPLEGABLE),
                 Click.on(BTN_MENUPEDIDO),
                 Click.on(BTN_PEDIDO),
                 Click.on(BTN_BUSCAR),
                 Enter.theValue(Comprador).into(BTN_BUSCAR),
+                unosSegundos(3),
                 Click.on(LISTA_ESTADO),
+                unosSegundos(3),
                 Click.on(ESTADO)
                 );
         actor.remember(SessionVariables.NombrePedido.toString(), Comprador);
