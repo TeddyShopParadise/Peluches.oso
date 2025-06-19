@@ -75,7 +75,7 @@ const Pedido = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [facturaDialogOpen, setFacturaDialogOpen] = useState(false);
   const [facturaGenerada, setFacturaGenerada] = useState(null);
-  const [compania, setCompania] = useState([]);
+  const [compania, setCompania] = useState(null);  
   const [detalleSeleccionado, setDetalleSeleccionado] = useState(null);
   const [openDevolucionDialog, setOpenDevolucionDialog] = useState(false);
   const [motivoDevolucion, setMotivoDevolucion] = useState('');
@@ -87,6 +87,7 @@ const Pedido = () => {
   useEffect(() => {
     fetchPedidos();
     fetchDetalles();
+    fetchCompanias();
   }, []);
 
   const fetchPedidos = async () => {
@@ -114,6 +115,17 @@ const Pedido = () => {
     }
   };
 
+ const fetchCompanias = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/Compania`);
+    if (!response.ok) throw new Error('Error al obtener compañías');
+    const data = await response.json();
+    setCompania(data.length > 0 ? data[0] : null); // Toma la primera compañía
+  } catch (error) {
+    console.error(error);
+    setCompania(null);
+  }
+};
 
   const actualizarPedido = async () => {
   if (!pedidoEdicion) return;
@@ -394,18 +406,53 @@ return (
             </Box>
           </Paper>
 
-          <Paper elevation={2} sx={{ borderRadius: '18px', padding: '20px', width: '220px', backgroundColor: '#f0f8ff', border: '1px solid #bbdefb', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-5px)' }, '&::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #bbdefb 0%, #90caf9 50%, #bbdefb 100%)' } }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Box>
-                <Typography variant="body2" sx={{ color: '#1976d2', fontWeight: 'bold' }}>Realizados</Typography>
-                <Typography variant="h4" sx={{ color: '#1976d2', fontWeight: 'bold', mt: 1 }}>{sortedPedidos.filter(p => p.estado === 'realizado').length}</Typography>
-              </Box>
-              <Box sx={{ backgroundColor: 'rgba(25, 118, 210, 0.1)', borderRadius: '12px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <CheckCircle sx={{ color: '#1976d2', fontSize: '28px' }} />
-              </Box>
+          <Paper
+          elevation={2}
+          sx={{
+            borderRadius: '18px',
+            padding: '20px',
+            width: '220px',
+            backgroundColor: '#e6f4ea',
+            border: '1px solid #a5d6a7',
+            position: 'relative',
+            overflow: 'hidden',
+            transition: 'transform 0.3s ease',
+            '&:hover': { transform: 'translateY(-5px)' },
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '4px',
+              background: 'linear-gradient(90deg, #c8e6c9, #81c784, #c8e6c9)',
+            },
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box>
+              <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                Realizados
+              </Typography>
+              <Typography variant="h4" sx={{ color: '#2e7d32', fontWeight: 'bold', mt: 1 }}>
+                {sortedPedidos.filter((p) => p.estado === 'realizado').length}
+              </Typography>
             </Box>
-          </Paper>
-
+            <Box
+              sx={{
+                backgroundColor: 'rgba(76, 175, 80, 0.15)',
+                borderRadius: '12px',
+                width: '48px',
+                height: '48px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <CheckCircle sx={{ color: '#4caf50', fontSize: '28px' }} />
+            </Box>
+          </Box>
+        </Paper>
           <Paper elevation={2} sx={{ borderRadius: '18px', padding: '20px', width: '220px', backgroundColor: '#fffde7', border: '1px solid #fff59d', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-5px)' }, '&::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #fff59d 0%, #ffee58 50%, #fff59d 100%)' } }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Box>
@@ -466,30 +513,107 @@ return (
                 {sortedPedidos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((pedido) => (
                   <TableRow key={pedido._id} hover>
                     <TableCell>{pedido.nombreComprador}</TableCell>
-                    <TableCell>{pedido.tamañoOso}</TableCell>
                     <TableCell>
-                      <FormControl size="small" sx={{ minWidth: 120 }}>
-                        <Select
-                          value={pedido.estado}
-                          onChange={(e) => handleEstadoChange(pedido._id, e.target.value)}
-                          sx={{ borderRadius: '8px', backgroundColor: pedido.estado === 'realizado' ? '#e8f5e8' : pedido.estado === 'en_proceso' ? '#fff3cd' : pedido.estado === 'cancelado' ? '#f8d7da' : '#e2e3e5', '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
-                        >
-                          {[,'en_proceso','realizado', 'cancelado'].map((est) => (
-                            <MenuItem key={est} value={est}>
-                              <Chip label={est.charAt(0).toUpperCase()+est.slice(1).replace('_',' ')} size="small" sx={{ backgroundColor: est==='cancelado'? '#e2e3e5': est==='en_proceso'? '#fff3cd': est==='realizado'? '#d1edff':'#f8d7da', color: est==='cancelado'? '#6c757d': est==='en_proceso'? '#856404': est==='realizado'? '#0c5460':'#721c24', fontWeight: 'bold' }} />
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
+                      {
+                        (detalles.find(d => d.idPedido?._id === pedido._id))?.idProducto?.tamañoProducto || 'Producto eliminado'
+                      }
+                    </TableCell>                    <TableCell>
+                     <FormControl size="small" sx={{ minWidth: 120 }}>
+                    <Select
+                      value={pedido.estado}
+                      onChange={(e) => handleEstadoChange(pedido._id, e.target.value)}
+                      displayEmpty
+                      sx={{
+                        borderRadius: '8px',
+                        '& .MuiSelect-select': {
+                          backgroundColor: 
+                            pedido.estado === 'realizado' ? '#d4edda' :
+                            pedido.estado === 'en_proceso' ? '#fff3cd' :
+                            pedido.estado === 'cancelado' ? '#f8d7da' :
+                            '#f1f1f1', 
+                          fontWeight: 'bold',
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                      }}
+                    >
+                      {['en_proceso', 'realizado', 'cancelado'].map((est) => (
+                        <MenuItem key={est} value={est}>
+                          <Chip 
+                            label={est.charAt(0).toUpperCase() + est.slice(1).replace('_', ' ')} 
+                            size="small"
+                            sx={{
+                              backgroundColor:
+                                est === 'cancelado' ? '#f8d7da' :
+                                est === 'en_proceso' ? '#fff3cd' :
+                                est === 'realizado' ? '#d4edda' : '#f1f1f1',
+                              color:
+                                est === 'cancelado' ? '#721c24' :
+                                est === 'en_proceso' ? '#856404' :
+                                est === 'realizado' ? '#155724' : '#6c757d',
+                              fontWeight: 'bold'
+                            }}
+                          />
+                        </MenuItem>
+                      ))}
+                    </Select>
+               </FormControl>
                     </TableCell>
-                    <TableCell align="center">
-                      <Box display="flex" gap={1} justifyContent="center">
-                        <Tooltip title="Ver detalles"><IconButton onClick={() => handleDetailClick(pedido)} sx={{ color: '#f48fb1', '&:hover': { backgroundColor: 'rgba(244, 143, 177, 0.1)' } }}><Info /></IconButton></Tooltip>
-                        <Tooltip title="Editar"><IconButton onClick={() => handleEditClick(pedido)} sx={{ color: '#f48fb1', '&:hover': { backgroundColor: 'rgba(244, 143, 177, 0.1)' } }}><Edit /></IconButton></Tooltip>
-                        <Tooltip title="Eliminar"><IconButton onClick={() => { setCurrentId(pedido._id); setOpenDeleteDialog(true); }} sx={{ color: '#f48fb1', '&:hover': { backgroundColor: 'rgba(244, 143, 177, 0.1)' } }}><Delete /></IconButton></Tooltip>
-                        {pedido.estado === 'realizado' && (<Tooltip title="Generar Factura"><IconButton onClick={() => handleGenerarFactura(pedido._id)} sx={{ color: '#4caf50', '&:hover': { backgroundColor: 'rgba(76, 175, 80, 0.1)' } }}><ReceiptLongIcon /></IconButton></Tooltip>)}
-                      </Box>
-                    </TableCell>
+                  <TableCell align="center">
+                  
+            <Box display="flex" gap={1} justifyContent="center">
+                 <Tooltip title="Editar">
+                <IconButton 
+                  onClick={() => handleEditClick(pedido)} 
+                  sx={{ 
+                    color: '#4caf50',
+                    '&:hover': { backgroundColor: 'rgba(76, 175, 80, 0.1)' }
+                  }}
+                >
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Ver detalles">
+                <IconButton 
+                  onClick={() => handleDetailClick(pedido)} 
+                  sx={{ 
+                    color: '#1976d2', 
+                    '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.1)' }
+                  }}
+                >
+                  <Info />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Eliminar">
+                <IconButton 
+                  onClick={() => { 
+                    setCurrentId(pedido._id); 
+                    setOpenDeleteDialog(true); 
+                  }} 
+                  sx={{ 
+                    color: '#f44336', 
+                    '&:hover': { backgroundColor: 'rgba(244, 67, 54, 0.1)' }
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+
+              {pedido.estado === 'realizado' && (
+                <Tooltip title="Generar Factura">
+                  <IconButton 
+                    onClick={() => handleGenerarFactura(pedido._id)} 
+                    sx={{ 
+                      color: '#ff9800',
+                      '&:hover': { backgroundColor: 'rgba(208, 132, 18, 0.1)' }
+                    }}
+                  >
+                    <ReceiptLongIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Box>
+          </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -691,7 +815,7 @@ return (
             <FacturaPDF 
               factura={facturaGenerada}
               pedido={selectedPedido} 
-              compania={compania}
+              compañia={compania}
               open={facturaDialogOpen}
               onClose={() => setFacturaDialogOpen(false)}
             />

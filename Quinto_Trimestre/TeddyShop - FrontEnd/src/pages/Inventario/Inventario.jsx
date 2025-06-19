@@ -349,15 +349,19 @@ return (
             <ListAlt fontSize="small" /> Lista de Inventarios
           </Typography>
 
-          <TableContainer
-            component={Paper}
-            elevation={3}
-            sx={{
-              borderRadius: '15px',
-              overflow: 'hidden',
-              border: '1px solid #f8c8dc',
-            }}
-          >
+            <TableContainer
+          component={Paper}
+          elevation={3}
+          sx={{
+            marginTop: 3,
+            borderRadius: '15px',
+            overflow: 'hidden',
+            border: '1px solid #f8c8dc',
+            maxHeight: 500,
+            overflowX: 'auto',
+
+          }}
+        >
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#ffeef3' }}>

@@ -604,6 +604,7 @@ const eliminarHistorialPrecio = async (id) => {
                         />
                       </TableCell>
                       <TableCell align="center">
+                      <Tooltip title="Editar Historial de Precio">
                         <IconButton
                           onClick={() => iniciarEdicion(historial)}
                           sx={{
@@ -615,17 +616,8 @@ const eliminarHistorialPrecio = async (id) => {
                         >
                           <Edit />
                         </IconButton>
-                        <IconButton
-                          onClick={() => eliminarHistorialPrecio(historial._id)}
-                          sx={{
-                            color: '#e57373',
-                            '&:hover': {
-                              backgroundColor: 'rgba(229, 115, 115, 0.1)',
-                            },
-                          }}
-                        >
-                          <Delete />
-                        </IconButton>
+                         </Tooltip>
+                         <Tooltip title="Ver Deatlles">
                         <IconButton
                           onClick={() => handleOpenDetails(historial)}
                           sx={{
@@ -637,6 +629,20 @@ const eliminarHistorialPrecio = async (id) => {
                         >
                           <Info />
                         </IconButton>
+                         </Tooltip>
+                         <Tooltip title="Eliminar Historial de Precio">
+                        <IconButton
+                          onClick={() => eliminarHistorialPrecio(historial._id)}
+                          sx={{
+                            color: '#e57373',
+                            '&:hover': {
+                              backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                            },
+                          }}
+                        >
+                          <Delete />
+                        </IconButton>
+                         </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}

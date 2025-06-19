@@ -1,13 +1,14 @@
-// validaciones/historialPrecioValidation.js
 const Joi = require('@hapi/joi');
 
 const historialPrecioSchemaValidation = Joi.object({
     precio: Joi.number()
-        .precision(3) // Permite hasta dos decimales
+        .precision(3)
+        .min(1)
         .required()
         .messages({
             'number.base': 'El precio debe ser un número',
-            'number.precision': 'El precio debe tener hasta 2 decimales',
+            'number.min': 'El precio debe ser mayor o igual a 1',
+            'number.precision': 'El precio debe tener hasta 3 decimales',
             'any.required': 'El precio es un campo requerido'
         }),
     fechaInicio: Joi.date()
@@ -17,7 +18,7 @@ const historialPrecioSchemaValidation = Joi.object({
             'any.required': 'La fecha de inicio es un campo requerido'
         }),
     fechaFin: Joi.date()
-        .min(Joi.ref('fechaInicio')) // La fecha de fin debe ser mayor o igual que la fecha de inicio
+        .min(Joi.ref('fechaInicio'))
         .required()
         .messages({
             'date.base': 'La fecha de fin debe ser una fecha válida',
@@ -41,5 +42,4 @@ const historialPrecioSchemaValidation = Joi.object({
         })
 });
 
-// Exportar la validación
 module.exports = { historialPrecioSchemaValidation };

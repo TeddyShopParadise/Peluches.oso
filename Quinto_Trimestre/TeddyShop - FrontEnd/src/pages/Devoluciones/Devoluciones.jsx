@@ -623,7 +623,7 @@ const handleDetallesClick = (devolucion) => {
                             sx={{
                               color: '#6c63ff',
                               '&:hover': {
-                                backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
                               },
                             }}
                           >
