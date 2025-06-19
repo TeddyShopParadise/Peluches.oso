@@ -25,8 +25,8 @@ public class NavegacionPedido implements Task {
     public <T extends Actor> void performAs(T actor) {
         String filtroComprador = actor.recall(SessionVariables.NombrePedido.toString());
         actor.attemptsTo(
-                Click.on(BTN_GESTIONPEDIDO),
-                Click.on(BTN_PEDIDOS),
+                Click.on(BTN_MENUPEDIDO),
+                Click.on(BTN_PEDIDO),
                 Click.on(BTN_BUSCAR),
                 Enter.theValue(filtroComprador).into(BTN_BUSCAR),
                 Click.on(LISTA_ESTADO),
