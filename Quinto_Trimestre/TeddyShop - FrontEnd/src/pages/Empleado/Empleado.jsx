@@ -804,28 +804,20 @@ const Empleado = () => {
                     <TableCell>{empleado.nombreEmpleado}</TableCell>
                     <TableCell>{empleado.telefonoEmpleado}</TableCell>
                     <TableCell align="center">
+                    <Tooltip title="Editar Empleado">
                       <IconButton
                         onClick={() => editarEmpleado(empleado)}
                         sx={{
                           color: '#6c63ff',
                           '&:hover': {
-                            backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
                           },
                         }}
                       >
                         <Edit />
                       </IconButton>
-                      <IconButton
-                        onClick={() => eliminarEmpleado(empleado._id)}
-                        sx={{
-                          color: '#e57373',
-                          '&:hover': {
-                            backgroundColor: 'rgba(229, 115, 115, 0.1)',
-                          },
-                        }}
-                      >
-                        <Delete />
-                      </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Ver detalles">
                       <IconButton
                         onClick={() => verDetalles(empleado)}
                         sx={{
@@ -837,6 +829,20 @@ const Empleado = () => {
                       >
                         <Info />
                       </IconButton>
+                      </Tooltip>                      
+                      <Tooltip title="Eliminar Empleado">
+                      <IconButton
+                        onClick={() => eliminarEmpleado(empleado._id)}
+                        sx={{
+                          color: '#e57373',
+                          '&:hover': {
+                            backgroundColor: 'rgba(229, 115, 115, 0.1)',
+                          },
+                        }}
+                      >
+                        <Delete />
+                      </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}

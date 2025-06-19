@@ -18,7 +18,7 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
           overflowY: 'visible'
         }
       }}>
-        {/* Encabezado responsivo */}
+       {/* Encabezado responsivo */}
         <Box textAlign="center" mb={4} sx={{
           backgroundColor: 'white',
           py: { xs: 2, md: 3 },
@@ -270,7 +270,7 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
           <Typography variant="caption" sx={{ fontSize: { xs: '0.7rem', md: '0.8rem' } }}>
             © {new Date().getFullYear()} {compania?.nombreEmpresa} - Todos los derechos reservados<br/>
             <Box component="span" sx={{ fontSize: '0.75rem' }}>
-              Factura electrónica válida como documento tributario
+              Desprendible de Pedido 
             </Box>
           </Typography>
         </Box>

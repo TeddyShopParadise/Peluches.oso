@@ -65,11 +65,6 @@ const styles = StyleSheet.create({
     width: '40%',
     fontSize: 9,
   },
-  columnaTamaño: {
-    width: '20%',
-    fontSize: 9,
-    textAlign: 'right',
-  },
   columnaPrecio: {
     width: '20%',
     fontSize: 9,
@@ -126,7 +121,6 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
             </Text>
           </View>
         </View>
-
         {/* Número de Factura y Fecha */}
         <View style={styles.facturaHeader}>
           <Text style={{ fontSize: 10 }}>
@@ -196,8 +190,8 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
 
         {/* Pie de Página */}
         <View style={styles.footer}>
-          <Text>¡Gracias por su compra! | Método de Pago: {pedido.metodoPago}</Text>
-          <Text>© {new Date().getFullYear()} {compania?.nombreEmpresa} - Factura válida como documento tributario</Text>
+          <Text>¡Gracias por su compra! </Text>
+          <Text>© {new Date().getFullYear()} {compania?.nombreEmpresa} - PDF de su Pedido</Text>
         </View>
       </Page>
     </Document>
