@@ -20,7 +20,8 @@ import {
   Pagination,
   DialogTitle,
   TextField,
-  DialogActions 
+  DialogActions,
+  Paper 
 } from '@mui/material';
 import { getApiUrl } from '../../utils/apiConfig';
 
@@ -433,140 +434,262 @@ export default function CatalogoUsuario() {
   const indexOfFirstProduct = indexOfLastProduct - productosPerPage;
   const currentProductos = filteredProductos.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  return (
-    <Box className="BoxInicial">      
-      <Box className="Box" 
-        sx={{ 
-          width: "90%", 
-          maxWidth: "100%", 
-          padding: { xs: "20px", md: "50px" }, 
-          borderRadius: "30px", 
-        }}>
-        <Container>
-          {!showProductos ? (
-            <>
-              <Typography variant="h4" align="center" gutterBottom>
-                CATÁLOGOS DE PELUCHES
+return (
+  <Box className="BoxInicial">      
+    <Box 
+      className="Box" 
+      sx={{ 
+        width: "90%", 
+        maxWidth: "100%", 
+        padding: { xs: "20px", md: "50px" }, 
+        borderRadius: "30px", 
+        margin: '0 auto',
+        backgroundColor: '#fffafc',
+        boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+        border: '2px solid #f8c8dc',
+      }}
+    >
+      <Container>
+        {!showProductos ? (
+          <>
+            <Box
+              sx={{
+                textAlign: 'center',
+                marginBottom: '30px',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-10px',
+                  left: '25%',
+                  width: '50%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                  borderRadius: '10px',
+                },
+              }}
+            >
+              <Typography 
+                variant="h4" 
+                align="center" 
+                gutterBottom
+                sx={{
+                  fontWeight: 'bold',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                }}
+              >
+                ✨ CATÁLOGOS DE PELUCHES ✨
               </Typography>
-              
-              <Grid container spacing={3}>
-                {catalogos.map((catalogo) => (
-                  <Grid item xs={12} sm={6} md={4} key={catalogo._id}>
-                    <Card sx={{ 
-                      transition: 'transform 0.3s', 
-                      '&:hover': { transform: 'scale(1.05)' }, 
-                      borderRadius: 3, 
-                      boxShadow: 3,
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column'
+            </Box>
+            
+            <Grid container spacing={3}>
+              {catalogos.map((catalogo) => (
+                <Grid item xs={12} sm={6} md={4} key={catalogo._id}>
+                  <Card sx={{ 
+                    transition: 'all 0.3s ease', 
+                    '&:hover': { 
+                      transform: 'scale(1.05)',
+                      boxShadow: '0 12px 28px rgba(248, 200, 220, 0.4)',
+                    }, 
+                    borderRadius: '20px', 
+                    boxShadow: '0 8px 16px rgba(248, 200, 220, 0.2)',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    border: '1px solid #f8c8dc',
+                    backgroundColor: '#fff5f7',
+                  }}>
+                    <CardMedia
+                      component="img"
+                      height="330"
+                      image={catalogo.imagen || 'default-image-url.jpg'}
+                      alt={catalogo.nombreCatalogo}
+                      sx={{ 
+                        objectFit: 'cover', 
+                        backgroundColor: '#f0f0f0', 
+                        borderRadius: '20px 20px 0 0',
+                      }}
+                    />
+                    <CardContent sx={{ 
+                      flexGrow: 1,
+                      padding: '20px',
                     }}>
-                      <CardMedia
-                        component="img"
-                        height="330"
-                        image={catalogo.imagen || 'default-image-url.jpg'}
-                        alt={catalogo.nombreCatalogo}
-                        sx={{ objectFit: 'cover', backgroundColor: '#f0f0f0', borderRadius: '12px 12px 0 0' }}
-                      />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="div" textAlign="center">
-                      {catalogo.nombreCatalogo}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      <strong>Descripción:</strong> {catalogo.descripcionCatalogo}
-                    </Typography>
-                    <Box mt={2} display="flex" justifyContent="center">
-                      <Button 
-                        variant="contained" 
-                        color="primary" 
-                        onClick={() => handleDetalles(catalogo)}
-                        sx={{ borderRadius: '20px' }}
+                      <Typography 
+                        gutterBottom 
+                        variant="h5" 
+                        component="div" 
+                        textAlign="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#b04e6f',
+                          fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                          marginBottom: '15px',
+                        }}
                       >
-                        Ver Productos
-                      </Button>
-                    </Box>
-                  </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </>
-          ) : (
-            <>
+                        {catalogo.nombreCatalogo}
+                      </Typography>
+                      <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                        sx={{
+                          color: '#666',
+                          lineHeight: 1.6,
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <strong style={{ color: '#b04e6f' }}>Descripción:</strong> {catalogo.descripcionCatalogo}
+                      </Typography>
+                      <Box mt={2} display="flex" justifyContent="center">
+                        <Button 
+                          variant="contained" 
+                          onClick={() => handleDetalles(catalogo)}
+                          sx={{ 
+                            borderRadius: '15px',
+                            backgroundColor: '#f48fb1',
+                            '&:hover': {
+                              backgroundColor: '#ec7096',
+                              transform: 'translateY(-2px)',
+                            },
+                            textTransform: 'none',
+                            fontWeight: 'bold',
+                            boxShadow: '0 4px 12px rgba(244, 143, 177, 0.3)',
+                            padding: '10px 25px',
+                            fontSize: '14px',
+                          }}
+                        >
+                          Ver Productos
+                        </Button>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </>
+        ) : (
+          <>
             <Box 
               display="flex" 
               justifyContent="space-between" 
               alignItems="center" 
-              px={{ xs: 1, sm: 1 }}
-              py={{ xs: 0.6, sm: 0.8 }} 
-              bgcolor="#fff0f6" 
-              borderRadius="12px" 
-              boxShadow="0 1px 4px rgba(0,0,0,0.05)"
+              px={{ xs: 2, sm: 3 }}
+              py={{ xs: 1.5, sm: 2 }} 
+              bgcolor="#fff0f5" 
+              borderRadius="20px" 
+              boxShadow="0 4px 12px rgba(248, 200, 220, 0.3)"
+              border="1px solid #f8c8dc"
               sx={{
                 width: "100%",
                 maxWidth: "lg",
-                margin: "0 auto", 
+                margin: "0 auto 30px auto", 
               }}
             >
               <Typography 
                 variant="h6" 
-                fontWeight="400"  
-                color="#d63384" 
-                sx={{ fontSize: { xs: "10px", sm: "12px", md: "14px" }, textAlign: { xs: "center", sm: "left" } }}
+                fontWeight="500"  
+                color="#b04e6f" 
+                sx={{ 
+                  fontSize: { xs: "12px", sm: "14px", md: "16px" }, 
+                  textAlign: { xs: "center", sm: "left" },
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                }}
               >
                 Regresa al catálogo cuando quieras ✨
               </Typography>
               <Button 
                 onClick={handleBackToCatalogos} 
                 sx={{ 
-                  px: { xs: 1.8, sm: 2 }, 
-                  py: { xs: 0.8, sm: 1 }, 
-                  borderRadius: "20px", 
-                  fontWeight: "400", 
-                  fontSize: { xs: "10px", sm: "11px", md: "12px" }, 
-                  textTransform: "uppercase",
-                  background: "linear-gradient(to right, #ff80ab, #8c7fe8)",
+                  px: { xs: 2, sm: 3 }, 
+                  py: { xs: 1, sm: 1.2 }, 
+                  borderRadius: "15px", 
+                  fontWeight: "600", 
+                  fontSize: { xs: "11px", sm: "12px", md: "13px" }, 
+                  textTransform: "none",
+                  background: "linear-gradient(45deg, #f48fb1 0%, #ec7096 100%)",
                   color: "#fff",
-                  boxShadow: "0 2px 4px rgba(247, 143, 179, 0.2)", 
+                  boxShadow: "0 4px 12px rgba(244, 143, 177, 0.3)", 
                   transition: "all 0.3s ease",
                   "&:hover": {
-                    transform: "scale(1.02)", 
-                    background: "linear-gradient(to right, #8c7fe8, #ff80ab)",
-                    boxShadow: "0 4px 6px rgba(247, 143, 179, 0.3)", 
+                    transform: "translateY(-2px)", 
+                    background: "linear-gradient(45deg, #ec7096 0%, #f48fb1 100%)",
+                    boxShadow: "0 6px 16px rgba(244, 143, 177, 0.4)", 
                   },
                 }}
-                startIcon={<span style={{ fontSize: "14px" }}>✨</span>} 
+                startIcon={<span style={{ fontSize: "16px" }}>🔙</span>} 
               >
                 Volver
               </Button>
             </Box>
 
-                            
-            <Typography 
-              variant="h4" 
-              align="center" 
-              gutterBottom
+            <Box
               sx={{
-                fontWeight: "700", 
-                color: "#d4af37", 
-                fontSize: { xs: "18px", sm: "22px", md: "30px", lg: "38px" }, 
-                textTransform: "uppercase", 
-                letterSpacing: "2px", 
-                fontFamily: "'Lora', serif", 
-                textShadow: "3px 3px 10px rgba(0, 0, 0, 0.2)", 
-                lineHeight: 1.4, 
+                textAlign: 'center',
+                marginBottom: '30px',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-10px',
+                  left: '25%',
+                  width: '50%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                  borderRadius: '10px',
+                },
               }}
             >
-              Productos del Catálogo: {selectedCatalogo.nombreCatalogo}
-            </Typography>
+              <Typography 
+                variant="h4" 
+                align="center" 
+                gutterBottom
+                sx={{
+                  fontWeight: "bold", 
+                  color: "#b04e6f", 
+                  fontSize: { xs: "18px", sm: "24px", md: "32px", lg: "36px" }, 
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                  lineHeight: 1.4, 
+                }}
+              >
+                🧸 Productos del Catálogo: {selectedCatalogo.nombreCatalogo}
+              </Typography>
+            </Box>
 
-              <FormControl style={{ width: "260px", height:"40px" }} sx={{ marginBottom: 5 }}>
-                <InputLabel id="categoriaFiltro-label">Filtrar por Categoría</InputLabel>
+            <Paper
+              elevation={2}
+              sx={{
+                padding: '20px',
+                borderRadius: '20px',
+                marginBottom: '30px',
+                backgroundColor: '#fff0f5',
+                border: '1px solid #f8c8dc',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <FormControl 
+                sx={{ 
+                  width: "280px", 
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '15px',
+                    backgroundColor: 'white',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              >
+                <InputLabel id="categoriaFiltro-label">🔍 Filtrar por Categoría</InputLabel>
                 <Select
                   labelId="categoriaFiltro-label"
                   value={categoriaFiltro}
                   onChange={handleCategoriaFiltroChange}
-                  label="Filtrar por Categoría"
+                  label="🔍 Filtrar por Categoría"
                 >
                   <MenuItem value="todos">Todas las categorías</MenuItem>
                   {categoriasCatalogo.map((categoria) => (
@@ -576,296 +699,646 @@ export default function CatalogoUsuario() {
                   ))}
                 </Select>
               </FormControl>
+            </Paper>
 
-              <Grid container spacing={3}>
-                {currentProductos.length > 0 ? (
-                  currentProductos.map((producto) => (
-                    <Grid item xs={12} sm={6} md={3} key={producto._id}>
-                      <Card sx={{ 
-                        transition: 'transform 0.3s', 
-                        '&:hover': { transform: 'scale(1.05)' }, 
-                        borderRadius: 3, 
-                        boxShadow: 3 
+            <Grid container spacing={3}>
+              {currentProductos.length > 0 ? (
+                currentProductos.map((producto) => (
+                  <Grid item xs={12} sm={6} md={3} key={producto._id}>
+                    <Card sx={{ 
+                      transition: 'all 0.3s ease', 
+                      '&:hover': { 
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 12px 28px rgba(248, 200, 220, 0.4)',
+                      }, 
+                      borderRadius: '20px', 
+                      boxShadow: '0 8px 16px rgba(248, 200, 220, 0.2)',
+                      border: '1px solid #f8c8dc',
+                      backgroundColor: '#fff5f7',
+                    }}>
+                      <CardMedia
+                        component="img"
+                        height="330"
+                        image={producto.imagen || 'default-image-url.jpg'}
+                        alt={producto.estiloProducto}
+                        sx={{ 
+                          objectFit: 'cover', 
+                          backgroundColor: '#f0f0f0', 
+                          borderRadius: '20px 20px 0 0',
+                        }}
+                      />
+                      <CardContent sx={{ 
+                        textAlign: 'left',
+                        padding: '20px',
                       }}>
-                        <CardMedia
-                          component="img"
-                          height="330"
-                          image={producto.imagen || 'default-image-url.jpg'}
-                          alt={producto.estiloProducto}
-                          sx={{ objectFit: 'cover', backgroundColor: '#f0f0f0', borderRadius: '12px 12px 0 0' }}
-                        />
-                       <CardContent sx={{ textAlign: 'left' }}>
-                      <Typography variant="body1" color="text.secondary">
-                        <strong>Precio:</strong>
-                        {producto.historialPrecios?.map((precioId, index) => {
-                          const precio = historialPrecios.find(p => p._id === precioId);
-                          return precio ? (
-                            <div key={index}>
-                              {new Intl.NumberFormat('es-CO', { 
-                                style: 'currency', 
-                                currency: 'COP' 
-                              }).format(precio.precio)}
-                            </div>
-                          ) : null;
-                        })}
-                         <strong>Tamaño:</strong> {producto.tamañoProducto}
-                      </Typography>
-                      
-                          <Box mt={2} display="flex" justifyContent="space-between">
-                            <Button 
-                              variant="outlined" 
-                              color="primary" 
-                              onClick={() => handleDetalleClick(producto)}
-                            >
-                              Ver Detalles
-                            </Button>
-                            <Button 
-                            variant="contained" 
-                            color="secondary" 
-                            onClick={() => handleCarritoClick(producto)}
+                        <Typography 
+                          variant="body1" 
+                          color="text.secondary"
+                          sx={{
+                            marginBottom: '15px',
+                            lineHeight: 1.6,
+                          }}
+                        >
+                          <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                            💰 Precio:
+                          </Box>
+                          {producto.historialPrecios?.map((precioId, index) => {
+                            const precio = historialPrecios.find(p => p._id === precioId);
+                            return precio ? (
+                              <Box key={index} sx={{ fontSize: '16px', fontWeight: 'bold', color: '#ec7096' }}>
+                                {new Intl.NumberFormat('es-CO', { 
+                                  style: 'currency', 
+                                  currency: 'COP' 
+                                }).format(precio.precio)}
+                              </Box>
+                            ) : null;
+                          })}
+                          <Box sx={{ marginTop: '8px' }}>
+                            <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                              📏 Tamaño:
+                            </Box> {producto.tamañoProducto}
+                          </Box>
+                        </Typography>
+                        
+                        <Box mt={2} display="flex" justifyContent="space-between" gap={1}>
+                          <Button 
+                            variant="outlined" 
+                            onClick={() => handleDetalleClick(producto)}
+                            sx={{
+                              borderRadius: '12px',
+                              borderColor: '#f48fb1',
+                              color: '#f48fb1',
+                              '&:hover': {
+                                borderColor: '#ec7096',
+                                backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                                transform: 'translateY(-1px)',
+                              },
+                              textTransform: 'none',
+                              fontWeight: 'bold',
+                              fontSize: '12px',
+                              padding: '8px 16px',
+                            }}
                           >
-                            Comprar
+                            Ver Detalles
+                          </Button>
+                          <Button 
+                            variant="contained" 
+                            onClick={() => handleCarritoClick(producto)}
+                            sx={{
+                              borderRadius: '12px',
+                              backgroundColor: '#f48fb1',
+                              '&:hover': {
+                                backgroundColor: '#ec7096',
+                                transform: 'translateY(-1px)',
+                              },
+                              textTransform: 'none',
+                              fontWeight: 'bold',
+                              boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                              fontSize: '12px',
+                              padding: '8px 16px',
+                            }}
+                          >
+                            🛒 Comprar
                           </Button>
                         </Box>
                       </CardContent>    
-                      </Card>
-                    </Grid>
-                  ))
-                ) : (
-                  <Typography variant="body1" sx={{ width: '100%', textAlign: 'center', p: 3 }}>
-                    {productosCatalogo.length === 0 
-                      ? 'No hay productos en este catálogo' 
-                      : 'No hay productos en la categoría seleccionada'}
-                  </Typography>
-                )}
-              </Grid>
-
-              {filteredProductos.length > productosPerPage && (
-                <Box mt={4} display="flex" justifyContent="center">
-                  <Pagination
-                    count={Math.ceil(filteredProductos.length / productosPerPage)}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    color="primary"
-                  />
-                </Box>
+                    </Card>
+                  </Grid>
+                ))
+              ) : (
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{
+                      padding: '40px',
+                      textAlign: 'center',
+                      backgroundColor: '#fff0f5',
+                      borderRadius: '20px',
+                      border: '1px solid #f8c8dc',
+                    }}
+                  >
+                    <Typography 
+                      variant="h6"
+                      sx={{
+                        color: '#b04e6f',
+                        fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                      }}
+                    >
+                      {productosCatalogo.length === 0 
+                        ? '😔 No hay productos en este catálogo' 
+                        : '🔍 No hay productos en la categoría seleccionada'}
+                    </Typography>
+                  </Paper>
+                </Grid>
               )}
+            </Grid>
 
-              <Dialog 
-                open={openDetalleDialog} 
-                onClose={handleCloseDetalleDialog} 
-                maxWidth="sm" 
-                fullWidth={false}
-              >
-                <DialogContent sx={{ 
-                  display: "flex", 
-                  flexDirection: "column", 
-                  alignItems: "center", 
-                  padding: 2, 
-                  textAlign: "center", 
-                  position: "relative", 
-                  maxWidth: "400px", 
-                  margin: "auto" 
-                }}>
-                  {productoSeleccionado && (
-                    <>
-                      <CardMedia
-                        component="img"
-                        width="auto"
-                        height="290"
-                        image={productoSeleccionado.imagen || 'default-image-url.jpg'}
-                        alt={productoSeleccionado.estiloProducto}
-                        sx={{
-                          borderRadius: "10px",
-                          width: "auto",
-                          objectFit: "contain",
-                          boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-                          marginBottom: 2,
-                        }}
-                      />
-                     
+            {filteredProductos.length > productosPerPage && (
+              <Box mt={4} display="flex" justifyContent="center">
+                <Pagination
+                  count={Math.ceil(filteredProductos.length / productosPerPage)}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  sx={{
+                    '& .MuiPaginationItem-root': {
+                      color: '#b04e6f',
+                      borderRadius: '12px',
+                      '&.Mui-selected': {
+                        backgroundColor: '#f48fb1',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: '#ec7096',
+                        },
+                      },
+                      '&:hover': {
+                        backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                      },
+                    },
+                  }}
+                />
+              </Box>
+            )}
+
+            <Dialog 
+              open={openDetalleDialog} 
+              onClose={handleCloseDetalleDialog} 
+              maxWidth="sm" 
+              fullWidth={false}
+              PaperProps={{
+                sx: {
+                  borderRadius: '20px',
+                  border: '2px solid #f8c8dc',
+                  backgroundColor: '#fffafc',
+                }
+              }}
+            >
+              <DialogContent sx={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center", 
+                padding: 3, 
+                textAlign: "center", 
+                position: "relative", 
+                maxWidth: "400px", 
+                margin: "auto" 
+              }}>
+                {productoSeleccionado && (
+                  <>
+                    <CardMedia
+                      component="img"
+                      width="auto"
+                      height="290"
+                      image={productoSeleccionado.imagen || 'default-image-url.jpg'}
+                      alt={productoSeleccionado.estiloProducto}
+                      sx={{
+                        borderRadius: "15px",
+                        width: "auto",
+                        objectFit: "contain",
+                        boxShadow: "0 8px 20px rgba(248, 200, 220, 0.4)",
+                        marginBottom: 3,
+                        border: '1px solid #f8c8dc',
+                      }}
+                    />
+                   
+                    <Paper
+                      sx={{
+                        padding: '20px',
+                        borderRadius: '15px',
+                        backgroundColor: '#fff0f5',
+                        border: '1px solid #f8c8dc',
+                        width: '100%',
+                      }}
+                    >
                       <Box sx={{ 
                         display: "flex", 
                         flexDirection: "column", 
-                        gap: 1, 
-                        width: "90%", 
+                        gap: 2, 
                         alignItems: "flex-start" 
                       }}>
-                        <Typography variant="body2" sx={{ textAlign: "left" }} gutterBottom>
-                          <strong>Descripción del Producto:</strong> {productoSeleccionado.estiloProducto}
+                        <Typography variant="body1" sx={{ 
+                          textAlign: "left",
+                          color: '#666',
+                          lineHeight: 1.6,
+                        }}>
+                          <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                            📝 Descripción del Producto:
+                          </Box> {productoSeleccionado.estiloProducto}
                         </Typography>
-                        <Typography variant="body2" sx={{ textAlign: "left" }}>
-                          <strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}
+                        <Typography variant="body1" sx={{ 
+                          textAlign: "left",
+                          color: '#666',
+                        }}>
+                          <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                            📏 Tamaño:
+                          </Box> {productoSeleccionado.tamañoProducto}
                         </Typography>
-                        <Typography variant="body2" sx={{ textAlign: "left" }}>
-                          <strong>Disponibilidad:</strong> {productoSeleccionado.disponibilidadProducto}
+                        <Typography variant="body1" sx={{ 
+                          textAlign: "left",
+                          color: '#666',
+                        }}>
+                          <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                            ✅ Disponibilidad:
+                          </Box> {productoSeleccionado.disponibilidadProducto}
                         </Typography>
                       </Box>
-                    </>
-                  )}
-                  <Button 
-                    onClick={handleCloseDetalleDialog} 
-                    variant="contained" 
-                    color="secondary" 
-                    sx={{ 
-                      mt: 2, 
-                      borderRadius: "20px", 
-                      px: 3, 
-                      py: 1, 
-                      boxShadow: "0 5px 15px rgba(0, 0, 0, 0.3)" 
-                    }}
-                  >
-                    Cerrar
-                  </Button>
-                </DialogContent>
-              </Dialog>
-
-               <Dialog open={openCarritoDialog} onClose={handleCloseCarritoDialog} maxWidth="sm" fullWidth>
-                    <DialogTitle>Detalles del pedido</DialogTitle>
-                    <DialogContent>
-                      {productoSeleccionado && (
-                        <>
-                          <Typography variant="body1" gutterBottom><strong>Producto:</strong> {productoSeleccionado.estiloProducto}</Typography>
-                          <Typography variant="body1" gutterBottom><strong>Tamaño:</strong> {productoSeleccionado.tamañoProducto}</Typography>
-                          <Typography variant="body1" gutterBottom>
-                            <strong>Precio:</strong> 
-                            {productoSeleccionado.historialPrecios?.map((precioId, index) => {
-                              const precio = historialPrecios.find(p => p._id === precioId);
-                              return precio ? (
-                                <span key={index}>
-                                  {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio.precio)}
-                                </span>
-                              ) : null;
-                            })}
-                          </Typography>
-
-                          <Box sx={{ mt: 2 }}>
-                            <Typography variant="subtitle1" gutterBottom>Información del Comprador</Typography>
-                             <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                                <InputLabel id="metodo-pago-label">Método de Pago</InputLabel>
-                                <Select
-                                  labelId="metodo-pago-label"
-                                  name="metodoPago"
-                                  value={pedido.metodoPago}
-                                  label="Método de Pago"
-                                  onChange={handleInputChange}
-                                >
-                                  {metodosPago.map((metodo) => (
-                                    <MenuItem key={metodo._id} value={metodo._id}>
-                                      {metodo.nombreMetodoPago}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
-                            <TextField
-                              label="Nombre del Comprador"
-                              fullWidth
-                              name="nombreComprador"
-                              value={pedido.nombreComprador}
-                              onChange={handleInputChange}
-                              sx={{ marginBottom: 2 }}
-                            />
-                            <TextField
-                              label="Número de Contacto"
-                              fullWidth
-                              name="numeroComprador"
-                              value={pedido.numeroComprador}
-                              onChange={handleInputChange}
-                              sx={{ marginBottom: 2 }}
-                            />
-                          </Box>
-
-                          <Box sx={{ mt: 2 }}>
-                            <Typography variant="subtitle1" gutterBottom>Información del Agendador</Typography>
-                            <TextField
-                              label="Nombre del Agendador"
-                              fullWidth
-                              name="nombreAgendador"
-                              value={pedido.nombreAgendador}
-                              onChange={handleInputChange}
-                              sx={{ marginBottom: 2 }}
-                            />
-                            <TextField
-                              label="Número del Agendador"
-                              fullWidth
-                              name="numeroAgendador"
-                              value={pedido.numeroAgendador}
-                              onChange={handleInputChange}
-                              sx={{ marginBottom: 2 }}
-                            />
-                          </Box>
-
-                          <Box sx={{ mt: 2 }}>
-                            <Typography variant="subtitle1" gutterBottom>Datos de Entrega</Typography>
-                            <TextField
-                              label="Localidad"
-                              fullWidth
-                              name="localidad"
-                              value={pedido.localidad}
-                              onChange={handleInputChange}
-                              sx={{ marginBottom: 2 }}
-                            />
-                            <TextField
-                              label="Dirección"
-                              fullWidth
-                              name="direccion"
-                              value={pedido.direccion}
-                              onChange={handleInputChange}
-                              sx={{ marginBottom: 2 }}
-                            />
-                            <TextField
-                              label="Barrio"
-                              fullWidth
-                              name="barrio"
-                              value={pedido.barrio}
-                              onChange={handleInputChange}
-                              sx={{ marginBottom: 2 }}
-                            />
-                          </Box>
-                        </>
-                      )}
-                    </DialogContent>
-                    <DialogActions sx={{ p: 3 }}>
-                      <Button 
-                        onClick={handleCloseCarritoDialog} 
-                        variant="outlined" 
-                        sx={{ mr: 2 }}
-                      >
-                        Cancelar
-                      </Button>
-                      <Button 
-                        onClick={handleSubmitPedido} 
-                        variant="contained" 
-                        color="secondary"
-                        size="large"
-                      >
-                        Enviar Pedido
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
-
-                  <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
-                    <Alert severity={snackbarMessage.includes('Error') ? 'error' : 'success'} sx={{ width: '100%' }}>
-                      {snackbarMessage}
-                    </Alert>
-                  </Snackbar>
-                    <Snackbar 
-                      open={openSnackbar} 
-                      autoHideDuration={6000} 
-                      onClose={() => setOpenSnackbar(false)}
-                    >
-                      <Alert 
-                        onClose={() => setOpenSnackbar(false)} 
-                        severity="error" 
-                        sx={{ width: '100%' }}
-                      >
-                        {snackbarMessage}
-                      </Alert>
-                    </Snackbar>
+                    </Paper>
                   </>
                 )}
-              </Container>
-      </Box>
+                <Button 
+                  onClick={handleCloseDetalleDialog} 
+                  variant="contained" 
+                  sx={{ 
+                    mt: 3, 
+                    borderRadius: "15px", 
+                    px: 4, 
+                    py: 1.5, 
+                    backgroundColor: '#f48fb1',
+                    '&:hover': {
+                      backgroundColor: '#ec7096',
+                    },
+                    boxShadow: "0 4px 12px rgba(244, 143, 177, 0.3)",
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Cerrar
+                </Button>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog 
+              open={openCarritoDialog} 
+              onClose={handleCloseCarritoDialog} 
+              maxWidth="sm" 
+              fullWidth
+              PaperProps={{
+                sx: {
+                  borderRadius: '20px',
+                  border: '2px solid #f8c8dc',
+                  backgroundColor: '#fffafc',
+                }
+              }}
+            >
+              <Box
+                sx={{
+                  padding: '20px 30px 10px 30px',
+                  backgroundColor: '#fff0f5',
+                  borderBottom: '1px solid #f8c8dc',
+                }}
+              >
+                <Typography 
+                  variant="h5"
+                  sx={{
+                    fontWeight: 'bold',
+                    color: '#b04e6f',
+                    fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                    textAlign: 'center',
+                  }}
+                >
+                  🛒 Detalles del Pedido
+                </Typography>
+              </Box>
+              <DialogContent sx={{ padding: '30px' }}>
+                {productoSeleccionado && (
+                  <>
+                    <Paper
+                      sx={{
+                        padding: '20px',
+                        borderRadius: '15px',
+                        backgroundColor: '#fff0f5',
+                        border: '1px solid #f8c8dc',
+                        marginBottom: '25px',
+                      }}
+                    >
+                      <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                        <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                          🧸 Producto:
+                        </Box> {productoSeleccionado.estiloProducto}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                        <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                          📏 Tamaño:
+                        </Box> {productoSeleccionado.tamañoProducto}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                        <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                          💰 Precio:
+                        </Box> 
+                        {productoSeleccionado.historialPrecios?.map((precioId, index) => {
+                          const precio = historialPrecios.find(p => p._id === precioId);
+                          return precio ? (
+                            <Box component="span" key={index} sx={{ fontWeight: 'bold', color: '#ec7096', marginLeft: '8px' }}>
+                              {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio.precio)}
+                            </Box>
+                          ) : null;
+                        })}
+                      </Typography>
+                    </Paper>
+
+                    <Box sx={{ mb: 3 }}>
+                      <Typography 
+                        variant="h6" 
+                        gutterBottom
+                        sx={{
+                          color: '#b04e6f',
+                          fontWeight: 'bold',
+                          fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        💳 Información del Comprador
+                      </Typography>
+                      <FormControl 
+                        fullWidth 
+                        sx={{ 
+                          marginBottom: 2,
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#f48fb1',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            '&.Mui-focused': {
+                              color: '#f48fb1',
+                            },
+                          },
+                        }}
+                      >
+                        <InputLabel id="metodo-pago-label">Método de Pago</InputLabel>
+                        <Select
+                          labelId="metodo-pago-label"
+                          name="metodoPago"
+                          value={pedido.metodoPago}
+                          label="Método de Pago"
+                          onChange={handleInputChange}
+                        >
+                          {metodosPago.map((metodo) => (
+                            <MenuItem key={metodo._id} value={metodo._id}>
+                              {metodo.nombreMetodoPago}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <TextField
+                        label="Nombre del Comprador"
+                        fullWidth
+                        name="nombreComprador"
+                        value={pedido.nombreComprador}
+                        onChange={handleInputChange}
+                        sx={{ 
+                          marginBottom: 2,
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#f48fb1',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            '&.Mui-focused': {
+                              color: '#f48fb1',
+                            },
+                          },
+                        }}
+                      />
+                      <TextField
+                        label="Número de Contacto"
+                        fullWidth
+                        name="numeroComprador"
+                        value={pedido.numeroComprador}
+                        onChange={handleInputChange}
+                        sx={{ 
+                          marginBottom: 2,
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#f48fb1',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            '&.Mui-focused': {
+                              color: '#f48fb1',
+                            },
+                          },
+                        }}
+                      />
+                    </Box>
+
+                    <Box sx={{ mb: 3 }}>
+                      <Typography 
+                        variant="h6" 
+                        gutterBottom
+                        sx={{
+                          color: '#b04e6f',
+                          fontWeight: 'bold',
+                          fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        👤 Información del Agendador
+                      </Typography>
+                      <TextField
+                        label="Nombre del Agendador"
+                        fullWidth
+                        name="nombreAgendador"
+                        value={pedido.nombreAgendador}
+                        onChange={handleInputChange}
+                        sx={{ 
+                          marginBottom: 2,
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#f48fb1',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            '&.Mui-focused': {
+                              color: '#f48fb1',
+                            },
+                          },
+                        }}
+                      />
+                      <TextField
+                        label="Número del Agendador"
+                        fullWidth
+                        name="numeroAgendador"
+                        value={pedido.numeroAgendador}
+                        onChange={handleInputChange}
+                        sx={{ 
+                          marginBottom: 2,
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#f48fb1',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            '&.Mui-focused': {
+                              color: '#f48fb1',
+                            },
+                          },
+                        }}
+                      />
+                    </Box>
+
+                    <Box sx={{ mb: 2 }}>
+                      <Typography 
+                        variant="h6" 
+                        gutterBottom
+                        sx={{
+                          color: '#b04e6f',
+                          fontWeight: 'bold',
+                          fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        🚚 Datos de Entrega
+                      </Typography>
+                      <TextField
+                        label="Localidad"
+                        fullWidth
+                        name="localidad"
+                        value={pedido.localidad}
+                        onChange={handleInputChange}
+                        sx={{ 
+                          marginBottom: 2,
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#f48fb1',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            '&.Mui-focused': {
+                              color: '#f48fb1',
+                            },
+                          },
+                        }}
+                      />
+                      <TextField
+                        label="Dirección"
+                        fullWidth
+                        name="direccion"
+                        value={pedido.direccion}
+                        onChange={handleInputChange}
+                        sx={{ 
+                          marginBottom: 2,
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#f48fb1',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            '&.Mui-focused': {
+                              color: '#f48fb1',
+                            },
+                          },
+                        }}
+                      />
+                      <TextField
+                        label="Barrio"
+                        fullWidth
+                        name="barrio"
+                        value={pedido.barrio}
+                        onChange={handleInputChange}
+                        sx={{ 
+                          marginBottom: 2,
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#f48fb1',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            '&.Mui-focused': {
+                              color: '#f48fb1',
+                            },
+                          },
+                        }}
+                      />
+                    </Box>
+                  </>
+                )}
+              </DialogContent>
+              <Box
+                sx={{
+                  padding: '20px 30px 30px 30px',
+                  backgroundColor: '#fff0f5',
+                  borderTop: '1px solid #f8c8dc',
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+gap: 2,
+                }}
+              >
+                <Button 
+                  onClick={handleCloseCarritoDialog} 
+                  variant="outlined" 
+                  sx={{ 
+                    borderRadius: '15px',
+                    borderColor: '#f48fb1',
+                    color: '#f48fb1',
+                    '&:hover': {
+                      borderColor: '#ec7096',
+                      backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    padding: '10px 25px',
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleSubmitPedido} 
+                  variant="contained" 
+                  sx={{
+                    borderRadius: '15px',
+                    backgroundColor: '#f48fb1',
+                    '&:hover': {
+                      backgroundColor: '#ec7096',
+                      transform: 'translateY(-1px)',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 12px rgba(244, 143, 177, 0.3)',
+                    padding: '10px 25px',
+                  }}
+                >
+                  Enviar Pedido
+                </Button>
+              </Box>
+            </Dialog>
+
+            <Snackbar 
+              open={openSnackbar} 
+              autoHideDuration={6000} 
+              onClose={() => setOpenSnackbar(false)}
+            >
+              <Alert 
+                onClose={() => setOpenSnackbar(false)} 
+                severity={snackbarMessage.includes('Error') ? 'error' : 'success'} 
+                sx={{ 
+                  width: '100%',
+                  borderRadius: '12px',
+                  '&.MuiAlert-standardSuccess': {
+                    backgroundColor: '#f0f9ff',
+                    color: '#065f46',
+                    border: '1px solid #34d399',
+                  },
+                  '&.MuiAlert-standardError': {
+                    backgroundColor: '#fef2f2',
+                    color: '#991b1b',
+                    border: '1px solid #f87171',
+                  },
+                }}
+              >
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
+          </>
+        )}
+      </Container>
     </Box>
-  );
-}
+  </Box>
+);
+};
