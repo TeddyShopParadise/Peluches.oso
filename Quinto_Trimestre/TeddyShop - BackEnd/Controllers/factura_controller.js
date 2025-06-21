@@ -5,6 +5,82 @@ const Pedido = require('../models/pedido_model');
 const Factura = require('../models/factura_model');
 const DetalleFactura = require('../models/detalleFactura_model');
 
+
+const crearPedidoConFacturaCompleta = async (req, res) => {
+  try {
+    const { 
+      pedidoData, 
+      detallesPedido, 
+      metodoPago 
+    } = req.body;
+
+
+    // 1. Crear pedido
+    const pedidoCreado = await require('../Logic/pedido_logic').crearPedido(pedidoData);
+
+    // 2. Crear detalles de pedido y factura
+    const detallesFacturaIds = [];
+    const detallesPedidoIds = [];
+
+    for (const detalle of detallesPedido) {
+      // Crear detalle de pedido
+      const detallePedido = await require('../Logic/detallePedido_logic').crearDetallePedido({
+        precioDetallePedido: detalle.precio,
+        cantidadDetallePedido: detalle.cantidad,
+        idPedido: pedidoCreado._id,
+        idProducto: detalle.idProducto
+      });
+      detallesPedidoIds.push(detallePedido._id);
+
+      // Crear detalle de factura
+      const detalleFactura = await require('../Logic/detalleFactura_logic').crearDetalleFactura({
+        precioDetalleFactura: detalle.precio,
+        cantidadDetalleFactura: detalle.cantidad,
+        idProducto: detalle.idProducto,
+        idInventario: detalle.idInventario
+      });
+      detallesFacturaIds.push(detalleFactura._id);
+    }
+
+    // 3. Crear factura con todos los detalles
+    const factura = await require('../Logic/factura_logic').crearFactura({
+      fechaCreacionFactura: new Date().toISOString().split('T')[0],
+      horaCreacionFactura: new Date().toLocaleTimeString('es-MX'),
+      pedido: pedidoCreado._id,
+      detallesFactura: detallesFacturaIds,
+      metodoPago: metodoPago
+    });
+
+    // 4. Actualizar pedido con detalles y factura
+    const pedidoFinal = await Pedido.findByIdAndUpdate(
+      pedidoCreado._id,
+      {
+        $set: {
+          detallesPedido: detallesPedidoIds,
+          facturas: [factura._id]
+        }
+      },
+      { new: true }
+    ).populate('cliente')
+     .populate('detallesPedido')
+     .populate('facturas');
+
+
+    res.status(201).json({
+      pedido: pedidoFinal,
+      factura: factura,
+      mensaje: "Pedido y factura creados exitosamente"
+    });
+
+  } catch (error) {
+    console.error("❌ ERROR EN CREACIÓN COMPLETA:", error);
+    res.status(500).json({ 
+      error: "Error al crear pedido completo",
+      detalle: error.message 
+    });
+  }
+};
+
 // Controlador para listar todas las facturas
 const listarFacturas = async (req, res) => {
     try {
@@ -204,5 +280,6 @@ module.exports = {
     obtenerFacturaPorId,
     eliminarFactura,
     generarFacturaDesdePedido,
-    buscarFacturaPorPedido 
+    buscarFacturaPorPedido,
+    crearPedidoConFacturaCompleta
 };

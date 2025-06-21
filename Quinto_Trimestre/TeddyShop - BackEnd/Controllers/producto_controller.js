@@ -22,10 +22,9 @@ const listarProductos = async (req, res) => {
           return res.status(404).json({ message: 'No se encontraron productos' });
         }
         res.json(productos);
-      } catch (error) {
-        console.error('Error al obtener productos:', error);
-        res.status(500).json({ message: 'Error al obtener productos', error: error.message });
-      }
+     } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor', detalle: err.message });
+}
 };
 
 // Controlador para crear un nuevo producto
@@ -52,9 +51,8 @@ const crearProducto = async (req, res) => {
         const nuevoProducto = await logic.crearProducto(productoConImagen);
         res.status(201).json(nuevoProducto);
     } catch (err) {
-        console.error('Error al crear producto:', err);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
+    res.status(500).json({ error: 'Error interno del servidor', detalle: err.message });
+}
 };
 
 // Controlador para actualizar un producto
@@ -84,9 +82,9 @@ const actualizarProducto = async (req, res) => {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
         res.json(productoActualizado);  
-    } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor', detalle: error.message });
-    }
+   } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor', detalle: err.message });
+}
 };
 // Controlador para obtener un producto por su ID
 const obtenerProductoPorId = async (req, res) => {
@@ -123,9 +121,9 @@ const getProductosByCatalogo = async (req, res) => {
       const { id } = req.params;
       const productos = await Producto.find({ catalogos: id }).populate('categorias');
       res.json(productos);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+   } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor', detalle: err.message });
+}
   };
 
   // Controlador para incrementar clics
@@ -158,12 +156,9 @@ const incrementarClics = async (req, res) => {
       }
   
       res.status(200).json(productos);
-    } catch (error) {
-      console.error('Error en obtenerMasPopulares:', error);
-      res.status(500).json({ 
-        error: 'Error interno del servidor',
-        detalle: process.env.NODE_ENV === 'development' ? error.message : ''
-      });
+    } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor', detalle: err.message });
+
     }
   };
 

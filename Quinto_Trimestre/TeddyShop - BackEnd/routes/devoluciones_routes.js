@@ -6,7 +6,8 @@ const {
   crearDevolucion,
   obtenerDevolucionPorId,
   buscarDevolucionesPorPedido,
-  eliminarDevolucion
+  eliminarDevolucion,
+  actualizarDevolucion
 } = require('../Controllers/devoluciones_controller');
 
 // const authorizeAccess = require('../middlewares/authorizeAccess');
@@ -189,5 +190,53 @@ router.get('/:id', obtenerDevolucionPorId);
  *         description: Error interno del servidor
  */
 router.delete('/:id', eliminarDevolucion);
+
+/**
+ * @swagger
+ * /devoluciones/{id}:
+ *   put:
+ *     summary: Actualiza una devolución existente
+ *     tags:
+ *       - Devoluciones
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fecha
+ *               - motivo
+ *               - items
+ *             properties:
+ *               fecha:
+ *                 type: string
+ *                 format: date-time
+ *               motivo:
+ *                 type: string
+ *                 example: "Producto equivocado entregado"
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/DevolucionItem'
+ *     responses:
+ *       200:
+ *         description: Devolución actualizada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Devolucion'
+ *       404:
+ *         description: Devolución no encontrada
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.put('/:id', actualizarDevolucion);
 
 module.exports = router;
