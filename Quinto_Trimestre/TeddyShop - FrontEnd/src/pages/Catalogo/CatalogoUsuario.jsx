@@ -28,6 +28,7 @@ import { getApiUrl } from '../../utils/apiConfig';
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
 const METODOSPAGO_API_URL = apiUrl + "/metodoPago";
+const PRODUCTOS_API_URL = `${apiUrl}/producto`;
 
 export default function CatalogoUsuario() {
   const [catalogos, setCatalogos] = useState([]);
@@ -46,7 +47,8 @@ export default function CatalogoUsuario() {
   const [historialPrecios, setHistorialPrecios] = useState([]);
   const [openCarritoDialog, setOpenCarritoDialog] = useState(false);
   const [metodosPago, setMetodosPago] = useState([]);
-  
+  const [refreshPopular, setRefreshPopular] = useState(false);
+
   const [pedido, setPedido] = useState({
     metodoPago: '',
     nombreComprador: '',
@@ -144,218 +146,129 @@ export default function CatalogoUsuario() {
     setPedido({ ...pedido, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitPedido = async () => {
-    const { precioFormateado, precioNumerico } = (() => {
-      if (!productoSeleccionado?.historialPrecios?.length) {
-        return { precioFormateado: "No disponible", precioNumerico: 0 };
-      }
-  
-      const historialCompleto = productoSeleccionado.historialPrecios
-        .map(precioId => historialPrecios.find(p => p._id === precioId))
-        .filter(Boolean);
-  
-      const ultimoRegistro = historialCompleto.at(-1);
-      
-      return {
-        precioFormateado: ultimoRegistro 
-          ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio)
-          : "No disponible",
-        precioNumerico: ultimoRegistro?.precio || 0
-      };
-    })();
-  
-    // Obtener el nombre del método de pago
-    const metodoPagoNombre = metodosPago.find(
-      (metodo) => metodo._id === pedido.metodoPago
-    )?.nombreMetodoPago || 'No seleccionado';
-  
-    // Crear mensaje de WhatsApp
-    const mensaje = `¡Hola! Me gustaría realizar el siguiente pedido:  
-  
-    📌 *Imagen del Producto:*  
-    ${productoSeleccionado?.imagen || 'No disponible'}  
-    
-    🆔 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}  
-    📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}  
-    📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}  
-    💵 *Metodo de pago seleccionado:* ${metodoPagoNombre}
-    💰 *Total:* ${precioFormateado}  
-    
-     🔹 *Datos del Pedido*  
-      👤 *Nombre del que paga:* ${pedido.nombreComprador}  
-      📞 *Número del que paga:* ${pedido.numeroComprador}  
-      👤 *Nombre del que recibe:* ${pedido.nombreAgendador}  
-      📞 *Número del que recibe:* ${pedido.numeroAgendador}  
-      📍 *Localidad:* ${pedido.localidad}  
-      🏠 *Dirección:* ${pedido.direccion}  
-      🏘 *Barrio:* ${pedido.barrio}`;
-  
-    const mensajeCodificado = encodeURIComponent(mensaje.trim());
-    const numeroWhatsApp = "573217292955";
-    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
-    window.open(urlWhatsApp, "_blank");
-  
+   const incrementClickCount = async (productId) => {
     try {
-      // Paso 1: Crear el pedido
-      const pedidoCompleto = {
+      const response = await fetch(`${PRODUCTOS_API_URL}/${productId}/clics`, {
+        method: 'POST'
+      });
+
+      if (!response.ok) throw new Error('Error en el servidor');
+
+      setRefreshPopular(prev => !prev);
+
+    } catch (error) {
+      console.error('Error al registrar clic:', error);
+      setSnackbarMessage('Error al actualizar popularidad');
+      setOpenSnackbar(true);
+    }
+  };
+
+const handleSubmitPedido = async () => {
+  const { precioFormateado, precioNumerico } = (() => {
+    if (!productoSeleccionado?.historialPrecios?.length) {
+      return { precioFormateado: "No disponible", precioNumerico: 0 };
+    }
+
+    const historialCompleto = productoSeleccionado.historialPrecios
+      .map(precioId => historialPrecios.find(p => p._id === precioId))
+      .filter(Boolean);
+
+    const ultimoRegistro = historialCompleto.at(-1);
+    
+    return {
+      precioFormateado: ultimoRegistro 
+        ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio)
+        : "No disponible",
+      precioNumerico: ultimoRegistro?.precio || 0
+    };
+  })();
+
+  const metodoPagoNombre = metodosPago.find(
+    (metodo) => metodo._id === pedido.metodoPago
+  )?.nombreMetodoPago || 'No seleccionado';
+
+  // Crear mensaje de WhatsApp
+  const mensaje = [
+    "¡Hola! Me gustaría realizar el siguiente pedido:\n",
+    `📍 *Imagen del Producto:* ${productoSeleccionado?.imagen || 'No disponible'}`,
+    `🔢 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}`,
+    `📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}`,
+    `📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}`,
+    `💳 *Método de pago seleccionado:* ${metodoPagoNombre || 'No seleccionado'}`,
+    `💰 *Total:* ${precioFormateado || 'No disponible'}`,
+    "\n📋 *Datos del Pedido*",
+    `👤 *Nombre del que paga:* ${pedido.nombreComprador || 'No proporcionado'}`,
+    `📱 *Número del que paga:* ${pedido.numeroComprador || 'No proporcionado'}`,
+    `👥 *Nombre del que recibe:* ${pedido.nombreAgendador || 'No proporcionado'}`,
+    `📞 *Número del que recibe:* ${pedido.numeroAgendador || 'No proporcionado'}`,
+    `🌍 *Localidad:* ${pedido.localidad || 'No proporcionado'}`,
+    `🏠 *Dirección:* ${pedido.direccion || 'No proporcionado'}`,
+    `🏘️ *Barrio:* ${pedido.barrio || 'No proporcionado'}`,
+  ].join('\n');
+
+  const mensajeCodificado = encodeURIComponent(mensaje);
+  const numeroWhatsApp = "573217292955";
+  const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
+  window.open(urlWhatsApp, "_blank");
+
+  try {
+    // Buscar inventario relacionado
+    let inventarioRelacionado = null;
+    try {
+      const inventarioResponse = await fetch(`${apiUrl}/inventario/por-producto/${productoSeleccionado._id}`);
+      if (inventarioResponse.ok) {
+        inventarioRelacionado = await inventarioResponse.json();
+      }
+    } catch (error) {
+      console.warn('No se encontró inventario para el producto.');
+    }
+
+    // Preparar datos completos para el backend
+    const datosCompletos = {
+      pedidoData: {
         nombreComprador: pedido.nombreComprador || "Sin nombre",
         numeroComprador: pedido.numeroComprador || "0000000000",
         nombreAgendador: pedido.nombreAgendador || "Sin nombre",
         numeroAgendador: pedido.numeroAgendador || "0000000000",
         localidad: pedido.localidad || "Sin localidad",
         direccion: pedido.direccion || "Sin dirección",
-        barrio: pedido.barrio || "Sin barrio",
-        cliente: "671976d2269e33c817066681",
-        facturas: [],
-        detallesPedido: [] // Inicializar como array vacío
-      };
-  
-  
-      const response = await fetch(`${apiUrl}/pedido`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pedidoCompleto)
-      });
-  
-      const responseData = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${JSON.stringify(responseData)}`);
-      }
-  
-      console.log('Pedido guardado:', responseData);
-  
-      // Paso 2: Crear el detalle del pedido
-      const detallePedido = {
-        precioDetallePedido: precioNumerico,
-        cantidadDetallePedido: 1,
-        idPedido: responseData._id,
-        idProducto: productoSeleccionado._id
-      };
-  
-  
-      const detalleResponse = await fetch(`${apiUrl}/detallesPedido`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(detallePedido)
-      });
-  
-      const detalleData = await detalleResponse.json();
-  
-      if (!detalleResponse.ok) {
-        throw new Error(`Error en detallePedido: ${JSON.stringify(detalleData)}`);
-      }
-  
-      console.log('DetallePedido guardado:', detalleData);
-  
-      // Paso 3: Crear la factura
-      const factura = {
-        fechaCreacionFactura: new Date().toISOString(),
-        horaCreacionFactura: new Date().toLocaleTimeString('es-MX'),
-        pedido: responseData._id,
-        detallesFactura: [],
-        metodoPago: pedido.metodoPago,
-      };
-  
-      
-      const facturaResponse = await fetch(`${apiUrl}/factura`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(factura)
-      });
-  
-      const facturaData = await facturaResponse.json();
-      
-      if (!facturaResponse.ok) {
-        throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
-      }
-  
-      console.log('Factura guardada:', facturaData);
-  
-      // Paso 4: Crear el detalle de la factura
-      const detalleFactura = {
-        precioDetalleFactura: precioNumerico.toString(),
-        cantidadDetalleFactura: 1,
+        barrio: pedido.barrio || "Sin barrio"
+      },
+      detallesPedido: [{
+        precio: precioNumerico,
+        cantidad: 1,
         idProducto: productoSeleccionado._id,
-        idFactura: facturaData._id 
-      };
-  
-      
-      const detalleFacturaResponse = await fetch(`${apiUrl}/detallesFactura`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(detalleFactura)
-      });
-  
-      const detalleFacturaData = await detalleFacturaResponse.json();
-      
-      if (!detalleFacturaResponse.ok) {
-        throw new Error(`Error en Detalle Factura: ${JSON.stringify(detalleFacturaData)}`);
-      }
-  
-      console.log('Detalle Factura guardada:', detalleFacturaData);
-  
-      // Paso 5: Actualizar la factura con el detalle
-      const updateFactura = {
-        fechaCreacionFactura: facturaData.fechaCreacionFactura,
-        horaCreacionFactura: facturaData.horaCreacionFactura,
-        pedido: facturaData.pedido,
-        metodoPago: facturaData.metodoPago,
-        detallesFactura: [detalleFacturaData._id]
-      };
-      
-      const updateResponse = await fetch(`${apiUrl}/factura/${facturaData._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateFactura)
-      });
-  
-      if (!updateResponse.ok) {
-        throw new Error(`Error actualizando factura: ${await updateResponse.text()}`);
-      }
-  
-      console.log('Factura actualizada con detalle');
-  
-      // Paso 6: Actualizar el pedido con el detalle y la factura
-      const updatePedido = {
-      nombreComprador: responseData.nombreComprador,
-      numeroComprador: responseData.numeroComprador,
-      nombreAgendador: responseData.nombreAgendador,
-      numeroAgendador: responseData.numeroAgendador,
-      localidad: responseData.localidad,
-      direccion: responseData.direccion,
-      barrio: responseData.barrio,
-      detallesPedido: [detalleData._id],
-      facturas: [facturaData._id],
-      cliente: responseData.cliente
-      };
-
-
-      const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
-      method: 'PUT',
+        idInventario: inventarioRelacionado?._id || null
+      }],
+      metodoPago: pedido.metodoPago
+    };
+    
+    // UNA SOLA LLAMADA AL BACKEND
+    const response = await fetch(`${apiUrl}/factura/crear-pedido-completo`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatePedido)
-      });
+      body: JSON.stringify(datosCompletos)
+    });
 
-      const updateResponseText = await updateResponsePedido.text();
+    const responseData = await response.json();
 
-      if (!updateResponsePedido.ok) {
-      console.error('Error al actualizar pedido - status:', updateResponsePedido.status);
-      console.error('Respuesta del servidor:', updateResponseText);
-      throw new Error(`Error actualizando pedido: ${updateResponseText}`);
-      }
-
-
-      setSnackbarMessage('Pedido realizado con éxito');
-    } catch (error) {
-      console.error('Error completo:', error);
-      setSnackbarMessage(error.message || 'Error al guardar el pedido');
-      setOpenSnackbar(true);
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${JSON.stringify(responseData)}`);
     }
-  
-    setOpenSnackbar(true);
-    handleCloseCarritoDialog();
-  };
+
+    
+    await incrementClickCount(productoSeleccionado._id);
+    setSnackbarMessage('Pedido realizado con éxito');
+    
+  } catch (error) {
+    console.error('❌ Error completo:', error);
+    setSnackbarMessage(error.message || 'Error al guardar el pedido');
+  }
+
+  setOpenSnackbar(true);
+  handleCloseCarritoDialog();
+};
+
 
   
 
