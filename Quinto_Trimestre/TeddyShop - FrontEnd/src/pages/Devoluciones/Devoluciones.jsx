@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import {
   Container,
@@ -27,7 +28,12 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider
+  Divider,
+  Grid,
+  Card,
+  CardContent,
+  Alert,
+  Snackbar
 } from '@mui/material';
 import {
   Edit,
@@ -42,7 +48,10 @@ import {
   AssignmentReturn,
   Inventory,
   Visibility,
-  Close
+  Close,
+  Info,
+  Save,
+  Cancel
 } from '@mui/icons-material';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig';
@@ -55,12 +64,14 @@ const Devoluciones = () => {
   const [devoluciones, setDevoluciones] = useState([]);
   const [inventarios, setInventarios] = useState([]);
   const [productos, setProductos] = useState([]);
-    const [selectedInventario, setSelectedInventario] = useState(null);
+  const [selectedInventario, setSelectedInventario] = useState(null);
   
-  const [nuevaDevolucion, setNuevaDevolucion] = useState({
+  const [formData, setFormData] = useState({
     fecha: '',
+    motivo: '',
     items: [{ inventario: '', cantidad: 1 }]
   });
+  
   const [editarDevolucion, setEditarDevolucion] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -71,6 +82,10 @@ const Devoluciones = () => {
   const [openDetalles, setOpenDetalles] = useState(false);
   const [devolucionSeleccionada, setDevolucionSeleccionada] = useState(null);
   const { makeRequest } = useApiRequest();
+  const [isEditing, setIsEditing] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const fetchData = async () => {
     try {
@@ -99,88 +114,37 @@ const Devoluciones = () => {
   }, []);
 
   const validarFormulario = () => {
-    if (!nuevaDevolucion.motivo.trim()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Campo incompleto',
-        text: 'Por favor, ingresa el detalle de la devolución',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#3085d6'
-      });
+    if (!formData.motivo?.trim()) {
+      setError('El motivo de la devolución es requerido');
       return false;
     }
 
-    if (!nuevaDevolucion.fecha) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Campo incompleto',
-        text: 'Por favor, selecciona la fecha de devolución',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#3085d6'
-      });
+    if (!formData.fecha) {
+      setError('La fecha de devolución es requerida');
       return false;
     }
 
-    const itemsValidos = nuevaDevolucion.items.every(item => 
+    const itemsValidos = formData.items.every(item => 
       item.inventario && item.cantidad > 0
     );
 
     if (!itemsValidos) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Items incompletos',
-        text: 'Por favor, completa todos los items de la devolución',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#3085d6'
-      });
+      setError('Todos los items deben tener un inventario seleccionado y cantidad mayor a 0');
       return false;
     }
 
     return true;
   };
-
-  const crearDevolucion = async () => {
-    if (!validarFormulario()) return;
-
-    await makeRequest({
-      url: `${apiUrl}/devoluciones`,
-      method: 'POST',
-      data: nuevaDevolucion,
-      confirm: {
-        title: 'Crear nueva devolución',
-        text: '¿Estás seguro de que deseas crear esta devolución?',
-        icon: 'question',
-        confirmButtonText: 'Sí, crear',
-        cancelButtonText: 'Cancelar'
-      },
-      loading: {
-        title: 'Procesando...',
-        html: 'Estamos creando la devolución'
-      },
-      success: {
-        title: '¡Devolución creada!',
-        text: 'La devolución se ha creado correctamente',
-        timer: 2000,
-        timerProgressBar: true
-      },
-      error: {
-        title: 'Error',
-        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
-      },
-      onSuccess: (newDevolucion) => {
-        setDevoluciones([...devoluciones, newDevolucion]);
-        resetDevolucionForm();
-      }
-    });
-  };
-
-  const actualizarDevolucion = async () => {
+  
+  const actualizarDevolucion = async (e) => {
+    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+    
     if (!editarDevolucion || !validarFormulario()) return;
 
     await makeRequest({
       url: `${apiUrl}/devoluciones/${editarDevolucion._id}`,
       method: 'PUT',
-      data: nuevaDevolucion,
+      data: formData,
       confirm: {
         title: 'Actualizar devolución',
         text: '¿Estás seguro de que deseas actualizar esta devolución?',
@@ -208,6 +172,7 @@ const Devoluciones = () => {
           dev._id === updatedDevolucion._id ? updatedDevolucion : dev
         ));
         resetDevolucionForm();
+        setSuccessMessage('Devolución actualizada exitosamente!');
       }
     });
   };
@@ -248,47 +213,65 @@ const Devoluciones = () => {
         setDevoluciones(prevDevoluciones => 
           prevDevoluciones.filter(dev => dev._id !== id)
         );
+        setSuccessMessage('Devolución eliminada exitosamente!');
       }
     });
   };
 
   const resetDevolucionForm = () => {
-    setNuevaDevolucion({
+    setFormData({
       fecha: '',
+      motivo: '',
       items: [{ inventario: '', cantidad: 1 }]
     });
     setEditarDevolucion(null);
+    setIsEditing(false);
+    setShowForm(false);
+    setError('');
   };
 
-  const handleEditClick = (devolucion) => {
-    setEditarDevolucion(devolucion);
-    setNuevaDevolucion({
-      fecha: devolucion.fecha?.split('T')[0] || '',
-      items: devolucion.items.map(item => ({
-        inventario: item.inventario._id || item.inventario,
-        cantidad: item.cantidad
-      }))
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+ const handleEditClick = (devolucion) => {
+  setEditarDevolucion(devolucion);
+  setFormData({
+    fecha: devolucion.fecha?.split('T')[0] || '',
+    motivo: devolucion.motivo || '',
+    items: devolucion.items.map(item => ({
+      inventario: item.inventario._id || item.inventario,
+      cantidad: item.cantidad
+    })),
+    pedido: devolucion.pedido._id || devolucion.pedido 
+  });
+  setIsEditing(true);
+  setShowForm(true);
+  setError('');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setError(''); // Limpiar error cuando el usuario empiece a escribir
   };
 
   const handleItemChange = (index, field, value) => {
-    const newItems = [...nuevaDevolucion.items];
+    const newItems = [...formData.items];
     newItems[index][field] = value;
-    setNuevaDevolucion({ ...nuevaDevolucion, items: newItems });
+    setFormData(prev => ({ ...prev, items: newItems }));
+    setError(''); // Limpiar error cuando el usuario haga cambios
   };
 
   const addItem = () => {
-    setNuevaDevolucion({
-      ...nuevaDevolucion,
-      items: [...nuevaDevolucion.items, { inventario: '', cantidad: 1 }]
-    });
+    setFormData(prev => ({
+      ...prev,
+      items: [...prev.items, { inventario: '', cantidad: 1 }]
+    }));
   };
 
   const removeItem = (index) => {
-    if (nuevaDevolucion.items.length > 1) {
-      const newItems = nuevaDevolucion.items.filter((_, i) => i !== index);
-      setNuevaDevolucion({ ...nuevaDevolucion, items: newItems });
+    if (formData.items.length > 1) {
+      const newItems = formData.items.filter((_, i) => i !== index);
+      setFormData(prev => ({ ...prev, items: newItems }));
     }
   };
 
@@ -311,46 +294,39 @@ const Devoluciones = () => {
     setSortBy(field);
   };
 
-// Extrae correctamente el _id de producto y busca estilo
-const getEstiloProductoFromInventarioId = (inventarioId) => {
-  // 1. Encuentra el inventario
-  const inv = inventarios.find(i => i._id === inventarioId);
-  if (!inv) return 'Inventario no encontrado';
+  const getEstiloProductoFromInventarioId = (inventarioId) => {
+    const inv = inventarios.find(i => i._id === inventarioId);
+    if (!inv) return 'Inventario no encontrado';
 
-  // 2. Saca el productId (puede venir como string o como { _id })
-  const prodId = typeof inv.idProducto === 'object' 
-    ? inv.idProducto._id 
-    : inv.idProducto;
+    const prodId = typeof inv.idProducto === 'object' 
+      ? inv.idProducto._id 
+      : inv.idProducto;
 
-  // 3. Busca el producto
-  const prod = productos.find(p => p._id === prodId);
-  return prod?.estiloProducto ?? 'Sin estilo';
-};
-
-// Si quieres devolver todo junto
-const getInventarioDetails = (inventarioId) => {
-  const inv = inventarios.find(i => i._id === inventarioId);
-  if (!inv) return null;
-
-  const prodId = typeof inv.idProducto === 'object' 
-    ? inv.idProducto._id 
-    : inv.idProducto;
-  const prod = productos.find(p => p._id === prodId);
-
-  return {
-    inventario: inv,
-    producto:    prod || null,
-    estiloProducto: prod?.estiloProducto ?? 'No especificado'
+    const prod = productos.find(p => p._id === prodId);
+    return prod?.estiloProducto ?? 'Sin estilo';
   };
-};
 
+  const getInventarioDetails = (inventarioId) => {
+    const inv = inventarios.find(i => i._id === inventarioId);
+    if (!inv) return null;
 
-  // Función para abrir el modal de detalles
-const handleDetallesClick = (devolucion) => {
+    const prodId = typeof inv.idProducto === 'object' 
+      ? inv.idProducto._id 
+      : inv.idProducto;
+    const prod = productos.find(p => p._id === prodId);
+
+    return {
+      inventario: inv,
+      producto: prod || null,
+      estiloProducto: prod?.estiloProducto ?? 'No especificado'
+    };
+  };
+
+  const handleDetallesClick = (devolucion) => {
     setDevolucionSeleccionada(devolucion);
     setOpenDetalles(true);
   };
-  // Función para cerrar el modal de detalles
+
   const handleCloseDetalles = () => {
     setOpenDetalles(false);
     setDevolucionSeleccionada(null);
@@ -371,19 +347,18 @@ const handleDetallesClick = (devolucion) => {
 
   return (
     <Box className="BoxInicial">
-      <Box
-        className="Box"
-        sx={{
-          width: '90%',
-          maxWidth: '900px',
-          padding: { xs: '20px', md: '30px' },
-          borderRadius: '30px',
-          margin: '0 auto',
-          backgroundColor: '#fffafc',
-          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
-          border: '2px solid #f8c8dc',
-        }}
-      >
+        <Box className="Box"
+          sx={{
+            width: '90%',
+            maxWidth: '900px',
+            padding: '30px',
+            borderRadius: '30px',
+            margin: '0 auto',
+            backgroundColor: '#fffafc',
+            boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+            border: '2px solid #f8c8dc',
+          }}
+        >
         <Container>
           <Box
             sx={{
@@ -414,6 +389,243 @@ const handleDetallesClick = (devolucion) => {
             </Typography>
           </Box>
 
+          {successMessage && (
+            <Alert 
+              severity="success" 
+              sx={{ 
+                mt: 2, 
+                mb: 3,
+                borderRadius: '10px',
+                backgroundColor: '#e8f5e9',
+                color: '#2e7d32',
+                border: '1px solid #a5d6a7',
+                '& .MuiAlert-icon': {
+                  color: '#2e7d32'
+                }
+              }}
+              onClose={() => setSuccessMessage('')}
+            >
+              {successMessage}
+            </Alert>
+          )}
+          
+          {error && (
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mt: 2, 
+                mb: 3,
+                borderRadius: '10px',
+                backgroundColor: '#ffebee',
+                color: '#c62828',
+                border: '1px solid #ef9a9a',
+                '& .MuiAlert-icon': {
+                  color: '#c62828'
+                }
+              }}
+              onClose={() => setError('')}
+            >
+              {error}
+            </Alert>
+          )}
+
+          {showForm && isEditing && (
+            <Paper
+              elevation={3}
+              sx={{
+                padding: '25px',
+                borderRadius: '20px',
+                marginBottom: '25px',
+                backgroundColor: '#fff0f5',
+                border: '1px solid #f8c8dc',
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  marginBottom: '20px',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <Edit fontSize="small" />
+                Editar Devolución
+              </Typography>
+
+              <form onSubmit={actualizarDevolucion}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Fecha de Devolución"
+                      type="date"
+                      name="fecha"
+                      value={formData.fecha}
+                      onChange={handleChange}
+                      required
+                      InputLabelProps={{ shrink: true }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Motivo de la Devolución"
+                      name="motivo"
+                      value={formData.motivo}
+                      onChange={handleChange}
+                      required
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12}>
+                    <Typography variant="h6" sx={{ mb: 2, color: '#b04e6f' }}>
+                      Items Devueltos
+                    </Typography>
+                    
+                    {formData.items.map((item, index) => (
+                      <Grid container spacing={2} key={index} alignItems="center" sx={{ mb: 2 }}>
+                        <Grid item xs={7} sm={5}>
+                          <FormControl fullWidth>
+                            <InputLabel>Inventario</InputLabel>
+                            <Select
+                              value={item.inventario}
+                              onChange={(e) => handleItemChange(index, 'inventario', e.target.value)}
+                              label="Inventario"
+                              required
+                              sx={{ borderRadius: '12px' }}
+                            >
+                              {inventarios.map(inv => (
+                                <MenuItem key={inv._id} value={inv._id}>
+                                  {getEstiloProductoFromInventarioId(inv._id)}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        
+                        <Grid item xs={3} sm={2}>
+                          <TextField
+                            fullWidth
+                            label="Cantidad"
+                            type="number"
+                            value={item.cantidad}
+                            onChange={(e) => handleItemChange(index, 'cantidad', parseInt(e.target.value) || 1)}
+                            required
+                            inputProps={{ min: 1 }}
+                            sx={{ borderRadius: '12px' }}
+                          />
+                        </Grid>
+                        
+                        <Grid item xs={2} sm={1}>
+                          <IconButton 
+                            onClick={() => removeItem(index)}
+                            disabled={formData.items.length <= 1}
+                            sx={{ 
+                              color: '#ff4081',
+                              '&:hover': { backgroundColor: 'rgba(255, 64, 129, 0.1)' }
+                            }}
+                          >
+                            <Remove />
+                          </IconButton>
+                        </Grid>
+                        
+                        {index === formData.items.length - 1 && (
+                          <Grid item xs={12} sm={4}>
+                            <Button
+                              variant="outlined"
+                              startIcon={<AddCircle />}
+                              onClick={addItem}
+                              type="button"
+                              sx={{
+                                borderRadius: '12px',
+                                borderColor: '#f48fb1',
+                                color: '#f48fb1',
+                                '&:hover': {
+                                  backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                                  borderColor: '#ec7096',
+                                }
+                              }}
+                            >
+                              Agregar Item
+                            </Button>
+                          </Grid>
+                        )}
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Grid>
+
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+                  <Button
+                    type="button"
+                    onClick={resetDevolucionForm}
+                    sx={{
+                      borderRadius: '12px',
+                      color: '#666',
+                      border: '1px solid #ddd',
+                      '&:hover': {
+                        backgroundColor: '#f5f5f5',
+                      },
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                      px: 3,
+                    }}
+                    startIcon={<Cancel />}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                      borderRadius: '12px',
+                      backgroundColor: '#f48fb1',
+                      '&:hover': {
+                        backgroundColor: '#ec7096',
+                      },
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                      px: 3,
+                      boxShadow: '0 4px 12px rgba(244, 143, 177, 0.3)',
+                    }}
+                    startIcon={<Save />}
+                  >
+                    Actualizar Devolución
+                  </Button>
+                </Box>
+              </form>
+            </Paper>
+          )}
+
           <Paper
             elevation={2}
             sx={{
@@ -434,26 +646,27 @@ const handleDetallesClick = (devolucion) => {
               },
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{
-                marginBottom: '15px',
-                color: '#b04e6f',
-                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <Search fontSize="small" /> Lista de Devoluciones
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <Search fontSize="small" /> Lista de Devoluciones
+              </Typography>
+            </Box>
 
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                marginBottom: 2,
+                marginTop: 2,
                 padding: '8px 16px',
                 borderRadius: '15px',
                 border: '1px solid #f8c8dc',
@@ -461,7 +674,6 @@ const handleDetallesClick = (devolucion) => {
                 backgroundColor: 'white',
                 maxWidth: '500px',
                 width: '100%',
-                margin: '0 auto',
               }}
             >
               <TextField
@@ -586,7 +798,6 @@ const handleDetallesClick = (devolucion) => {
                           : item.inventario._id;
 
                         const estilo = getEstiloProductoFromInventarioId(invId);
-
                             
                           return (
                           <Chip
@@ -604,17 +815,17 @@ const handleDetallesClick = (devolucion) => {
                         </Box>
                       </TableCell>
                       <TableCell align="center">
-                        <Tooltip title="Ver detalles del inventario">
+                        <Tooltip title="Ver detalles de la devolución">
                           <IconButton
                             onClick={() => handleDetallesClick(devolucion)}
                             sx={{
-                              color: '#2196f3',
+                              color: '#9c27b0',
                               '&:hover': {
                                 backgroundColor: 'rgba(33, 150, 243, 0.1)',
                               },
                             }}
                           >
-                            <Visibility />
+                            <Info />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Editar devolución">
@@ -831,5 +1042,6 @@ const handleDetallesClick = (devolucion) => {
     </Box>
   );
 };
+
 
 export default Devoluciones;
