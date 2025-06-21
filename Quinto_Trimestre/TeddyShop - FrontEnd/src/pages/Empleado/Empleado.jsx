@@ -804,6 +804,19 @@ const Empleado = () => {
                     <TableCell>{empleado.nombreEmpleado}</TableCell>
                     <TableCell>{empleado.telefonoEmpleado}</TableCell>
                     <TableCell align="center">
+                       <Tooltip title="Ver detalles">
+                      <IconButton
+                        onClick={() => verDetalles(empleado)}
+                        sx={{
+                          color: '#9c27b0',
+                          '&:hover': {
+                            backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                          },
+                        }}
+                      >
+                        <Info />
+                      </IconButton>
+                      </Tooltip>            
                     <Tooltip title="Editar Empleado">
                       <IconButton
                         onClick={() => editarEmpleado(empleado)}
@@ -816,20 +829,7 @@ const Empleado = () => {
                       >
                         <Edit />
                       </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Ver detalles">
-                      <IconButton
-                        onClick={() => verDetalles(empleado)}
-                        sx={{
-                          color: '#9c27b0',
-                          '&:hover': {
-                            backgroundColor: 'rgba(156, 39, 176, 0.1)',
-                          },
-                        }}
-                      >
-                        <Info />
-                      </IconButton>
-                      </Tooltip>                      
+                      </Tooltip>          
                       <Tooltip title="Eliminar Empleado">
                       <IconButton
                         onClick={() => eliminarEmpleado(empleado._id)}

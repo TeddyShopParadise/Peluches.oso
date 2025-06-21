@@ -317,20 +317,17 @@ const Movimientos = () => {
             />
           </Box>
   
-          <TableContainer
-          component={Paper}
-          elevation={3}
-          sx={{
-            marginTop: 3,
-            borderRadius: '15px',
-            overflow: 'hidden',
-            border: '1px solid #f8c8dc',
-            maxHeight: 500,
-            overflowX: 'auto',
-
-          }}
-        >
-            <Table>
+           <TableContainer
+           component={Paper}
+           elevation={3}
+           sx={{
+             marginTop: 3,
+             borderRadius: '15px',
+             border: '1px solid #f8c8dc',
+             overflow: 'auto',    
+           }}
+         >
+           <Table sx={{ minWidth: 600 }}>
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#ffeef3' }}>
                   <TableCell sx={{ fontWeight: 'bold' }}>Fecha</TableCell>
@@ -390,7 +387,7 @@ const Movimientos = () => {
                         <IconButton
                           onClick={() => handleOpenDetailsDialog(movimiento)}
                           sx={{
-                            color: '#6c63ff',
+                            color: '#9c27b0',
                             '&:hover': {
                               backgroundColor: 'rgba(108, 99, 255, 0.1)',
                             },
