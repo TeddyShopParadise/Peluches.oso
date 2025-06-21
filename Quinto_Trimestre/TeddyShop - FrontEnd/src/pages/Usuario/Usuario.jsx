@@ -790,21 +790,7 @@ return (
                       <TableCell>{usuario.username}</TableCell>
                       <TableCell>{usuario.email}</TableCell>
                       <TableCell align="center">
-                          <Tooltip title="Editar Usuario">
-                        <IconButton
-                          onClick={() => handleEditClick(usuario)}
-                          sx={{
-                            color: '#6c63ff',
-                            '&:hover': {
-                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            },
-                          }}
-                        >
-                          <Edit />
-                        </IconButton>
-                         </Tooltip>
                       <Tooltip title="Ver detalles">
-                        
                         <IconButton
                           onClick={() => handleOpenDetailDialog(usuario)}
                           sx={{
@@ -817,6 +803,19 @@ return (
                           <Info />
                         </IconButton>
                         </Tooltip>
+                         <Tooltip title="Editar Usuario">
+                        <IconButton
+                          onClick={() => handleEditClick(usuario)}
+                          sx={{
+                            color: '#6c63ff',
+                            '&:hover': {
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            },
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                         </Tooltip>
                         <Tooltip title="Eliminar Usuario">                          
                         <IconButton
                           onClick={() => eliminarUsuario(usuario._id)}
