@@ -1,24 +1,52 @@
 import React from 'react';
-import { Dialog, DialogContent, Button, Typography, Box, Table, TableBody, TableCell, TableHead, TableRow, Grid } from '@mui/material';
+import {
+  Dialog,
+  DialogContent,
+  Button,
+  Typography,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Grid
+} from '@mui/material';
 import { LocationOn, Phone, Print } from '@mui/icons-material';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import FacturaPDFExport from './FacturaPDFExport';
 
-
 const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
-  console.log("Datos de la factura:", factura); 
-  if (!factura || !pedido) return null;
+  const companiaData = Array.isArray(compania) && compania.length > 0
+    ? compania[0]
+    : compania;
+
+  if (!factura || !pedido || !companiaData) {
+    return null;
+  }
+
+  // Debug cada item individual
+  if (factura.detallesFactura && Array.isArray(factura.detallesFactura)) {
+    factura.detallesFactura.forEach((item, index) => {
+     
+      // Verificar estructura del producto
+      if (item.idProducto) {
+      }
+    
+      if (item.producto_id) {
+      }
+    });
+  }
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogContent sx={{ 
-        backgroundColor: '#f8f9fa', 
+      <DialogContent sx={{
+        backgroundColor: '#f8f9fa',
         p: { xs: 2, md: 4 },
         '& .MuiDialogContent-root': {
           overflowY: 'visible'
         }
       }}>
-       {/* Encabezado responsivo */}
         <Box textAlign="center" mb={4} sx={{
           backgroundColor: 'white',
           py: { xs: 2, md: 3 },
@@ -33,21 +61,21 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
             textTransform: 'uppercase',
             fontSize: { xs: '1.75rem', md: '2.125rem' }
           }}>
-            {compania?.nombreEmpresa}
+            {companiaData?.nombreEmpresa} 
           </Typography>
           
           <Grid container spacing={1} justifyContent="center" sx={{ textAlign: { xs: 'left', md: 'center' } }}>
             <Grid item xs={12} md={4} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <LocationOn fontSize="small" color="primary" />
               <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>
-                {compania?.direccionEmpresa}
+                {companiaData?.direccionEmpresa} 
               </Typography>
             </Grid>
             
             <Grid item xs={12} md={4} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Phone fontSize="small" color="primary" />
               <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>
-                {compania?.telefonoEmpresa}
+                {companiaData?.telefonoEmpresa} 
               </Typography>
             </Grid>
             
@@ -56,13 +84,12 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
                 fontWeight: 500,
                 fontSize: { xs: '0.8rem', md: '0.875rem' }
               }}>
-                NIT: {compania?.NIT?.toLocaleString('es-CO')}
+                NIT: {companiaData?.NIT?.toLocaleString('es-CO')} 
               </Typography>
             </Grid>
           </Grid>
         </Box>
 
-        {/* Sección Cliente - Versión Responsive */}
         <Box mb={4} sx={{
           p: { xs: 2, md: 3 },
           backgroundColor: 'white',
@@ -167,41 +194,46 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
             }}>
               <TableRow>
                 <TableCell>Producto</TableCell>
-                <TableCell align="right">Tamaño</TableCell>
-                <TableCell align="right">Cantidad</TableCell>
                 <TableCell align="right">Precio Unitario</TableCell>
+                <TableCell align="right">Cantidad</TableCell>
                 <TableCell align="right">Total</TableCell>
               </TableRow>
             </TableHead>
-            
-            <TableBody>
-  {factura.detallesFactura?.map((item, index) => (
-    <TableRow key={index}>
-      <TableCell sx={{ minWidth: 200 }}>
-        <Typography sx={{ fontWeight: 500 }}>
-          {/* Corregido para acceder correctamente a los datos del producto */}
-          {item.idProducto?._id && `  ${item.idProducto._id}`}
-        </Typography>
-      </TableCell>
-      
-      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-          {item.idProducto?.tamañoProducto && `  ${item.idProducto.tamañoProducto}`}
-      </TableCell>
-      <TableCell align="right">{item.cantidadDetalleFactura}</TableCell>
-      
-      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-        ${typeof item.precioDetalleFactura === 'number' 
-          ? item.precioDetalleFactura.toLocaleString("es-CO") 
-          : parseFloat(item.precioDetalleFactura || 0).toLocaleString("es-CO")}
-      </TableCell>
-     
-      <TableCell align="right" sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-        ${(parseFloat(item.precioDetalleFactura || 0) * (item.cantidadDetalleFactura || 1)).toLocaleString("es-CO")}
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
 
+            <TableBody>
+              {factura.detallesFactura?.map((item, index) => {
+                
+                // Determinar cuál campo usar para el producto
+                const producto = item.idProducto || item.producto_id;
+                
+                const nombreProducto = producto?.estiloProducto || 
+                                     producto?.tamañoProducto || 
+                                     "⚠️ Producto no especificado";
+                
+                const precioUnitario = item.precioDetalleFactura || 0;
+                const cantidad = item.cantidadDetalleFactura || 0;
+                const total = precioUnitario * cantidad;
+                
+  
+                
+                return (
+                  <TableRow key={index}>
+                    <TableCell sx={{ minWidth: 200 }}>
+                      <Typography sx={{ fontWeight: 500 }}>
+                        {nombreProducto}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+                      ${precioUnitario?.toLocaleString("es-CO")}
+                    </TableCell>
+                    <TableCell align="right">{cantidad}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                      ${total?.toLocaleString("es-CO")}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
           </Table>
         </Box>
 
@@ -217,7 +249,10 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
               fontSize: { xs: '1.25rem', md: '1.5rem' }
             }}>
               Total General: ${factura.detallesFactura?.reduce(
-                (sum, item) => sum + (item.precioDetalleFactura * item.cantidadDetalleFactura), 
+                (sum, item) => {
+                  const subtotal = (item.precioDetalleFactura || 0) * (item.cantidadDetalleFactura || 0);
+                  return sum + subtotal;
+                }, 
                 0
               )?.toLocaleString('es-CO')}
             </Typography>
@@ -236,19 +271,19 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
                 minWidth: { xs: '100%', sm: '160px' }
               }}
             >
-              <PDFDownloadLink
-                document={
-                  <FacturaPDFExport 
-                    factura={factura} 
-                    pedido={pedido} 
-                    compania={compania} 
-                  />
-                }
-                fileName={`factura-${factura.idFactura}.pdf`}
-                style={{ color: 'white', textDecoration: 'none' }}
-              >
-                {({ loading }) => (loading ? 'Generando...' : 'Exportar PDF')}
-              </PDFDownloadLink>
+            <PDFDownloadLink
+              document={
+                <FacturaPDFExport 
+                  factura={factura} 
+                  pedido={pedido} 
+                  compania={companiaData} 
+                />
+              }
+              fileName={`factura-${factura.idFactura}.pdf`}
+              style={{ color: 'white', textDecoration: 'none' }}
+            >
+              {({ loading }) => (loading ? 'Generando...' : 'Exportar PDF')}
+            </PDFDownloadLink>
             </Button>
             <Button
               variant="outlined"
@@ -265,15 +300,15 @@ const FacturaPDF = ({ factura, open, onClose, pedido, compania }) => {
           </Box>
         </Box>
 
-        {/* Footer Responsive */}
         <Box mt={4} textAlign="center" sx={{ color: 'text.secondary' }}>
           <Typography variant="caption" sx={{ fontSize: { xs: '0.7rem', md: '0.8rem' } }}>
-            © {new Date().getFullYear()} {compania?.nombreEmpresa} - Todos los derechos reservados<br/>
+            © {new Date().getFullYear()} {companiaData?.nombreEmpresa} - Todos los derechos reservados<br/>
             <Box component="span" sx={{ fontSize: '0.75rem' }}>
               Desprendible de Pedido 
             </Box>
           </Typography>
         </Box>
+
       </DialogContent>
     </Dialog>
   );
