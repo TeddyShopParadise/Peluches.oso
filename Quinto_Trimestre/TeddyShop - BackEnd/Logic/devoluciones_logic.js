@@ -109,11 +109,77 @@ async function eliminarDevolucion(id) {
     throw err;
   }
 }
+async function actualizarDevolucion(id, body) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const devolucionAnterior = await Devoluciones.findById(id).session(session);
+    if (!devolucionAnterior) throw new Error(`Devolución ${id} no encontrada`);
+
+    // Revertir stock y eliminar movimientos anteriores
+    for (const { inventario: invId, cantidad } of devolucionAnterior.items) {
+      const inv = await Inventario.findById(invId).session(session);
+      if (!inv) continue;
+
+      inv.stock -= cantidad;
+      await inv.save({ session });
+
+      await Movimiento.deleteMany({
+        inventario: invId,
+        descripcionMovimiento: { $regex: `Devolución.*${devolucionAnterior._id}` }
+      }).session(session);
+    }
+
+    // Aplicar nuevos datos
+    devolucionAnterior.fecha  = body.fecha;
+    devolucionAnterior.motivo = body.motivo;
+    devolucionAnterior.items  = body.items;
+
+    await devolucionAnterior.save({ session });
+
+    // Aplicar nuevos cambios al inventario y registrar movimientos
+    for (const { inventario: invId, cantidad } of body.items) {
+      const inv = await Inventario.findById(invId).session(session);
+      if (!inv) throw new Error(`Inventario ${invId} no encontrado`);
+
+      inv.stock += cantidad;
+
+      const mov = new Movimiento({
+        fecha: new Date(),
+        cantidadIngreso: cantidad,
+        cantidadVendida: 0,
+        descripcionMovimiento: `Devolución #${id}`,
+        inventario: inv._id
+      });
+
+      inv.movimientos.push(mov._id);
+      await Promise.all([
+        inv.save({ session }),
+        mov.save({ session })
+      ]);
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return Devoluciones
+      .findById(id)
+      .populate('pedido')
+      .populate('items.inventario')
+      .lean();
+
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    throw err;
+  }
+}
 
 module.exports = {
   crearDevolucion,
   listarDevoluciones,
   buscarDevolucionPorId,
   buscarDevolucionesPorPedido,
-  eliminarDevolucion
+  eliminarDevolucion,
+  actualizarDevolucion
 };

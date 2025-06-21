@@ -7,33 +7,65 @@ const { agregarFacturaAPedido } = require('./pedido_logic');
 
 // Crear factura
 async function crearFactura(body) {
+  
+  // Verificar si ya existe una factura para este pedido
   const facturaExistente = await Factura.findOne({ pedido: body.pedido });
+  
   if (facturaExistente) {
+    
+    // Si existe, actualizar con los nuevos detalles
+    if (body.detallesFactura && body.detallesFactura.length > 0) {
+      // Agregar nuevos detalles sin duplicar
+      const nuevosDetalles = body.detallesFactura.filter(
+        detalle => !facturaExistente.detallesFactura.includes(detalle)
+      );
+      
+      if (nuevosDetalles.length > 0) {
+        facturaExistente.detallesFactura.push(...nuevosDetalles);
+        if (body.metodoPago) {
+          facturaExistente.metodoPago = body.metodoPago;
+        }
+        await facturaExistente.save();
+      }
+    }
+    
     return facturaExistente; 
   }
 
+  
   const factura = new Factura({
-    fechaCreacionFactura: body.fechaCreacionFactura,
-    horaCreacionFactura: body.horaCreacionFactura,
+    fechaCreacionFactura: body.fechaCreacionFactura || new Date().toISOString().split('T')[0],
+    horaCreacionFactura: body.horaCreacionFactura || new Date().toLocaleTimeString('es-MX'),
     pedido: body.pedido,
-    cliente: body.cliente,
     detallesFactura: body.detallesFactura || [],
     metodoPago: body.metodoPago
   });
 
+
   const facturaGuardada = await factura.save();
+  
+  
+  // Agregar factura al pedido
   await agregarFacturaAPedido(facturaGuardada.pedido, facturaGuardada._id);
 
   return facturaGuardada;
 }
+
+
 // Actualizar factura
 async function actualizarFactura(id, body) {
+    
     const facturaOriginal = await Factura.findById(id);
-    if (!facturaOriginal) throw new Error(`Factura con ID ${id} no encontrada`);
+    if (!facturaOriginal) {
+        console.error(`❌ FACTURA ${id} NO ENCONTRADA`);
+        throw new Error(`Factura con ID ${id} no encontrada`);
+    }
+
 
     if (facturaOriginal.pedido.toString() !== body.pedido) {
         const facturaExistente = await Factura.findOne({ pedido: body.pedido });
         if (facturaExistente) {
+            console.error("❌ EL NUEVO PEDIDO YA TIENE FACTURA");
             throw new Error('El nuevo pedido ya tiene una factura generada.');
         }
     }
@@ -49,67 +81,76 @@ async function actualizarFactura(id, body) {
         }
     }, { new: true });
 
+
     return factura;
 }
-
-// Listar facturas con populate + lean() para obtener objetos puros de JS
+// listarFacturas limpio
 async function listarFacturas() {
-    try {
-      const facturas = await Factura.find()
-        .populate('pedido', 'numPedido')
-        .populate('cliente', 'nombreCliente')
-        .populate({
-          path: 'detallesFactura',
-          populate: [
-            { path: 'idProducto', select: 'estiloProducto disponibilidadProducto' },
-            { path: 'idInventario', select: 'stock precioVenta precioCompra' }
-          ]
-        })
-        .populate('metodoPago', 'nombreMetodoPago')
-        .lean();
-  
-      return facturas;
-    } catch (err) {
-      console.error("Error al listar facturas:", err.message);
-      throw new Error("Error al obtener facturas");
-    }
-  }
-  
+  try {
+    const facturas = await Factura.find()
+      .populate('pedido', 'numPedido')
+      .populate('cliente', 'nombreCliente')
+      .populate({
+        path: 'detallesFactura',
+        populate: [
+          { path: 'idProducto', select: 'estiloProducto disponibilidadProducto tamañoProducto' },
+          { path: 'idInventario', select: 'stock precioVenta precioCompra' }
+        ]
+      })
+      .populate('metodoPago', 'nombreMetodoPago')
+      .lean();
 
-// Buscar factura por ID con populate profundo
-async function buscarFacturaPorId(id) {
-    try {
-      const factura = await Factura.findById(id)
-        .populate('pedido', 'numPedido')
-        .populate('cliente', 'nombreCliente')
-        .populate({
-          path: 'detallesFactura',
-          populate: [
-            { path: 'idProducto', select: 'estiloProducto disponibilidadProducto' },
-            { path: 'idInventario', select: 'stock precioVenta precioCompra' }
-          ]
-        })
-        .populate('metodoPago', 'nombreMetodoPago')
-        .lean();
-  
-      console.log('Factura completa:\n', JSON.stringify(factura, null, 2));
-      return factura;
-    } catch (err) {
-      console.error(`Error al buscar la factura por ID: ${err.message}`);
-      throw err;
-    }
+    // Sin logs innecesarios
+    return facturas;
+  } catch (err) {
+    console.error("❌ ERROR AL LISTAR FACTURAS:", err.message);
+    console.error("❌ STACK TRACE:", err.stack);
+    throw new Error("Error al obtener facturas");
   }
-  
+}
+
+// buscarFacturaPorId limpio
+async function buscarFacturaPorId(id) {
+  try {
+    const factura = await Factura.findById(id)
+      .populate('pedido', 'numPedido')
+      .populate('cliente', 'nombreCliente')
+      .populate({
+        path: 'detallesFactura',
+        populate: [
+          { path: 'idProducto', select: 'estiloProducto disponibilidadProducto tamañoProducto' },
+          { path: 'idInventario', select: 'stock precioVenta precioCompra' }
+        ]
+      })
+      .populate('metodoPago', 'nombreMetodoPago')
+      .lean();
+
+    if (!factura) {
+      console.error(`❌ FACTURA ${id} NO ENCONTRADA`);
+      return null;
+    }
+
+    return factura;
+  } catch (err) {
+    console.error(`❌ ERROR AL BUSCAR LA FACTURA POR ID: ${err.message}`);
+    console.error("❌ STACK TRACE:", err.stack);
+    throw err;
+  }
+}
+
 // Eliminar factura
 async function eliminarFactura(id) {
     try {
+        
         const factura = await Factura.findByIdAndDelete(id);
         if (!factura) {
+            console.error(`❌ FACTURA ${id} NO ENCONTRADA PARA ELIMINAR`);
             throw new Error(`Factura con ID ${id} no encontrada`);
         }
-        return factura;
+                return factura;
     } catch (err) {
-        console.error(`Error al eliminar la factura: ${err.message}`);
+        console.error(`❌ ERROR AL ELIMINAR LA FACTURA: ${err.message}`);
+        console.error("❌ STACK TRACE:", err.stack);
         throw err;
     }
 }
