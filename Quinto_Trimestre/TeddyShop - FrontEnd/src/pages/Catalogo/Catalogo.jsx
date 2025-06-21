@@ -573,17 +573,19 @@ const CatalogoComponent = () => {
               <ListAlt fontSize="small" /> Lista de Catálogos
             </Typography>
   
-            <TableContainer
-              component={Paper}
-              elevation={3}
-              sx={{
-                borderRadius: '15px',
-                overflow: 'hidden',
-                border: '1px solid #f8c8dc',
-                overflowX: 'auto',
+          <TableContainer
+          component={Paper}
+          elevation={3}
+          sx={{
+            marginTop: 3,
+            borderRadius: '15px',
+            overflow: 'hidden',
+            border: '1px solid #f8c8dc',
+            maxHeight: 500,
+            overflowX: 'auto',
 
-              }}
-            >
+          }}
+        >
               <Table>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: '#ffeef3' }}>
@@ -605,17 +607,33 @@ const CatalogoComponent = () => {
                       <TableCell>{catalogo.nombreCatalogo}</TableCell>
                       <TableCell>{catalogo.compania?.nombreEmpresa || 'Sin compañía'}</TableCell>
                       <TableCell align="center">
+                         <Tooltip title="Ver Detalles">
+                        <IconButton
+                          onClick={() => openDetailsDialog(catalogo)}
+                          sx={{
+                            color: '#9c27b0',
+                            '&:hover': {
+                              backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                            },
+                          }}
+                        >
+                          <Info />
+                        </IconButton>
+                        </Tooltip>
+                         <Tooltip title="Editar Catalogo">
                         <IconButton
                           onClick={() => editarCatalogo(catalogo)}
                           sx={{
-                            color: '#4caf50',
+                            color: '#6c63ff',
                             '&:hover': {
-                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
                             },
                           }}
                         >
                           <Edit />
                         </IconButton>
+                         </Tooltip>
+                      <Tooltip title="Eliminar Catalogo">
                         <IconButton
                           onClick={() => eliminarCatalogo(catalogo._id)}
                           sx={{
@@ -627,17 +645,7 @@ const CatalogoComponent = () => {
                         >
                           <Delete />
                         </IconButton>
-                        <IconButton
-                          onClick={() => openDetailsDialog(catalogo)}
-                          sx={{
-                            color: '#6c63ff',
-                            '&:hover': {
-                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
-                            },
-                          }}
-                        >
-                          <Info />
-                        </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}

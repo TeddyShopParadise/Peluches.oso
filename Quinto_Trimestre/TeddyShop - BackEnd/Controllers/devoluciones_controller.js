@@ -37,7 +37,6 @@ const obtenerDevolucionPorId = async (req, res) => {
 
   try {
     const devolucion = await logic.buscarDevolucionPorId(id);
-    console.log('[obtenerDevolucionPorId] Devolución encontrada:', devolucion);
     res.json(devolucion);
   } catch (err) {
     if (err.message.includes('no encontrada')) {
@@ -79,10 +78,33 @@ const eliminarDevolucion = async (req, res) => {
   }
 };
 
+const actualizarDevolucion = async (req, res) => {
+  const { id } = req.params;
+  const { error, value } = devolucionesSchemaValidation.validate(req.body);
+
+  if (error) {
+    console.warn('[actualizarDevolucion] Validación fallida:', error.details);
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
+  try {
+    const devolucionActualizada = await logic.actualizarDevolucion(id, value);
+    res.json(devolucionActualizada);
+  } catch (err) {
+    if (err.message.includes('no encontrada')) {
+      console.warn('[actualizarDevolucion] No encontrada:', err.message);
+      return res.status(404).json({ error: err.message });
+    }
+    console.error('[actualizarDevolucion] Error:', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 module.exports = {
   listarDevoluciones,
   crearDevolucion,
   obtenerDevolucionPorId,
   buscarDevolucionesPorPedido,
-  eliminarDevolucion
+  eliminarDevolucion,
+  actualizarDevolucion
 };

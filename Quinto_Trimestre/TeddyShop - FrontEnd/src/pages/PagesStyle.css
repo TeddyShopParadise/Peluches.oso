@@ -185,3 +185,31 @@ tr:nth-child(even) {
     z-index: 9999999 !important;
   }
 }
+
+.swal2-container {
+  z-index: 999999 !important;
+}
+
+.swal2-popup {
+  z-index: 999999 !important;
+}
+
+.swal2-container.swal2-shown {
+  z-index: 999999 !important;
+}
+
+.swal2-container.swal2-top-end, 
+.swal2-container.swal2-top, 
+.swal2-container.swal2-top-start, 
+.swal2-container.swal2-center-start, 
+.swal2-container.swal2-center, 
+.swal2-container.swal2-center-end, 
+.swal2-container.swal2-bottom-start, 
+.swal2-container.swal2-bottom, 
+.swal2-container.swal2-bottom-end {
+  z-index: 999999 !important;
+}
+
+.swal2-backdrop-show {
+  z-index: 999998 !important;
+}

@@ -15,9 +15,7 @@ const listarClientes = async (req, res) => {
 // Controlador para crear un cliente
 const crearCliente = async (req, res) => {
     const body = req.body;
-    console.log('Cuerpo de la solicitud:', body);  
 
-    // Validación del cliente con Joi
     const { error, value } = clienteSchemaValidation.validate(body);
     if (error) {
         console.log('Error en la validación:', error.details[0].message);  
@@ -25,7 +23,6 @@ const crearCliente = async (req, res) => {
     }
 
     try {
-        console.log('Datos validados:', value);  
 
         const { nombre, apellido } = logic.separarNombreYApellido(value.nombreCliente);
         console.log('Nombre descompuesto:', nombre);  

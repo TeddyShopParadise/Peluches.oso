@@ -449,10 +449,11 @@ const CategoriaComponent = () => {
                       <TableCell>{categoria.nombreCategoria}</TableCell>
                       <TableCell>{categoria.descripcionCategoria}</TableCell>
                       <TableCell align="center">
+                      <Tooltip title="Editar Categoria">
                         <IconButton
                           onClick={() => editarCategoria(categoria)}
                           sx={{
-                            color: '#4caf50',
+                            color: '#6c63ff',
                             '&:hover': {
                               backgroundColor: 'rgba(76, 175, 80, 0.1)',
                             },
@@ -460,6 +461,8 @@ const CategoriaComponent = () => {
                         >
                           <Edit />
                         </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Eliminar Categoria">
                         <IconButton
                           onClick={() => eliminarCategoria(categoria._id)}
                           sx={{
@@ -471,6 +474,8 @@ const CategoriaComponent = () => {
                         >
                           <Delete />
                         </IconButton>
+                        </Tooltip>
+
                       </TableCell>
                     </TableRow>
                   ))}

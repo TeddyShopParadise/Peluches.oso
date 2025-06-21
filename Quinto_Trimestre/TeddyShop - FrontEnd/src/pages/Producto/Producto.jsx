@@ -223,7 +223,7 @@ const ProductoComponent = () => {
 
   const crearProducto = async () => {
   if (!estiloProducto || !disponibilidadProducto || !tamañoProducto || 
-      !categoriaSeleccionada || !catalogoSeleccionado) { // Cambiar de .length === 0 a !valor
+      !categoriaSeleccionada || !catalogoSeleccionado) { 
     await Swal.fire('Error', 'Por favor, completa todos los campos.', 'error');
     return;
   }
@@ -1083,10 +1083,24 @@ const limpiarValor = (valor) => valor.replace(/\./g, '');
                       <TableCell>{producto.tamañoProducto}</TableCell>
                       <TableCell>{producto.disponibilidadProducto}</TableCell>
                       <TableCell align="center">
+                          <Tooltip title="Ver Detalles">
+                        <IconButton
+                          onClick={() => openDetailsDialog(producto)}
+                          sx={{
+                            color: '#9c27b0',
+                            '&:hover': {
+                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                            },
+                          }}
+                        >
+                          <Info />
+                        </IconButton>
+                         </Tooltip>
+                      <Tooltip title="Editar Producto">
                         <IconButton
                           onClick={() => editarProducto(producto)}
                           sx={{
-                            color: '#4caf50',
+                            color: '#6c63ff',
                             '&:hover': {
                               backgroundColor: 'rgba(76, 175, 80, 0.1)',
                             },
@@ -1094,6 +1108,8 @@ const limpiarValor = (valor) => valor.replace(/\./g, '');
                         >
                           <Edit />
                         </IconButton>
+                        </Tooltip>
+                      <Tooltip title="Eliminar Producto">
                         <IconButton
                           onClick={() => eliminarProducto(producto._id)}
                           sx={{
@@ -1105,17 +1121,7 @@ const limpiarValor = (valor) => valor.replace(/\./g, '');
                         >
                           <Delete />
                         </IconButton>
-                        <IconButton
-                          onClick={() => openDetailsDialog(producto)}
-                          sx={{
-                            color: '#6c63ff',
-                            '&:hover': {
-                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
-                            },
-                          }}
-                        >
-                          <Info />
-                        </IconButton>
+                        </Tooltip>   
                       </TableCell>
                     </TableRow>
                   ))}

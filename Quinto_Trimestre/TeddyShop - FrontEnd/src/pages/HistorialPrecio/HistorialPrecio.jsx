@@ -604,10 +604,24 @@ const eliminarHistorialPrecio = async (id) => {
                         />
                       </TableCell>
                       <TableCell align="center">
+                         <Tooltip title="Ver Deatlles">
+                        <IconButton
+                          onClick={() => handleOpenDetails(historial)}
+                          sx={{
+                            color: '#9c27b0',
+                            '&:hover': {
+                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                            },
+                          }}
+                        >
+                          <Info />
+                        </IconButton>
+                         </Tooltip>
+                          <Tooltip title="Editar Historial de Precio">
                         <IconButton
                           onClick={() => iniciarEdicion(historial)}
                           sx={{
-                            color: '#4caf50',
+                            color: '#6c63ff',
                             '&:hover': {
                               backgroundColor: 'rgba(76, 175, 80, 0.1)',
                             },
@@ -615,6 +629,8 @@ const eliminarHistorialPrecio = async (id) => {
                         >
                           <Edit />
                         </IconButton>
+                         </Tooltip>
+                         <Tooltip title="Eliminar Historial de Precio">
                         <IconButton
                           onClick={() => eliminarHistorialPrecio(historial._id)}
                           sx={{
@@ -626,17 +642,7 @@ const eliminarHistorialPrecio = async (id) => {
                         >
                           <Delete />
                         </IconButton>
-                        <IconButton
-                          onClick={() => handleOpenDetails(historial)}
-                          sx={{
-                            color: '#6c63ff',
-                            '&:hover': {
-                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
-                            },
-                          }}
-                        >
-                          <Info />
-                        </IconButton>
+                         </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}

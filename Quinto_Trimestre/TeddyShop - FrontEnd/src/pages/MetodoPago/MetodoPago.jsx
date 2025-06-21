@@ -528,17 +528,21 @@ const MetodoPago = () => {
                   >
                     <TableCell>{metodo.nombreMetodoPago}</TableCell>
                     <TableCell align="center">
+                    <Tooltip title="Editar Método de Pago">
+                      
                       <IconButton
                         onClick={() => handleEditClick(metodo)}
                         sx={{
                           color: '#6c63ff',
                           '&:hover': {
-                            backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
                           },
                         }}
                       >
                         <Edit />
                       </IconButton>
+                      </Tooltip>  
+                      <Tooltip title="Eliminar Método de Pago">
                       <IconButton
                         onClick={() => eliminarMetodoPago(metodo._id)}
                         sx={{
@@ -550,6 +554,7 @@ const MetodoPago = () => {
                       >
                         <Delete />
                       </IconButton>
+                     </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}

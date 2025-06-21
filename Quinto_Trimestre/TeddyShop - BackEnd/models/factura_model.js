@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const facturaSchema = new mongoose.Schema({
   fechaCreacionFactura: {
     type: String,
-    default: () => new Date().toISOString().split('T')[0] // Fecha actual por defecto
+    default: () => new Date().toISOString().split('T')[0] 
   },
   horaCreacionFactura: {
     type: String,
-    default: () => new Date().toLocaleTimeString('ES-es') // Hora actual por defecto
+    default: () => new Date().toLocaleTimeString('ES-es') 
   },
   pedido: {
     type: mongoose.Schema.Types.ObjectId,
