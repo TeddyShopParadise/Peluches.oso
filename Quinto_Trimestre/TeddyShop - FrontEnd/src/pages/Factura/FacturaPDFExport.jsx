@@ -7,12 +7,14 @@ const styles = StyleSheet.create({
   page: {
     padding: 30,
     fontFamily: 'Helvetica',
+    backgroundColor: '#f8f9fa',
     position: 'relative',
   },
   header: {
     marginBottom: 15,
     borderBottom: '2px solid #7434B0',
     paddingBottom: 10,
+    alignItems: 'center',
   },
   logo: {
     width: 100,
@@ -37,16 +39,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 10,
+    fontSize: 10,
   },
   clienteSection: {
     marginBottom: 15,
     padding: 10,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 4,
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    borderLeft: '4px solid #7434B0',
   },
   tabla: {
     width: '100%',
     marginVertical: 10,
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    border: '1px solid #ccc',
   },
   tablaHeader: {
     flexDirection: 'row',
@@ -55,18 +62,20 @@ const styles = StyleSheet.create({
     padding: 6,
     fontSize: 10,
     fontWeight: 'bold',
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
   },
   tablaRow: {
     flexDirection: 'row',
-    borderBottom: '1px solid #ddd',
+    borderBottom: '1px solid #eee',
     padding: 6,
   },
   columnaProducto: {
-    width: '40%',
+    width: '30%',
     fontSize: 9,
   },
   columnaTamaño: {
-    width: '20%',
+    width: '15%',
     fontSize: 9,
     textAlign: 'right',
   },
@@ -76,7 +85,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   columnaCantidad: {
-    width: '20%',
+    width: '15%',
     fontSize: 9,
     textAlign: 'right',
   },
@@ -88,8 +97,9 @@ const styles = StyleSheet.create({
   totalSection: {
     marginTop: 15,
     padding: 10,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 4,
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    border: '1px solid #eee',
   },
   footer: {
     position: 'absolute',
@@ -107,17 +117,13 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
     (sum, item) => sum + item.precioDetalleFactura * item.cantidadDetalleFactura,
     0
   );
-  const total = subtotal
+  const total = subtotal;
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Logo y Encabezado */}
         <View style={styles.header}>
-          <Image 
-            src= {logo}
-            style={styles.logo} 
-          />
+          <Image src={logo} style={styles.logo} />
           <View style={styles.empresaInfo}>
             <Text style={styles.empresaNombre}>{compania?.nombreEmpresa}</Text>
             <Text style={styles.datosEmpresa}>
@@ -127,64 +133,62 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
           </View>
         </View>
 
-        {/* Número de Factura y Fecha */}
         <View style={styles.facturaHeader}>
-          <Text style={{ fontSize: 10 }}>
-            Factura No: {factura?._id?.toString() || "N/A"}
-          </Text>
-          <Text style={{ fontSize: 10 }}>
+          <Text>Pedido con ID: {factura?._id?.toString() || "N/A"}</Text>
+          <Text>
             Fecha: {format(new Date(factura.fechaCreacionFactura), "dd/MM/yyyy", { locale: es })}
           </Text>
         </View>
 
-        {/* Datos del Cliente */}
         <View style={styles.clienteSection}>
-          <Text style={{ fontSize: 12, marginBottom: 5, color: '#7434B0' }}>CLIENTE</Text>
+          <Text style={{ fontSize: 12, marginBottom: 5, color: '#7434B0', fontWeight: 'bold' }}>
+            DATOS DEL CLIENTE
+          </Text>
           <Text style={{ fontSize: 10 }}>
-            {pedido.nombreComprador} 
-            Tel: {pedido.numeroComprador}{'\n'}
-            Dirección: {pedido.direccion}
+            {pedido.nombreComprador} {'\n'}
+            Tel: {pedido.numeroComprador} {'\n'}
+            Dirección: {pedido.direccion} {'\n'}
+            Localidad: {pedido.localidad}  {'\n'}
+            Barrio: {pedido.barrio}
           </Text>
         </View>
 
-       {/* Tabla de Productos */}
-<View style={styles.tabla}>
-  <View style={styles.tablaHeader}>
-    <Text style={styles.columnaProducto}>Producto</Text>
-    <Text style={styles.columnaTamaño}>Tamaño</Text>
-    <Text style={styles.columnaPrecio}>Precio Unitario</Text>
-    <Text style={styles.columnaCantidad}>Cantidad</Text>
-    <Text style={styles.columnaTotal}>Total</Text>
-  </View>
+        <View style={styles.tabla}>
+          <View style={styles.tablaHeader}>
+            <Text style={styles.columnaProducto}>Producto</Text>
+            <Text style={styles.columnaTamaño}>Tamaño</Text>
+            <Text style={styles.columnaPrecio}>Precio Unitario</Text>
+            <Text style={styles.columnaCantidad}>Cantidad</Text>
+            <Text style={styles.columnaTotal}>Total</Text>
+          </View>
 
-  {factura.detallesFactura?.map((item, index) => {
-    const precioUnitario = parseFloat(item.precioDetalleFactura || 0);
-    const cantidad = item.cantidadDetalleFactura || 1;
-    const total = precioUnitario * cantidad;
+          {factura.detallesFactura?.map((item, index) => {
+            const precioUnitario = parseFloat(item.precioDetalleFactura || 0);
+            const cantidad = item.cantidadDetalleFactura || 1;
+            const total = precioUnitario * cantidad;
 
-    return (
-      <View key={index} style={styles.tablaRow}>
-        <Text style={styles.columnaProducto}>
-          {item.idProducto?._id || "Producto no especificado"}
-        </Text>
-        <Text style={styles.columnaTamaño}>
-          {item.idProducto?.tamañoProducto || "-"}
-        </Text>
-        <Text style={styles.columnaPrecio}>
-          ${precioUnitario.toLocaleString('es-CO')}
-        </Text>
-        <Text style={styles.columnaCantidad}>
-          {cantidad}
-        </Text>
-        <Text style={styles.columnaTotal}>
-          ${total.toLocaleString('es-CO')}
-        </Text>
-      </View>
-    );
-  })}
-</View>
+            return (
+              <View key={index} style={styles.tablaRow}>
+                <Text style={styles.columnaProducto}>
+                  {item.idProducto?._id || "Producto no especificado"}
+                </Text>
+                <Text style={styles.columnaTamaño}>
+                  {item.idProducto?.tamañoProducto || "-"}
+                </Text>
+                <Text style={styles.columnaPrecio}>
+                  ${precioUnitario.toLocaleString('es-CO')}
+                </Text>
+                <Text style={styles.columnaCantidad}>
+                  {cantidad}
+                </Text>
+                <Text style={styles.columnaTotal}>
+                  ${total.toLocaleString('es-CO')}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
 
-        {/* Totales */}
         <View style={styles.totalSection}>
           <Text style={{ fontSize: 10, textAlign: 'right' }}>
             Subtotal: ${subtotal?.toLocaleString('es-CO')}
@@ -194,10 +198,9 @@ const FacturaPDFExport = ({ factura, pedido, compania }) => {
           </Text>
         </View>
 
-        {/* Pie de Página */}
         <View style={styles.footer}>
-          <Text>¡Gracias por su compra! | Método de Pago: {pedido.metodoPago}</Text>
-          <Text>© {new Date().getFullYear()} {compania?.nombreEmpresa} - Factura válida como documento tributario</Text>
+          <Text>¡Gracias por su compra!</Text>
+          <Text>© {new Date().getFullYear()} {compania?.nombreEmpresa} - PDF de su Pedido</Text>
         </View>
       </Page>
     </Document>

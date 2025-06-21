@@ -34,6 +34,8 @@ import {
 import sortBy from 'lodash/sortBy';
 import { Edit, Delete, ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
 import '../PagesStyle.css';
+import Swal from 'sweetalert2';
+import useApiRequest from '../../hooks/useApiRequest';
 import { getApiUrl } from '../../utils/apiConfig'
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ",apiUrl);
@@ -69,26 +71,41 @@ const Movimientos = () => {
     setOpenDetailsDialog(true);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`${apiUrl}/movimiento/${id}`, {
-        method: 'DELETE'
-      });
-      if (response.ok) {
-        fetchMovimientos();
-      } else {
-        console.error('Error deleting movimiento:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error deleting movimiento:', error);
-    }
-  };
-
-  
   const handleCloseDetailsDialog = () => {
-    setOpenDetailsDialog(false);
-    setSelectedMovimiento(null);
-  };
+  setOpenDetailsDialog(false);
+  setSelectedMovimiento(null);
+};
+  
+  const { makeRequest } = useApiRequest();
+
+
+ const handleDelete = async (id) => {
+  await makeRequest({
+    url: `${apiUrl}/movimiento/${id}`,
+    method: 'DELETE',
+    confirm: {
+      title: '¿Estás seguro?',
+      text: 'Eliminar este movimiento revertirá el cambio en el inventario. Esta acción no se puede deshacer.',
+      icon: 'warning',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33'
+    },
+    success: {
+      title: '¡Eliminado!',
+      text: 'El movimiento fue eliminado correctamente y el inventario fue actualizado.',
+      icon: 'success'
+    },
+    error: {
+      title: 'Error',
+      text: (error) =>
+        error?.message || 'Ocurrió un error al eliminar el movimiento.',
+      icon: 'error'
+    },
+    onSuccess: fetchMovimientos
+  });
+};
 
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -300,16 +317,17 @@ const Movimientos = () => {
             />
           </Box>
   
-          <TableContainer
-            component={Paper}
-            elevation={3}
-            sx={{
-              borderRadius: '15px',
-              overflow: 'hidden',
-              border: '1px solid #f8c8dc',
-            }}
-          >
-            <Table>
+           <TableContainer
+           component={Paper}
+           elevation={3}
+           sx={{
+             marginTop: 3,
+             borderRadius: '15px',
+             border: '1px solid #f8c8dc',
+             overflow: 'auto',    
+           }}
+         >
+           <Table sx={{ minWidth: 600 }}>
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#ffeef3' }}>
                   <TableCell sx={{ fontWeight: 'bold' }}>Fecha</TableCell>
@@ -364,6 +382,21 @@ const Movimientos = () => {
                         {movimiento.inventario?._id || 'N/A'}
                       </TableCell>
                       <TableCell align="center">
+                     
+                         <Tooltip title="Ver Detalles">
+                        <IconButton
+                          onClick={() => handleOpenDetailsDialog(movimiento)}
+                          sx={{
+                            color: '#9c27b0',
+                            '&:hover': {
+                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                            },
+                          }}
+                        >
+                          <Info />
+                        </IconButton>
+                         </Tooltip>
+                          <Tooltip title="Eliminar Movimiento">
                         <IconButton
                           onClick={() => handleDelete(movimiento._id)}
                           sx={{
@@ -375,17 +408,7 @@ const Movimientos = () => {
                         >
                           <Delete />
                         </IconButton>
-                        <IconButton
-                          onClick={() => handleOpenDetailsDialog(movimiento)}
-                          sx={{
-                            color: '#6c63ff',
-                            '&:hover': {
-                              backgroundColor: 'rgba(108, 99, 255, 0.1)',
-                            },
-                          }}
-                        >
-                          <Info />
-                        </IconButton>
+                         </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}

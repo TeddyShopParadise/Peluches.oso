@@ -360,17 +360,21 @@ const eliminarFactura = async (id) => {
                       <TableCell>{factura.horaCreacionFactura}</TableCell>
                       <TableCell>{factura.pedido?._id || factura.pedido}</TableCell>
                       <TableCell align="center">
+                        
+                        <Tooltip title="Ver detalles">
                         <IconButton
-                          onClick={() => obtenerFacturaPorId(factura._id)}
+                          onClick={() => openDetailDialog(factura)}
                           sx={{
-                            color: '#4caf50',
+                            color: '#9c27b0',
                             '&:hover': {
-                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                              backgroundColor: 'rgba(132, 94, 247, 0.1)',
                             },
                           }}
                         >
-                          <Edit />
+                          <Info />
                         </IconButton>
+                       </Tooltip>
+                        <Tooltip title="Eliminar Factura">
                         <IconButton
                           onClick={() => eliminarFactura(factura._id)}
                           sx={{
@@ -382,17 +386,8 @@ const eliminarFactura = async (id) => {
                         >
                           <Delete />
                         </IconButton>
-                        <IconButton
-                          onClick={() => openDetailDialog(factura)}
-                          sx={{
-                            color: '#845ef7',
-                            '&:hover': {
-                              backgroundColor: 'rgba(132, 94, 247, 0.1)',
-                            },
-                          }}
-                        >
-                          <Info />
-                        </IconButton>
+                        </Tooltip>
+
                       </TableCell>
                     </TableRow>
                   ))}

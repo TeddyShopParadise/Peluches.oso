@@ -64,7 +64,6 @@ const ProductoUsuario = () => {
     try {
       const response = await fetch(PRODUCTOS_API_URL);
       const data = await response.json();
-      console.log("Productos obtenidos:", data);
       const productosArray = Array.isArray(data) ? data : [];
       setProductos(productosArray);
       setFilteredProductos(productosArray);
@@ -89,7 +88,6 @@ const ProductoUsuario = () => {
       }
 
       const data = await response.json();
-      console.log("Historial de precios cargado:", data);
       setHistorialPrecios(data);
     } catch (error) {
       console.error(error);
@@ -130,9 +128,6 @@ const ProductoUsuario = () => {
   };
 
   useEffect(() => {
-    console.log('Producto seleccionado:', productoSeleccionado);
-    console.log('Historial de precios:', historialPrecios);
-    console.log('Metodos de pago:', metodosPago);
     fetchProductos();
     fetchCategorias();
     fetchMetodosPago();
@@ -212,204 +207,111 @@ const ProductoUsuario = () => {
     }
   };
 
-    const handleSubmitPedido = async () => {
-      const { precioFormateado, precioNumerico } = (() => {
-        if (!productoSeleccionado?.historialPrecios?.length) {
-          return { precioFormateado: "No disponible", precioNumerico: 0 };
-        }
-    
-        const historialCompleto = productoSeleccionado.historialPrecios
-          .map(precioId => historialPrecios.find(p => p._id === precioId))
-          .filter(Boolean);
-    
-        const ultimoRegistro = historialCompleto.at(-1);
-        
-        return {
-          precioFormateado: ultimoRegistro 
-            ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio)
-            : "No disponible",
-          precioNumerico: ultimoRegistro?.precio || 0
-        };
-      })();
-    
-      const metodoPagoNombre = metodosPago.find(
-        (metodo) => metodo._id === pedido.metodoPago
-      )?.nombreMetodoPago || 'No seleccionado';
-    
-      // Crear mensaje de WhatsApp
+const handleSubmitPedido = async () => {
+  const { precioFormateado, precioNumerico } = (() => {
+    if (!productoSeleccionado?.historialPrecios?.length) {
+      return { precioFormateado: "No disponible", precioNumerico: 0 };
+    }
 
-      const mensaje = [
-        "¡Hola! Me gustaría realizar el siguiente pedido:\n",
-        `📍 *Imagen del Producto:* ${productoSeleccionado?.imagen || 'No disponible'}`,
-        `🔢 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}`,
-        `📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}`,
-        `📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}`,
-        `💳 *Método de pago seleccionado:* ${metodoPagoNombre || 'No seleccionado'}`,
-        `💰 *Total:* ${precioFormateado || 'No disponible'}`,
-        "\n📋 *Datos del Pedido*",
-        `👤 *Nombre del que paga:* ${pedido.nombreComprador || 'No proporcionado'}`,
-        `📱 *Número del que paga:* ${pedido.numeroComprador || 'No proporcionado'}`,
-        `👥 *Nombre del que recibe:* ${pedido.nombreAgendador || 'No proporcionado'}`,
-        `📞 *Número del que recibe:* ${pedido.numeroAgendador || 'No proporcionado'}`,
-        `🌍 *Localidad:* ${pedido.localidad || 'No proporcionado'}`,
-        `🏠 *Dirección:* ${pedido.direccion || 'No proporcionado'}`,
-        `🏘️ *Barrio:* ${pedido.barrio || 'No proporcionado'}`,
-      ].join('\n');
+    const historialCompleto = productoSeleccionado.historialPrecios
+      .map(precioId => historialPrecios.find(p => p._id === precioId))
+      .filter(Boolean);
 
-      const mensajeCodificado = encodeURIComponent(mensaje);
-      const numeroWhatsApp = "573217292955";
-      const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
-      window.open(urlWhatsApp, "_blank");
+    const ultimoRegistro = historialCompleto.at(-1);
     
-      try {
-        // Paso 1: Crear el pedido
-        const pedidoCompleto = {
-          nombreComprador: pedido.nombreComprador || "Sin nombre",
-          numeroComprador: pedido.numeroComprador || "0000000000",
-          nombreAgendador: pedido.nombreAgendador || "Sin nombre",
-          numeroAgendador: pedido.numeroAgendador || "0000000000",
-          localidad: pedido.localidad || "Sin localidad",
-          direccion: pedido.direccion || "Sin dirección",
-          barrio: pedido.barrio || "Sin barrio",
-          cliente: "671976d2269e33c817066681",
-          facturas: [],
-          detallesPedido: [] 
-        };
-    
-    
-        const response = await fetch(`${apiUrl}/pedido`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(pedidoCompleto)
-        });
-    
-        const responseData = await response.json();
-    
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${JSON.stringify(responseData)}`);
-        }
-    
-        console.log('Pedido guardado:', responseData);
-    
-        // Paso 2: Crear el detalle del pedido
-        const detallePedido = {
-          precioDetallePedido: precioNumerico,
-          cantidadDetallePedido: 1,
-          idPedido: responseData._id,
-          idProducto: productoSeleccionado._id
-        };
-        
-        const detalleResponse = await fetch(`${apiUrl}/detallesPedido`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(detallePedido)
-        });
-        const detalleData = await detalleResponse.json();
-        if (!detalleResponse.ok) {
-          throw new Error(`Error en detallePedido: ${JSON.stringify(detalleData)}`);
-        }
-        
-        // Paso 3: Buscar inventario relacionado (antes de crear detalle de factura)
-        let inventarioRelacionado = null;
-        try {
-          const inventarioResponse = await fetch(`${apiUrl}/inventario/por-producto/${productoSeleccionado._id}`);
-          if (inventarioResponse.ok) {
-            inventarioRelacionado = await inventarioResponse.json();
-          } else {
-            console.warn('No se encontró inventario para el producto.');
-          }
-        } catch (error) {
-          console.error('Error buscando inventario relacionado:', error);
-        }
-        
-        // Paso 4: Crear el detalle de factura
-        const detalleFactura = {
-          precioDetalleFactura: precioNumerico.toString(),
-          cantidadDetalleFactura: 1,
-          idProducto: productoSeleccionado._id,
-          ...(inventarioRelacionado && inventarioRelacionado._id && { idInventario: inventarioRelacionado._id })
-        };
-        
-        const detalleFacturaResponse = await fetch(`${apiUrl}/detallesFactura`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(detalleFactura)
-        });
-        const detalleFacturaData = await detalleFacturaResponse.json();
-        if (!detalleFacturaResponse.ok) {
-          throw new Error(`Error en Detalle Factura: ${JSON.stringify(detalleFacturaData)}`);
-        }
-        
-        // Paso 5: Crear la factura con el detalle directamente
-        let facturaData;
-      try {
-        const facturaExistenteResponse = await fetch(`${apiUrl}/factura/pedido/${responseData._id}`);
-        if (facturaExistenteResponse.ok) {
-          // Si ya existe una factura, usamos esa
-          facturaData = await facturaExistenteResponse.json();
-          console.log('Factura existente encontrada:', facturaData);
-        } else {
-          // Si no existe, creamos una nueva
-          const factura = {
-            fechaCreacionFactura: new Date().toISOString(),
-            horaCreacionFactura: new Date().toLocaleTimeString('es-MX'),
-
-            pedido: responseData._id,
-            metodoPago: pedido.metodoPago,
-            detallesFactura: [detalleFacturaData._id]
-          };
-                  
-            const facturaResponse = await fetch(`${apiUrl}/factura`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(factura)
-            });
-            facturaData = await facturaResponse.json();
-            if (!facturaResponse.ok) {
-              throw new Error(`Error en Factura: ${JSON.stringify(facturaData)}`);
-            }
-          }
-        } catch (error) {
-          console.error('Error con la factura:', error);
-          throw error;
-        }
-        
-        // Paso 6: Actualizar el pedido con el detalle y la factura
-        const updatePedido = {
-          nombreComprador: responseData.nombreComprador,
-          numeroComprador: responseData.numeroComprador,
-          nombreAgendador: responseData.nombreAgendador,
-          numeroAgendador: responseData.numeroAgendador,
-          localidad: responseData.localidad,
-          direccion: responseData.direccion,
-          barrio: responseData.barrio,
-          detallesPedido: [detalleData._id],
-          facturas: [facturaData._id],
-          cliente: responseData.cliente
-        };
-        
-        const updateResponsePedido = await fetch(`${apiUrl}/pedido/${responseData._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatePedido)
-        });
-        const updateResponseText = await updateResponsePedido.text();
-        if (!updateResponsePedido.ok) {
-          throw new Error(`Error actualizando pedido: ${updateResponseText}`);
-        }
-        console.log('Pedido actualizado con detalle y factura');
-                await incrementClickCount(productoSeleccionado._id);
-
-        setSnackbarMessage('Pedido realizado con éxito');
-      } catch (error) {
-        console.error('Error completo:', error);
-        setSnackbarMessage(error.message || 'Error al guardar el pedido');
-        setOpenSnackbar(true);
-      }
-    
-      setOpenSnackbar(true);
-      handleCloseCarritoDialog();
+    return {
+      precioFormateado: ultimoRegistro 
+        ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio)
+        : "No disponible",
+      precioNumerico: ultimoRegistro?.precio || 0
     };
+  })();
+
+  const metodoPagoNombre = metodosPago.find(
+    (metodo) => metodo._id === pedido.metodoPago
+  )?.nombreMetodoPago || 'No seleccionado';
+
+  // Crear mensaje de WhatsApp
+  const mensaje = [
+    "¡Hola! Me gustaría realizar el siguiente pedido:\n",
+    `📍 *Imagen del Producto:* ${productoSeleccionado?.imagen || 'No disponible'}`,
+    `🔢 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}`,
+    `📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}`,
+    `📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}`,
+    `💳 *Método de pago seleccionado:* ${metodoPagoNombre || 'No seleccionado'}`,
+    `💰 *Total:* ${precioFormateado || 'No disponible'}`,
+    "\n📋 *Datos del Pedido*",
+    `👤 *Nombre del que paga:* ${pedido.nombreComprador || 'No proporcionado'}`,
+    `📱 *Número del que paga:* ${pedido.numeroComprador || 'No proporcionado'}`,
+    `👥 *Nombre del que recibe:* ${pedido.nombreAgendador || 'No proporcionado'}`,
+    `📞 *Número del que recibe:* ${pedido.numeroAgendador || 'No proporcionado'}`,
+    `🌍 *Localidad:* ${pedido.localidad || 'No proporcionado'}`,
+    `🏠 *Dirección:* ${pedido.direccion || 'No proporcionado'}`,
+    `🏘️ *Barrio:* ${pedido.barrio || 'No proporcionado'}`,
+  ].join('\n');
+
+  const mensajeCodificado = encodeURIComponent(mensaje);
+  const numeroWhatsApp = "573217292955";
+  const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
+  window.open(urlWhatsApp, "_blank");
+
+  try {
+    // Buscar inventario relacionado
+    let inventarioRelacionado = null;
+    try {
+      const inventarioResponse = await fetch(`${apiUrl}/inventario/por-producto/${productoSeleccionado._id}`);
+      if (inventarioResponse.ok) {
+        inventarioRelacionado = await inventarioResponse.json();
+      }
+    } catch (error) {
+      console.warn('No se encontró inventario para el producto.');
+    }
+
+    // Preparar datos completos para el backend
+    const datosCompletos = {
+      pedidoData: {
+        nombreComprador: pedido.nombreComprador || "Sin nombre",
+        numeroComprador: pedido.numeroComprador || "0000000000",
+        nombreAgendador: pedido.nombreAgendador || "Sin nombre",
+        numeroAgendador: pedido.numeroAgendador || "0000000000",
+        localidad: pedido.localidad || "Sin localidad",
+        direccion: pedido.direccion || "Sin dirección",
+        barrio: pedido.barrio || "Sin barrio"
+      },
+      detallesPedido: [{
+        precio: precioNumerico,
+        cantidad: 1,
+        idProducto: productoSeleccionado._id,
+        idInventario: inventarioRelacionado?._id || null
+      }],
+      metodoPago: pedido.metodoPago
+    };
+    
+    // UNA SOLA LLAMADA AL BACKEND
+    const response = await fetch(`${apiUrl}/factura/crear-pedido-completo`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosCompletos)
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${JSON.stringify(responseData)}`);
+    }
+
+    
+    await incrementClickCount(productoSeleccionado._id);
+    setSnackbarMessage('Pedido realizado con éxito');
+    
+  } catch (error) {
+    console.error('❌ Error completo:', error);
+    setSnackbarMessage(error.message || 'Error al guardar el pedido');
+  }
+
+  setOpenSnackbar(true);
+  handleCloseCarritoDialog();
+};
 
     const handlePageChange = (event, value) => {
       setCurrentPage(value);

@@ -7,7 +7,8 @@ const {
     obtenerFacturaPorId,
     eliminarFactura,
     generarFacturaDesdePedido,
-    buscarFacturaPorPedido
+    buscarFacturaPorPedido,
+    crearPedidoConFacturaCompleta  // ← Agregar esta importación
 } = require('../Controllers/factura_controller'); // Importa los controladores
 
 /**
@@ -55,9 +56,83 @@ const {
  *         description: Error interno del servidor
  */
 
-
 // Ruta para listar todas las facturas
 router.get('/', listarFacturas);
+
+/**
+ * @swagger
+ * /factura/crear-pedido-completo:
+ *   post:
+ *     summary: Crea un pedido completo con su factura y detalles
+ *     tags:
+ *       - Facturas
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               pedidoData:
+ *                 type: object
+ *                 properties:
+ *                   fechaPedido:
+ *                     type: string
+ *                     format: date
+ *                     example: "2024-10-22"
+ *                   horaPedido:
+ *                     type: string
+ *                     example: "14:30:00"
+ *                   cliente:
+ *                     type: string
+ *                     example: "60d2b6e3e6b0f99dbe0c5a7b"
+ *                   estadoPedido:
+ *                     type: string
+ *                     example: "pendiente"
+ *               detallesPedido:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     idProducto:
+ *                       type: string
+ *                       example: "60d2b6e3e6b0f99dbe0c5a7c"
+ *                     idInventario:
+ *                       type: string
+ *                       example: "60d2b6e3e6b0f99dbe0c5a7d"
+ *                     cantidad:
+ *                       type: number
+ *                       example: 2
+ *                     precio:
+ *                       type: number
+ *                       example: 25.50
+ *               metodoPago:
+ *                 type: string
+ *                 example: "60d2b6e3e6b0f99dbe0c5a7e"
+ *     responses:
+ *       201:
+ *         description: Pedido y factura creados exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 pedido:
+ *                   type: object
+ *                 factura:
+ *                   type: object
+ *                 mensaje:
+ *                   type: string
+ *                   example: "Pedido y factura creados exitosamente"
+ *       400:
+ *         description: Error en los datos enviados
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+// ===== NUEVA RUTA AGREGADA =====
+// Ruta para crear pedido completo con factura
+router.post('/crear-pedido-completo', crearPedidoConFacturaCompleta);
 
 /**
  * @swagger
@@ -157,7 +232,6 @@ router.post('/', crearFactura);
  *         description: Factura no encontrada
  */
 
-
 // Ruta para actualizar una factura por su ID
 router.put('/:id', actualizarFactura);
 
@@ -184,13 +258,12 @@ router.put('/:id', actualizarFactura);
  *         description: Error interno del servidor
  */
 
-
 // Ruta para obtener una factura por su ID
 router.get('/:id', obtenerFacturaPorId);
 
 /**
  * @swagger
- * /factura{id}:
+ * /factura/{id}:
  *   delete:
  *     summary: Elimina una factura por su ID
  *     tags:
@@ -213,7 +286,6 @@ router.get('/:id', obtenerFacturaPorId);
 
 // Ruta para eliminar una factura por su ID
 router.delete('/:id', eliminarFactura);
-
 
 /**
  * @swagger
@@ -256,6 +328,5 @@ router.post('/generar/:pedidoId', generarFacturaDesdePedido);
  *         description: No se encontró factura para este pedido
  */
 router.get('/pedido/:pedidoId', buscarFacturaPorPedido);
-
 
 module.exports = router;

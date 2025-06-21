@@ -53,6 +53,7 @@ const actualizarInventario = async (req, res) => {
   const { error, value } = inventariosSchemaValidation.validate(body, { abortEarly: false });
 
   if (error) {
+    console.log('[Actualizar Inventario] Errores de validación:', error.details);
     return res.status(400).json({
       message: 'Validación fallida',
       details: error.details.map(err => ({
@@ -68,14 +69,18 @@ const actualizarInventario = async (req, res) => {
     value.precioVenta = limpiarPrecio(value.precioVenta);
 
     const inventarioActualizado = await logic.actualizarInventario(id, value);
+
     if (!inventarioActualizado) {
       return res.status(404).json({ error: 'Inventario no encontrado' });
     }
+
     res.json(inventarioActualizado);
   } catch (err) {
+    console.error('[Actualizar Inventario] Error inesperado:', err);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
+
 // Controlador para obtener un inventario por su ID
 const obtenerInventarioPorId = async (req, res) => {
     const { id } = req.params;
