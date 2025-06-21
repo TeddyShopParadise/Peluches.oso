@@ -604,30 +604,30 @@ const eliminarHistorialPrecio = async (id) => {
                         />
                       </TableCell>
                       <TableCell align="center">
-                      <Tooltip title="Editar Historial de Precio">
-                        <IconButton
-                          onClick={() => iniciarEdicion(historial)}
-                          sx={{
-                            color: '#4caf50',
-                            '&:hover': {
-                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            },
-                          }}
-                        >
-                          <Edit />
-                        </IconButton>
-                         </Tooltip>
                          <Tooltip title="Ver Deatlles">
                         <IconButton
                           onClick={() => handleOpenDetails(historial)}
                           sx={{
-                            color: '#6c63ff',
+                            color: '#9c27b0',
                             '&:hover': {
                               backgroundColor: 'rgba(108, 99, 255, 0.1)',
                             },
                           }}
                         >
                           <Info />
+                        </IconButton>
+                         </Tooltip>
+                          <Tooltip title="Editar Historial de Precio">
+                        <IconButton
+                          onClick={() => iniciarEdicion(historial)}
+                          sx={{
+                            color: '#6c63ff',
+                            '&:hover': {
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            },
+                          }}
+                        >
+                          <Edit />
                         </IconButton>
                          </Tooltip>
                          <Tooltip title="Eliminar Historial de Precio">
