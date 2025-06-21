@@ -1083,24 +1083,11 @@ const limpiarValor = (valor) => valor.replace(/\./g, '');
                       <TableCell>{producto.tamañoProducto}</TableCell>
                       <TableCell>{producto.disponibilidadProducto}</TableCell>
                       <TableCell align="center">
-                      <Tooltip title="Editar Producto">
-                        <IconButton
-                          onClick={() => editarProducto(producto)}
-                          sx={{
-                            color: '#4caf50',
-                            '&:hover': {
-                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            },
-                          }}
-                        >
-                          <Edit />
-                        </IconButton>
-                        </Tooltip>
-                         <Tooltip title="Ver Detalles">
+                          <Tooltip title="Ver Detalles">
                         <IconButton
                           onClick={() => openDetailsDialog(producto)}
                           sx={{
-                            color: '#6c63ff',
+                            color: '#9c27b0',
                             '&:hover': {
                               backgroundColor: 'rgba(108, 99, 255, 0.1)',
                             },
@@ -1109,6 +1096,19 @@ const limpiarValor = (valor) => valor.replace(/\./g, '');
                           <Info />
                         </IconButton>
                          </Tooltip>
+                      <Tooltip title="Editar Producto">
+                        <IconButton
+                          onClick={() => editarProducto(producto)}
+                          sx={{
+                            color: '#6c63ff',
+                            '&:hover': {
+                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            },
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                        </Tooltip>
                       <Tooltip title="Eliminar Producto">
                         <IconButton
                           onClick={() => eliminarProducto(producto._id)}
