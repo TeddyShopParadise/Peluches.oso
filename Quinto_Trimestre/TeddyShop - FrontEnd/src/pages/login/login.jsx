@@ -27,7 +27,6 @@ const Login = ({ setIsAuthenticated }) => {
 
     setLoading(true);
     const body = { email, contraseña };
-    console.log('Cuerpo de la solicitud:', body); 
 
     try {
       // Realizar la solicitud al servidor
@@ -41,7 +40,6 @@ const Login = ({ setIsAuthenticated }) => {
 
       // Verifica si la respuesta fue exitosa
       const data = await response.json();
-      console.log('Respuesta de la API:', data); 
 
       setLoading(false);
 
@@ -54,7 +52,6 @@ const Login = ({ setIsAuthenticated }) => {
         let decodedToken;
         try {
           decodedToken = JSON.parse(atob(data.token.split('.')[1]));
-          console.log("Token decodificado:", decodedToken); 
         } catch (e) {
           setMessage('Error al decodificar el token');
           setOpen(true);
@@ -65,7 +62,6 @@ const Login = ({ setIsAuthenticated }) => {
         }
         // Verificar los roles del usuario decodificado
         const userRoles = Array.isArray(decodedToken.roles) ? decodedToken.roles : [];
-        console.log("Roles del usuario:", userRoles); 
 
         let userRole = null;
         if (userRoles.includes('Administrador')) {
@@ -107,7 +103,6 @@ const Login = ({ setIsAuthenticated }) => {
     if (token) {
       try {
         const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        console.log('Token decodificado:', decodedToken);
   
         // Marca como autenticado y redirige
         setIsAuthenticated(true);

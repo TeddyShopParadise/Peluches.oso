@@ -528,6 +528,8 @@ const MetodoPago = () => {
                   >
                     <TableCell>{metodo.nombreMetodoPago}</TableCell>
                     <TableCell align="center">
+                    <Tooltip title="Editar Método de Pago">
+                      
                       <IconButton
                         onClick={() => handleEditClick(metodo)}
                         sx={{
@@ -539,6 +541,8 @@ const MetodoPago = () => {
                       >
                         <Edit />
                       </IconButton>
+                      </Tooltip>  
+                      <Tooltip title="Eliminar Método de Pago">
                       <IconButton
                         onClick={() => eliminarMetodoPago(metodo._id)}
                         sx={{
@@ -550,6 +554,7 @@ const MetodoPago = () => {
                       >
                         <Delete />
                       </IconButton>
+                     </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
