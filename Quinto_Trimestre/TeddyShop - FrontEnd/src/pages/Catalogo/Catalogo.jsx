@@ -607,22 +607,22 @@ const CatalogoComponent = () => {
                       <TableCell>{catalogo.nombreCatalogo}</TableCell>
                       <TableCell>{catalogo.compania?.nombreEmpresa || 'Sin compañía'}</TableCell>
                       <TableCell align="center">
-                      <Tooltip title="Editar Catalogo">
-                        <IconButton
-                          onClick={() => editarCatalogo(catalogo)}
-                          sx={{
-                            color: '#4caf50',
-                            '&:hover': {
-                              backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            },
-                          }}
-                        >
-                          <Edit />
-                        </IconButton>
-                         </Tooltip>
                          <Tooltip title="Ver Detalles">
                         <IconButton
                           onClick={() => openDetailsDialog(catalogo)}
+                          sx={{
+                            color: '#9c27b0',
+                            '&:hover': {
+                              backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                            },
+                          }}
+                        >
+                          <Info />
+                        </IconButton>
+                        </Tooltip>
+                         <Tooltip title="Editar Catalogo">
+                        <IconButton
+                          onClick={() => editarCatalogo(catalogo)}
                           sx={{
                             color: '#6c63ff',
                             '&:hover': {
@@ -630,9 +630,9 @@ const CatalogoComponent = () => {
                             },
                           }}
                         >
-                          <Info />
+                          <Edit />
                         </IconButton>
-                        </Tooltip>
+                         </Tooltip>
                       <Tooltip title="Eliminar Catalogo">
                         <IconButton
                           onClick={() => eliminarCatalogo(catalogo._id)}

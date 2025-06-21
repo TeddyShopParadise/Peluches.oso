@@ -20,7 +20,7 @@ console.log("Url almacenada: ",apiUrl);
 export default function CategoriaUsuario() {
   const [tamañoFiltro, setTamañoFiltro] = useState("todos");
   const [categorias, setCategorias] = useState([]);
-  const navigate = useNavigate(); // Hook para navegar entre rutas
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCategorias();

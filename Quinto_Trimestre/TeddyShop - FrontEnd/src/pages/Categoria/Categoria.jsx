@@ -453,7 +453,7 @@ const CategoriaComponent = () => {
                         <IconButton
                           onClick={() => editarCategoria(categoria)}
                           sx={{
-                            color: '#4caf50',
+                            color: '#6c63ff',
                             '&:hover': {
                               backgroundColor: 'rgba(76, 175, 80, 0.1)',
                             },
