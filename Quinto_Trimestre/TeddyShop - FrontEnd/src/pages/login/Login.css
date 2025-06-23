@@ -5,7 +5,7 @@
   .wrapper {
     position: relative;
     max-width: 100%;
-    width: 800px;
+    width: 60%;
     margin: auto;
     margin-bottom: 70px;
     height: 65vh;
@@ -20,22 +20,31 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    max-width: 300px;
+    height: 100%;
+    margin: 0 auto;
   }
   
   .title {
-    font-size: 35px;
+    font-size: 200%;
+    margin-bottom: 10%;
+    font-family: 'Georgia', 'Times New Roman', 'Book Antiqua', serif;
+    font-weight: bold;
+    letter-spacing: 1px;
   }
   
   .inp {
     padding-bottom: 10px;
     border-bottom: 2px solid #eee;
+    width: 80%;
   }
   
   .input {
     border: none;
     outline: none;
     background: none;
-    width: 260px;
+    width: 100%;
     margin-top: 40px;
     padding-right: 10px;
     font-size: 17px;
@@ -45,7 +54,7 @@
   .submit {
     border: none;
     outline: none;
-    width: 288px;
+    width: 100%;
     margin-top: 25px;
     padding: 10px 0;
     font-size: 20px;
@@ -65,8 +74,8 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 450px;
-    height: 390px;
+    width: 60%;
+    height: 100%;
     background: linear-gradient(to right, #7434B0FF, rgba(201, 154, 201, 0.9));
     clip-path: polygon(0 0, 100% 0, 100% 100%, 60% 100%);
     padding-right: 70px;
@@ -75,12 +84,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-end;
+    z-index: -1;
   }
   
   .wel_text {
-    font-size: 40px;
-    margin-top: -50px;
+    font-size: 225%;
+    margin-top: -10%;
     line-height: 50px;
+    font-family: 'Georgia', 'Times New Roman', 'Book Antiqua', serif;
+    font-weight: bold;
   }
   
   .para {
@@ -90,5 +102,64 @@
     letter-spacing: 1px;
   }
 
-  
-  
+  @media (max-width: 900px) {
+  .wrapper {
+    max-width: 100%;
+    max-height: 50%;
+    height: auto;
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .form {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+  }
+
+ 
+
+  .wel_text {
+    display: none;  
+  }
+
+  .title {
+    font-size: 28px;
+    color: #FFFFFF;
+    -webkit-text-stroke: 2px #4A1A6B;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+
+  .input {
+    font-size: 16px;
+  }
+
+  .submit {
+    font-size: 18px;
+  }
+
+  .para {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    margin-bottom: 50px;
+  }
+
+  .title {
+    font-size: 24px;
+    color: #FFFFFF;
+    -webkit-text-stroke: 2px #4A1A6B;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+
+  .input {
+    font-size: 14px;
+  }
+
+  .submit {
+    font-size: 16px;
+  }
+}
