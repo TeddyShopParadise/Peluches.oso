@@ -1,5 +1,4 @@
 //Controlador para Pedido
-//Importación para que funcione correctamente
 const logic = require('../Logic/pedido_logic'); 
 const { pedidoSchemaValidation } = require('../Validations/pedido_validation'); 
 
@@ -77,18 +76,21 @@ const obtenerPedidoPorId = async (req, res) => {
 
 // Controlador para eliminar un pedido por su ID
 const eliminarPedido = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const pedidoEliminado = await logic.eliminarPedido(id);
-        res.json(pedidoEliminado);
-    } catch (err) {
-        if (err.message.includes('no encontrado')) {
-            return res.status(404).json({ error: err.message });
-        }
-        res.status(500).json({ error: 'Error interno del servidor' });
+  const { id } = req.params;
+  try {
+    const resultado = await logic.eliminarPedido(id);
+    res.json(resultado);
+  } catch (err) {
+    const msg = err.message.toLowerCase();
+    if (msg.includes('inválido') || msg.includes('no proporcionado')) {
+      return res.status(400).json({ error: err.message });
     }
+    if (msg.includes('no encontrado')) {
+      return res.status(404).json({ error: err.message });
+    }
+    res.status(500).json({ error: 'Error eliminando el pedido' });
+  }
 };
-
 
 //Controlador para actualizar el estado del pedido
 const actualizarEstadoPedido = async (req, res) => {

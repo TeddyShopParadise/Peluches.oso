@@ -7,12 +7,11 @@ async function crearMovimiento(body) {
         fecha: body.fecha,
         cantidadIngreso: body.cantidadIngreso,
         cantidadVendida: body.cantidadVendida,
-        inventario: body.inventario // Se espera un ObjectId de Inventario
+        inventario: body.inventario 
     });
 
     const movimientoGuardado = await movimiento.save();
 
-    // Actualizar stock en el inventario
     const inventario = await Inventario.findById(body.inventario);
     if (!inventario) {
         throw new Error('Inventario no encontrado para el movimiento');
@@ -21,7 +20,6 @@ async function crearMovimiento(body) {
     inventario.stock += body.cantidadIngreso;
     inventario.stock -= body.cantidadVendida;
 
-    // Guardar el movimiento en el array de movimientos del inventario
     inventario.movimientos.push(movimientoGuardado._id);
 
     await inventario.save();
@@ -41,11 +39,9 @@ async function actualizarMovimiento(id, body) {
         throw new Error('Inventario no encontrado para el movimiento');
     }
 
-    // Revertir el efecto anterior del movimiento
     inventario.stock -= movimientoAnterior.cantidadIngreso;
     inventario.stock += movimientoAnterior.cantidadVendida;
 
-    // Aplicar el nuevo efecto del movimiento actualizado
     inventario.stock += body.cantidadIngreso;
     inventario.stock -= body.cantidadVendida;
 
@@ -56,7 +52,7 @@ async function actualizarMovimiento(id, body) {
             fecha: body.fecha,
             cantidadIngreso: body.cantidadIngreso,
             cantidadVendida: body.cantidadVendida,
-            inventario: body.inventario // Se espera un ObjectId de Inventario
+            inventario: body.inventario 
         }
     }, { new: true });
 
@@ -94,13 +90,10 @@ async function eliminarMovimiento(id) {
             throw new Error(`Movimiento con ID ${id} no encontrado`);
         }
 
-        // Ajustar el stock del inventario
         const inventario = await Inventario.findById(movimiento.inventario);
         if (inventario) {
             inventario.stock -= movimiento.cantidadIngreso;
             inventario.stock += movimiento.cantidadVendida;
-
-            // Eliminar referencia al movimiento
             inventario.movimientos = inventario.movimientos.filter(movId => movId.toString() !== id);
 
             await inventario.save();
@@ -113,10 +106,107 @@ async function eliminarMovimiento(id) {
     }
 }
 
+// Función de diagnóstico para verificar las referencias entre movimientos e inventarios
+async function diagnosticarMovimientos() {
+    try {
+        
+        const totalMovimientos = await Movimiento.countDocuments();
+        
+        const totalInventarios = await Inventario.countDocuments();
+        
+        const movimientos = await Movimiento.find({}).lean();
+        
+        let movimientosSinInventario = 0;
+        let movimientosConInventarioInvalido = 0;
+        let movimientosValidos = 0;
+        
+        // Obtener todos los IDs de inventarios válidos
+        const inventariosValidos = await Inventario.find({}, '_id').lean();
+        const idsInventariosValidos = inventariosValidos.map(inv => inv._id.toString());
+        
+        for (const movimiento of movimientos) {
+           
+            if (!movimiento.inventario) {
+                console.log(`  ❌ Sin referencia a inventario`);
+                movimientosSinInventario++;
+            } else {
+                const inventarioRefStr = movimiento.inventario.toString();
+                if (idsInventariosValidos.includes(inventarioRefStr)) {
+                    movimientosValidos++;
+                } else {
+                    console.log(`  ❌ Referencia inválida (inventario no existe)`);
+                    movimientosConInventarioInvalido++;
+                }
+            }
+        }
+      
+        const inventarios = await Inventario.find({}).populate('movimientos').lean();
+        
+        for (const inventario of inventarios) {
+            
+            if (inventario.movimientos && inventario.movimientos.length > 0) {
+                for (const mov of inventario.movimientos) {
+                    if (mov) {
+                    } else {
+                        console.log(`    ❌ Referencia a movimiento inexistente`);
+                    }
+                }
+            }
+        }
+        
+        return {
+            totalMovimientos,
+            totalInventarios,
+            movimientosValidos,
+            movimientosSinInventario,
+            movimientosConInventarioInvalido
+        };
+        
+    } catch (error) {
+        console.error('Error en diagnóstico:', error);
+        throw error;
+    }
+}
+
+// Función para limpiar movimientos huérfanos
+async function limpiarMovimientosHuerfanos() {
+    try {
+        
+        const inventariosValidos = await Inventario.find({}, '_id').lean();
+        const idsInventariosValidos = inventariosValidos.map(inv => inv._id.toString());
+        
+        const todosMovimientos = await Movimiento.find({}).lean();
+        const movimientosHuerfanos = [];
+        
+        for (const movimiento of todosMovimientos) {
+            if (!movimiento.inventario || !idsInventariosValidos.includes(movimiento.inventario.toString())) {
+                movimientosHuerfanos.push(movimiento._id);
+            }
+        }
+                
+        if (movimientosHuerfanos.length > 0) {
+            const resultado = await Movimiento.deleteMany({
+                _id: { $in: movimientosHuerfanos }
+            });
+            
+            return resultado.deletedCount;
+        }
+        
+        return 0;
+        
+    } catch (error) {
+        console.error('Error en limpieza:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     crearMovimiento,
     actualizarMovimiento,
     listarMovimientos,
     buscarMovimientoPorId,
-    eliminarMovimiento
+    eliminarMovimiento,
+    limpiarMovimientosHuerfanos,
+     diagnosticarMovimientos
+
 };
