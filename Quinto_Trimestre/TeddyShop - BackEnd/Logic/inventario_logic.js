@@ -32,10 +32,13 @@ async function crearInventario(body) {
             fecha: new Date(),
             cantidadIngreso: body.stock,
             cantidadVendida: 0,
-            inventario: inventarioGuardado._id
+            inventario: inventarioGuardado._id 
         });
 
         const movimientoGuardado = await movimientoInicial.save();
+
+        // Verificar que la referencia se guardó correctamente
+        const movimientoVerificacion = await Movimiento.findById(movimientoGuardado._id);
 
         inventarioGuardado.movimientos.push(movimientoGuardado._id);
         await inventarioGuardado.save();
@@ -107,6 +110,9 @@ async function eliminarInventario(id) {
         if (!inventario) {
             throw new Error(`Inventario con ID ${id} no encontrado`);
         }
+
+        await Movimiento.deleteMany({ inventario: id });
+
         return inventario;
     } catch (err) {
         console.error(`Error al eliminar el inventario: ${err.message}`);
@@ -114,13 +120,12 @@ async function eliminarInventario(id) {
     }
 }
 
+
 // Función asíncrona para obtener el inventario por idProducto
 async function obtenerInventarioPorProducto(idProducto) {
     try {
-        // Buscar el inventario que tenga el idProducto correspondiente
         const inventario = await Inventario.findOne({ idProducto: idProducto });
         
-        // Si no se encuentra, retornamos null
         if (!inventario) {
             return null;
         }
