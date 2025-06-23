@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const DetallePedido = require('../models/detallePedido_model');
+const DetalleFactura = require('../models/detalleFactura_model');
 const Producto = require('../models/producto_model');
 const Factura = require('../models/factura_model');
 const Cliente = require('../models/cliente_model');
@@ -26,7 +27,6 @@ const crearPedido = async (body) => {
         cliente = await nuevoCliente.save();
       }
   
-      // CREAR PEDIDO SIN FACTURA INICIAL
       const pedido = new Pedido({
         nombreComprador: body.nombreComprador,
         numeroComprador: body.numeroComprador,
@@ -37,13 +37,12 @@ const crearPedido = async (body) => {
         barrio: body.barrio,
         cliente: cliente._id,
         estado: body.estado || "en_proceso",
-        detallesPedido: [], // Se llenará después
-        facturas: [] // Se llenará después
+        detallesPedido: [], 
+        facturas: [] 
       });
   
       const pedidoGuardado = await pedido.save();
   
-      // Actualizar cliente con el pedido
       cliente.pedidos.push(pedidoGuardado._id);
       await cliente.save();
   
@@ -54,7 +53,7 @@ const crearPedido = async (body) => {
     }
 };
 
-// NUEVA FUNCIÓN para agregar detalle al pedido
+// FUNCIÓN para agregar detalle al pedido
 const agregarDetallePedido = async (idPedido, idDetallePedido) => {
     try {
         const pedidoActualizado = await Pedido.findByIdAndUpdate(
@@ -76,12 +75,10 @@ const agregarDetallePedido = async (idPedido, idDetallePedido) => {
 
 // Actualizar pedido
 async function actualizarPedido(id, body) {
-  // Validar ID del pedido
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error(`ID de pedido inválido: ${id}`);
   }
 
-  // Preparar campos actualizables
   const camposActualizables = {
     nombreComprador: body.nombreComprador,
     numeroComprador: body.numeroComprador,
@@ -143,15 +140,50 @@ async function buscarPedidoPorId(id) {
 
 // Eliminar pedido
 async function eliminarPedido(id) {
-    try {
-        const pedido = await Pedido.findByIdAndDelete(id);
-        if (!pedido) throw new Error(`Pedido con ID ${id} no encontrado`);
-        return pedido;
-    } catch (err) {
-        console.error(`Error al eliminar el pedido: ${err.message}`);
-        throw err;
+  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error('ID de pedido inválido o no proporcionado');
+  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+
+    const facturas = await Factura.find({ pedido: id })
+                                   .select('detallesFactura')
+                                   .session(session);
+ 
+
+    const detalleFacturaIds = facturas
+      .flatMap(f => f.detallesFactura || [])
+      .map(dfId => dfId.toString());
+
+    const delDetFact = await DetalleFactura.deleteMany({ 
+      _id: { $in: detalleFacturaIds } 
+    }).session(session);
+
+    const delFact = await Factura.deleteMany({ pedido: id })
+                                  .session(session);
+
+    const delDetPed = await DetallePedido.deleteMany({ idPedido: id })
+                                         .session(session);
+
+    const result = await Pedido.deleteOne({ _id: id })
+                               .session(session);
+    if (result.deletedCount === 0) {
+      throw new Error('Pedido no encontrado');
     }
+
+    await session.commitTransaction();
+    session.endSession();
+    return { message: 'Pedido y todos sus datos relacionados eliminados.' };
+
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error('❌ Error en eliminarPedido:', err);
+    throw err;
+  }
 }
+
 
 
 // Reemplazar la función actualizarEstado existente con esta:

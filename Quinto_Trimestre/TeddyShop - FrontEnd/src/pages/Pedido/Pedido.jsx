@@ -33,7 +33,7 @@ import {
   Alert,
   Grid,
   Card,
-  CardContent
+  CardContent,
 } from '@mui/material';
 
 import { 
@@ -51,6 +51,8 @@ import '../PagesStyle.css';
 import Swal from 'sweetalert2';
 import { getApiUrl } from '../../utils/apiConfig';
 import FacturaPDF from '../Factura/FacturaPDF';
+import useApiRequest from '../../hooks/useApiRequest';
+
 
 const apiUrl = getApiUrl();
 console.log("Url almacenada: ", apiUrl);
@@ -60,7 +62,6 @@ const Pedido = () => {
   const [pedidoEdicion, setPedidoEdicion] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [selectedPedido, setSelectedPedido] = useState(null);
   const [currentId, setCurrentId] = useState(null);
@@ -79,6 +80,7 @@ const Pedido = () => {
   const [pedidoACancelar, setPedidoACancelar] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const { makeRequest } = useApiRequest();
 
  
   const fetchPedidos = async () => {
@@ -196,25 +198,47 @@ const fetchCompania = async () => {
   }
 };
 
-  const eliminarPedido = async () => {
-    if (!currentId) return;
+const eliminarPedido = async (id) => {
+  if (!id) return;
 
-    try {
-      await fetch(`${apiUrl}/pedido/${currentId}`, {
-        method: 'DELETE',
-      });
-      setPedidos((prevPedidos) => prevPedidos.filter((pedido) => pedido._id !== currentId));
-      setSnackbarMessage('Pedido eliminado con éxito');
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error('Error eliminando el pedido:', error);
-      setSnackbarMessage('Error al eliminar el pedido');
-      setOpenSnackbar(true);
-    } finally {
-      setOpenDeleteDialog(false);
-    }
-  };
-
+  await makeRequest({
+    url: `${apiUrl}/pedido/${id}`,
+    method: 'DELETE',
+    confirm: {
+      title: 'Eliminar pedido',
+      text: '¿Estás seguro de que deseas eliminar este pedido? Se eliminarán también su factura y sus detalles.',
+      icon: 'warning',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      backdrop: `
+        rgba(0,0,0,0.7)
+        url("/images/warning.gif")
+        center top
+        no-repeat
+      `
+    },
+    loading: {
+      title: 'Eliminando...',
+      html: 'Estamos eliminando el pedido'
+    },
+    success: {
+      title: '¡Pedido eliminado!',
+      text: 'El pedido y sus datos relacionados han sido eliminados con éxito',
+      timer: 2000,
+      timerProgressBar: true
+    },
+    error: {
+      title: 'Error',
+      text: 'Hubo un problema al eliminar el pedido',
+      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+    },
+    onSuccess: () => {
+       setPedidos(prev => prev.filter(p => p._id !== id));
+    },
+    
+    
+  });
+};
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -629,9 +653,7 @@ const fetchCompania = async () => {
                           <Tooltip title="Eliminar">
                             <IconButton
                               onClick={() => {
-                                setCurrentId(pedido._id);
-                                setOpenDeleteDialog(true);
-                              }}
+                                eliminarPedido(pedido._id);                              }}
                               sx={{
                                 color: '#f44336',
                                 '&:hover': { backgroundColor: 'rgba(244, 67, 54, 0.1)' }
@@ -932,65 +954,6 @@ const fetchCompania = async () => {
               {snackbarMessage}
             </Alert>
           </Snackbar>
-
-          <Dialog
-            open={openDeleteDialog}
-            onClose={() => setOpenDeleteDialog(false)}
-            PaperProps={{
-              sx: {
-                borderRadius: '15px',
-                border: '1px solid #f8c8dc',
-                boxShadow: '0 4px 20px rgba(244, 143, 177, 0.15)',
-              }
-            }}
-          >
-            <DialogTitle sx={{
-              color: '#b04e6f',
-              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
-            }}>
-              Eliminar Pedido
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                ¿Estás seguro de que deseas eliminar este pedido?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => setOpenDeleteDialog(false)}
-                sx={{
-                  borderRadius: '12px',
-                  borderColor: '#f48fb1',
-                  color: '#f48fb1',
-                  '&:hover': {
-                    borderColor: '#ec7096',
-                    backgroundColor: 'rgba(244, 143, 177, 0.08)',
-                  },
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={eliminarPedido}
-                variant="contained"
-                sx={{
-                  borderRadius: '12px',
-                  backgroundColor: '#f48fb1',
-                  '&:hover': {
-                    backgroundColor: '#ec7096',
-                  },
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                  boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
-                }}
-              >
-                Eliminar
-              </Button>
-            </DialogActions>
-          </Dialog>
-
           <Dialog
             open={openDetailDialog}
             onClose={() => setOpenDetailDialog(false)}

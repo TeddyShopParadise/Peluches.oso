@@ -7,19 +7,14 @@ const { agregarFacturaAPedido } = require('./pedido_logic');
 
 // Crear factura
 async function crearFactura(body) {
-  
-  // Verificar si ya existe una factura para este pedido
   const facturaExistente = await Factura.findOne({ pedido: body.pedido });
-  
+
   if (facturaExistente) {
-    
-    // Si existe, actualizar con los nuevos detalles
     if (body.detallesFactura && body.detallesFactura.length > 0) {
-      // Agregar nuevos detalles sin duplicar
       const nuevosDetalles = body.detallesFactura.filter(
         detalle => !facturaExistente.detallesFactura.includes(detalle)
       );
-      
+
       if (nuevosDetalles.length > 0) {
         facturaExistente.detallesFactura.push(...nuevosDetalles);
         if (body.metodoPago) {
@@ -28,25 +23,31 @@ async function crearFactura(body) {
         await facturaExistente.save();
       }
     }
-    
-    return facturaExistente; 
+
+    return facturaExistente;
   }
 
-  
+  const pedidoAsociado = await Pedido.findById(body.pedido);
+  if (!pedidoAsociado) {
+    throw new Error('Pedido no encontrado al crear factura');
+  }
+
   const factura = new Factura({
     fechaCreacionFactura: body.fechaCreacionFactura || new Date().toISOString().split('T')[0],
     horaCreacionFactura: body.horaCreacionFactura || new Date().toLocaleTimeString('es-MX'),
     pedido: body.pedido,
+    cliente: pedidoAsociado.cliente, 
     detallesFactura: body.detallesFactura || [],
     metodoPago: body.metodoPago
   });
 
-
   const facturaGuardada = await factura.save();
-  
-  
-  // Agregar factura al pedido
+
   await agregarFacturaAPedido(facturaGuardada.pedido, facturaGuardada._id);
+
+  await Cliente.findByIdAndUpdate(pedidoAsociado.cliente, {
+    $push: { facturas: facturaGuardada._id }
+  });
 
   return facturaGuardada;
 }
@@ -84,7 +85,7 @@ async function actualizarFactura(id, body) {
 
     return factura;
 }
-// listarFacturas limpio
+// listarFacturas 
 async function listarFacturas() {
   try {
     const facturas = await Factura.find()
@@ -100,7 +101,6 @@ async function listarFacturas() {
       .populate('metodoPago', 'nombreMetodoPago')
       .lean();
 
-    // Sin logs innecesarios
     return facturas;
   } catch (err) {
     console.error("❌ ERROR AL LISTAR FACTURAS:", err.message);
@@ -109,7 +109,7 @@ async function listarFacturas() {
   }
 }
 
-// buscarFacturaPorId limpio
+// buscarFacturaPorId 
 async function buscarFacturaPorId(id) {
   try {
     const factura = await Factura.findById(id)
