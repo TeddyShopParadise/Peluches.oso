@@ -32,7 +32,7 @@ import {
   Checkbox
 } from '@mui/material';
 import sortBy from 'lodash/sortBy';
-import { Edit, Delete, ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
+import { Edit, ListAlt, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search  } from '@mui/icons-material';
 import '../PagesStyle.css';
 import { getApiUrl } from '../../utils/apiConfig';
 import useApiRequest from '../../hooks/useApiRequest';
@@ -162,49 +162,6 @@ const Facturas = () => {
       console.error('Error al obtener factura:', error);
     }
   };
-
- // Eliminar factura
-const eliminarFactura = async (id) => {
-  await makeRequest({
-    url: `${apiUrl}/factura/${id}`,
-    method: 'DELETE',
-    confirm: {
-      title: 'Eliminar factura',
-      text: '¿Estás seguro de que deseas eliminar esta factura? Esta acción no se puede deshacer.',
-      icon: 'warning',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      reverseButtons: true,
-      backdrop: `
-        rgba(0,0,0,0.7)
-        url("/images/warning.gif")
-        center top
-        no-repeat
-      `
-    },
-    loading: {
-      title: 'Eliminando...',
-      html: 'Estamos eliminando la factura',
-      allowOutsideClick: false
-    },
-    success: {
-      icon: 'success',
-      title: '¡Factura eliminada!',
-      text: 'La factura ha sido eliminada correctamente.',
-      timer: 2000,
-      timerProgressBar: true
-    },
-    error: {
-      icon: 'error',
-      title: 'Error al eliminar factura',
-      text: (error) => error.message || 'Hubo un problema al eliminar la factura.',
-      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
-    },
-    onSuccess: fetchFacturas 
-  });
-};
-
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -374,21 +331,7 @@ const eliminarFactura = async (id) => {
                           <Info />
                         </IconButton>
                        </Tooltip>
-                        <Tooltip title="Eliminar Factura">
-                        <IconButton
-                          onClick={() => eliminarFactura(factura._id)}
-                          sx={{
-                            color: '#e57373',
-                            '&:hover': {
-                              backgroundColor: 'rgba(229, 115, 115, 0.1)',
-                            },
-                          }}
-                        >
-                          <Delete />
-                        </IconButton>
-                        </Tooltip>
-
-                      </TableCell>
+                     </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
