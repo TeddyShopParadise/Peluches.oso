@@ -313,38 +313,38 @@ const actualizarProducto = async () => {
     });
   };
   
-  const eliminarProducto = async (id) => {
-    await makeRequest({
-      url: `${apiUrl}/producto/${id}`,
-      method: 'DELETE',
-      confirm: {
-        title: '¿Estás seguro?',
-        text: 'Esta acción no se puede deshacer',
-        icon: 'warning',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6'
-      },
-      success: {
-        title: 'Eliminado',
-        text: 'El producto ha sido eliminado correctamente',
-        icon: 'success',
-        confirmButtonColor: '#3085d6'
-      },
-      error: {
-        title: 'Error',
-        text: (error) => error.message || 'Error al eliminar el producto',
-        icon: 'error',
-        confirmButtonColor: '#d33'
-      },
-      onSuccess: () => {
-        fetchProductos();
-        setProductos(prev => prev.filter(p => p._id !== id));
-      }
-    });
-  };
-  
+ const eliminarProducto = async (id) => {
+  await makeRequest({
+    url: `${apiUrl}/producto/${id}`,
+    method: 'DELETE',
+    confirm: {
+      title: '¿Estás seguro?',
+      text: 'Se eliminará el producto, su inventario y todos los movimientos asociados. Esta acción no se puede deshacer.',
+      icon: 'warning',
+      confirmButtonText: 'Sí, eliminar todo',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    },
+    success: {
+      title: 'Eliminado',
+      text: 'El producto, su inventario y movimientos han sido eliminados correctamente.',
+      icon: 'success',
+      confirmButtonColor: '#3085d6'
+    },
+    error: {
+      title: 'Error',
+      text: (error) => error.message || 'Error al eliminar el producto',
+      icon: 'error',
+      confirmButtonColor: '#d33'
+    },
+    onSuccess: () => {
+      fetchProductos();
+      setProductos(prev => prev.filter(p => p._id !== id));
+    }
+  });
+};
+
  const editarProducto = (producto) => {
   setEditingId(producto._id);
   setEstiloProducto(producto.estiloProducto || '');

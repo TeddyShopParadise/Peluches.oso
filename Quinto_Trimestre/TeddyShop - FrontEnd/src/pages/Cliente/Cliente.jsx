@@ -37,7 +37,6 @@ import {
 } from '@mui/material';
 import { 
   Edit, 
-  Delete, 
   ArrowUpward, 
   ArrowDownward, 
   Info, 
@@ -180,46 +179,6 @@ export default function Cliente() {
 
   const handleCancelEdit = () => {
     resetForm();
-  };
-
-  const eliminarCliente = async (id) => {
-    await makeRequest({
-      url: `${apiUrl}/clientes/${id}`,
-      method: 'DELETE',
-      confirm: {
-        title: 'Eliminar cliente',
-        text: '¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.',
-        icon: 'warning',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: true,
-        backdrop: `
-          rgba(0,0,0,0.7)
-          url("/images/warning.gif")
-          center top
-          no-repeat
-        `
-      },
-      loading: {
-        title: 'Eliminando...',
-        html: 'Estamos eliminando el cliente',
-        allowOutsideClick: false
-      },
-      success: {
-        icon: 'success',
-        title: '¡Cliente eliminado!',
-        text: 'El cliente ha sido eliminado correctamente.',
-        timer: 2000,
-        timerProgressBar: true
-      },
-      error: {
-        icon: 'error',
-        title: 'Error al eliminar cliente',
-        text: (error) => error.message || 'Ocurrió un error al eliminar el cliente',
-        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
-      },
-      onSuccess: listarClientes
-    });
   };
 
   const handleChangePage = (event, newPage) => {
@@ -596,19 +555,6 @@ return (
                           }}
                         >
                           <Edit />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Eliminar cliente">
-                        <IconButton
-                          onClick={() => eliminarCliente(cliente._id)}
-                          sx={{
-                            color: '#ff4081',
-                            '&:hover': {
-                              backgroundColor: 'rgba(255, 64, 129, 0.1)',
-                            },
-                          }}
-                        >
-                          <Delete />
                         </IconButton>
                       </Tooltip>
                     </TableCell>

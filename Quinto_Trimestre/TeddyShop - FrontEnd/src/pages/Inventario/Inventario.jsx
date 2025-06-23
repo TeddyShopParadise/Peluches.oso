@@ -163,7 +163,6 @@ const Inventario = () => {
     idProducto: selectedInventario.idProducto._id
   };
 
-  // 🔴 CIERRA EL DIÁLOGO ANTES DE LANZAR SweetAlert
   setOpenEditDialog(false);
 
   await makeRequest({
@@ -202,7 +201,7 @@ const eliminarInventario = async (id) => {
     method: 'DELETE',
     confirm: {
       title: '¿Estás seguro?',
-      text: 'Esta acción no se puede deshacer',
+      text: 'Eliminar el inventario también eliminará el movimiento asociado. Esta acción no se puede deshacer.',
       icon: 'warning',
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
@@ -215,7 +214,7 @@ const eliminarInventario = async (id) => {
     },
     success: {
       title: 'Eliminado',
-      text: 'El inventario ha sido eliminado correctamente.',
+      text: 'El inventario y su movimiento asociado han sido eliminados correctamente.',
       icon: 'success',
       customClass: {  
         container: 'swal-high-zindex',
@@ -234,6 +233,7 @@ const eliminarInventario = async (id) => {
     onSuccess: fetchInventarios
   });
 };
+
   const handleOpenDetailDialog = (inventario) => {
     setSelectedInventario(inventario);
     setOpenDetailDialog(true);
