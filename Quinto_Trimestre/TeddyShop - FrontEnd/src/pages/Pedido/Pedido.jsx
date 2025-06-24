@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import ShoppingBag from '@mui/icons-material/ShoppingBag';
+import React, { useState, useEffect } from 'react';
 
 import {
   Container,
@@ -45,17 +43,18 @@ import {
   ArrowUpward, 
   ArrowDownward, 
   Cancel,
-  Search
+  Search,
+  ShoppingBag,
 } from '@mui/icons-material';
 import '../PagesStyle.css';
 import Swal from 'sweetalert2';
 import { getApiUrl } from '../../utils/apiConfig';
 import FacturaPDF from '../Factura/FacturaPDF';
 import useApiRequest from '../../hooks/useApiRequest';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 
 const apiUrl = getApiUrl();
-console.log("Url almacenada: ", apiUrl);
 
 const Pedido = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -80,17 +79,113 @@ const Pedido = () => {
   const [pedidoACancelar, setPedidoACancelar] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [userInfo, setUserInfo] = useState(null);
   const { makeRequest } = useApiRequest();
 
- 
+  // Función para obtener información del usuario desde el token
+  const getUserInfoFromToken = () => {
+    try {
+      const token = localStorage.getItem('authToken'); 
+      if (!token) return null;
+
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return {
+        userId: payload.userId,
+        username: payload.username,
+        roles: payload.roles || [],
+        usuario: payload.usuario || null
+      };
+    } catch (error) {
+      console.error('Error al decodificar token:', error);
+      return null;
+    }
+  };
+
+  // Función para obtener el ID del empleado del usuario autenticado
+  const getEmpleadoId = (userInfo) => {
+    if (!userInfo || !userInfo.usuario || !userInfo.usuario.empleados) {
+      return null;
+    }
+    
+    // Si el usuario tiene empleados asociados, tomar el primero
+    const empleados = userInfo.usuario.empleados;
+    return empleados.length > 0 ? empleados[0]._id : null;
+  };
+
   const fetchPedidos = async () => {
     try {
-      const response = await fetch(`${apiUrl}/pedido`);
-      if (!response.ok) throw new Error('Error al obtener los pedidos');
+      const token = localStorage.getItem('authToken'); 
+      
+      if (!token) {
+        console.error('No hay token disponible');
+        setSnackbarMessage('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        setOpenSnackbar(true);
+        return;
+      }
+
+      // Obtener información del usuario
+      const currentUserInfo = getUserInfoFromToken();
+      setUserInfo(currentUserInfo);
+
+      if (!currentUserInfo) {
+        setSnackbarMessage('Error al obtener información del usuario');
+        setOpenSnackbar(true);
+        return;
+      }
+
+
+      const response = await fetch(`${apiUrl}/pedido`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        console.error('Token expirado o inválido');
+        localStorage.removeItem('authToken');
+        setSnackbarMessage('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        setOpenSnackbar(true);
+        return;
+      }
+
+      if (response.status === 403) {
+        console.error('Acceso prohibido');
+        setSnackbarMessage('No tienes permisos para acceder a esta información.');
+        setOpenSnackbar(true);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
       const data = await response.json();
-      setPedidos(data);
+
+      // Filtrar pedidos según el rol del usuario
+      let pedidosFiltrados = data;
+
+      if (currentUserInfo.roles.includes('Empleado') && !currentUserInfo.roles.includes('Administrador')) {
+        const empleadoId = getEmpleadoId(currentUserInfo);
+        
+        if (empleadoId) {
+          console.log('Filtrando pedidos para empleado ID:', empleadoId);
+          
+      pedidosFiltrados = data.filter(pedido => {
+      const match = pedido.vendedor && pedido.vendedor._id === empleadoId;
+      return match;
+    });
+        } else {
+          pedidosFiltrados = [];
+        }
+      } else {
+      }
+
+      setPedidos(pedidosFiltrados);
     } catch (error) {
-      console.error(error);
+      console.error('Error al obtener pedidos:', error);
+      setSnackbarMessage('Error al obtener los pedidos: ' + error.message);
+      setOpenSnackbar(true);
       setPedidos([]);
     } finally {
       setLoading(false);
@@ -99,7 +194,13 @@ const Pedido = () => {
 
   const fetchDetalles = async () => {
     try {
-      const response = await fetch(`${apiUrl}/detallesPedido`);
+      const token = localStorage.getItem('authToken'); 
+      const response = await fetch(`${apiUrl}/detallesPedido`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (!response.ok) throw new Error('Error al obtener los detalles de pedido');
       const data = await response.json();
       setDetalles(data);
@@ -108,9 +209,15 @@ const Pedido = () => {
     }
   };
 
-const fetchCompania = async () => {
+  const fetchCompania = async () => {
     try {
-      const response = await fetch(`${apiUrl}/Compania`);
+      const token = localStorage.getItem('authToken'); 
+      const response = await fetch(`${apiUrl}/Compania`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await response.json();
       setCompania(data);
     } catch (error) {
@@ -118,13 +225,11 @@ const fetchCompania = async () => {
     }
   };
 
- useEffect(() => {
+  useEffect(() => {
     fetchPedidos();
     fetchDetalles();
-      fetchCompania();
-
+    fetchCompania();
   }, []);
-
 
   const validarFormulario = () => {
     const errors = {};
@@ -149,96 +254,103 @@ const fetchCompania = async () => {
     return Object.keys(errors).length === 0;
   };
 
- const actualizarPedido = async () => {
-  if (!pedidoEdicion) return;
-  
-  if (!validarFormulario()) {
-    setSnackbarMessage('Por favor, complete todos los campos requeridos');
-    setOpenSnackbar(true);
-    return;
-  }
-
-  const datosActualizacion = {
-    nombreComprador: pedidoEdicion.nombreComprador,
-    numeroComprador: pedidoEdicion.numeroComprador,
-    nombreAgendador: pedidoEdicion.nombreAgendador,
-    numeroAgendador: pedidoEdicion.numeroAgendador,
-    localidad: pedidoEdicion.localidad,
-    direccion: pedidoEdicion.direccion,
-    barrio: pedidoEdicion.barrio
-  };
-
-  try {
-    const response = await fetch(`${apiUrl}/pedido/${pedidoEdicion._id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(datosActualizacion),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error de validación en el servidor:", errorData);
-      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+  const actualizarPedido = async () => {
+    if (!pedidoEdicion) return;
+    
+    if (!validarFormulario()) {
+      setSnackbarMessage('Por favor, complete todos los campos requeridos');
+      setOpenSnackbar(true);
+      return;
     }
 
-    const updatedPedido = await response.json();
-    setPedidos(
-      pedidos.map((pedido) =>
-        pedido._id === updatedPedido._id ? updatedPedido : pedido
-      )
-    );
-    setSnackbarMessage('Pedido actualizado con éxito');
-    setOpenSnackbar(true);
-    setPedidoEdicion(null);
-    setOpenEditDialog(false);
-  } catch (error) {
-    console.error('Error actualizando el pedido:', error);
-    setSnackbarMessage('Error al actualizar el pedido: ' + error.message);
-    setOpenSnackbar(true);
-  }
-};
+    const datosActualizacion = {
+      nombreComprador: pedidoEdicion.nombreComprador,
+      numeroComprador: pedidoEdicion.numeroComprador,
+      nombreAgendador: pedidoEdicion.nombreAgendador,
+      numeroAgendador: pedidoEdicion.numeroAgendador,
+      localidad: pedidoEdicion.localidad,
+      direccion: pedidoEdicion.direccion,
+      barrio: pedidoEdicion.barrio
+    };
 
-const eliminarPedido = async (id) => {
-  if (!id) return;
+    try {
+      const token = localStorage.getItem('authToken'); 
+      const response = await fetch(`${apiUrl}/pedido/${pedidoEdicion._id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(datosActualizacion),
+      });
 
-  await makeRequest({
-    url: `${apiUrl}/pedido/${id}`,
-    method: 'DELETE',
-    confirm: {
-      title: 'Eliminar pedido',
-      text: '¿Estás seguro de que deseas eliminar este pedido? Se eliminarán también su factura y sus detalles.',
-      icon: 'warning',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      backdrop: `
-        rgba(0,0,0,0.7)
-        url("/images/warning.gif")
-        center top
-        no-repeat
-      `
-    },
-    loading: {
-      title: 'Eliminando...',
-      html: 'Estamos eliminando el pedido'
-    },
-    success: {
-      title: '¡Pedido eliminado!',
-      text: 'El pedido y sus datos relacionados han sido eliminados con éxito',
-      timer: 2000,
-      timerProgressBar: true
-    },
-    error: {
-      title: 'Error',
-      text: 'Hubo un problema al eliminar el pedido',
-      footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
-    },
-    onSuccess: () => {
-       setPedidos(prev => prev.filter(p => p._id !== id));
-    },
-    
-    
-  });
-};
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error de validación en el servidor:", errorData);
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+
+      const updatedPedido = await response.json();
+      setPedidos(
+        pedidos.map((pedido) =>
+          pedido._id === updatedPedido._id ? updatedPedido : pedido
+        )
+      );
+      setSnackbarMessage('Pedido actualizado con éxito');
+      setOpenSnackbar(true);
+      setPedidoEdicion(null);
+      setOpenEditDialog(false);
+    } catch (error) {
+      console.error('Error actualizando el pedido:', error);
+      setSnackbarMessage('Error al actualizar el pedido: ' + error.message);
+      setOpenSnackbar(true);
+    }
+  };
+
+  const eliminarPedido = async (id) => {
+    if (!id) return;
+
+    const token = localStorage.getItem('authToken'); 
+    await makeRequest({
+      url: `${apiUrl}/pedido/${id}`,
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      confirm: {
+        title: 'Eliminar pedido',
+        text: '¿Estás seguro de que deseas eliminar este pedido? Se eliminarán también su factura y sus detalles.',
+        icon: 'warning',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        backdrop: `
+          rgba(0,0,0,0.7)
+          url("/images/warning.gif")
+          center top
+          no-repeat
+        `
+      },
+      loading: {
+        title: 'Eliminando...',
+        html: 'Estamos eliminando el pedido'
+      },
+      success: {
+        title: '¡Pedido eliminado!',
+        text: 'El pedido y sus datos relacionados han sido eliminados con éxito',
+        timer: 2000,
+        timerProgressBar: true
+      },
+      error: {
+        title: 'Error',
+        text: 'Hubo un problema al eliminar el pedido',
+        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+      },
+      onSuccess: () => {
+        setPedidos(prev => prev.filter(p => p._id !== id));
+      },
+    });
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -286,9 +398,13 @@ const eliminarPedido = async (id) => {
     }
 
     try {
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${apiUrl}/pedido/estado/${pedidoId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ estado: nuevoEstado }),
       });
 
@@ -316,9 +432,13 @@ const eliminarPedido = async (id) => {
       return setOpenSnackbar(true);
     }
     try {
+      const token = localStorage.getItem('authToken'); 
       const resp1 = await fetch(`${apiUrl}/pedido/estado/${pedidoACancelar._id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ estado: 'cancelado' })
       });
       if (!resp1.ok) { const e = await resp1.json(); throw new Error(e.message); }
@@ -332,7 +452,10 @@ const eliminarPedido = async (id) => {
 
       const resp2 = await fetch(`${apiUrl}/devoluciones`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ pedido: pedidoACancelar._id, motivo: motivoDevolucion, items: itemsParaDevolucion })
       });
       if (!resp2.ok) { const e = await resp2.json(); throw new Error(e.message); }
@@ -353,10 +476,11 @@ const eliminarPedido = async (id) => {
     setPedidoACancelar(null);
   };
 
+  // Filtrado y ordenamiento
   const filteredPedidos = pedidos.filter((pedido) =>
     pedido.nombreComprador && pedido.nombreComprador.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  
   const sortedPedidos = [...filteredPedidos].sort((a, b) => {
     const aValue = a[sortBy];
     const bValue = b[sortBy];
@@ -378,8 +502,12 @@ const eliminarPedido = async (id) => {
 
       setSelectedPedido(pedidoSeleccionado);
 
+      const token = localStorage.getItem('authToken'); 
       const response = await fetch(`${apiUrl}/factura/generar/${pedidoId}`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (!response.ok) {
@@ -389,30 +517,30 @@ const eliminarPedido = async (id) => {
 
       const facturaData = await response.json();
 
-    // Asegurar que los detalles tengan idProducto poblado
-    const facturaConProductos = {
-      ...facturaData,
-      detallesFactura: facturaData.detallesFactura.map(detalle => ({
-        ...detalle,
-        idProducto: detalle.idProducto || detalles.find(d => 
-          d._id === detalle.idDetallePedido
-        )?.idProducto
-      }))
-    };
+      const facturaConProductos = {
+        ...facturaData,
+        detallesFactura: facturaData.detallesFactura.map(detalle => ({
+          ...detalle,
+          idProducto: detalle.idProducto || detalles.find(d => 
+            d._id === detalle.idDetallePedido
+          )?.idProducto
+        }))
+      };
 
-    setFacturaGenerada(facturaConProductos);
-    setFacturaDialogOpen(true);
+      setFacturaGenerada(facturaConProductos);
+      setFacturaDialogOpen(true);
 
-  } catch (error) {
-    console.error("Error:", error);
-    setSnackbarMessage(error.message);
-    setOpenSnackbar(true);
-  }
-};
+    } catch (error) {
+      console.error("Error:", error);
+      setSnackbarMessage(error.message);
+      setOpenSnackbar(true);
+    }
+  };
 
   const detallesFiltrados = detalles.filter(
     (detalle) => detalle.idPedido?._id === selectedPedido?._id
   );
+
 
   return (
     <Box className="BoxInicial">
@@ -459,13 +587,14 @@ const eliminarPedido = async (id) => {
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center', mb: 4 }}>
-            <Paper elevation={2} sx={{ borderRadius: '18px', padding: '20px', width: '220px', backgroundColor: '#fff0f5', border: '1px solid #f8c8dc', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-5px)' }, '&::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)' } }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography variant="body2" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>Pedidos Totales</Typography>
-                  <Typography variant="h4" sx={{ color: '#b04e6f', fontWeight: 'bold', mt: 1 }}>{sortedPedidos.length}</Typography>
-                </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center', mb: 4 }}>
+                <Paper elevation={2} sx={{ borderRadius: '18px', padding: '20px', width: '220px', backgroundColor: '#fff0f5', border: '1px solid #f8c8dc', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-5px)' }, '&::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)' } }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              Mostrando {sortedPedidos.length} de {pedidos.length} pedidos
+            </Typography>
+          </Box>
                 <Box sx={{ backgroundColor: 'rgba(244, 143, 177, 0.15)', borderRadius: '12px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ShoppingBag sx={{ color: '#f48fb1', fontSize: '28px' }} />
                 </Box>
@@ -653,7 +782,8 @@ const eliminarPedido = async (id) => {
                           <Tooltip title="Eliminar">
                             <IconButton
                               onClick={() => {
-                                eliminarPedido(pedido._id);                              }}
+                                eliminarPedido(pedido._id);      
+                              }}
                               sx={{
                                 color: '#f44336',
                                 '&:hover': { backgroundColor: 'rgba(244, 67, 54, 0.1)' }
