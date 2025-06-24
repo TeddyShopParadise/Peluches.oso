@@ -11,6 +11,7 @@ import net.serenitybdd.screenplay.actions.Enter;
 import java.util.List;
 
 import static co.com.AutoTeddyShop.userinterface.CategoriasAdmin.InteraccionCategoriasAdmin.*;
+import static co.com.AutoTeddyShop.userinterface.ProductosUsuario.InteraccionProductosUsuario.BOTON_ACEPTARCODESPACE;
 import static net.serenitybdd.screenplay.actors.OnStage.theActorInTheSpotlight;
 
 import co.com.AutoTeddyShop.models.Utilidades.NumeroRandom;

@@ -15,6 +15,7 @@ import java.util.List;
 import static co.com.AutoTeddyShop.models.Utilidades.NumeroRandom.generarNumeroAleatorio;
 import static co.com.AutoTeddyShop.tasks.Esperar.unosSegundos;
 import static co.com.AutoTeddyShop.userinterface.ProductosAdmin.ProductoAdminPage.*;
+import static co.com.AutoTeddyShop.userinterface.ProductosUsuario.InteraccionProductosUsuario.BOTON_ACEPTARCODESPACE;
 import static net.serenitybdd.screenplay.actors.OnStage.theActorInTheSpotlight;
 
 public class RegistrarProducto implements Task {

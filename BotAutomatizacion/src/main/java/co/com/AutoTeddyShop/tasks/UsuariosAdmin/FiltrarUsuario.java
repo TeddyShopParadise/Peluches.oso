@@ -7,6 +7,7 @@ import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Enter;
+import net.serenitybdd.screenplay.actions.Scroll;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class FiltrarUsuario implements Task {
         String nombre = actor.recall(SessionVariables.NombreUsuario.toString());
 
         actor.attemptsTo(
+                Scroll.to(BUSCAR_USUARIO),
                 Click.on(BUSCAR_USUARIO),
                 Enter.theValue(nombre).into(BUSCAR_USUARIO)
         );

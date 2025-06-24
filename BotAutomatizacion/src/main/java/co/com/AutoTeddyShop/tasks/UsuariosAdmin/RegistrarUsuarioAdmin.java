@@ -11,6 +11,8 @@ import net.serenitybdd.screenplay.actions.SelectFromOptions;
 import java.util.List;
 
 import static co.com.AutoTeddyShop.models.Utilidades.NumeroRandom.generarNumeroAleatorio;
+import static co.com.AutoTeddyShop.tasks.Esperar.unosSegundos;
+import static co.com.AutoTeddyShop.userinterface.ProductosUsuario.InteraccionProductosUsuario.BOTON_ACEPTARCODESPACE;
 import static co.com.AutoTeddyShop.userinterface.UsuarioAdmin.InteraccionUsuariosAdmin.*;
 import static net.serenitybdd.screenplay.actors.OnStage.theActorInTheSpotlight;
 
@@ -35,17 +37,17 @@ public class RegistrarUsuarioAdmin implements Task {
         String Nombre = usuario.getNombreUsuario() + generarNumeroAleatorio();
 
         actor.attemptsTo(
+                Click.on(BOTON_ACEPTARCODESPACE),
                 Enter.theValue(Email).into(INPUT_EMAIL),
                 Enter.theValue(usuario.getContrasena()).into(INPUT_CONTRASENA),
                 Enter.theValue(Nombre).into(INPUT_NOMBRE_USUARIO),
                 Click.on(SELECT_ROLES),
                 Click.on(BTN_ADMIN),
-                Click.on(BTN_DEVOLVER),
                 Click.on(SELECT_EMPLEADO),
                 Click.on(BTN_EMPLEA),
-                Click.on(BTN_DEVOLVER),
                 Click.on(BTN_CREAR_USUARIO),
-                Click.on(BTN_CREAR_FINAL)
+                Click.on(BTN_CREAR_FINAL),
+                unosSegundos(2)
         );
         theActorInTheSpotlight().remember(SessionVariables.EmailUsuario.toString(), Email);
         theActorInTheSpotlight().remember(SessionVariables.NombreUsuario.toString(), Nombre);

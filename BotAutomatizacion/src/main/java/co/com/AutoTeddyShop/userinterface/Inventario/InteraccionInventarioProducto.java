@@ -5,15 +5,15 @@ import org.openqa.selenium.By;
 
 public class InteraccionInventarioProducto {
     public static final Target INPUT_STOCK_INCIAL = Target.the("Campo del stock inicial")
-            .located(By.xpath("//*[@id=\":rt:\"]"));
+            .located(By.xpath("/html/body/div[3]/div[3]/div/div[1]/div/div[1]/div/input"));
     public static final Target INPUT_STOCK_MINIMO = Target.the("Campo del stock inicial")
             .located(By.xpath("/html/body/div[3]/div[3]/div/div[1]/div/div[2]/div/input"));
     public static final Target INPUT_STOCK_MAXIMO = Target.the("Campo del stock inicial")
-            .located(By.xpath("//*[@id=\":r11:\"]"));
+            .located(By.xpath("/html/body/div[3]/div[3]/div/div[1]/div/div[3]/div/input"));
     public static final Target INPUT_PRECIO_VENTA = Target.the("Campo del stock inicial")
-            .located(By.xpath("//*[@id=\":r13:\"]"));
+            .located(By.xpath("/html/body/div[3]/div[3]/div/div[1]/div/div[4]/div/input"));
     public static final Target INPUT_PRECIO_COMPRA = Target.the("Campo del stock inicial")
-            .located(By.xpath("//*[@id=\":r15:\"]"));
+            .located(By.xpath("/html/body/div[3]/div[3]/div/div[1]/div/div[5]/div/input"));
     public static final Target BTN_CONFIRMAR_CREACION_INVENTARIO = Target.the("Campo del stock inicial")
             .located(By.xpath("/html/body/div[3]/div[3]/div/div[2]/button[2]"));
     public static final Target MENSAJE_EXITO_INVENTARIO = Target.the("mensaje de producto creado")

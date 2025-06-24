@@ -10,6 +10,7 @@ import net.serenitybdd.screenplay.actions.Enter;
 
 import java.util.List;
 
+import static co.com.AutoTeddyShop.userinterface.CatalogosUsuario.VisualizarCatalogos.SIDEBAR;
 import static co.com.AutoTeddyShop.userinterface.ProductosUsuario.InteraccionProductosUsuario.*;
 
 public class NavegacionPedido implements Task {
@@ -25,6 +26,7 @@ public class NavegacionPedido implements Task {
     public <T extends Actor> void performAs(T actor) {
         String filtroComprador = actor.recall(SessionVariables.NombrePedido.toString());
         actor.attemptsTo(
+                Click.on(SIDEBAR),
                 Click.on(BTN_GESTIONPEDIDO),
                 Click.on(BTN_PEDIDOS),
                 Click.on(BTN_BUSCAR),

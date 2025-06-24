@@ -13,6 +13,7 @@ import java.util.List;
 
 import static co.com.AutoTeddyShop.tasks.Esperar.unosSegundos;
 import static co.com.AutoTeddyShop.userinterface.Empleado.RegistrarEmpleadoTeddyShop.*;
+import static co.com.AutoTeddyShop.userinterface.ProductosUsuario.InteraccionProductosUsuario.BOTON_ACEPTARCODESPACE;
 import static net.serenitybdd.screenplay.actors.OnStage.theActorInTheSpotlight;
 
 public class RegistrarEmpleado implements Task {

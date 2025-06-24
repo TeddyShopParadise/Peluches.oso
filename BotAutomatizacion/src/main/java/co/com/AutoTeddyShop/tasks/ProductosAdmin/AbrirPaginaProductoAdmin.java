@@ -1,6 +1,6 @@
 package co.com.AutoTeddyShop.tasks.ProductosAdmin;
 
-import co.com.AutoTeddyShop.userinterface.ProductoAdminTeddyShop;
+import co.com.AutoTeddyShop.userinterface.ProductosAdmin.ProductoAdminTeddyShop;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.Tasks;
