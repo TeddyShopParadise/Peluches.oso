@@ -36,6 +36,7 @@ const crearPedido = async (body) => {
         direccion: body.direccion,
         barrio: body.barrio,
         cliente: cliente._id,
+        vendedor: body.vendedor,
         estado: body.estado || "en_proceso",
         detallesPedido: [], 
         facturas: [] 
@@ -86,7 +87,8 @@ async function actualizarPedido(id, body) {
     numeroAgendador: body.numeroAgendador,
     localidad: body.localidad,
     direccion: body.direccion,
-    barrio: body.barrio
+    barrio: body.barrio,
+     vendedor: body.vendedor
   };
 
   // Actualizar solo los campos permitidos
@@ -104,21 +106,33 @@ async function actualizarPedido(id, body) {
 }
 
 // Listar todos los pedidos
-async function listarPedidos() {
-    const pedidos = await Pedido.find()
-        .populate('cliente', 'telefonoCliente')
-        .populate({
-            path: 'detallesPedido',
-            populate: { path: 'idProducto' }
-        })
-        .populate({
-            path: 'facturas',
-            options: { sort: { fecha: -1 } } 
-        });
+async function listarPedidos(vendedorId = null) {
+    try {
+        let query = {};
+        
+        if (vendedorId) {
+            query.vendedor = vendedorId;
+        }
 
-    return pedidos;
+        const pedidos = await Pedido.find(query)
+            .populate('cliente', 'telefonoCliente')
+            .populate({
+                path: 'detallesPedido',
+                populate: { path: 'idProducto' }
+            })
+            .populate('vendedor', 'nombreEmpleado dniEmpleado telefonoEmpleado')
+            .populate({
+                path: 'facturas',
+                options: { sort: { fecha: -1 } } 
+            });
+
+        return pedidos;
+
+    } catch (err) {
+        console.error('❌ Error al listar pedidos:', err.message);
+        throw err;
+    }
 }
-
 // Buscar pedido por ID
 async function buscarPedidoPorId(id) {
     try {
@@ -127,13 +141,17 @@ async function buscarPedidoPorId(id) {
             .populate({
                 path: 'detallesPedido',
                 populate: { path: 'idProducto' }
-            })
+            }) 
+            .populate('vendedor', 'nombreEmpleado dniEmpleado telefonoEmpleado')
             .populate('facturas');
 
         if (!pedido) throw new Error(`Pedido con ID ${id} no encontrado`);
+
+        console.log('🔍 Pedido encontrado:', pedido._id);
         return pedido;
+
     } catch (err) {
-        console.error(`Error al buscar el pedido por ID: ${err.message}`);
+        console.error(`❌ Error al buscar el pedido por ID: ${err.message}`);
         throw err;
     }
 }
@@ -148,8 +166,8 @@ async function eliminarPedido(id) {
   try {
 
     const facturas = await Factura.find({ pedido: id })
-                                   .select('detallesFactura')
-                                   .session(session);
+      .select('detallesFactura')
+      .session(session);
  
 
     const detalleFacturaIds = facturas
@@ -161,13 +179,13 @@ async function eliminarPedido(id) {
     }).session(session);
 
     const delFact = await Factura.deleteMany({ pedido: id })
-                                  .session(session);
+      .session(session);
 
     const delDetPed = await DetallePedido.deleteMany({ idPedido: id })
-                                         .session(session);
+      .session(session);
 
     const result = await Pedido.deleteOne({ _id: id })
-                               .session(session);
+      .session(session);
     if (result.deletedCount === 0) {
       throw new Error('Pedido no encontrado');
     }
@@ -186,7 +204,7 @@ async function eliminarPedido(id) {
 
 
 
-// Reemplazar la función actualizarEstado existente con esta:
+// función actualizarEstado pedido
 async function actualizarEstado(id, nuevoEstado, motivoCancelacion = null) {
     try {
         const pedidoAnterior = await Pedido.findById(id);
