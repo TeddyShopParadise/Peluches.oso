@@ -53,6 +53,16 @@ const pedidoSchemaValidation = Joi.object({
             'string.length': 'El ID del cliente debe tener 24 caracteres',
             'any.required': 'El ID del cliente es un campo requerido'
         }),
+
+    vendedor: Joi.string()
+    .length(24)
+    .hex()
+    .optional()
+    .messages({
+      'string.base': 'El ID del vendedor debe ser un texto',
+      'string.length': 'El ID del vendedor debe tener 24 caracteres',
+      'string.hex': 'El ID del vendedor debe ser hexadecimal'
+    }),
     
     detallesPedido: Joi.array()
         .items(Joi.string().length(24).hex())
