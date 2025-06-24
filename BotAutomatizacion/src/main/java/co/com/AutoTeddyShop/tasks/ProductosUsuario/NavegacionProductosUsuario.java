@@ -11,8 +11,7 @@ import co.com.AutoTeddyShop.models.DatosCompraProducto;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTHeaderFooter;
 
 import static co.com.AutoTeddyShop.tasks.Esperar.unosSegundos;
-import static co.com.AutoTeddyShop.userinterface.CatalogosUsuario.VisualizarCatalogos.BTN_LISTADESPLEGABLE;
-import static co.com.AutoTeddyShop.userinterface.CatalogosUsuario.VisualizarCatalogos.BTN_MENU_PRODUCTOS;
+import static co.com.AutoTeddyShop.userinterface.CatalogosUsuario.VisualizarCatalogos.*;
 import static co.com.AutoTeddyShop.userinterface.ProductosUsuario.InteraccionProductosUsuario.*;
 import static net.serenitybdd.screenplay.actors.OnStage.theActorInTheSpotlight;
 
@@ -38,9 +37,8 @@ public class NavegacionProductosUsuario implements Task {
         String Comprador = comprador.getNombrePaga() + NumeroRandom.generarNumeroAleatorio();
 
         actor.attemptsTo(
-                Click.on(BTN_LISTADESPLEGABLE),
-                Click.on(BTN_MENU_PRODUCTOS),
-                Click.on(BTN_PRODUCTO_USUARIO),
+               //Click.on(BTN_LISTADESPLEGABLE),
+               //Click.on(BTN_PRODUCTOUSUARIO),
                 Click.on(BTN_CATEGORIA),
                 Click.on(BTN_OSOSCOLORES),
                 Click.on((BTN_DETALLES)),
@@ -62,17 +60,9 @@ public class NavegacionProductosUsuario implements Task {
                 Enter.theValue(datosCompra.get(0).getBarrio()).into(INPUT_BARRIO),
                 Click.on(INPUT_LOCALIDAD),
                 Enter.theValue(datosCompra.get(0).getLocalidad()).into(INPUT_LOCALIDAD),
+                Click.on(BTN_SELECCIONARVENDEDOR),
                 Click.on(BTN_ENVIARPEDIDO),
-                unosSegundos(7),
-                Click.on(BTN_LISTADESPLEGABLE),
-                Click.on(BTN_MENUPEDIDO),
-                Click.on(BTN_PEDIDO),
-                Click.on(BTN_BUSCAR),
-                Enter.theValue(Comprador).into(BTN_BUSCAR),
-                unosSegundos(3),
-                Click.on(LISTA_ESTADO),
-                unosSegundos(3),
-                Click.on(ESTADO)
+                unosSegundos(7)
                 );
         actor.remember(SessionVariables.NombrePedido.toString(), Comprador);
     }

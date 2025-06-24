@@ -1,9 +1,9 @@
 package co.com.AutoTeddyShop.questions;
-import static co.com.AutoTeddyShop.userinterface.Login.LoginPageTeddyShop.BOTON_GESTION_PEDIDO;
+import static co.com.AutoTeddyShop.userinterface.Login.LoginPageTeddyShop.TEXT_PELUCHESOSO;
 import static jxl.biff.FormatRecord.logger;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Question;
-import net.serenitybdd.screenplay.questions.Visibility;
+import net.serenitybdd.screenplay.questions.Text;
 
 public class validacionLogin implements Question<Boolean> {
 
@@ -14,9 +14,10 @@ public class validacionLogin implements Question<Boolean> {
     @Override
     public Boolean answeredBy(Actor actor) {
         try {
-            return Visibility.of(BOTON_GESTION_PEDIDO).viewedBy(actor).asBoolean();
+            String texto = Text.of(TEXT_PELUCHESOSO).viewedBy(actor).asString();
+            return "¡Bienvenidos a Peluches.oso! Encuentra el compañero de peluche perfecto para todas las edades.".equals(texto);
         } catch (Exception e) {
-            logger.info("No se encontró el botón Gestión de Pedido");
+            logger.info("No se encontró el texto");
             return false;
         }
     }

@@ -17,10 +17,5 @@ public enum SessionVariables {
 
     NombreCategoria,
     DescripcionCategoria,
-<<<<<<< HEAD
-    Nombrecatalogo,
-=======
-
     Nombrecatalogo
->>>>>>> f2946a7cad5790cd884d726f43b48701f9731ba2
 }

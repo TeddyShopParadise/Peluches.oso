@@ -2,6 +2,7 @@ package co.com.AutoTeddyShop.questions;
 
 import co.com.AutoTeddyShop.models.DatosCompraProducto;
 import co.com.AutoTeddyShop.models.Utilidades.SessionVariables;
+import co.com.AutoTeddyShop.tasks.ProductosUsuario.NavegacionPedido;
 import net.serenitybdd.core.steps.Instrumented;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Question;
@@ -30,6 +31,7 @@ public class ValidacionProductosUsuario implements Question<Boolean> {
     public Boolean answeredBy(Actor actor) {
         try {
             actor.attemptsTo(
+                    NavegacionPedido.pedido(datosCompra),
                     WaitUntil.the(NOMBRE_PEDIDO, isVisible()).forNoMoreThan(10).seconds(),
                     WaitUntil.the(MENSAJE_ESTADO, isVisible()).forNoMoreThan(10).seconds()
             );

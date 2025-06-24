@@ -16,8 +16,8 @@ public class LoginPageTeddyShop extends PageObject {
     public static final Target BOTON_INICIAR_SESION = Target.the("Botón INICIA SESIÓN")
             .located(By.cssSelector("button[type='submit']"));
 
-    public static final Target BOTON_GESTION_PEDIDO = Target.the("Botón Gestión de Pedido")
-            .located(By.xpath("//button[normalize-space()='Gestión de Pedido']"));
+    public static final Target TEXT_PELUCHESOSO = Target.the("Texto de verificacion")
+            .located(By.xpath("/html/body/div[1]/div/div/div[3]/div/p"));
 
 
 }

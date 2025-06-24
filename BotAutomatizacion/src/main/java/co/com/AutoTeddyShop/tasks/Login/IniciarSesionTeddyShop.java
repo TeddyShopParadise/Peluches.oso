@@ -7,9 +7,11 @@ import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Enter;
+import net.serenitybdd.screenplay.actions.Scroll;
 
 import java.util.List;
 
+import static co.com.AutoTeddyShop.userinterface.Login.LoginPageTeddyShop.TEXT_PELUCHESOSO;
 import static co.com.AutoTeddyShop.userinterface.ProductosUsuario.InteraccionProductosUsuario.BOTON_ACEPTARCODESPACE;
 import static net.serenitybdd.screenplay.Tasks.instrumented;
 
@@ -34,7 +36,7 @@ public class IniciarSesionTeddyShop implements Task {
                 Enter.theValue(dato.getUsuario()).into(LoginPageTeddyShop.INPUT_USUARIO),
                 Enter.theValue(dato.getContrasena()).into(LoginPageTeddyShop.INPUT_CONTRASENA),
                 Click.on(LoginPageTeddyShop.BOTON_INICIAR_SESION),
-                Esperar.unosSegundos(2)
+                Esperar.unosSegundos(7)
         );
     }
 }
