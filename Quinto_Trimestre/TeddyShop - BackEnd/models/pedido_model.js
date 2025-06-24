@@ -34,6 +34,11 @@ const pedidoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Cliente', 
   },
+  vendedor: {  
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Empleado',
+    required: false
+  },
  
   detallesPedido: [{
     type: mongoose.Schema.Types.ObjectId,

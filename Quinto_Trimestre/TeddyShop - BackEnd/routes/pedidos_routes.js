@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const pedidoController = require('../Controllers/pedido_controller');
+const Pedidos = require('../models/pedido_model'); 
 
+const authorizeAccess = require('../middlewares/authorizeAccess');
+const { authenticateToken } = require('../middlewares/authorizeAccess');
 //const authorizeAccess = require('../middlewares/authorizeAccess');
 //router.use(authorizeAccess('Administrador', 'Empleado'));
 
@@ -16,6 +19,76 @@ const pedidoController = require('../Controllers/pedido_controller');
  * security:
  *   - bearerAuth: []
  */
+
+/**
+ * @swagger
+ * /pedido:
+ *   get:
+ *     summary: Obtiene pedidos filtrados por usuario
+ *     tags:
+ *       - Pedidos
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de pedidos filtrados
+ *       401:
+ *         description: Token requerido
+ *       403:
+ *         description: Token inválido
+ *       500:
+ *         description: Error interno del servidor
+ */
+// RUTA PRINCIPAL GET - Obtener pedidos filtrados por usuario
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const usuario = req.usuario;
+    
+    // Verificar si es administrador
+    const esAdministrador = usuario.roles.some(rol => 
+      rol.nombre === "Administrador"
+    );
+
+    let pedidos;
+
+    if (esAdministrador) {
+      // Si es administrador, obtener todos los pedidos
+      pedidos = await Pedidos.find()
+        .populate('vendedor')
+        .populate('cliente')
+        .populate({
+          path: 'detallesPedido',
+          populate: {
+            path: 'idProducto'
+          }
+        })
+        .populate('facturas')
+        .sort({ createdAt: -1 });
+    } else {
+      // Si es empleado, filtrar solo sus pedidos
+      const empleadoIds = usuario.empleados.map(emp => emp._id);
+      
+      pedidos = await Pedidos.find({
+        'vendedor': { $in: empleadoIds } 
+      })
+        .populate('vendedor')
+        .populate('cliente')
+        .populate({
+          path: 'detallesPedido',
+          populate: {
+            path: 'idProducto'
+          }
+        })
+        .populate('facturas')
+        .sort({ createdAt: -1 });
+    }
+
+    res.json(pedidos);
+  } catch (error) {
+    console.error('Error al obtener pedidos:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+});
 
 /**
  * @swagger
@@ -116,6 +189,10 @@ router.get('/', pedidoController.listarPedidos);
  *               cliente:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
+ *               vendedor:
+ *                 type: string
+ *                 description: ID del vendedor asignado
+ *                 example: "60d2b6e3e6b0f99dbe0c5a7d"
  *               detallesPedido:
  *                 type: array
  *                 items:
@@ -210,6 +287,10 @@ router.get('/:id', pedidoController.obtenerPedidoPorId);
  *               cliente:
  *                 type: string
  *                 example: "60d2b6e3e6b0f99dbe0c5a7a"
+ *               vendedor:
+ *                 type: string
+ *                 description: ID del vendedor asignado
+ *                 example: "60d2b6e3e6b0f99dbe0c5a7d"
  *               detallesPedido:
  *                 type: array
  *                 items:
@@ -228,6 +309,7 @@ router.get('/:id', pedidoController.obtenerPedidoPorId);
  *       404:
  *         description: Pedido no encontrado
  */
+
 
 
 router.put('/:id', pedidoController.actualizarPedido);
