@@ -5,7 +5,8 @@ const { pedidoSchemaValidation } = require('../Validations/pedido_validation');
 // Controlador para listar todos los pedidos
 const listarPedidos = async (req, res) => {
     try {
-        const pedidos = await logic.listarPedidos();
+        const vendedorId = req.query.vendedorId || null;
+        const pedidos = await logic.listarPedidos(vendedorId);
         res.json(pedidos);
     } catch (err) {
         res.status(500).json({ error: 'Error interno del servidor' });
