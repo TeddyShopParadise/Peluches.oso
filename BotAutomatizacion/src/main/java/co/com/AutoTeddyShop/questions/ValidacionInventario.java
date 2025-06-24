@@ -3,6 +3,7 @@ package co.com.AutoTeddyShop.questions;
 import co.com.AutoTeddyShop.models.DatosInventario;
 import co.com.AutoTeddyShop.models.Utilidades.SessionVariables;
 import co.com.AutoTeddyShop.tasks.Inventario.RedireccionInventario;
+import co.com.AutoTeddyShop.tasks.ProductosAdmin.EliminarProducto;
 import co.com.AutoTeddyShop.tasks.ProductosAdmin.FiltrarProducto;
 import co.com.AutoTeddyShop.userinterface.Inventario.*;
 import net.serenitybdd.core.steps.Instrumented;
@@ -40,7 +41,8 @@ public class ValidacionInventario implements Question<Boolean> {
 
             actor.attemptsTo(
                     RedireccionInventario.val(datosInventario),
-                    FiltrarProducto.filtrar(datosInventario)
+                    FiltrarProducto.filtrar(datosInventario),
+                    EliminarProducto.eliminar(datosInventario)
             );
 
             String estiloProducto = Text.of(ESTILO_PRODUCTO).viewedBy(actor).asString().replaceFirst("Descripción: ", "").trim();

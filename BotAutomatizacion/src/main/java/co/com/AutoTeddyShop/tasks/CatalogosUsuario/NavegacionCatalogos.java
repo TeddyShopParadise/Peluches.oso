@@ -20,6 +20,8 @@ public class NavegacionCatalogos implements Task{
                 Click.on(SIDEBAR),
                 Click.on(BTN_LISTADESPLEGABLE),
                 unosSegundos(1),
+                Click.on(BTN_MENU_PRODUCTOS),
+                unosSegundos(1),
                 Click.on(BTN_CATALOGOS),
                 unosSegundos(1),
                 Click.on(BTN_VERPRODUCTOS),
