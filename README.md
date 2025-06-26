@@ -1,4 +1,4 @@
-# 🧸 TeddyShop - Sitio Web de Peluches
+# ![imagen](https://github.com/user-attachments/assets/55e27f25-dfba-4595-8072-778c204eee55) TeddyShop - Sitio Web de Peluches
 
 **TeddyShop** es un sitio web completo para la Gestión de Inventario y Catalogo, desarrollado como proyecto académico. El repositorio incluye tanto el backend (API REST con Node.js) como el frontend (SPA en React), organizados por trimestres dentro de la carpeta `Quinto_Trimestre`.
 
