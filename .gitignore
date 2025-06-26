@@ -361,3 +361,22 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Ignorar la carpeta node_modules
+node_modules/
+
+# Ignorar archivos de log
+*.log
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar archivos temporales
+*.tmp
+
+# Ignorar el directorio dist
+dist/
+
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db

@@ -1,0 +1,53 @@
+/* Estructura de la aplicación */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.content {
+  flex: 1; /* Toma el espacio disponible */
+  padding-top: 64px; /* Ajusta para evitar el solapamiento con el Navbar */
+  box-sizing: border-box;
+}
+
+.footer {
+  height: auto;
+  padding: 20px;
+  background-color: #f0f0f0; /* Ajusta según el diseño */
+  text-align: center;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Estilo para inputs y textareas */
+input, textarea {
+  color: #000; /* Color del texto */
+  background-color: #fff; /* Color de fondo */
+  border: 1px solid #ccc; /* Borde */
+  padding: 10px; /* Espaciado interno */
+  border-radius: 4px; /* Bordes redondeados */
+  width: 100%; /* Ajuste de ancho */
+  margin: 10px 0; /* Espaciado vertical */
+}
+
+
+/* Elimina las flechas en todos los inputs number */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

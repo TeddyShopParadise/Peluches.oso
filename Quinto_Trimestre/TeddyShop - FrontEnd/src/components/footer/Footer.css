@@ -1,0 +1,37 @@
+footer {
+  font-family: Arial, sans-serif;
+}
+
+footer a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+footer a:hover {
+  color: #ffd700; /* Color de hover */
+}
+
+footer ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+footer ul li {
+  margin: 8px 0;
+}
+
+footer .MuiSvgIcon-root {
+  font-size: 50px;
+}
+
+footer .tiktok{
+    font-size: 50px;
+}
+
+@media (max-width: 600px) {
+  footer ul {
+    text-align: center;
+  }
+}
+

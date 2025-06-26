@@ -1,0 +1,318 @@
+import React, { useEffect, useState } from 'react';
+import {
+  Container,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Box,
+  TablePagination,
+  Typography,
+  Tooltip,
+  Chip,
+  FormControlLabel,
+  Switch,
+  Snackbar, 
+  Alert 
+} from '@mui/material';
+import { Edit, Delete, ArrowUpward, ArrowDownward, Info, AddCircle, Save, Cancel, Add, Clear, Search, SentimentDissatisfied   } from '@mui/icons-material';
+import '../PagesStyle.css';
+import Swal from 'sweetalert2';
+import '../PagesStyle.css';
+import { getApiUrl } from '../../utils/apiConfig'
+const apiUrl = getApiUrl();
+console.log("Url almacenada: ",apiUrl);
+import useApiRequest from '../../hooks/useApiRequest';
+
+
+const Roles = () => {
+  const [roles, setRoles] = useState([]);
+  const [filteredRoles, setFilteredRoles] = useState([]);
+  const [role, setRole] = useState({ nombre: "", estado: true });
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentId, setCurrentId] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("nombre");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const { makeRequest } = useApiRequest();
+  
+  
+
+  const getAuthToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/roles`);
+      if (!response.ok) {
+        throw new Error('Error al obtener los roles');
+      } 
+      const data = await response.json();
+      setRoles(data);
+      setFilteredRoles(data);
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+      setSnackbarMessage("Error al obtener los roles");
+      setOpenSnackbar(true);
+    }
+  };
+
+
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleSearchChange = (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+    setFilteredRoles(
+      roles.filter((role) =>
+        role.nombre.toLowerCase().includes(term.toLowerCase())
+      )
+    );
+  };
+
+  const handleSort = (field) => {
+    const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+    setSortOrder(newSortOrder);
+    setSortBy(field);
+    setFilteredRoles(
+      [...filteredRoles].sort((a, b) => {
+        if (a[field] < b[field]) return newSortOrder === "asc" ? -1 : 1;
+        if (a[field] > b[field]) return newSortOrder === "asc" ? 1 : -1;
+        return 0;
+      })
+    );
+  };
+  return (
+    <Box className="BoxInicial">
+      <Box
+        className="Box"
+        sx={{
+          width: '90%',
+          maxWidth: '900px',
+          padding: '30px',
+          borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
+        }}
+      >
+        <Container>
+          <Box
+            sx={{
+              textAlign: 'center',
+              marginBottom: '30px',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-10px',
+                left: '25%',
+                width: '50%',
+                height: '4px',
+                background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                borderRadius: '10px',
+              },
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 'bold',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              }}
+            >
+              Gestión de Roles
+            </Typography>
+          </Box>
+  
+  
+          <Paper
+            elevation={2}
+            sx={{
+              padding: '20px',
+              borderRadius: '20px',
+              marginBottom: '20px',
+              backgroundColor: '#fff0f5',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '5px',
+                background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)',
+              },
+            }}
+          >
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                }}
+              >
+                Lista de Roles
+              </Typography>
+              <TextField
+                label="Buscar por nombre"
+                variant="outlined"
+                size="small"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                sx={{
+                  width: 250,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#666',
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              />
+            </Box>
+  
+            <TableContainer
+              component={Paper}
+              elevation={3}
+              sx={{
+                marginTop: 2,
+                borderRadius: '15px',
+                overflow: 'hidden',
+                border: '1px solid #f8c8dc',
+                overflowX: 'auto',
+
+              }}
+            >
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                    <TableCell>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={1}
+                        onClick={() => handleSort('nombre')}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        Nombre
+                        {sortBy === 'nombre' &&
+                          (sortOrder === 'asc' ? (
+                            <ArrowUpward fontSize="small" />
+                          ) : (
+                            <ArrowDownward fontSize="small" />
+                          ))}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={1}
+                        onClick={() => handleSort('estado')}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        Estado
+                        {sortBy === 'estado' &&
+                          (sortOrder === 'asc' ? (
+                            <ArrowUpward fontSize="small" />
+                          ) : (
+                            <ArrowDownward fontSize="small" />
+                          ))}
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredRoles
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((r) => (
+                      <TableRow
+                        key={r._id}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: '#fff0f5',
+                          },
+                        }}
+                      >
+                        <TableCell>{r.nombre}</TableCell>
+                         <TableCell>
+                        <Chip 
+                          label={r.estado ? 'Activo' : 'Inactivo'} 
+                          sx={{
+                            backgroundColor: r.estado ? '#e8f5e9' : '#ffebee',
+                            color: r.estado ? '#2e7d32' : '#c62828',
+                            fontWeight: 'bold'
+                          }}
+                        />
+                      </TableCell>
+                        <TableCell align="center">
+                        
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+  
+            <TablePagination
+              rowsPerPageOptions={[10]}
+              component="div"
+              count={filteredRoles.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+  
+          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+            <Alert onClose={handleCloseSnackbar} severity="success">
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+        </Container>
+      </Box>
+    </Box>
+  );
+};
+
+export default Roles;

@@ -1,0 +1,215 @@
+/* ---------- General Page Background and Typography ---------- */
+body {
+    /*background: linear-gradient(135deg, rgba(201, 154, 201, 0.9), rgba(221, 160, 221, 0.5), rgba(216, 131, 216, 0.9), rgba(141, 80, 174, 0.7));*/
+    background-color: white;
+    font-family: 'Arial', sans-serif;
+    font-size: large;
+    margin: 0;
+    padding: 0;
+}
+
+/* ---------- Titles ---------- */
+h1, .page-title {
+    color: #000000;
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.Box {
+    background: #FCFAF2;
+    box-shadow: 0 0 15px 5px rgba(150, 50, 150, 0.5), 0 0 25px 10px rgba(221, 160, 221, 0.1), 0 0 35px 15px rgba(255, 182, 193, 0.1);
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px); /* Aparece desde abajo */
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .BoxInicial {
+    height: auto; 
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    padding-top: 8px;
+    padding-bottom: 80px;
+  }
+
+/* ---------- Form Styles ---------- */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input[type="text"], button {
+    border-radius: 8px;
+}
+
+/* Material-UI Specific Styles */
+.MuiInputBase-input {
+    color: #000000 !important; /* Black text color */
+}
+
+.MuiOutlinedInput-root {
+    background-color: #FFFFFF !important; /* White background for input */
+}
+
+/* ---------- Buttons ---------- */
+button, .btn-primary {
+    background-color: #FFB6C1;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* ---------- Tables ---------- */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: whitesmoke;
+    color: white;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(255, 228, 225, 0.5);
+}
+
+/* ---------- Dialogs ---------- */
+.dialog-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4a148c;
+    text-align: center;
+}
+
+.dialog-content {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    background-color: rgba(245, 245, 245, 0.9);
+    border-radius: 10px;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.dialog-actions button {
+    margin: 0 5px;
+}
+
+/* ---------- Snackbar ---------- */
+.snackbar {
+    background-color: #FFB6C1;
+    color: white;
+}
+
+
+/* Imprimir Factura */
+@media print {
+    body * {
+      visibility: hidden;
+    }
+    
+    .factura-printable, .factura-printable * {
+      visibility: visible;
+    }
+    
+    .factura-printable {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100% !important;
+      box-shadow: none;
+      padding: 20px;
+    }
+    
+    .no-print {
+      display: none !important;
+    }
+  }
+
+  .swal-high-zindex {
+  z-index: 999999 !important;
+}
+
+.swal-high-zindex .swal2-container {
+  z-index: 999999 !important;
+}
+
+.swal-high-zindex .swal2-popup {
+  z-index: 999999 !important;
+}
+
+/* Para móviles específicamente */
+@media (max-width: 768px) {
+  .swal-high-zindex {
+    z-index: 9999999 !important;
+  }
+  
+  .swal-high-zindex .swal2-container {
+    z-index: 9999999 !important;
+  }
+  
+  .swal-high-zindex .swal2-popup {
+    z-index: 9999999 !important;
+  }
+}
+
+.swal2-container {
+  z-index: 999999 !important;
+}
+
+.swal2-popup {
+  z-index: 999999 !important;
+}
+
+.swal2-container.swal2-shown {
+  z-index: 999999 !important;
+}
+
+.swal2-container.swal2-top-end, 
+.swal2-container.swal2-top, 
+.swal2-container.swal2-top-start, 
+.swal2-container.swal2-center-start, 
+.swal2-container.swal2-center, 
+.swal2-container.swal2-center-end, 
+.swal2-container.swal2-bottom-start, 
+.swal2-container.swal2-bottom, 
+.swal2-container.swal2-bottom-end {
+  z-index: 999999 !important;
+}
+
+.swal2-backdrop-show {
+  z-index: 999998 !important;
+}

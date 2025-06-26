@@ -1,0 +1,1438 @@
+import React, { useEffect, useState } from 'react';
+import {
+  Container,
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Grid,
+  Button,
+  Chip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogContent,
+  Snackbar,
+  Alert,
+  Pagination,
+  DialogTitle,
+  TextField,
+  DialogActions,
+  Paper 
+} from '@mui/material';
+import { getApiUrl } from '../../utils/apiConfig';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PhoneIcon from '@mui/icons-material/Phone';
+import BadgeIcon from '@mui/icons-material/Badge';
+
+const apiUrl = getApiUrl();
+console.log("Url almacenada: ", apiUrl);
+const METODOSPAGO_API_URL = apiUrl + "/metodoPago";
+const PRODUCTOS_API_URL = `${apiUrl}/producto`;
+const EMPLEADOS_API_URL = apiUrl + "/empleado";
+const CATEGORIAS_API_URL = apiUrl + "/categorias";
+
+
+
+export default function CatalogoUsuario() {
+  const [catalogos, setCatalogos] = useState([]);
+  const [selectedCatalogo, setSelectedCatalogo] = useState(null);
+  const [productosCatalogo, setProductosCatalogo] = useState([]);
+  const [categoriasCatalogo, setCategoriasCatalogo] = useState([]);
+  const [showProductos, setShowProductos] = useState(false);
+  const [categoriaFiltro, setCategoriaFiltro] = useState('todos');
+  const [filteredProductos, setFilteredProductos] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productosPerPage = 12;
+  const [openDetalleDialog, setOpenDetalleDialog] = useState(false);
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [historialPrecios, setHistorialPrecios] = useState([]);
+  const [openCarritoDialog, setOpenCarritoDialog] = useState(false);
+  const [metodosPago, setMetodosPago] = useState([]);
+  const [refreshPopular, setRefreshPopular] = useState(false);
+  const [empleados, setEmpleados] = useState([]);
+  const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
+
+  const [pedido, setPedido] = useState({
+    metodoPago: '',
+    nombreComprador: '',
+    numeroComprador: '',
+    nombreAgendador: '',
+    numeroAgendador: '',
+    localidad: '',
+    direccion: '',
+    barrio: '',
+    cliente: '',
+    vendedor: '',
+
+  });
+
+  const usuarioLogueado = JSON.parse(localStorage.getItem('usuario'));
+
+  
+
+  useEffect(() => {
+    fetchHistorialPrecios();
+  }, []);
+
+  useEffect(() => {
+    listarCatalogos();
+    fetchEmpleados();
+  }, []);
+
+  useEffect(() => {
+    if (productosCatalogo.length > 0) {
+      filterProductos(categoriaFiltro);
+      fetchMetodosPago();
+    }
+  }, [categoriaFiltro, productosCatalogo]);
+
+ 
+  const listarCatalogos = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/catalogos/activos`);
+      const data = await response.json();
+      setCatalogos(data);
+    } catch (error) {
+      console.error('Error fetching catalogos:', error);
+      setSnackbarMessage('Error al obtener los catálogos');
+      setOpenSnackbar(true);
+    }
+  };
+
+
+    //Obtener los metodos de pago
+    const fetchMetodosPago = async () => {
+      try {
+        const response = await fetch(METODOSPAGO_API_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMetodosPago(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error fetching Metodos de pago:', error);
+        setSnackbarMessage('Error al obtener los Metodos de pago');
+        setOpenSnackbar(true);
+      }
+    };
+// Función para obtener empleados
+const fetchEmpleados = async () => {
+  try {
+    const response = await fetch(EMPLEADOS_API_URL);
+    if (!response.ok) throw new Error('Error al obtener empleados');
+    const data = await response.json();
+    setEmpleados(data);
+    if (data.length > 0) {
+      setVendedorSeleccionado(data[0]);
+    }
+  } catch (error) {
+    console.error('Error fetching empleados:', error);
+    setSnackbarMessage('Error al obtener los vendedores');
+    setOpenSnackbar(true);
+  }
+};
+
+  const fetchHistorialPrecios = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/historialPrecio`);
+      const data = await response.json();
+      setHistorialPrecios(data);
+    } catch (error) {
+      console.error('Error al obtener el historial de precios:', error);
+      setSnackbarMessage('Error al obtener los precios');
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleCarritoClick = (producto) => {
+    setProductoSeleccionado(producto);
+    setOpenCarritoDialog(true);
+  };
+
+  const handleCloseCarritoDialog = () => {
+    setOpenCarritoDialog(false);
+    setPedido({
+      metodoPago: '',
+      tamañoOso: '',
+      nombreComprador: '',
+      numeroComprador: '',
+      nombreAgendador: '',
+      numeroAgendador: '',
+      localidad: '',
+      direccion: '',
+      barrio: '',
+      cliente: '',
+    });
+  };
+
+  const handleInputChange = (e) => {
+    setPedido({ ...pedido, [e.target.name]: e.target.value });
+  };
+
+   const incrementClickCount = async (productId) => {
+    try {
+      const response = await fetch(`${PRODUCTOS_API_URL}/${productId}/clics`, {
+        method: 'POST'
+      });
+
+      if (!response.ok) throw new Error('Error en el servidor');
+
+      setRefreshPopular(prev => !prev);
+
+    } catch (error) {
+      console.error('Error al registrar clic:', error);
+      setSnackbarMessage('Error al actualizar popularidad');
+      setOpenSnackbar(true);
+    }
+  };
+
+
+const handleSubmitPedido = async () => {
+
+
+  const { precioFormateado, precioNumerico } = (() => {
+    if (!productoSeleccionado?.historialPrecios?.length) {
+      return { precioFormateado: "No disponible", precioNumerico: 0 };
+    }
+
+    const historialCompleto = productoSeleccionado.historialPrecios
+      .map(precioId => historialPrecios.find(p => p._id === precioId))
+      .filter(Boolean);
+
+    const ultimoRegistro = historialCompleto.at(-1);
+    
+    return {
+      precioFormateado: ultimoRegistro 
+        ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(ultimoRegistro.precio)
+        : "No disponible",
+      precioNumerico: ultimoRegistro?.precio || 0
+    };
+  })();
+
+  const metodoPagoNombre = metodosPago.find(
+    (metodo) => metodo._id === pedido.metodoPago
+  )?.nombreMetodoPago || 'No seleccionado';
+
+  // Crear mensaje de WhatsApp
+  const lineasMensaje = [
+    "¡Hola! Me gustaría realizar el siguiente pedido:\n",
+    `📍 *Imagen del Producto:* ${productoSeleccionado?.imagen || 'No disponible'}`,
+    `🔢 *ID del Producto:* ${productoSeleccionado?._id || 'No disponible'}`,
+    `📦 *Producto:* ${productoSeleccionado?.estiloProducto || ''}`,
+    `📏 *Tamaño:* ${productoSeleccionado?.tamañoProducto || ''}`,
+    `💳 *Método de pago seleccionado:* ${metodoPagoNombre || 'No seleccionado'}`,
+    `💰 *Total:* ${precioFormateado || 'No disponible'}`,
+    "\n📋 *Datos del Pedido*",
+    `👤 *Nombre del que paga:* ${pedido.nombreComprador || 'No proporcionado'}`,
+    `📱 *Número del que paga:* ${pedido.numeroComprador || 'No proporcionado'}`,
+    `👥 *Nombre del que recibe:* ${pedido.nombreAgendador || 'No proporcionado'}`,
+    `📞 *Número del que recibe:* ${pedido.numeroAgendador || 'No proporcionado'}`,
+    `🌍 *Localidad:* ${pedido.localidad || 'No proporcionado'}`,
+    `🏠 *Dirección:* ${pedido.direccion || 'No proporcionado'}`,
+    `🏘️ *Barrio:* ${pedido.barrio || 'No proporcionado'}`,
+  ];
+
+  // Agregar vendedor al ARRAY
+  const vendedorNombre = vendedorSeleccionado?.nombreEmpleado || 'No asignado';
+  lineasMensaje.push(`👤 *Vendedor asignado:* ${vendedorNombre}`);
+  
+  // Convertir a string
+  const mensajeFinal = lineasMensaje.join('\n');
+
+  // Función para formatear números
+  const formatPhoneNumber = (phone) => {
+    let num = phone.toString().replace(/\D/g, '');
+    if (num.startsWith('57')) return num;
+    if (num.startsWith('0')) return '57' + num.substring(1);
+    return '57' + num;
+  };
+
+  const numeroWhatsApp = vendedorSeleccionado 
+    ? formatPhoneNumber(vendedorSeleccionado.telefonoEmpleado)
+    : "573217292955";
+
+  const mensajeCodificado = encodeURIComponent(mensajeFinal);
+  const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
+  window.open(urlWhatsApp, "_blank");
+
+
+  try {
+    // Buscar inventario relacionado
+    let inventarioRelacionado = null;
+    try {
+      const inventarioResponse = await fetch(`${apiUrl}/inventario/por-producto/${productoSeleccionado._id}`);
+      if (inventarioResponse.ok) {
+        inventarioRelacionado = await inventarioResponse.json();
+      }
+    } catch (error) {
+      console.warn('No se encontró inventario para el producto.');
+    }
+    const vendedorId = pedido.vendedor || null;
+
+    // Preparar datos completos para el backend
+    const datosCompletos = {
+      pedidoData: {
+        nombreComprador: pedido.nombreComprador || "Sin nombre",
+        numeroComprador: pedido.numeroComprador || "0000000000",
+        nombreAgendador: pedido.nombreAgendador || "Sin nombre",
+        numeroAgendador: pedido.numeroAgendador || "0000000000",
+        localidad: pedido.localidad || "Sin localidad",
+        direccion: pedido.direccion || "Sin dirección",
+        barrio: pedido.barrio || "Sin barrio",
+        vendedor: vendedorId,
+      },
+      detallesPedido: [{
+        precio: precioNumerico,
+        cantidad: 1,
+        idProducto: productoSeleccionado._id,
+        idInventario: inventarioRelacionado?._id || null
+      }],
+      metodoPago: pedido.metodoPago
+    };
+    
+    // UNA SOLA LLAMADA AL BACKEND
+    const response = await fetch(`${apiUrl}/factura/crear-pedido-completo`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosCompletos)
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${JSON.stringify(responseData)}`);
+    }
+
+    
+    await incrementClickCount(productoSeleccionado._id);
+    setSnackbarMessage('Pedido realizado con éxito');
+    
+  } catch (error) {
+    console.error('❌ Error completo:', error);
+    setSnackbarMessage(error.message || 'Error al guardar el pedido');
+  }
+
+  setOpenSnackbar(true);
+  handleCloseCarritoDialog();
+};
+
+
+
+  const handleDetalles = async (catalogo) => {
+    setSelectedCatalogo(catalogo);
+    setCategoriaFiltro('todos');
+    
+    try {
+      const productosResponse = await fetch(`${apiUrl}/producto/catalogo/${catalogo._id}`);
+      const productosData = await productosResponse.json();
+      setProductosCatalogo(productosData);
+      
+      const categoriasUnicas = [];
+      productosData.forEach(producto => {
+        if (producto.categorias) {
+          producto.categorias.forEach(categoria => {
+            if (!categoriasUnicas.some(c => c._id === categoria._id)) {
+              categoriasUnicas.push(categoria);
+            }
+          });
+        }
+      });
+      setCategoriasCatalogo(categoriasUnicas);
+      
+      setShowProductos(true);
+      setCurrentPage(1);
+    } catch (error) {
+      console.error('Error al obtener productos y categorías:', error);
+      setSnackbarMessage('Error al cargar los productos del catálogo');
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleBackToCatalogos = () => {
+    setShowProductos(false);
+    setSelectedCatalogo(null);
+  };
+
+  const handleCategoriaFiltroChange = (event) => {
+    setCategoriaFiltro(event.target.value);
+  };
+
+  const filterProductos = (categoriaId) => {
+    if (categoriaId === 'todos') {
+      setFilteredProductos(productosCatalogo);
+    } else {
+      const productosFiltrados = productosCatalogo.filter((producto) =>
+        producto.categorias && producto.categorias.some((cat) => cat._id === categoriaId)
+      );
+      setFilteredProductos(productosFiltrados);
+    }
+    setCurrentPage(1);
+  };
+
+  const handleDetalleClick = (producto) => {
+    setProductoSeleccionado(producto);
+    setOpenDetalleDialog(true);
+  };
+
+  const handleCloseDetalleDialog = () => {
+    setOpenDetalleDialog(false);
+    setProductoSeleccionado(null);
+  };
+
+
+  
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+
+
+  const indexOfLastProduct = currentPage * productosPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productosPerPage;
+  const currentProductos = filteredProductos.slice(indexOfFirstProduct, indexOfLastProduct);
+
+return (
+  <Box className="BoxInicial">      
+    <Box 
+      className="Box" 
+      sx={{ 
+        width: "90%", 
+        maxWidth: "100%", 
+        padding: { xs: "20px", md: "50px" }, 
+        borderRadius: "30px", 
+        margin: '0 auto',
+        backgroundColor: '#fffafc',
+        boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+        border: '2px solid #f8c8dc',
+      }}
+    >
+      <Container>
+        {!showProductos ? (
+          <>
+            <Box
+              sx={{
+                textAlign: 'center',
+                marginBottom: '30px',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-10px',
+                  left: '25%',
+                  width: '50%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                  borderRadius: '10px',
+                },
+              }}
+            >
+              <Typography 
+                variant="h4" 
+                align="center" 
+                gutterBottom
+                sx={{
+                  fontWeight: 'bold',
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                }}
+              >
+                ✨ CATÁLOGOS DE PELUCHES ✨
+              </Typography>
+            </Box>
+            
+            <Grid container spacing={3}>
+              {catalogos.map((catalogo) => (
+                <Grid item xs={12} sm={6} md={4} key={catalogo._id}>
+                  <Card sx={{ 
+                    transition: 'all 0.3s ease', 
+                    '&:hover': { 
+                      transform: 'scale(1.05)',
+                      boxShadow: '0 12px 28px rgba(248, 200, 220, 0.4)',
+                    }, 
+                    borderRadius: '20px', 
+                    boxShadow: '0 8px 16px rgba(248, 200, 220, 0.2)',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    border: '1px solid #f8c8dc',
+                    backgroundColor: '#fff5f7',
+                  }}>
+                    <CardMedia
+                      component="img"
+                      height="330"
+                      image={catalogo.imagen || 'default-image-url.jpg'}
+                      alt={catalogo.nombreCatalogo}
+                      sx={{ 
+                        objectFit: 'cover', 
+                        backgroundColor: '#f0f0f0', 
+                        borderRadius: '20px 20px 0 0',
+                      }}
+                    />
+                    <CardContent sx={{ 
+                      flexGrow: 1,
+                      padding: '20px',
+                    }}>
+                      <Typography 
+                        gutterBottom 
+                        variant="h5" 
+                        component="div" 
+                        textAlign="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#b04e6f',
+                          fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        {catalogo.nombreCatalogo}
+                      </Typography>
+                      <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                        sx={{
+                          color: '#666',
+                          lineHeight: 1.6,
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <strong style={{ color: '#b04e6f' }}>Descripción:</strong> {catalogo.descripcionCatalogo}
+                      </Typography>
+                      <Box mt={2} display="flex" justifyContent="center">
+                        <Button 
+                          variant="contained" 
+                          onClick={() => handleDetalles(catalogo)}
+                          sx={{ 
+                            borderRadius: '15px',
+                            backgroundColor: '#f48fb1',
+                            '&:hover': {
+                              backgroundColor: '#ec7096',
+                              transform: 'translateY(-2px)',
+                            },
+                            textTransform: 'none',
+                            fontWeight: 'bold',
+                            boxShadow: '0 4px 12px rgba(244, 143, 177, 0.3)',
+                            padding: '10px 25px',
+                            fontSize: '14px',
+                          }}
+                        >
+                          Ver Productos
+                        </Button>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </>
+        ) : (
+          <>
+            <Box 
+              display="flex" 
+              justifyContent="space-between" 
+              alignItems="center" 
+              px={{ xs: 2, sm: 3 }}
+              py={{ xs: 1.5, sm: 2 }} 
+              bgcolor="#fff0f5" 
+              borderRadius="20px" 
+              boxShadow="0 4px 12px rgba(248, 200, 220, 0.3)"
+              border="1px solid #f8c8dc"
+              sx={{
+                width: "100%",
+                maxWidth: "lg",
+                margin: "0 auto 30px auto", 
+              }}
+            >
+              <Typography 
+                variant="h6" 
+                fontWeight="500"  
+                color="#b04e6f" 
+                sx={{ 
+                  fontSize: { xs: "12px", sm: "14px", md: "16px" }, 
+                  textAlign: { xs: "center", sm: "left" },
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                }}
+              >
+                Regresa al catálogo cuando quieras ✨
+              </Typography>
+              <Button 
+                onClick={handleBackToCatalogos} 
+                sx={{ 
+                  px: { xs: 2, sm: 3 }, 
+                  py: { xs: 1, sm: 1.2 }, 
+                  borderRadius: "15px", 
+                  fontWeight: "600", 
+                  fontSize: { xs: "11px", sm: "12px", md: "13px" }, 
+                  textTransform: "none",
+                  background: "linear-gradient(45deg, #f48fb1 0%, #ec7096 100%)",
+                  color: "#fff",
+                  boxShadow: "0 4px 12px rgba(244, 143, 177, 0.3)", 
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-2px)", 
+                    background: "linear-gradient(45deg, #ec7096 0%, #f48fb1 100%)",
+                    boxShadow: "0 6px 16px rgba(244, 143, 177, 0.4)", 
+                  },
+                }}
+                startIcon={<span style={{ fontSize: "16px" }}>🔙</span>} 
+              >
+                Volver
+              </Button>
+            </Box>
+
+            <Box
+              sx={{
+                textAlign: 'center',
+                marginBottom: '30px',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-10px',
+                  left: '25%',
+                  width: '50%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                  borderRadius: '10px',
+                },
+              }}
+            >
+              <Typography 
+                variant="h4" 
+                align="center" 
+                gutterBottom
+                sx={{
+                  fontWeight: "bold", 
+                  color: "#b04e6f", 
+                  fontSize: { xs: "18px", sm: "24px", md: "32px", lg: "36px" }, 
+                  fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                  lineHeight: 1.4, 
+                }}
+              >
+                🧸 Productos del Catálogo: {selectedCatalogo.nombreCatalogo}
+              </Typography>
+            </Box>
+
+            <Paper
+              elevation={2}
+              sx={{
+                padding: '20px',
+                borderRadius: '20px',
+                marginBottom: '30px',
+                backgroundColor: '#fff0f5',
+                border: '1px solid #f8c8dc',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <FormControl 
+                sx={{ 
+                  width: "280px", 
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '15px',
+                    backgroundColor: 'white',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f48fb1',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                      color: '#f48fb1',
+                    },
+                  },
+                }}
+              >
+                <InputLabel id="categoriaFiltro-label">🔍 Filtrar por Categoría</InputLabel>
+                <Select
+                  labelId="categoriaFiltro-label"
+                  value={categoriaFiltro}
+                  onChange={handleCategoriaFiltroChange}
+                  label="🔍 Filtrar por Categoría"
+                >
+                  <MenuItem value="todos">Todas las categorías</MenuItem>
+                  {categoriasCatalogo.map((categoria) => (
+                    <MenuItem key={categoria._id} value={categoria._id}>
+                      {categoria.nombreCategoria}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Paper>
+
+            <Grid container spacing={3}>
+              {currentProductos.length > 0 ? (
+                currentProductos.map((producto) => (
+                  <Grid item xs={12} sm={6} md={3} key={producto._id}>
+                    <Card sx={{ 
+                      transition: 'all 0.3s ease', 
+                      '&:hover': { 
+                        transform: 'scale(1.05)',
+                        boxShadow: '0 12px 28px rgba(248, 200, 220, 0.4)',
+                      }, 
+                      borderRadius: '20px', 
+                      boxShadow: '0 8px 16px rgba(248, 200, 220, 0.2)',
+                      border: '1px solid #f8c8dc',
+                      backgroundColor: '#fff5f7',
+                    }}>
+                      <CardMedia
+                        component="img"
+                        height="330"
+                        image={producto.imagen || 'default-image-url.jpg'}
+                        alt={producto.estiloProducto}
+                        sx={{ 
+                          objectFit: 'cover', 
+                          backgroundColor: '#f0f0f0', 
+                          borderRadius: '20px 20px 0 0',
+                        }}
+                      />
+                      <CardContent sx={{ 
+                        textAlign: 'left',
+                        padding: '20px',
+                      }}>
+                        <Typography 
+                          variant="body1" 
+                          color="text.secondary"
+                          sx={{
+                            marginBottom: '15px',
+                            lineHeight: 1.6,
+                          }}
+                        >
+                          <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                            💰 Precio:
+                          </Box>
+                          {producto.historialPrecios?.map((precioId, index) => {
+                            const precio = historialPrecios.find(p => p._id === precioId);
+                            return precio ? (
+                              <Box key={index} sx={{ fontSize: '16px', fontWeight: 'bold', color: '#ec7096' }}>
+                                {new Intl.NumberFormat('es-CO', { 
+                                  style: 'currency', 
+                                  currency: 'COP' 
+                                }).format(precio.precio)}
+                              </Box>
+                            ) : null;
+                          })}
+                          <Box sx={{ marginTop: '8px' }}>
+                            <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                              📏 Tamaño:
+                            </Box> {producto.tamañoProducto}
+                          </Box>
+                        </Typography>
+                        
+                        <Box mt={2} display="flex" justifyContent="space-between" gap={1}>
+                          <Button 
+                            variant="outlined" 
+                            onClick={() => handleDetalleClick(producto)}
+                            sx={{
+                              borderRadius: '12px',
+                              borderColor: '#f48fb1',
+                              color: '#f48fb1',
+                              '&:hover': {
+                                borderColor: '#ec7096',
+                                backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                                transform: 'translateY(-1px)',
+                              },
+                              textTransform: 'none',
+                              fontWeight: 'bold',
+                              fontSize: '12px',
+                              padding: '8px 16px',
+                            }}
+                          >
+                            Ver Detalles
+                          </Button>
+                          <Button 
+                            variant="contained" 
+                            onClick={() => handleCarritoClick(producto)}
+                            sx={{
+                              borderRadius: '12px',
+                              backgroundColor: '#f48fb1',
+                              '&:hover': {
+                                backgroundColor: '#ec7096',
+                                transform: 'translateY(-1px)',
+                              },
+                              textTransform: 'none',
+                              fontWeight: 'bold',
+                              boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                              fontSize: '12px',
+                              padding: '8px 16px',
+                            }}
+                          >
+                            🛒 Comprar
+                          </Button>
+                        </Box>
+                      </CardContent>    
+                    </Card>
+                  </Grid>
+                ))
+              ) : (
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{
+                      padding: '40px',
+                      textAlign: 'center',
+                      backgroundColor: '#fff0f5',
+                      borderRadius: '20px',
+                      border: '1px solid #f8c8dc',
+                    }}
+                  >
+                    <Typography 
+                      variant="h6"
+                      sx={{
+                        color: '#b04e6f',
+                        fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                      }}
+                    >
+                      {productosCatalogo.length === 0 
+                        ? '😔 No hay productos en este catálogo' 
+                        : '🔍 No hay productos en la categoría seleccionada'}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              )}
+            </Grid>
+
+            {filteredProductos.length > productosPerPage && (
+              <Box mt={4} display="flex" justifyContent="center">
+                <Pagination
+                  count={Math.ceil(filteredProductos.length / productosPerPage)}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  sx={{
+                    '& .MuiPaginationItem-root': {
+                      color: '#b04e6f',
+                      borderRadius: '12px',
+                      '&.Mui-selected': {
+                        backgroundColor: '#f48fb1',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: '#ec7096',
+                        },
+                      },
+                      '&:hover': {
+                        backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                      },
+                    },
+                  }}
+                />
+              </Box>
+            )}
+
+            <Dialog 
+              open={openDetalleDialog} 
+              onClose={handleCloseDetalleDialog} 
+              maxWidth="sm" 
+              fullWidth={false}
+              PaperProps={{
+                sx: {
+                  borderRadius: '20px',
+                  border: '2px solid #f8c8dc',
+                  backgroundColor: '#fffafc',
+                }
+              }}
+            >
+              <DialogContent sx={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center", 
+                padding: 3, 
+                textAlign: "center", 
+                position: "relative", 
+                maxWidth: "400px", 
+                margin: "auto" 
+              }}>
+                {productoSeleccionado && (
+                  <>
+                    <CardMedia
+                      component="img"
+                      width="auto"
+                      height="290"
+                      image={productoSeleccionado.imagen || 'default-image-url.jpg'}
+                      alt={productoSeleccionado.estiloProducto}
+                      sx={{
+                        borderRadius: "15px",
+                        width: "auto",
+                        objectFit: "contain",
+                        boxShadow: "0 8px 20px rgba(248, 200, 220, 0.4)",
+                        marginBottom: 3,
+                        border: '1px solid #f8c8dc',
+                      }}
+                    />
+                   
+                    <Paper
+                      sx={{
+                        padding: '20px',
+                        borderRadius: '15px',
+                        backgroundColor: '#fff0f5',
+                        border: '1px solid #f8c8dc',
+                        width: '100%',
+                      }}
+                    >
+                      <Box sx={{ 
+                        display: "flex", 
+                        flexDirection: "column", 
+                        gap: 2, 
+                        alignItems: "flex-start" 
+                      }}>
+                        <Typography variant="body1" sx={{ 
+                          textAlign: "left",
+                          color: '#666',
+                          lineHeight: 1.6,
+                        }}>
+                          <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                            📝 Descripción del Producto:
+                          </Box> {productoSeleccionado.estiloProducto}
+                        </Typography>
+                        <Typography variant="body1" sx={{ 
+                          textAlign: "left",
+                          color: '#666',
+                        }}>
+                          <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                            📏 Tamaño:
+                          </Box> {productoSeleccionado.tamañoProducto}
+                        </Typography>
+                        <Typography variant="body1" sx={{ 
+                          textAlign: "left",
+                          color: '#666',
+                        }}>
+                          <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                            ✅ Disponibilidad:
+                          </Box> {productoSeleccionado.disponibilidadProducto}
+                        </Typography>
+                      </Box>
+                    </Paper>
+                  </>
+                )}
+                <Button 
+                  onClick={handleCloseDetalleDialog} 
+                  variant="contained" 
+                  sx={{ 
+                    mt: 3, 
+                    borderRadius: "15px", 
+                    px: 4, 
+                    py: 1.5, 
+                    backgroundColor: '#f48fb1',
+                    '&:hover': {
+                      backgroundColor: '#ec7096',
+                    },
+                    boxShadow: "0 4px 12px rgba(244, 143, 177, 0.3)",
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Cerrar
+                </Button>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog 
+              open={openCarritoDialog} 
+              onClose={handleCloseCarritoDialog} 
+              maxWidth="sm" 
+              fullWidth
+              PaperProps={{
+                sx: {
+                  borderRadius: '20px',
+                  border: '2px solid #f8c8dc',
+                  backgroundColor: '#fffafc',
+                }
+              }}
+            >
+              <Box
+                sx={{
+                  padding: '20px 30px 10px 30px',
+                  backgroundColor: '#fff0f5',
+                  borderBottom: '1px solid #f8c8dc',
+                }}
+              >
+                <Typography 
+                  variant="h5"
+                  sx={{
+                    fontWeight: 'bold',
+                    color: '#b04e6f',
+                    fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                    textAlign: 'center',
+                  }}
+                >
+                  🛒 Detalles del Pedido
+                </Typography>
+              </Box>
+              <DialogContent sx={{ padding: '30px' }}>
+            {productoSeleccionado && (
+              <>
+                <Paper
+                  sx={{
+                    padding: '20px',
+                    borderRadius: '15px',
+                    backgroundColor: '#fff0f5',
+                    border: '1px solid #f8c8dc',
+                    marginBottom: '25px',
+                  }}
+                >
+                  <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                    <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                      🧸 Producto:
+                    </Box> {productoSeleccionado.estiloProducto}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                    <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                      📏 Tamaño:
+                    </Box> {productoSeleccionado.tamañoProducto}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
+                    <Box component="span" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                      💰 Precio:
+                    </Box>
+                    {productoSeleccionado.historialPrecios && productoSeleccionado.historialPrecios.length > 0 ? (
+                      productoSeleccionado.historialPrecios.map((precioId, index) => {
+                        const precio = historialPrecios.find(p => p._id === precioId);
+                        return precio ? (
+                          <Box component="span" key={index} sx={{ fontWeight: 'bold', color: '#ec7096', marginLeft: '8px' }}>
+                            {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(precio.precio)}
+                          </Box>
+                        ) : (
+                          <Box component="span" key={index} sx={{ color: '#666', marginLeft: '8px' }}>
+                            Precio no disponible
+                          </Box>
+                        );
+                      })
+                    ) : (
+                      <Box component="span" sx={{ color: '#666', marginLeft: '8px' }}>
+                        No hay precios históricos disponibles.
+                      </Box>
+                    )}
+                  </Typography>
+                </Paper>
+
+                <Box sx={{ mb: 3 }}>
+                  <Typography 
+                    variant="h6" 
+                    gutterBottom
+                    sx={{
+                      color: '#b04e6f',
+                      fontWeight: 'bold',
+                      fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    💳 Información de Pago
+                  </Typography>
+                  <FormControl 
+                    fullWidth 
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  >
+                    <InputLabel id="metodo-pago-label">Método de Pago</InputLabel>
+                    <Select
+                      labelId="metodo-pago-label"
+                      name="metodoPago"
+                      value={pedido.metodoPago}
+                      label="Método de Pago"
+                      onChange={handleInputChange}
+                    >
+                      {metodosPago.map((metodo) => (
+                        <MenuItem key={metodo._id} value={metodo._id}>
+                          {metodo.nombreMetodoPago}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <TextField
+                    label="Nombre de quién paga"
+                    fullWidth
+                    name="nombreComprador"
+                    value={pedido.nombreComprador}
+                    onChange={handleInputChange}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  />
+                  <TextField
+                    label="Número de quién paga"
+                    fullWidth
+                    name="numeroComprador"
+                    value={pedido.numeroComprador}
+                    onChange={handleInputChange}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  />
+                </Box>
+
+                <Box sx={{ mb: 3 }}>
+                  <Typography 
+                    variant="h6" 
+                    gutterBottom
+                    sx={{
+                      color: '#b04e6f',
+                      fontWeight: 'bold',
+                      fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    👤 Información del Receptor
+                  </Typography>
+                  <TextField
+                    label="Nombre del que recibe"
+                    fullWidth
+                    name="nombreAgendador"
+                    value={pedido.nombreAgendador}
+                    onChange={handleInputChange}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  />
+                  <TextField
+                    label="Número del que recibe"
+                    fullWidth
+                    name="numeroAgendador"
+                    value={pedido.numeroAgendador}
+                    onChange={handleInputChange}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  />
+                </Box>
+
+                <Box sx={{ mb: 2 }}>
+                  <Typography 
+                    variant="h6" 
+                    gutterBottom
+                    sx={{
+                      color: '#b04e6f',
+                      fontWeight: 'bold',
+                      fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    🚚 Datos de Entrega
+                  </Typography>
+                  <TextField
+                    label="Dirección"
+                    fullWidth
+                    name="direccion"
+                    value={pedido.direccion}
+                    onChange={handleInputChange}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  />
+                  <TextField
+                    label="Barrio"
+                    fullWidth
+                    name="barrio"
+                    value={pedido.barrio}
+                    onChange={handleInputChange}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  />
+                  <TextField
+                    label="Localidad"
+                    fullWidth
+                    name="localidad"
+                    value={pedido.localidad}
+                    onChange={handleInputChange}
+                    sx={{ 
+                      marginBottom: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#f48fb1',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        '&.Mui-focused': {
+                          color: '#f48fb1',
+                        },
+                      },
+                    }}
+                  />
+                 {/* Selector de Vendedores */}
+<Box sx={{ mb: 3 }}>
+  <Typography 
+    variant="h6" 
+    gutterBottom
+    sx={{
+      color: '#b04e6f',
+      fontWeight: 'bold',
+      fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+      marginBottom: '15px',
+    }}
+  >
+    👤 Seleccionar Vendedor
+  </Typography>
+  
+  <Grid container spacing={2}>
+    {empleados.map((empleado) => (
+      <Grid item xs={12} sm={6} key={empleado._id}>
+       <Card 
+  onClick={() => {
+    setVendedorSeleccionado(empleado);
+    setPedido(prev => ({...prev, vendedor: empleado._id}));
+  }}
+          sx={{
+            cursor: 'pointer',
+            borderRadius: '15px',
+            backgroundColor: vendedorSeleccionado?._id === empleado._id 
+              ? '#fce4ec' 
+              : '#fff0f5',
+            border: `2px solid ${
+              vendedorSeleccionado?._id === empleado._id 
+                ? '#f48fb1' 
+                : '#f8c8dc'
+            }`,
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-3px)',
+              boxShadow: '0 6px 15px rgba(244, 143, 177, 0.3)',
+              borderColor: '#ec7096',
+            },
+            padding: '15px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Indicador de selección */}
+          {vendedorSeleccionado?._id === empleado._id && (
+            <Box sx={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: 0,
+              height: 0,
+              borderLeft: '30px solid transparent',
+              borderTop: '30px solid #f48fb1',
+            }}>
+              <CheckCircleIcon 
+                sx={{ 
+                  position: 'absolute',
+                  top: '-28px',
+                  right: '0px',
+                  color: 'white',
+                  fontSize: '18px'
+                }} 
+              />
+            </Box>
+          )}
+          
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {/* Avatar circular */}
+            <Box sx={{ 
+              width: 50, 
+              height: 50, 
+              borderRadius: '50%', 
+              backgroundColor: '#f8c8dc',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '15px',
+              flexShrink: 0
+            }}>
+              <Typography variant="h6" sx={{ color: '#b04e6f', fontWeight: 'bold' }}>
+                {empleado.nombreEmpleado.charAt(0)}
+              </Typography>
+            </Box>
+            
+            {/* Información del vendedor */}
+            <Box sx={{ overflow: 'hidden' }}>
+              <Typography 
+                variant="subtitle1" 
+                sx={{ 
+                  fontWeight: 'bold', 
+                  color: '#b04e6f',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}
+              >
+                {empleado.nombreEmpleado}
+              </Typography>
+              
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: '#666',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}
+              >
+                <PhoneIcon sx={{ fontSize: '14px' }} />
+                {empleado.telefonoEmpleado}
+              </Typography>
+            </Box>
+          </Box>
+        </Card>
+      </Grid>
+    ))}
+  </Grid>
+</Box>
+                    </Box>
+                  </>
+                )}
+              </DialogContent>
+              <Box
+                sx={{
+                  padding: '20px 30px 30px 30px',
+                  backgroundColor: '#fff0f5',
+                  borderTop: '1px solid #f8c8dc',
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+gap: 2,
+                }}
+              >
+                <Button 
+                  onClick={handleCloseCarritoDialog} 
+                  variant="outlined" 
+                  sx={{ 
+                    borderRadius: '15px',
+                    borderColor: '#f48fb1',
+                    color: '#f48fb1',
+                    '&:hover': {
+                      borderColor: '#ec7096',
+                      backgroundColor: 'rgba(244, 143, 177, 0.08)',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    padding: '10px 25px',
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleSubmitPedido} 
+                  variant="contained" 
+                  sx={{
+                    borderRadius: '15px',
+                    backgroundColor: '#f48fb1',
+                    '&:hover': {
+                      backgroundColor: '#ec7096',
+                      transform: 'translateY(-1px)',
+                    },
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 12px rgba(244, 143, 177, 0.3)',
+                    padding: '10px 25px',
+                  }}
+                >
+                  Enviar Pedido
+                </Button>
+              </Box>
+            </Dialog>
+
+            <Snackbar 
+              open={openSnackbar} 
+              autoHideDuration={6000} 
+              onClose={() => setOpenSnackbar(false)}
+            >
+              <Alert 
+                onClose={() => setOpenSnackbar(false)} 
+                severity={snackbarMessage.includes('Error') ? 'error' : 'success'} 
+                sx={{ 
+                  width: '100%',
+                  borderRadius: '12px',
+                  '&.MuiAlert-standardSuccess': {
+                    backgroundColor: '#f0f9ff',
+                    color: '#065f46',
+                    border: '1px solid #34d399',
+                  },
+                  '&.MuiAlert-standardError': {
+                    backgroundColor: '#fef2f2',
+                    color: '#991b1b',
+                    border: '1px solid #f87171',
+                  },
+                }}
+              >
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
+          </>
+        )}
+      </Container>
+    </Box>
+  </Box>
+);
+};

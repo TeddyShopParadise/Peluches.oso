@@ -1,0 +1,412 @@
+@import "https://unpkg.com/open-props";
+
+/* Estilo para el fondo de la página */
+.background-image {
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  width: 100%;
+  opacity: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.Box {
+  background: #FCFAF2;
+  box-shadow: 0 0 15px 5px rgba(150, 50, 150, 0.5), 0 0 25px 10px rgba(221, 160, 221, 0.1), 0 0 35px 15px rgba(255, 182, 193, 0.1);
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.BoxInicial {
+  height: auto; 
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  padding-top: 8px;
+  padding-bottom: 80px;
+}
+
+fieldset {
+  display: grid;
+  grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr) var(--col-3, 1fr) var(--col-4, 1fr) var(--col-5, 1fr);
+  transition: grid-template-columns 2s var(--ease-spring-5);
+}
+
+fieldset:has(label:nth-child(1) > input:checked) {
+  --col-1: 5fr;
+  --col-2: 1fr;
+}
+
+fieldset:has(label:nth-child(2) > input:checked) {
+  --col-2: 5fr;
+  --col-3: 1fr;
+}
+
+fieldset:has(label:nth-child(3) > input:checked) {
+  --col-3: 5fr;
+  --col-4: 1fr;
+}
+
+fieldset:has(label:nth-child(4) > input:checked) {
+  --col-4: 5fr;
+  --col-5: 1fr;
+}
+
+fieldset:has(label:nth-child(5) > input:checked) {
+  --col-5: 5fr;
+}
+
+label {
+  background-position: center;
+  background-size: auto 125%;
+  cursor: pointer;
+  border-radius: var(--radius-4);
+}
+
+label:focus-within {
+  outline: 1px solid #fff;
+  outline-offset: 5px;
+}
+
+body {
+  place-content: center;
+  gap: var(--size-4);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Ajuste adicional para dispositivos móviles */
+@media (max-width: 820px) {
+  .background-image {
+    background-attachment: scroll;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .categorias {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .categoria {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+  }
+
+  .categoria svg {
+    width: 30px;
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+}
+
+.product-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.product-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(221, 160, 221, 0.9);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.price-tag {
+  color: #2f2f2f;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #666;
+  margin-right: 8px;
+}
+
+/* Estilos para la sección de Catálogos */
+.container{
+  cursor: pointer;
+  align-items: center;
+  display: flex;
+  min-height: 100%;
+  justify-content: center;
+  padding: 6px 24px;
+}
+
+.card-grid{
+  display: grid;
+  grid-column-gap: 24px;
+  grid-row-gap: 24px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+@media(min-width: 540px){
+  .card-grid{
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
+
+@media(min-width: 960px){
+  .card-grid{
+    grid-template-columns: repeat(3, 1fr); 
+  }
+}
+
+.card{
+  position: relative;
+}
+
+.card:before{
+  content: '';
+  display: block;
+  padding-bottom: 150%;
+  width: 100%;
+}
+
+.backgroundCat{
+  background-position: center;
+  background-size: cover;
+  border-radius: 24px;
+  bottom: 0;
+  filter: brightness(0.75) saturate(1.2) 
+          contrast(0.85);
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 
+    filter 200ms linear,
+    transform 200ms linear;
+}
+
+.card:hover .backgroundCat{
+  transform: scale(1.05);
+  filter: none;
+}
+
+.card-grid:hover > .card:not(:hover) .backgroundCat{
+  filter: brightness(0.6) saturate(1)
+          contrast(1.2)   blur(5px);
+}
+
+.card-grid:hover > .card:not(:hover) .contentCat{
+  filter: brightness(0.8) blur(2px);
+}
+
+.contentCat{
+  padding: 24px;
+  font-family:Arial, Helvetica, sans-serif;
+  position: absolute;
+  top: 0;
+}
+
+.category{
+  color: black;
+  font-size: 1.5rem;
+  margin-bottom: -85px;
+  text-transform: uppercase;
+}
+
+/*.heading{
+  color: black;
+  font-size: 2rem;
+}*/
+
+
+/* FAQ Styles */
+.faq-container {
+  width: 100%;
+  max-width: 4xl;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Centra los elementos en la columna */
+}
+
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.category-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.category-button:hover {
+  transform: translateY(-2px);
+}
+
+.category-button-active {
+  background-color: #9333ea;
+  color: white;
+  box-shadow: 0 4px 6px rgba(147, 51, 234, 0.3);
+}
+
+.category-button-inactive {
+  background-color: #f3e8ff;
+  color: #9333ea;
+}
+
+.category-button-inactive:hover {
+  background-color: #e9d5ff;
+}
+
+.accordion-container {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.accordion-button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.accordion-button:hover {
+  background-color: rgba(147, 51, 234, 0.05);
+}
+
+.accordion-question {
+  font-weight: 500;
+  color: #1f2937;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+.accordion-icon {
+  transition: transform 0.3s ease;
+}
+
+.accordion-icon-open {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  border-top: 1px solid rgba(147, 51, 234, 0.1);
+}
+
+.accordion-answer {
+  padding: 1.5rem;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* Media Queries for FAQ Section */
+@media (max-width: 820px) {
+  .category-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .category-button {
+    width: 100%;
+    /* Asegura que los botones ocupen el ancho completo */
+    max-width: 300px;
+    /* Limita el ancho de los botones */
+  }
+
+  .accordion-question {
+    font-size: 1rem;
+    /* Ajusta el tamaño de fuente para pantallas más pequeñas */
+  }
+
+  .accordion-button {
+    padding: 1rem;
+    /* Reduce el relleno para pantallas más pequeñas */
+  }
+
+  .accordion-answer {
+    padding: 1rem;
+    /* Reduce el relleno para pantallas más pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-container {
+    padding: 1rem;
+    /* Reduce el relleno en pantallas muy pequeñas */
+  }
+
+  .category-buttons {
+    flex-direction: column;
+    /* Apila los botones verticalmente */
+  }
+}

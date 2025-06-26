@@ -1,0 +1,1196 @@
+import React, { useState, useEffect } from 'react';
+
+import {
+  Container,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Box,
+  TablePagination,
+  Typography,
+  Tooltip,
+  Chip,
+  FormControl,
+  InputLabel,
+  Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  MenuItem,
+  Divider,
+  Snackbar,
+  Alert,
+  Grid,
+  Card,
+  CardContent,
+} from '@mui/material';
+
+import { 
+  Edit, 
+  Delete, 
+  CheckCircle, 
+  HourglassBottom, 
+  Info, 
+  ArrowUpward, 
+  ArrowDownward, 
+  Cancel,
+  Search,
+  ShoppingBag,
+} from '@mui/icons-material';
+import '../PagesStyle.css';
+import Swal from 'sweetalert2';
+import { getApiUrl } from '../../utils/apiConfig';
+import FacturaPDF from '../Factura/FacturaPDF';
+import useApiRequest from '../../hooks/useApiRequest';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+
+
+const apiUrl = getApiUrl();
+
+const Pedido = () => {
+  const [pedidos, setPedidos] = useState([]);
+  const [pedidoEdicion, setPedidoEdicion] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [openDetailDialog, setOpenDetailDialog] = useState(false);
+  const [selectedPedido, setSelectedPedido] = useState(null);
+  const [currentId, setCurrentId] = useState(null);
+  const [page, setPage] = useState(0);
+  const [detalles, setDetalles] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('nombreComprador');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [facturaDialogOpen, setFacturaDialogOpen] = useState(false);
+  const [facturaGenerada, setFacturaGenerada] = useState(null);
+  const [compania, setCompania] = useState(null);
+  const [openDevolucionDialog, setOpenDevolucionDialog] = useState(false);
+  const [motivoDevolucion, setMotivoDevolucion] = useState('');
+  const [pedidoACancelar, setPedidoACancelar] = useState(null);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [userInfo, setUserInfo] = useState(null);
+  const { makeRequest } = useApiRequest();
+
+  // Función para obtener información del usuario desde el token
+  const getUserInfoFromToken = () => {
+    try {
+      const token = localStorage.getItem('authToken'); 
+      if (!token) return null;
+
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return {
+        userId: payload.userId,
+        username: payload.username,
+        roles: payload.roles || [],
+        usuario: payload.usuario || null
+      };
+    } catch (error) {
+      console.error('Error al decodificar token:', error);
+      return null;
+    }
+  };
+
+  // Función para obtener el ID del empleado del usuario autenticado
+  const getEmpleadoId = (userInfo) => {
+    if (!userInfo || !userInfo.usuario || !userInfo.usuario.empleados) {
+      return null;
+    }
+    
+    // Si el usuario tiene empleados asociados, tomar el primero
+    const empleados = userInfo.usuario.empleados;
+    return empleados.length > 0 ? empleados[0]._id : null;
+  };
+
+  const fetchPedidos = async () => {
+    try {
+      const token = localStorage.getItem('authToken'); 
+      
+      if (!token) {
+        console.error('No hay token disponible');
+        setSnackbarMessage('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        setOpenSnackbar(true);
+        return;
+      }
+
+      // Obtener información del usuario
+      const currentUserInfo = getUserInfoFromToken();
+      setUserInfo(currentUserInfo);
+
+      if (!currentUserInfo) {
+        setSnackbarMessage('Error al obtener información del usuario');
+        setOpenSnackbar(true);
+        return;
+      }
+
+
+      const response = await fetch(`${apiUrl}/pedido`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        console.error('Token expirado o inválido');
+        localStorage.removeItem('authToken');
+        setSnackbarMessage('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        setOpenSnackbar(true);
+        return;
+      }
+
+      if (response.status === 403) {
+        console.error('Acceso prohibido');
+        setSnackbarMessage('No tienes permisos para acceder a esta información.');
+        setOpenSnackbar(true);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Filtrar pedidos según el rol del usuario
+      let pedidosFiltrados = data;
+
+      if (currentUserInfo.roles.includes('Empleado') && !currentUserInfo.roles.includes('Administrador')) {
+        const empleadoId = getEmpleadoId(currentUserInfo);
+        
+        if (empleadoId) {
+          console.log('Filtrando pedidos para empleado ID:', empleadoId);
+          
+      pedidosFiltrados = data.filter(pedido => {
+      const match = pedido.vendedor && pedido.vendedor._id === empleadoId;
+      return match;
+    });
+        } else {
+          pedidosFiltrados = [];
+        }
+      } else {
+      }
+
+      setPedidos(pedidosFiltrados);
+    } catch (error) {
+      console.error('Error al obtener pedidos:', error);
+      setSnackbarMessage('Error al obtener los pedidos: ' + error.message);
+      setOpenSnackbar(true);
+      setPedidos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDetalles = async () => {
+    try {
+      const token = localStorage.getItem('authToken'); 
+      const response = await fetch(`${apiUrl}/detallesPedido`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) throw new Error('Error al obtener los detalles de pedido');
+      const data = await response.json();
+      setDetalles(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchCompania = async () => {
+    try {
+      const token = localStorage.getItem('authToken'); 
+      const response = await fetch(`${apiUrl}/Compania`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      setCompania(data);
+    } catch (error) {
+      console.error("Error al obtener la compañía:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPedidos();
+    fetchDetalles();
+    fetchCompania();
+  }, []);
+
+  const validarFormulario = () => {
+    const errors = {};
+    
+    if (!pedidoEdicion.nombreComprador || pedidoEdicion.nombreComprador.trim() === '') {
+      errors.nombreComprador = 'El nombre del comprador es requerido';
+    }
+    
+    if (!pedidoEdicion.numeroComprador || pedidoEdicion.numeroComprador.trim() === '') {
+      errors.numeroComprador = 'El número del comprador es requerido';
+    }
+    
+    if (!pedidoEdicion.localidad || pedidoEdicion.localidad.trim() === '') {
+      errors.localidad = 'La localidad es requerida';
+    }
+    
+    if (!pedidoEdicion.direccion || pedidoEdicion.direccion.trim() === '') {
+      errors.direccion = 'La dirección es requerida';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const actualizarPedido = async () => {
+    if (!pedidoEdicion) return;
+    
+    if (!validarFormulario()) {
+      setSnackbarMessage('Por favor, complete todos los campos requeridos');
+      setOpenSnackbar(true);
+      return;
+    }
+
+    const datosActualizacion = {
+      nombreComprador: pedidoEdicion.nombreComprador,
+      numeroComprador: pedidoEdicion.numeroComprador,
+      nombreAgendador: pedidoEdicion.nombreAgendador,
+      numeroAgendador: pedidoEdicion.numeroAgendador,
+      localidad: pedidoEdicion.localidad,
+      direccion: pedidoEdicion.direccion,
+      barrio: pedidoEdicion.barrio
+    };
+
+    try {
+      const token = localStorage.getItem('authToken'); 
+      const response = await fetch(`${apiUrl}/pedido/${pedidoEdicion._id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(datosActualizacion),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error de validación en el servidor:", errorData);
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+
+      const updatedPedido = await response.json();
+      setPedidos(
+        pedidos.map((pedido) =>
+          pedido._id === updatedPedido._id ? updatedPedido : pedido
+        )
+      );
+      setSnackbarMessage('Pedido actualizado con éxito');
+      setOpenSnackbar(true);
+      setPedidoEdicion(null);
+      setOpenEditDialog(false);
+    } catch (error) {
+      console.error('Error actualizando el pedido:', error);
+      setSnackbarMessage('Error al actualizar el pedido: ' + error.message);
+      setOpenSnackbar(true);
+    }
+  };
+
+  const eliminarPedido = async (id) => {
+    if (!id) return;
+
+    const token = localStorage.getItem('authToken'); 
+    await makeRequest({
+      url: `${apiUrl}/pedido/${id}`,
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      confirm: {
+        title: 'Eliminar pedido',
+        text: '¿Estás seguro de que deseas eliminar este pedido? Se eliminarán también su factura y sus detalles.',
+        icon: 'warning',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        backdrop: `
+          rgba(0,0,0,0.7)
+          url("/images/warning.gif")
+          center top
+          no-repeat
+        `
+      },
+      loading: {
+        title: 'Eliminando...',
+        html: 'Estamos eliminando el pedido'
+      },
+      success: {
+        title: '¡Pedido eliminado!',
+        text: 'El pedido y sus datos relacionados han sido eliminados con éxito',
+        timer: 2000,
+        timerProgressBar: true
+      },
+      error: {
+        title: 'Error',
+        text: 'Hubo un problema al eliminar el pedido',
+        footer: '<a href="/ayuda">¿Necesitas ayuda?</a>'
+      },
+      onSuccess: () => {
+        setPedidos(prev => prev.filter(p => p._id !== id));
+      },
+    });
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSort = (field) => {
+    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newSortOrder);
+    setSortBy(field);
+  };
+
+  const handleEditClick = (pedido) => {
+    setPedidoEdicion({ ...pedido });
+    setFormErrors({});
+    setOpenEditDialog(true);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setPedidoEdicion(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleDetailClick = (pedido) => {
+    setSelectedPedido(pedido);
+    setOpenDetailDialog(true);
+  };
+
+  const handleEstadoChange = async (pedidoId, nuevoEstado) => {
+    if (nuevoEstado === 'cancelado') {
+      const pedido = pedidos.find(p => p._id === pedidoId);
+      setPedidoACancelar(pedido);
+      setOpenDevolucionDialog(true);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${apiUrl}/pedido/estado/${pedidoId}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ estado: nuevoEstado }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al actualizar el estado');
+      }
+
+      const actualizado = await response.json();
+      setPedidos(prev =>
+        prev.map(p => (p._id === pedidoId ? actualizado : p))
+      );
+      setSnackbarMessage('Estado actualizado con éxito');
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error('Error al cambiar el estado:', error);
+      setSnackbarMessage('Error al actualizar el estado: ' + error.message);
+      setOpenSnackbar(true);
+    }
+  };
+
+  const confirmarCancelacion = async () => {
+    if (!pedidoACancelar || !motivoDevolucion.trim()) {
+      setSnackbarMessage('El motivo es obligatorio');
+      return setOpenSnackbar(true);
+    }
+    try {
+      const token = localStorage.getItem('authToken'); 
+      const resp1 = await fetch(`${apiUrl}/pedido/estado/${pedidoACancelar._id}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ estado: 'cancelado' })
+      });
+      if (!resp1.ok) { const e = await resp1.json(); throw new Error(e.message); }
+      const pedidoActualizado = await resp1.json();
+      const itemsParaDevolucion = detalles
+        .filter(d => d.idPedido?._id === pedidoACancelar._id)
+        .map(d => ({
+          inventario: d.idInventario,
+          cantidad: d.cantidadDetallePedido
+        }));
+
+      const resp2 = await fetch(`${apiUrl}/devoluciones`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ pedido: pedidoACancelar._id, motivo: motivoDevolucion, items: itemsParaDevolucion })
+      });
+      if (!resp2.ok) { const e = await resp2.json(); throw new Error(e.message); }
+      setPedidos(prev => prev.map(p => p._id === pedidoACancelar._id ? pedidoActualizado : p));
+      setSnackbarMessage('Pedido cancelado y devolución creada con éxito');
+      setOpenSnackbar(true);
+      cerrarDialogDevolucion();
+    } catch (error) {
+      console.error(error);
+      setSnackbarMessage(error.message);
+      setOpenSnackbar(true);
+    }
+  };
+
+  const cerrarDialogDevolucion = () => {
+    setOpenDevolucionDialog(false);
+    setMotivoDevolucion('');
+    setPedidoACancelar(null);
+  };
+
+  // Filtrado y ordenamiento
+  const filteredPedidos = pedidos.filter((pedido) =>
+    pedido.nombreComprador && pedido.nombreComprador.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  const sortedPedidos = [...filteredPedidos].sort((a, b) => {
+    const aValue = a[sortBy];
+    const bValue = b[sortBy];
+
+    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const handleGenerarFactura = async (pedidoId) => {
+    try {
+      const pedidoSeleccionado = pedidos.find(p => p._id === pedidoId);
+
+      if (pedidoSeleccionado.estado !== 'realizado') {
+        setSnackbarMessage('Solo puedes generar desprendibles de pedidos para pedidos realizados');
+        setOpenSnackbar(true);
+        return;
+      }
+
+      setSelectedPedido(pedidoSeleccionado);
+
+      const token = localStorage.getItem('authToken'); 
+      const response = await fetch(`${apiUrl}/factura/generar/${pedidoId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al generar desprendible de pedido");
+      }
+
+      const facturaData = await response.json();
+
+      const facturaConProductos = {
+        ...facturaData,
+        detallesFactura: facturaData.detallesFactura.map(detalle => ({
+          ...detalle,
+          idProducto: detalle.idProducto || detalles.find(d => 
+            d._id === detalle.idDetallePedido
+          )?.idProducto
+        }))
+      };
+
+      setFacturaGenerada(facturaConProductos);
+      setFacturaDialogOpen(true);
+
+    } catch (error) {
+      console.error("Error:", error);
+      setSnackbarMessage(error.message);
+      setOpenSnackbar(true);
+    }
+  };
+
+  const detallesFiltrados = detalles.filter(
+    (detalle) => detalle.idPedido?._id === selectedPedido?._id
+  );
+
+
+  return (
+    <Box className="BoxInicial">
+      <Box
+        className="Box"
+        sx={{
+          width: '90%',
+          maxWidth: '1200px',
+          padding: '30px',
+          borderRadius: '30px',
+          margin: '0 auto',
+          backgroundColor: '#fffafc',
+          boxShadow: '0 8px 24px rgba(248, 200, 220, 0.3)',
+          border: '2px solid #f8c8dc',
+        }}
+      >
+        <Container>
+          <Box
+            sx={{
+              textAlign: 'center',
+              marginBottom: '30px',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-10px',
+                left: '25%',
+                width: '50%',
+                height: '4px',
+                background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)',
+                borderRadius: '10px',
+              },
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 'bold',
+                color: '#b04e6f',
+                fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+              }}
+            >
+              Gestión de Pedidos
+            </Typography>
+          </Box>
+
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center', mb: 4 }}>
+                <Paper elevation={2} sx={{ borderRadius: '18px', padding: '20px', width: '220px', backgroundColor: '#fff0f5', border: '1px solid #f8c8dc', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-5px)' }, '&::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #fce4ec 0%, #f8c8dc 50%, #fce4ec 100%)' } }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              Mostrando {sortedPedidos.length} de {pedidos.length} pedidos
+            </Typography>
+          </Box>
+                <Box sx={{ backgroundColor: 'rgba(244, 143, 177, 0.15)', borderRadius: '12px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ShoppingBag sx={{ color: '#f48fb1', fontSize: '28px' }} />
+                </Box>
+              </Box>
+            </Paper>
+
+            <Paper
+              elevation={2}
+              sx={{
+                borderRadius: '18px',
+                padding: '20px',
+                width: '220px',
+                backgroundColor: '#e6f4ea',
+                border: '1px solid #a5d6a7',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'transform 0.3s ease',
+                '&:hover': { transform: 'translateY(-5px)' },
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #c8e6c9, #81c784, #c8e6c9)',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                    Realizados
+                  </Typography>
+                  <Typography variant="h4" sx={{ color: '#2e7d32', fontWeight: 'bold', mt: 1 }}>
+                    {sortedPedidos.filter((p) => p.estado === 'realizado').length}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    backgroundColor: 'rgba(76, 175, 80, 0.15)',
+                    borderRadius: '12px',
+                    width: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <CheckCircle sx={{ color: '#4caf50', fontSize: '28px' }} />
+                </Box>
+              </Box>
+            </Paper>
+            <Paper elevation={2} sx={{ borderRadius: '18px', padding: '20px', width: '220px', backgroundColor: '#fffde7', border: '1px solid #fff59d', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-5px)' }, '&::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #fff59d 0%, #ffee58 50%, #fff59d 100%)' } }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="body2" sx={{ color: '#f57f17', fontWeight: 'bold' }}>En Proceso</Typography>
+                  <Typography variant="h4" sx={{ color: '#f57f17', fontWeight: 'bold', mt: 1 }}>{sortedPedidos.filter(p => p.estado === 'en_proceso').length}</Typography>
+                </Box>
+                <Box sx={{ backgroundColor: 'rgba(245, 127, 23, 0.1)', borderRadius: '12px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <HourglassBottom sx={{ color: '#f57f17', fontSize: '28px' }} />
+                </Box>
+              </Box>
+            </Paper>
+
+            <Paper elevation={2} sx={{ borderRadius: '18px', padding: '20px', width: '220px', backgroundColor: '#ffebee', border: '1px solid #ffcdd2', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-5px)' }, '&::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #ffcdd2 0%, #ef9a9a 50%, #ffcdd2 100%)' } }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="body2" sx={{ color: '#c62828', fontWeight: 'bold' }}>Cancelados</Typography>
+                  <Typography variant="h4" sx={{ color: '#c62828', fontWeight: 'bold', mt: 1 }}>{sortedPedidos.filter(p => p.estado === 'cancelado').length}</Typography>
+                </Box>
+                <Box sx={{ backgroundColor: 'rgba(198, 40, 40, 0.1)', borderRadius: '12px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Cancel sx={{ color: '#c62828', fontSize: '28px' }} />
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
+
+          <Paper elevation={2} sx={{ padding: '20px', borderRadius: '20px', marginBottom: '20px', backgroundColor: '#fff0f5', position: 'relative', overflow: 'hidden', '&::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '5px', background: 'linear-gradient(90deg, #f8c8dc 0%, #f8bbd0 50%, #f8c8dc 100%)' } }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Typography variant="h6" sx={{ color: '#b04e6f', fontFamily: '"Baloo 2", "Comic Sans MS", cursive' }}>
+                Lista de Pedidos
+              </Typography>
+              <TextField
+                label="Buscar por nombre"
+                variant="outlined"
+                size="small"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                sx={{ width: 250, '& .MuiOutlinedInput-root': { borderRadius: '12px', '&.Mui-focused fieldset': { borderColor: '#f48fb1' } }, '& .MuiInputLabel-root': { color: '#666', '&.Mui-focused': { color: '#f48fb1' } } }}
+              />
+            </Box>
+
+            <TableContainer component={Paper} elevation={3} sx={{ marginTop: 2, borderRadius: '15px', overflow: 'hidden', border: '1px solid #f8c8dc', overflowX: 'auto' }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#ffeef3' }}>
+                    {['nombreComprador', 'tamañoOso', 'estado'].map((col) => (
+                      <TableCell key={col}>
+                        <Box display="flex" alignItems="center" gap={1} onClick={() => handleSort(col)} sx={{ cursor: 'pointer' }}>
+                          {col === 'nombreComprador' ? 'Nombre del Comprador' : col === 'tamañoOso' ? 'Tamaño del Oso' : 'Estado'}
+                          {sortBy === col && (sortOrder === 'asc' ? <ArrowUpward fontSize="small" /> : <ArrowDownward fontSize="small" />)}
+                        </Box>
+                      </TableCell>
+                    ))}
+                    <TableCell align="center">Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {sortedPedidos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((pedido) => (
+                    <TableRow key={pedido._id} hover>
+                      <TableCell>{pedido.nombreComprador}</TableCell>
+                      <TableCell>
+                        {
+                          (detalles.find(d => d.idPedido?._id === pedido._id))?.idProducto?.tamañoProducto || 'Producto eliminado'
+                        }
+                      </TableCell>
+                      <TableCell>
+                        <FormControl size="small" sx={{ minWidth: 120 }}>
+                          <Select
+                            value={pedido.estado}
+                            onChange={(e) => handleEstadoChange(pedido._id, e.target.value)}
+                            displayEmpty
+                            sx={{
+                              borderRadius: '8px',
+                              '& .MuiSelect-select': {
+                                backgroundColor:
+                                  pedido.estado === 'realizado' ? '#d4edda' :
+                                    pedido.estado === 'en_proceso' ? '#fff3cd' :
+                                      pedido.estado === 'cancelado' ? '#f8d7da' :
+                                        '#f1f1f1',
+                                fontWeight: 'bold',
+                              },
+                              '& .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                            }}
+                          >
+                            {['en_proceso', 'realizado', 'cancelado'].map((est) => (
+                              <MenuItem key={est} value={est}>
+                                <Chip
+                                  label={est.charAt(0).toUpperCase() + est.slice(1).replace('_', ' ')}
+                                  size="small"
+                                  sx={{
+                                    backgroundColor:
+                                      est === 'cancelado' ? '#f8d7da' :
+                                        est === 'en_proceso' ? '#fff3cd' :
+                                          est === 'realizado' ? '#d4edda' : '#f1f1f1',
+                                    color:
+                                      est === 'cancelado' ? '#721c24' :
+                                        est === 'en_proceso' ? '#856404' :
+                                          est === 'realizado' ? '#155724' : '#6c757d',
+                                    fontWeight: 'bold'
+                                  }}
+                                />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Box display="flex" gap={1} justifyContent="center">
+                          <Tooltip title="Ver detalles">
+                            <IconButton
+                              onClick={() => handleDetailClick(pedido)}
+                              sx={{
+                                color: '#9c27b0',
+                                '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.1)' }
+                              }}
+                            >
+                              <Info />
+                            </IconButton>
+                          </Tooltip>
+
+                          <Tooltip title="Editar">
+                            <IconButton
+                              onClick={() => handleEditClick(pedido)}
+                              sx={{
+                                color: '#6c63ff',
+                                '&:hover': { backgroundColor: 'rgba(76, 175, 80, 0.1)' }
+                              }}
+                            >
+                              <Edit />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Eliminar">
+                            <IconButton
+                              onClick={() => {
+                                eliminarPedido(pedido._id);      
+                              }}
+                              sx={{
+                                color: '#f44336',
+                                '&:hover': { backgroundColor: 'rgba(244, 67, 54, 0.1)' }
+                              }}
+                            >
+                              <Delete />
+                            </IconButton>
+                          </Tooltip>
+
+                          {pedido.estado === 'realizado' && (
+                            <Tooltip title="Generar Desprendible de pedido">
+                              <IconButton
+                                onClick={() => handleGenerarFactura(pedido._id)}
+                                sx={{
+                                  color: '#ff9800',
+                                  '&:hover': { backgroundColor: 'rgba(208, 132, 18, 0.1)' }
+                                }}
+                              >
+                                <ReceiptLongIcon />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            <TablePagination
+              component="div"
+              count={sortedPedidos.length}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              labelRowsPerPage="Filas por página:"
+              sx={{ '& .MuiTablePagination-select': { borderRadius: '8px' }, '& .MuiTablePagination-toolbar': { color: '#b04e6f' } }}
+            />
+          </Paper>
+
+          <Dialog
+            open={openEditDialog}
+            onClose={() => setOpenEditDialog(false)}
+            maxWidth="md"
+            fullWidth
+            PaperProps={{
+              sx: {
+              maxWidth: '500px',   
+              margin: 'auto',      
+              borderRadius: 4,
+              border: '2px solid #f8c8dc',
+              background: 'linear-gradient(135deg, #fff0f5 0%, #fce4ec 100%)',
+              p: 2
+            }
+          }}
+          >
+            <DialogTitle sx={{ 
+              color: '#b04e6f', 
+              fontWeight: 'bold',
+              fontSize: '1.5rem',
+              textAlign: 'center',
+              borderBottom: '2px solid #f8c8dc',
+              pb: 2
+            }}>
+              Editar Pedido
+            </DialogTitle>
+            <DialogContent>
+              {pedidoEdicion && (
+                <Grid container spacing={3} sx={{ mt: 1 }}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Nombre de quién paga *"
+                      name="nombreComprador"
+                      value={pedidoEdicion.nombreComprador || ''}
+                      onChange={handleEditChange}
+                      error={!!formErrors.nombreComprador}
+                      helperText={formErrors.nombreComprador}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Teléfono de quién paga *"
+                      name="numeroComprador"
+                      value={pedidoEdicion.numeroComprador || ''}
+                      onChange={handleEditChange}
+                      error={!!formErrors.numeroComprador}
+                      helperText={formErrors.numeroComprador}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Nombre del que recibe"
+                      name="nombreAgendador"
+                      value={pedidoEdicion.nombreAgendador || ''}
+                      onChange={handleEditChange}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Teléfono del que recibe"
+                      name="numeroAgendador"
+                      value={pedidoEdicion.numeroAgendador || ''}
+                      onChange={handleEditChange}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Localidad *"
+                      name="localidad"
+                      value={pedidoEdicion.localidad || ''}
+                      onChange={handleEditChange}
+                      error={!!formErrors.localidad}
+                      helperText={formErrors.localidad}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Dirección *"
+                      name="direccion"
+                      value={pedidoEdicion.direccion || ''}
+                      onChange={handleEditChange}
+                      error={!!formErrors.direccion}
+                      helperText={formErrors.direccion}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Barrio"
+                      name="barrio"
+                      value={pedidoEdicion.barrio || ''}
+                      onChange={handleEditChange}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#f48fb1',
+                          },
+                        },
+                        '& .MuiInputLabel-root': {
+                          '&.Mui-focused': {
+                            color: '#f48fb1',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              )}
+            </DialogContent>
+            <DialogActions sx={{ p: 3, gap: 2 }}>
+              <Button
+                onClick={() => setOpenEditDialog(false)}
+                variant="outlined"
+                sx={{
+                  borderRadius: '12px',
+                  borderColor: '#f48fb1',
+                  color: '#f48fb1',
+                  '&:hover': {
+                    backgroundColor: 'rgba(244, 143, 177, 0.1)',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  px: 3,
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={actualizarPedido}
+                variant="contained"
+                sx={{
+                  borderRadius: '12px',
+                  backgroundColor: '#f48fb1',
+                  '&:hover': {
+                    backgroundColor: '#f06292',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  px: 3,
+                  boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                }}
+              >
+                Guardar Cambios
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog open={openDevolucionDialog} onClose={cerrarDialogDevolucion} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '20px', padding: '10px', background: 'linear-gradient(135deg, #fff0f5 0%, #fce4ec 100%)' } }}>
+            <DialogTitle sx={{ textAlign: 'center', color: '#b04e6f', fontWeight: 'bold', fontSize: '1.5rem', borderBottom: '2px solid #f8c8dc', mb: 2 }}>⚠️ Confirmar Cancelación</DialogTitle>
+            <DialogContent>
+              <DialogContentText sx={{ mb: 3, color: '#666', textAlign: 'center', fontSize: '1.1rem' }}>
+                Al cancelar se generará devolución para ajustar inventario. Proporciona la información necesaria.
+              </DialogContentText>
+              {pedidoACancelar && (
+                <Box sx={{ backgroundColor: '#fff', p: 2, borderRadius: '12px', border: '1px solid #f8c8dc', mb: 3 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#b04e6f', mb: 1 }}>📋 Información del Pedido:</Typography>
+                  <Typography variant="body2" color="textSecondary"><strong>Cliente:</strong> {pedidoACancelar.nombreComprador}</Typography>
+                  <Typography variant="body2" color="textSecondary"><strong>Estado actual:</strong> {pedidoACancelar.estado}</Typography>
+                </Box>
+              )}
+              <TextField autoFocus margin="dense" label="Motivo de la cancelación *" fullWidth variant="outlined" value={motivoDevolucion} onChange={(e) => setMotivoDevolucion(e.target.value)} placeholder="Ej: Cliente cambió planes" required sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '12px', '&.Mui-focused fieldset': { borderColor: '#f48fb1' } }, '& .MuiInputLabel-root': { '&.Mui-focused': { color: '#f48fb1' } } }} />
+            </DialogContent>
+            <DialogActions sx={{ p: 3, gap: 2 }}>
+              <Button onClick={cerrarDialogDevolucion} variant="outlined" sx={{ borderRadius: '12px', borderColor: '#f48fb1', color: '#f48fb1', '&:hover': { backgroundColor: 'rgba(244, 143, 177, 0.1)' } }}>Cancelar</Button>
+              <Button onClick={confirmarCancelacion} variant="contained" disabled={!motivoDevolucion.trim()} sx={{ borderRadius: '12px', backgroundColor: '#f48fb1', '&:hover': { backgroundColor: '#f06292' }, '&:disabled': { backgroundColor: '#ccc' } }}>Confirmar Cancelación</Button>
+            </DialogActions>
+          </Dialog>
+
+          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+            <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+          <Dialog
+            open={openDetailDialog}
+            onClose={() => setOpenDetailDialog(false)}
+            PaperProps={{
+              sx: {
+                borderRadius: '15px',
+                border: '1px solid #f8c8dc',
+                boxShadow: '0 4px 20px rgba(244, 143, 177, 0.15)',
+                padding: '10px',
+              }
+            }}
+          >
+            <DialogTitle sx={{
+              color: '#b04e6f',
+              fontFamily: '"Baloo 2", "Comic Sans MS", cursive',
+            }}>
+              Detalles de Pedidos
+            </DialogTitle>
+            <DialogContent>
+              {selectedPedido && (
+                <Paper elevation={0} sx={{
+                  padding: '15px',
+                  backgroundColor: '#fff5f7',
+                  borderRadius: '12px',
+                  border: '1px solid #f8c8dc',
+                }}>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Nombre del Comprador:</strong> {selectedPedido.nombreComprador}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Numero del Comprador:</strong> {selectedPedido.numeroComprador}</Typography>
+                  <Divider sx={{ my: 2, backgroundColor: '#f8c8dc' }} />
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Nombre del Agendador:</strong> {selectedPedido.nombreAgendador}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Numero del Agendador:</strong> {selectedPedido.numeroAgendador}</Typography>
+                  <Divider sx={{ my: 2, backgroundColor: '#f8c8dc' }} />
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Localidad:</strong> {selectedPedido.localidad}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Dirección:</strong> {selectedPedido.direccion}</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}><strong>Barrio:</strong> {selectedPedido.barrio}</Typography>
+                </Paper>
+              )}
+              <Divider sx={{ my: 2, backgroundColor: '#f8c8dc' }} />
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#b04e6f',
+                  fontFamily: '"Baloo 2", cursive',
+                  mb: 1
+                }}
+              >
+                Productos del Pedido:
+              </Typography>
+
+              <Table size="small" sx={{ backgroundColor: '#fff0f4', borderRadius: '10px', overflow: 'hidden' }}>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#ffe4ec' }}>
+                    <TableCell><strong>Producto</strong></TableCell>
+                    <TableCell><strong>Cantidad</strong></TableCell>
+                    <TableCell><strong> Precio</strong></TableCell>
+                    <TableCell><strong>Pedido</strong></TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {detalles
+                    .filter((detalle) => detalle.idPedido?._id === selectedPedido?._id)
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((detalle) => (
+                      <TableRow key={detalle._id}>
+                        <TableCell>{detalle.idProducto?.tamañoProducto || 'Producto eliminado'}</TableCell>
+                        <TableCell>{detalle.cantidadDetallePedido}</TableCell>
+                        <TableCell>${detalle.precioDetallePedido.toFixed(2)}</TableCell>
+                        <TableCell>{detalle.idPedido?._id || 'Sin pedido'}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => setOpenDetailDialog(false)}
+                sx={{
+                  borderRadius: '12px',
+                  backgroundColor: '#f48fb1',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#f06292',
+                  },
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 8px rgba(244, 143, 177, 0.3)',
+                }}
+              >
+                Cerrar
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {facturaGenerada && selectedPedido && (
+            <FacturaPDF
+              factura={facturaGenerada}
+              pedido={selectedPedido}
+              compania={compania}
+              open={facturaDialogOpen}
+              onClose={() => setFacturaDialogOpen(false)}
+            />
+          )}
+        </Container>
+      </Box>
+    </Box>
+  );
+};
+
+export default Pedido;
