@@ -1,0 +1,42 @@
+# GRADLE
+.gradle/
+build/
+!gradle-wrapper.jar
+**/executionHistory/
+**/fileHashes/
+**/resourceHashesCache.bin
+*/.lock
+
+# JAVA
+*.class
+*.jar
+*.war
+*.ear
+
+# REPORTES Y RESULTADOS DE PRUEBAS
+build/reports/
+build/test-results/
+**/test-results/
+**/test-output/
+
+# SERENITY BDD
+target/
+**/target/
+target/site/serenity/
+target/site/serenity/**
+
+# IDEs (IntelliJ IDEA / Eclipse / VSCode)
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# SISTEMA OPERATIVO Y TEMPORALES
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
