@@ -18,7 +18,6 @@
 
 - **Frontend:**
   - React + Vite
-  - Tailwind CSS
 
 - **Backend:**
   - Node.js + Express
@@ -26,6 +25,7 @@
   - Mongoose
   - Multer (subida de imágenes)
   - JWT (autenticación)
+  - Cloudinary para almacenamiento de imagenes 
 
 ---
 
