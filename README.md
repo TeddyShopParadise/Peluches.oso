@@ -1,16 +1,38 @@
-### Hi there 👋
+# 🧸 TeddyShop - Sitio Web de Peluches
 
-<!--
-**TeddyShopParadise/TeddyShopParadise** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+**TeddyShop** es un sitio web completo para la Gestión de Inventario y Catalogo, desarrollado como proyecto académico. El repositorio incluye tanto el backend (API REST con Node.js) como el frontend (SPA en React), organizados por trimestres dentro de la carpeta `Quinto_Trimestre`.
 
-Here are some ideas to get you started:
+---
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## 📁 Estructura del Repositorio
+
+
+
+### Otros proyectos relacionados:
+- `PeluchesOsoKotlinV1(console)` y `V2(xml)` en Sexto_Trimestre → Versión móvil en Android
+- `BotAutomatizacion` en Septimo_Trimestre → Automatización de pruebas con Serenity BDD
+
+---
+
+## 🚀 Tecnologías Utilizadas
+
+- **Frontend:**
+  - React + Vite
+  - Tailwind CSS
+
+- **Backend:**
+  - Node.js + Express
+  - MongoDB (Atlas)
+  - Mongoose
+  - Multer (subida de imágenes)
+  - JWT (autenticación)
+
+---
+
+## 🔧 Instalación
+
+### Clona el proyecto
+
+```bash
+git clone https://github.com/TeddyShopParadise/Peluches.oso.git
+cd TeddyShop/Quinto_Trimestre
