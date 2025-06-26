@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical"
+			  android:padding="16dp">
+
+	<EditText
+			android:id="@+id/numDetallePedido"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Número de detalle de pedido"
+			android:inputType="number"/>
+
+	<EditText
+			android:id="@+id/precioDetallePedido"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Precio del detalle"
+			android:inputType="numberDecimal"/>
+
+	<EditText
+			android:id="@+id/cantidadDetallePedido"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Cantidad del detalle"
+			android:inputType="number"/>
+
+	<Button
+			android:onClick="crearDetallePedido"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Crear Detalle de Pedido"/>
+
+	<Button
+			android:onClick="listarDetallesPedido"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Listar Detalles de Pedido"/>
+
+	<TextView
+			android:id="@+id/textViewResultados"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Resultados aparecerán aquí"
+			android:paddingTop="16dp"/>
+</LinearLayout>

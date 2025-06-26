@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  xmlns:app="http://schemas.android.com/apk/res-auto"
+			  android:orientation="vertical"
+			  android:padding="16dp">
+
+	<!-- Campo para Estilo del Producto -->
+	<EditText
+			android:id="@+id/estiloProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Estilo del Producto" />
+
+	<!-- Campo para Material del Producto -->
+	<EditText
+			android:id="@+id/materialProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Material del Producto" />
+
+	<!-- Campo para Tamaño del Producto -->
+	<EditText
+			android:id="@+id/tamañoProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Tamaño del Producto" />
+
+	<!-- Campo para Disponibilidad del Producto -->
+	<EditText
+			android:id="@+id/disponibilidadProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="¿Disponible? (true/false)"
+			android:inputType="text" />
+
+	<!-- Botón para Crear Producto -->
+	<Button
+			android:onClick="crearProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Crear Producto"
+			app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+			/>
+
+	<Button
+			android:onClick="listarProductos"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="listar productos"/>
+
+
+	<!-- Campo para Buscar Producto por ID -->
+	<EditText
+			android:id="@+id/idProductoBuscar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="ID del Producto a Buscar" />
+
+	<!-- Botón para Buscar Producto -->
+	<Button
+			android:onClick="buscarProductoPorId"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Buscar Producto" />
+
+	<!-- Campo para Actualizar Producto -->
+	<EditText
+			android:id="@+id/idProductoActualizar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="ID del Producto a Actualizar" />
+
+	<EditText
+			android:id="@+id/nuevoEstiloProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nuevo Estilo del Producto" />
+
+	<EditText
+			android:id="@+id/nuevoMaterialProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nuevo Material del Producto" />
+
+	<EditText
+			android:id="@+id/nuevoTamañoProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nuevo Tamaño del Producto" />
+
+	<EditText
+			android:id="@+id/nuevaDisponibilidadProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Nueva Disponibilidad (true/false)" />
+
+	<!-- Botón para Actualizar Producto -->
+	<Button
+			android:onClick="actualizarProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Actualizar Producto" />
+
+	<!-- Campo para Eliminar Producto -->
+	<EditText
+			android:id="@+id/idProductoEliminar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="ID del Producto a Eliminar" />
+
+	<!-- Botón para Eliminar Producto -->
+	<Button
+			android:onClick="eliminarProducto"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Eliminar Producto" />
+
+	<!-- Área para mostrar el mensaje o lista de productos -->
+	<TextView
+			android:id="@+id/textViewListadoProductos"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Resultados de los productos aparecerán aquí"
+			android:paddingTop="20dp" />
+
+</LinearLayout>

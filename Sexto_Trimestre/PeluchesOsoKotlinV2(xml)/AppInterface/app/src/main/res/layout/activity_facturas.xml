@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/main"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".Views.Pedidos.FacturasActivity">
+
+	<TextView
+			android:id="@+id/textViewTitulo"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Formulario Facturas"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintHorizontal_bias="0.498"
+			app:layout_constraintVertical_bias="0.008" />
+
+	<EditText
+			android:id="@+id/numeroFactura"
+			android:layout_width="411dp"
+			android:layout_height="wrap_content"
+			android:hint="Número de Factura"
+			android:inputType="text"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintVertical_bias="0.055"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.0" />
+
+	<EditText
+			android:id="@+id/fechaFactura"
+			android:layout_width="411dp"
+			android:layout_height="wrap_content"
+			android:hint="Fecha de Emisión"
+			android:inputType="date"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintVertical_bias="0.145"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.0" />
+
+	<EditText
+			android:id="@+id/montoTotal"
+			android:layout_width="403dp"
+			android:layout_height="wrap_content"
+			android:hint="Monto Total"
+			android:inputType="numberDecimal"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.234" />
+
+	<Button
+			android:id="@+id/crearFactura"
+			android:text="Crear Factura"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="crearFactura"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintHorizontal_bias="0.847"
+			app:layout_constraintVertical_bias="0.42" />
+
+	<TextView
+			android:id="@+id/textViewListado"
+			android:text="Visualización de las facturas"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+	<Button
+			android:id="@+id/listarFacturas"
+			android:text="Listar Facturas"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="listarFacturas"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintHorizontal_bias="0.114"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_bias="0.42" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

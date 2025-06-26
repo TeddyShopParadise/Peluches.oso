@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+		  xmlns:tools="http://schemas.android.com/tools">
+
+	<application
+			android:allowBackup="true"
+			android:dataExtractionRules="@xml/data_extraction_rules"
+			android:fullBackupContent="@xml/backup_rules"
+			android:label="@string/app_name"
+			android:supportsRtl="true"
+			android:theme="@style/Theme.AppInterface"
+			tools:targetApi="31">
+		<activity
+				android:name=".MainActivity"
+				android:exported="true">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>
+		</activity>
+		<activity android:name=".Views.Productos.MainProductosActivity"/>
+		<activity android:name=".Views.Productos.CatalogoActivity"/>
+		<activity android:name=".Views.Productos.CategoriaActivity"/>
+		<activity android:name=".Views.Productos.HistorialPrecioActivity"/>
+		<activity android:name=".Views.Productos.InventarioActivity"/>
+		<activity android:name=".Views.Productos.ProductoActivity"/>
+		<activity android:name=".Views.Productos.MovimientoActivity"/>
+		<activity android:name=".Views.Pedidos.MainPedidoActivity"/>
+		<activity android:name=".Views.Pedidos.PedidoActivity"/>
+		<activity android:name=".Views.Pedidos.DetallePedidoActivity"/>|
+		<activity android:name=".Views.Pedidos.MetodoPagoActivity"/>
+		<activity android:name=".Views.Pedidos.DevolucionesActivity"/>
+		<activity android:name=".Views.Pedidos.FacturasActivity"/>|
+		<activity android:name=".Views.Pedidos.DetalleFacturaActivity"/>|
+		<activity android:name=".Views.Usuarios.MainUsuariosActivity"/>
+		<activity android:name=".Views.Usuarios.RolesActivity"/>
+		<activity android:name=".Views.Usuarios.ClientesActivity"/>
+		<activity android:name=".Views.Usuarios.UsuarioActivity"/>
+		<activity android:name=".Views.Usuarios.EmpleadosActivity"/>
+		<activity android:name=".Views.AdministradorActivity"/>
+		<activity android:name=".Views.EmpleadoActivity"/>
+	</application>
+
+</manifest>

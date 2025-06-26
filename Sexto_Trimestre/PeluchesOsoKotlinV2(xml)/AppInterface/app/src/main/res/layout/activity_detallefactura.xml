@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical"
+			  android:padding="16dp">
+
+	<!-- Campo para Número de Factura -->
+	<EditText
+			android:id="@+id/numFactura"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Número de Factura"/>
+
+	<!-- Campo para Número de Detalle -->
+	<EditText
+			android:id="@+id/numDetalle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Número de Detalle"/>
+
+	<!-- Campo para Precio -->
+	<EditText
+			android:id="@+id/precioDetalle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Precio"/>
+
+	<!-- Campo para Cantidad -->
+	<EditText
+			android:id="@+id/cantidadDetalle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Cantidad"/>
+
+	<!-- Botón para Crear Detalle de Factura -->
+	<Button
+			android:onClick="crearDetalleFactura"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Crear Detalle de Factura"/>
+
+	<!-- Botón para Listar Detalles de Factura -->
+	<Button
+			android:onClick="listarDetallesFactura"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Listar Detalles de Factura"/>
+
+	<!-- Área para mostrar los detalles de factura -->
+	<TextView
+			android:id="@+id/textViewDetallesFactura"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Detalles de factura aparecerán aquí"
+			android:paddingTop="16dp"/>
+</LinearLayout>
